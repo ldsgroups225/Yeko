@@ -25,6 +25,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys } from '@/lib/queries/students'
 import { getPresignedUploadUrl } from '@/school/functions/storage'
 import { createStudent, generateMatricule, updateStudent } from '@/school/functions/students'
@@ -88,6 +89,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   })
 
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.create,
     mutationFn: (data: StudentFormData) => createStudent({ data }),
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
@@ -106,6 +108,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   })
 
   const updateMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.update,
     mutationFn: (data: StudentFormData) =>
       updateStudent({ data: { id: student!.id, data } }),
 
@@ -126,6 +129,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
   })
 
   const generateMatriculeMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.generateMatricule,
     mutationFn: () => generateMatricule(),
     onSuccess: (result) => {
       if (result.success) {

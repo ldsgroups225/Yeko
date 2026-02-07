@@ -20,6 +20,7 @@ import { ConductTypeBadge } from '@/components/conduct/conduct-type-badge'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { conductRecordOptions } from '@/lib/queries/conduct-records'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { changeStatus } from '@/school/functions/conduct-records'
 
 export const Route = createFileRoute('/_auth/conducts/conduct/$recordId')({
@@ -36,6 +37,7 @@ function ConductRecordDetailPage() {
   const record = result || null
 
   const statusMutation = useMutation({
+    mutationKey: schoolMutationKeys.conductRecords.update,
     mutationFn: changeStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conduct-records'] })

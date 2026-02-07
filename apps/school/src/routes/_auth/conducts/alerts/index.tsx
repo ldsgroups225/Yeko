@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { AlertsTable } from '@/components/attendance/alerts/alerts-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   acknowledgeAlert,
   dismissAlert,
@@ -43,6 +44,7 @@ function AlertsPage() {
   const alerts = alertsResult?.success ? alertsResult.data : []
 
   const acknowledgeMutation = useMutation({
+    mutationKey: schoolMutationKeys.alerts.acknowledge,
     mutationFn: (id: string) => acknowledgeAlert({ data: { id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['attendance-alerts'] })
@@ -53,6 +55,7 @@ function AlertsPage() {
   })
 
   const dismissMutation = useMutation({
+    mutationKey: schoolMutationKeys.alerts.dismiss,
     mutationFn: (id: string) => dismissAlert({ data: { id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['attendance-alerts'] })

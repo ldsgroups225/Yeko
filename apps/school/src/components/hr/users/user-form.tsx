@@ -17,6 +17,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { RoleSelector } from '@/components/hr/users/role-selector'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { userCreateSchema } from '@/schemas/user'
 import { createNewUser, updateExistingUser } from '@/school/functions/users'
 
@@ -58,6 +59,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
   })
 
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.users.create,
     mutationFn: async (data: UserFormData) => {
       return await createNewUser({ data })
     },
@@ -78,6 +80,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
   })
 
   const updateMutation = useMutation({
+    mutationKey: schoolMutationKeys.users.update,
     mutationFn: async (data: UserFormData) => {
       return await updateExistingUser({
         data: {

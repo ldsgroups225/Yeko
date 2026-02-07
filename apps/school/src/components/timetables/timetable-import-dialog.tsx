@@ -35,6 +35,7 @@ import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { parseTimetableExcel } from '@/lib/excel-parser'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { dayOfWeekLabels } from '@/schemas/timetable'
 import { getClasses } from '@/school/functions/classes'
 import { getClassrooms } from '@/school/functions/classrooms'
@@ -99,6 +100,7 @@ export function TimetableImportDialog({
   // Lookup Maps
 
   const importMutation = useMutation({
+    mutationKey: schoolMutationKeys.timetables.import,
     mutationFn: (sessions: ParsedSession[]) => {
       // IconFilter only valid sessions and map to required format
       const validSessions = sessions

@@ -39,6 +39,7 @@ import {
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { parentsOptions } from '@/lib/queries/parents'
 import { studentsKeys } from '@/lib/queries/students'
 import { createParent, linkParentToStudent } from '@/school/functions/parents'
@@ -104,6 +105,7 @@ export function ParentLinkDialog({
   }
 
   const createAndLinkMutation = useMutation({
+    mutationKey: schoolMutationKeys.parents.create,
     mutationFn: async () => {
       const parentResult = await createParent({
         data: {
@@ -147,6 +149,7 @@ export function ParentLinkDialog({
   })
 
   const linkExistingMutation = useMutation({
+    mutationKey: schoolMutationKeys.parents.link,
     mutationFn: async () => {
       if (!selectedParentId)
         throw new Error('No parent selected')

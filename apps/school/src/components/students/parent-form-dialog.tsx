@@ -24,6 +24,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { parentsKeys } from '@/lib/queries/parents'
 import { createParent, updateParent } from '@/school/functions/parents'
 
@@ -79,6 +80,7 @@ export function ParentFormDialog({
   })
 
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.parents.create,
     mutationFn: (data: ParentFormValues) => createParent({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: parentsKeys.all })
@@ -92,6 +94,7 @@ export function ParentFormDialog({
   })
 
   const updateMutation = useMutation({
+    mutationKey: schoolMutationKeys.parents.update,
     mutationFn: (data: ParentFormValues) =>
       updateParent({ data: { id: parent!.id, updates: data } }),
     onSuccess: () => {

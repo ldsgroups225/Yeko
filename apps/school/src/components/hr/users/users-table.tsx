@@ -58,6 +58,7 @@ import { EmptyState } from '@/components/hr/empty-state'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingUser, getUsers } from '@/school/functions/users'
 
 interface IconUser {
@@ -88,6 +89,7 @@ export function UsersTable({ filters }: UsersTableProps) {
   const debouncedSearch = useDebounce(searchInput, 500)
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.users.delete,
     mutationFn: (userId: string) => deleteExistingUser({ data: userId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })

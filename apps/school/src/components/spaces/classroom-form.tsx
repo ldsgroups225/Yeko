@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { createClassroom, updateClassroom } from '@/school/functions/classrooms'
 
 const classroomSchema = z.object({
@@ -45,6 +46,7 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
   })
 
   const mutation = useMutation({
+    mutationKey: isEditing ? schoolMutationKeys.classrooms.update : schoolMutationKeys.classrooms.create,
     mutationFn: (data: ClassroomFormData) =>
       isEditing
         ? updateClassroom({ data: { id: classroom.id, updates: data } })

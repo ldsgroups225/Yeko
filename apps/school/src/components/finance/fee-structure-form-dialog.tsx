@@ -34,6 +34,7 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { feeStructuresKeys, feeTypesKeys, feeTypesOptions } from '@/lib/queries'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { createNewFeeStructure, updateExistingFeeStructure } from '@/school/functions/fee-structures'
 import { getGrades } from '@/school/functions/grades'
 import { getSeries } from '@/school/functions/series'
@@ -146,6 +147,9 @@ export function FeeStructureFormDialog({
   )
 
   const mutation = useMutation({
+    mutationKey: isEditing
+      ? schoolMutationKeys.feeStructures.update
+      : schoolMutationKeys.feeStructures.create,
     mutationFn: async (data: FeeStructureFormData) => {
       const yearContext = await getSchoolYearContext()
       if (!yearContext?.schoolYearId) {

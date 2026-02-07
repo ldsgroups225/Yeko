@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   deleteExistingUser,
   getUser,
@@ -57,6 +58,7 @@ function UserDetailsPage() {
   const activity = activityResult?.success ? activityResult.data : []
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.users.delete,
     mutationFn: async () => {
       return await deleteExistingUser({ data: userId })
     },

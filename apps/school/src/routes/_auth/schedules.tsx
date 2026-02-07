@@ -28,6 +28,7 @@ import { TimetableImportDialog } from '@/components/timetables/timetable-import-
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { timetablesOptions } from '@/lib/queries/timetables'
 import { detectConflicts } from '@/lib/utils/timetable-conflicts'
 import {
@@ -186,6 +187,7 @@ function TimetablesPage() {
 
   // Mutations
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.timetables.create,
     mutationFn: (data: CreateTimetableSessionInput) => createTimetableSession({ data }),
     onSuccess: (res) => {
       if (res.success) {
@@ -200,6 +202,7 @@ function TimetablesPage() {
   })
 
   const updateMutation = useMutation({
+    mutationKey: schoolMutationKeys.timetables.update,
     mutationFn: (data: UpdateTimetableSessionInput) => updateTimetableSession({ data }),
     onSuccess: (res) => {
       if (res.success) {
@@ -214,6 +217,7 @@ function TimetablesPage() {
   })
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.timetables.delete,
     mutationFn: (id: string) => deleteTimetableSession({ data: { id } }),
     onSuccess: () => {
       toast.success(t.common.success())

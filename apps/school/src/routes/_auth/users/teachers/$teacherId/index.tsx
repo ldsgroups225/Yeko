@@ -33,6 +33,7 @@ import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
 import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { teacherOptions } from '@/lib/queries/teachers'
 import { cn } from '@/lib/utils'
 import { deleteExistingTeacher } from '@/school/functions/teachers'
@@ -58,6 +59,7 @@ function TeacherDetailsPage() {
   })
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.teachers.delete,
     mutationFn: async () => {
       return await deleteExistingTeacher({ data: teacherId })
     },

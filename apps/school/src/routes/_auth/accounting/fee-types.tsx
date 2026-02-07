@@ -1,6 +1,6 @@
 import type { feeCategories } from '@/schemas/fee-type'
 import { IconPlus, IconTag } from '@tabler/icons-react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -16,7 +16,8 @@ import { toast } from 'sonner'
 import { FeeTypeFormDialog, FeeTypesTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
-import { feeTypesOptions } from '@/lib/queries'
+import { feeTypesKeys, feeTypesOptions } from '@/lib/queries/fee-types'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingFeeType } from '@/school/functions/fee-types'
 
 export const Route = createFileRoute('/_auth/accounting/fee-types')({
@@ -56,10 +57,25 @@ function FeeTypesPage() {
   const {
     data: feeTypes,
     isLoading,
-    refetch,
   } = useQuery(feeTypesOptions.list())
 
-  const feeTypesList: FeeTypeItem[]
+  const queryClient = useQueryClient()
+  const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.feeTypes.delete,
+    mutationFn: (id: string) => deleteExistingFeeType({ data: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
+      toast.success('Type de frais supprimé')
+      setDeleteData(null)
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : 'Une erreur est survenue',
+      )
+    },
+  })
+
+  const feeTypesList
     = feeTypes?.map(ft => ({
       id: ft.id,
       code: ft.code,
@@ -86,19 +102,10 @@ function FeeTypesPage() {
     setDeleteData({ id: feeType.id, name: feeType.name })
   }
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = () => {
     if (!deleteData)
       return
-    try {
-      await deleteExistingFeeType({ data: deleteData.id })
-      await refetch()
-      toast.success('Type de frais supprimé')
-    }
-    catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : 'Une erreur est survenue',
-      )
-    }
+    deleteMutation.mutate(deleteData.id)
   }
 
   return (
@@ -179,6 +186,7 @@ function FeeTypesPage() {
         open={!!deleteData}
         onOpenChange={open => !open && setDeleteData(null)}
         onConfirm={handleDeleteConfirm}
+        isLoading={deleteMutation.isPending}
         title={t.accounting.feeTypes.deleteConfirmTitle()}
         description={
           deleteData

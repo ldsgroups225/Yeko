@@ -22,6 +22,7 @@ import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { getClasses } from '@/school/functions/classes'
 import { getEnrollments } from '@/school/functions/enrollments'
 import {
@@ -108,6 +109,7 @@ function ReportCardsPage() {
   const activeTemplate = templates?.find(t => t.isDefault) || templates?.[0]
 
   const generateMutation = useMutation({
+    mutationKey: schoolMutationKeys.reportCards.generate,
     mutationFn: async (studentIds: string[]) => {
       if (!authUserId)
         throw new Error('IconUser not found')

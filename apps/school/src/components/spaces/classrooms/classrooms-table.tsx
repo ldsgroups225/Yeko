@@ -8,7 +8,7 @@ import {
   IconTrash,
   IconUsers,
 } from '@tabler/icons-react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
   flexRender,
@@ -62,6 +62,7 @@ import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteClassroom, getClassrooms } from '@/school/functions/classrooms'
 
 interface ClassroomItem {
@@ -92,7 +93,7 @@ export function ClassroomsTable({
   const [itemToDelete, setItemToDelete] = useState<ClassroomItem | null>(null)
   const debouncedSearch = useDebounce(searchInput, 500)
 
-  const { data: result, isLoading: isLoadingQuery, refetch } = useQuery({
+  const { data: result, isLoading: isLoadingQuery } = useQuery({
     queryKey: ['classrooms', { search: debouncedSearch }],
     queryFn: async () => {
       const res = await getClassrooms({
@@ -107,20 +108,24 @@ export function ClassroomsTable({
   const data = result?.success ? (result.data as unknown as ClassroomItem[]) : []
   const isLoading = isLoadingQuery
 
-  const handleDelete = async () => {
+  const queryClient = useQueryClient()
+  const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.classrooms.delete,
+    mutationFn: (id: string) => deleteClassroom({ data: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['classrooms'] })
+      toast.success(t.common.deleteSuccess())
+      setItemToDelete(null)
+    },
+    onError: () => {
+      toast.error(t.common.error())
+    },
+  })
+
+  const handleDelete = () => {
     if (!itemToDelete)
       return
-    try {
-      await deleteClassroom({ data: itemToDelete.id })
-      toast.success(t.common.deleteSuccess())
-      refetch()
-    }
-    catch {
-      toast.error(t.common.error())
-    }
-    finally {
-      setItemToDelete(null)
-    }
+    deleteMutation.mutate(itemToDelete.id)
   }
 
   const columns = useMemo<ColumnDef<ClassroomItem>[]>(

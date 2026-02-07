@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { createClass, updateClass } from '@/school/functions/classes'
 import { getClassrooms } from '@/school/functions/classrooms'
 import { getGrades } from '@/school/functions/grades'
@@ -96,10 +97,11 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
   })
 
   const mutation = useMutation({
-    mutationFn: (formData: ClassFormData) =>
+    mutationKey: isEditing ? schoolMutationKeys.classes.update : schoolMutationKeys.classes.create,
+    mutationFn: (data: ClassFormData) =>
       isEditing
-        ? updateClass({ data: { id: classData.class.id, updates: formData } })
-        : createClass({ data: formData }),
+        ? updateClass({ data: { id: classData!.class.id, updates: data } })
+        : createClass({ data }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] })
       toast.success(isEditing ? t.classes.updateSuccess() : t.classes.createSuccess())

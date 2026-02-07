@@ -42,6 +42,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { cn } from '@/lib/utils'
 import {
   assignTeacherToClassSubject,
@@ -170,6 +171,7 @@ export function AssignmentMatrix({
   })
 
   const assignMutation = useMutation({
+    mutationKey: schoolMutationKeys.classSubjects.assignTeacher,
     mutationFn: (data: {
       classId: string
       subjectId: string
@@ -194,6 +196,7 @@ export function AssignmentMatrix({
   })
 
   const removeMutation = useMutation({
+    mutationKey: schoolMutationKeys.teachers.unassign,
     mutationFn: (data: { classId: string, subjectId: string }) =>
       removeTeacherFromClassSubject({ data }),
     onSuccess: () => {

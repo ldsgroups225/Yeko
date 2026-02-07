@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { getSchoolYearContext, setSchoolYearContext } from '@/school/middleware/school-context'
 
 /**
@@ -14,6 +15,7 @@ export function useSchoolYearContext() {
   })
 
   const switchSchoolYear = useMutation({
+    mutationKey: schoolMutationKeys.context.selectSchoolYear,
     mutationFn: async (schoolYearId: string) => await setSchoolYearContext({ data: schoolYearId }),
     onSuccess: () => {
       // Invalidate queries that depend on school year

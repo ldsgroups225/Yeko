@@ -34,6 +34,7 @@ import {
   classSubjectsKeys,
   classSubjectsOptions,
 } from '@/lib/queries/class-subjects'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { teacherOptions } from '@/lib/queries/teachers'
 import {
   assignTeacherToClassSubject,
@@ -75,6 +76,7 @@ export function ClassSubjectManager({
   } | null>(null)
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.classSubjects.delete,
     mutationFn: (data: { classId: string, subjectId: string }) =>
       removeClassSubject({ data }),
     onSuccess: () => {
@@ -95,6 +97,7 @@ export function ClassSubjectManager({
   })
 
   const assignMutation = useMutation({
+    mutationKey: schoolMutationKeys.classSubjects.assignTeacher,
     mutationFn: (data: { subjectId: string, teacherId: string }) =>
       assignTeacherToClassSubject({
         data: { classId, subjectId: data.subjectId, teacherId: data.teacherId },

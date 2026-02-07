@@ -18,6 +18,7 @@ import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { schoolSubjectsOptions } from '@/lib/queries/school-subjects'
 import {
   teacherSubjectsKeys,
@@ -67,6 +68,7 @@ export function TeacherAssignmentDialog({
   const isLoading = loadingAll || loadingAssigned
 
   const assignMutation = useMutation({
+    mutationKey: schoolMutationKeys.teachers.assign,
     mutationFn: (subjectIds: string[]) =>
       saveTeacherAssignments({
         data: {

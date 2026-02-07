@@ -45,6 +45,7 @@ import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   schoolSubjectsKeys,
   schoolSubjectsOptions,
@@ -122,6 +123,7 @@ export function SchoolSubjectList({ schoolYearId }: SchoolSubjectListProps) {
   )
 
   const toggleStatusMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolSubjects.toggleStatus,
     mutationFn: (params: { id: string, status: 'active' | 'inactive' }) =>
       toggleSchoolSubjectStatus({ data: params }),
     onSuccess: () => {

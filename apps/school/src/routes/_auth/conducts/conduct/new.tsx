@@ -8,6 +8,7 @@ import { ConductRecordForm } from '@/components/conduct/conduct-record-form'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { createRecord } from '@/school/functions/conduct-records'
 import { getSchoolYears } from '@/school/functions/school-years'
 
@@ -31,6 +32,7 @@ function NewConductRecordPage() {
   const effectiveSchoolYearId = contextSchoolYearId || activeSchoolYear?.id
 
   const mutation = useMutation({
+    mutationKey: schoolMutationKeys.conductRecords.create,
     mutationFn: createRecord,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['conduct-records'] })

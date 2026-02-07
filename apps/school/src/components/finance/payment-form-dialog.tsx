@@ -33,6 +33,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { StudentCombobox } from '@/components/attendance/student/student-combobox'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { paymentsKeys } from '@/lib/queries/payments'
 import { studentFeesOptions } from '@/lib/queries/student-fees'
 import { paymentMethodLabels, paymentMethods } from '@/schemas/payment'
@@ -85,6 +86,7 @@ export function PaymentFormDialog({
   )
 
   const mutation = useMutation({
+    mutationKey: schoolMutationKeys.payments.create,
     mutationFn: (data: PaymentFormData) => {
       const paymentAmount = Number.parseFloat(data.amount)
       let remainingAmount = paymentAmount

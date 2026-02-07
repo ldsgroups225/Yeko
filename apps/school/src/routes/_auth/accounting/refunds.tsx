@@ -8,6 +8,7 @@ import { RefundsTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { refundsKeys, refundsOptions } from '@/lib/queries'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { approveExistingRefund, rejectExistingRefund } from '@/school/functions/refunds'
 
 export const Route = createFileRoute('/_auth/accounting/refunds')({
@@ -21,6 +22,7 @@ function RefundsPage() {
   const { data: refunds, isLoading } = useQuery(refundsOptions.list())
 
   const approveMutation = useMutation({
+    mutationKey: schoolMutationKeys.refunds.approve,
     mutationFn: (id: string) => approveExistingRefund({ data: { refundId: id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: refundsKeys.all })
@@ -30,6 +32,7 @@ function RefundsPage() {
   })
 
   const rejectMutation = useMutation({
+    mutationKey: schoolMutationKeys.refunds.reject,
     mutationFn: (id: string) => rejectExistingRefund({ data: { refundId: id, rejectionReason: 'Rejected by admin' } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: refundsKeys.all })

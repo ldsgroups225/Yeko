@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { bulkAssignFees } from '@/school/functions/bulk-operations'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -42,6 +43,7 @@ export function BulkFeeAssignmentCard() {
     : []
 
   const assignMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.bulkAssignFees,
     mutationFn: bulkAssignFees,
     onSuccess: (result: { success: boolean, data?: { succeeded: number } }) => {
       if (result.success && result.data) {

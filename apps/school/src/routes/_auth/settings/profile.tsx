@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { SchoolProfileForm } from '@/components/settings/school-profile-form'
 import { SchoolSettingsTabs } from '@/components/settings/school-settings-tabs'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { schoolProfileKeys, schoolProfileOptions } from '@/lib/queries/school-profile'
 import {
   updateSchoolLogo,
@@ -26,6 +27,7 @@ function SettingsProfilePage() {
   const { data: result, isLoading } = useQuery(schoolProfileOptions.detail())
 
   const profileMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolProfile.update,
     mutationFn: updateSchoolProfile,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: schoolProfileKeys.all })
@@ -37,6 +39,7 @@ function SettingsProfilePage() {
   })
 
   const settingsMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolProfile.updateSettings,
     mutationFn: updateSchoolSettings,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: schoolProfileKeys.all })
@@ -48,6 +51,7 @@ function SettingsProfilePage() {
   })
 
   const logoMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolProfile.updateLogo,
     mutationFn: updateSchoolLogo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: schoolProfileKeys.all })

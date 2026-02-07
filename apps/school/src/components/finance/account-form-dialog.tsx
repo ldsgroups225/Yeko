@@ -36,6 +36,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { accountsKeys } from '@/lib/queries/accounts'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   accountTypeLabels,
   accountTypes,
@@ -111,6 +112,9 @@ export function AccountFormDialog({
   const isEditing = !!initialData
 
   const mutation = useMutation({
+    mutationKey: isEditing
+      ? schoolMutationKeys.accounts.update
+      : schoolMutationKeys.accounts.create,
     mutationFn: (data: AccountFormData) => {
       if (isEditing) {
         return updateExistingAccount({

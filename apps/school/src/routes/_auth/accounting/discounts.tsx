@@ -17,6 +17,7 @@ import { DiscountFormDialog, DiscountsTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { discountsKeys, discountsOptions } from '@/lib/queries'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingDiscount } from '@/school/functions/discounts'
 
 export const Route = createFileRoute('/_auth/accounting/discounts')({
@@ -33,6 +34,7 @@ function DiscountsPage() {
   const { data: discounts, isLoading } = useQuery(discountsOptions.list())
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.discounts.delete,
     mutationFn: (id: string) => deleteExistingDiscount({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: discountsKeys.all })

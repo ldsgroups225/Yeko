@@ -37,6 +37,7 @@ import { z } from 'zod'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys } from '@/lib/queries/students'
 import { createEnrollment } from '@/school/functions/enrollments'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -103,6 +104,7 @@ export function EnrollmentDialog({
   })
 
   const enrollMutation = useMutation({
+    mutationKey: schoolMutationKeys.enrollments.create,
     mutationFn: (data: EnrollmentFormData) =>
       createEnrollment({ data: { ...data, studentId } }),
     onSuccess: (result) => {

@@ -38,8 +38,8 @@ import {
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
-
 import { updateStudent } from '@/school/functions/students'
 import { formatDate } from '@/utils/formatDate'
 import { generateUUID } from '@/utils/generateUUID'
@@ -72,6 +72,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
   const [photoDialogOpen, setPhotoDialogOpen] = useState(false)
 
   const updatePhotoMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.uploadPhoto,
     mutationFn: (photoUrl: string) =>
       updateStudent({ data: { id: studentId, data: { photoUrl } } }),
 

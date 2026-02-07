@@ -12,6 +12,7 @@ import { toast } from 'sonner'
 import { FeeStructureFormDialog, FeeStructuresTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { feeStructuresKeys, feeStructuresOptions } from '@/lib/queries'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingFeeStructure } from '@/school/functions/fee-structures'
 
 export const Route = createFileRoute('/_auth/accounting/fee-structures')({
@@ -30,6 +31,7 @@ function FeeStructuresPage() {
   )
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.feeStructures.delete,
     mutationFn: (id: string) => deleteExistingFeeStructure({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeStructuresKeys.lists() })

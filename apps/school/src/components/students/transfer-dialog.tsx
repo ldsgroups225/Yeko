@@ -34,6 +34,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys } from '@/lib/queries/students'
 import { transferStudent } from '@/school/functions/enrollments'
 
@@ -84,6 +85,7 @@ export function TransferDialog({
   })
 
   const transferMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.transfer,
     mutationFn: (data: TransferFormData) =>
       transferStudent({
         data: {

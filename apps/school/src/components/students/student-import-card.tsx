@@ -7,6 +7,7 @@ import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { importStudents, validateImportData } from '@/school/functions/bulk-operations'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -33,6 +34,7 @@ export function StudentImportCard() {
   const [validationResult, setValidationResult] = useState<ValidationResult | null>(null)
 
   const validateMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.validateImport,
     mutationFn: validateImportData,
     onSuccess: (result: { success: boolean, data?: ValidationResult }) => {
       if (result.success && result.data) {
@@ -45,6 +47,7 @@ export function StudentImportCard() {
   })
 
   const importMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.bulkImport,
     mutationFn: importStudents,
     onSuccess: (result: { success: boolean, data?: ImportResult }) => {
       if (result.success && result.data) {

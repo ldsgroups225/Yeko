@@ -23,6 +23,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { getSettings, updateSettings } from '@/school/functions/attendance-settings'
 
 export const Route = createFileRoute('/_auth/conducts/settings')({
@@ -80,6 +81,7 @@ function AttendanceSettingsPage() {
   }, [result, form])
 
   const mutation = useMutation({
+    mutationKey: schoolMutationKeys.conductSettings.update,
     mutationFn: (values: SettingsFormValues) =>
       updateSettings({
         data: {

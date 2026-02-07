@@ -28,6 +28,7 @@ import {
   classSubjectsOptions,
 } from '@/lib/queries/class-subjects'
 import { gradesKeys } from '@/lib/queries/grades'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { teacherOptions } from '@/lib/queries/teachers'
 import { assignTeacherToClassSubject } from '@/school/functions/class-subjects'
 import {
@@ -163,6 +164,7 @@ export function GradeEntryTable({
   }, [gradesByStudent, pendingChanges])
 
   const updateMutation = useMutation({
+    mutationKey: schoolMutationKeys.grades.save,
     mutationFn: (params: { id: string, value: number }) => updateGrade({ data: { id: params.id, value: params.value } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: gradesKeys.byClass(classId, subjectId, termId) })
@@ -170,6 +172,7 @@ export function GradeEntryTable({
   })
 
   const createBulkMutation = useMutation({
+    mutationKey: schoolMutationKeys.grades.bulkSave,
     mutationFn: (params: Parameters<typeof createBulkGrades>[0]['data']) => createBulkGrades({ data: params }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: gradesKeys.byClass(classId, subjectId, termId) })
@@ -198,6 +201,7 @@ export function GradeEntryTable({
   const subjectName = currentSubject?.subject.name || ''
 
   const submitMutation = useMutation({
+    mutationKey: schoolMutationKeys.grades.publish,
     mutationFn: (params: { gradeIds: string[] }) => submitGradesForValidation({ data: params }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: gradesKeys.byClass(classId, subjectId, termId) })
@@ -209,6 +213,7 @@ export function GradeEntryTable({
   const effectiveGradeDate = gradeDate ?? new Date().toISOString().slice(0, 10)
 
   const deleteDraftMutation = useMutation({
+    mutationKey: schoolMutationKeys.grades.delete,
     mutationFn: () => deleteDraftGrades({
       data: {
         classId,
@@ -229,6 +234,7 @@ export function GradeEntryTable({
   })
 
   const assignMutation = useMutation({
+    mutationKey: schoolMutationKeys.classSubjects.assignTeacher,
     mutationFn: (newTeacherId: string) => assignTeacherToClassSubject({
       data: {
         classId,

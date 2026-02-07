@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { bulkEnrollStudents } from '@/school/functions/bulk-operations'
 import { getStudents } from '@/school/functions/students'
 
@@ -31,6 +32,7 @@ export function BulkEnrollmentCard() {
   const classes = result || []
 
   const enrollMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.bulkEnroll,
     mutationFn: bulkEnrollStudents,
     onSuccess: (result) => {
       if (result.success && result.data) {

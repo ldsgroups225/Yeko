@@ -30,6 +30,7 @@ import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
 import * as XLSX from 'xlsx'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys } from '@/lib/queries/students'
 import { bulkImportStudents } from '@/school/functions/students'
 import { generateUUID } from '@/utils/generateUUID'
@@ -248,6 +249,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
   const [result, setResult] = useState<ImportResult | null>(null)
 
   const importMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.bulkImport,
     mutationFn: (students: ParsedStudent[]) =>
       bulkImportStudents({ data: students }),
     onSuccess: (result) => {

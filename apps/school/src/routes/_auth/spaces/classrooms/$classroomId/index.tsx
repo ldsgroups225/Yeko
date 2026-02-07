@@ -27,6 +27,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   deleteClassroom,
   getClassroomById,
@@ -50,6 +51,7 @@ function ClassroomDetailPage() {
   const data = result?.success ? result.data : null
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.classrooms.delete,
     mutationFn: () => deleteClassroom({ data: classroomId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classrooms'] })

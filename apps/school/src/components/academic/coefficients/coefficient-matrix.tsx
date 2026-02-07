@@ -22,6 +22,7 @@ import { motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   schoolCoefficientsKeys,
   schoolCoefficientsOptions,
@@ -57,6 +58,7 @@ export function CoefficientMatrix({
   }, [data])
 
   const bulkUpdateMutation = useMutation({
+    mutationKey: schoolMutationKeys.coefficients.update,
     mutationFn: (
       updates: { coefficientTemplateId: string, weightOverride: number }[],
     ) => bulkUpdateSchoolCoefficients({ data: { updates } }),
@@ -71,6 +73,7 @@ export function CoefficientMatrix({
   })
 
   const deleteOverrideMutation = useMutation({
+    mutationKey: schoolMutationKeys.coefficients.delete,
     mutationFn: (overrideId: string) =>
       deleteCoefficientOverride({ data: overrideId }),
     onSuccess: () => {

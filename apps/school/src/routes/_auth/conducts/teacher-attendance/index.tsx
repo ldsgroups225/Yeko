@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { TeacherAttendanceGrid } from '@/components/attendance/teacher/teacher-attendance-grid'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { dailyTeacherAttendanceOptions } from '@/lib/queries/teacher-attendance'
 import { bulkRecordAttendance } from '@/school/functions/teacher-attendance'
 
@@ -40,6 +41,7 @@ function TeacherAttendancePage() {
   const { data, isLoading } = useQuery(dailyTeacherAttendanceOptions(dateStr))
 
   const mutation = useMutation({
+    mutationKey: schoolMutationKeys.teacherAttendance.save,
     mutationFn: (params: { date: string, entries: Array<{ teacherId: string, status: 'present' | 'late' | 'absent' | 'excused' | 'on_leave', arrivalTime?: string | null, reason?: string | null }> }) =>
       bulkRecordAttendance({ data: params }),
     onSuccess: () => {

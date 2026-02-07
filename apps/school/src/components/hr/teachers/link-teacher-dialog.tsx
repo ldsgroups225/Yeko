@@ -24,6 +24,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { linkTeacherByEmailFn } from '@/school/functions/teachers'
 
 const formSchema = z.object({
@@ -41,6 +42,7 @@ export function LinkTeacherDialog() {
   })
 
   const linkMutation = useMutation({
+    mutationKey: schoolMutationKeys.teachers.link,
     mutationFn: linkTeacherByEmailFn,
     onSuccess: (result) => {
       if (result.success) {

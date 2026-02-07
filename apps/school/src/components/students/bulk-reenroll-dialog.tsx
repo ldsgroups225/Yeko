@@ -42,6 +42,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys } from '@/lib/queries/students'
 import { bulkReEnroll } from '@/school/functions/enrollments'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -92,6 +93,7 @@ export function BulkReEnrollDialog({
   })
 
   const reEnrollMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.bulkReEnroll,
     mutationFn: (data: ReEnrollFormData) => bulkReEnroll({ data }),
     onSuccess: (result) => {
       if (result.success) {

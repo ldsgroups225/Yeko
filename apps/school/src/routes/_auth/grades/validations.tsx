@@ -39,6 +39,7 @@ import { useSchoolContext } from '@/hooks/use-school-context'
 import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 import { gradesKeys, gradesOptions } from '@/lib/queries/grades'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   getSubmittedGradeIds,
   rejectGrades,
@@ -86,6 +87,7 @@ function GradeValidationsPage() {
   const pendingValidations = pendingValidationsResult || []
 
   const validateMutation = useMutation({
+    mutationKey: schoolMutationKeys.grades.validate,
     mutationFn: (params: {
       gradeIds: string[]
       userId: string
@@ -105,6 +107,7 @@ function GradeValidationsPage() {
   })
 
   const rejectMutation = useMutation({
+    mutationKey: schoolMutationKeys.grades.reject,
     mutationFn: (params: {
       gradeIds: string[]
       userId: string

@@ -34,6 +34,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { feeTypesKeys, feeTypesOptions } from '@/lib/queries/fee-types'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { feeCategories, feeCategoryLabels } from '@/schemas/fee-type'
 import { createNewFeeType, updateExistingFeeType } from '@/school/functions/fee-types'
 
@@ -131,6 +132,7 @@ export function FeeTypeFormDialog({
   }, [open, resetForm])
 
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.feeTypes.create,
     mutationFn: (data: FeeTypeFormData) =>
       createNewFeeType({
         data: {
@@ -155,6 +157,7 @@ export function FeeTypeFormDialog({
   })
 
   const updateMutation = useMutation({
+    mutationKey: schoolMutationKeys.feeTypes.update,
     mutationFn: (data: FeeTypeFormData) =>
       updateExistingFeeType({
         data: {

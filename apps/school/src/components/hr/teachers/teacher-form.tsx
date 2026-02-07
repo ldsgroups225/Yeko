@@ -19,6 +19,7 @@ import { toast } from 'sonner'
 import { UserCombobox } from '@/components/hr/staff/user-combobox'
 import { SubjectMultiSelect } from '@/components/hr/teachers/subject-multi-select'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { teacherCreateSchema } from '@/schemas/teacher'
 import { createNewTeacher, updateExistingTeacher } from '@/school/functions/teachers'
 
@@ -59,6 +60,7 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
   })
 
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.teachers.create,
     mutationFn: async (data: TeacherFormData) => {
       return await createNewTeacher({ data })
     },
@@ -73,6 +75,7 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
   })
 
   const updateMutation = useMutation({
+    mutationKey: schoolMutationKeys.teachers.update,
     mutationFn: async (data: TeacherFormData) => {
       return await updateExistingTeacher({
         data: {

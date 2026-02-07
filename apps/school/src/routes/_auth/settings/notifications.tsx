@@ -8,6 +8,7 @@ import { toast } from 'sonner'
 import { NotificationSettingsForm } from '@/components/settings/notification-settings-form'
 import { useTranslations } from '@/i18n'
 import { schoolProfileOptions } from '@/lib/queries'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { updateSchoolSettings } from '@/school/functions/school-profile'
 
 export const Route = createFileRoute('/_auth/settings/notifications')({
@@ -21,6 +22,7 @@ function NotificationsSettingsPage() {
   const { data: result, isLoading } = useQuery(schoolProfileOptions.detail())
 
   const settingsMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolProfile.updateSettings,
     mutationFn: updateSchoolSettings,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['school-profile'] })

@@ -12,7 +12,7 @@ import {
   IconUsers,
   IconX,
 } from '@tabler/icons-react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
   flexRender,
@@ -75,6 +75,7 @@ import { ClassForm } from '@/components/academic/class-form'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteClass, getClasses } from '@/school/functions/classes'
 
 interface ClassItem {
@@ -117,6 +118,7 @@ export function ClassesTable({
   const [searchInput, setSearchInput] = useState(initialFilters.search || '')
   const [status, setStatus] = useState<string>(initialFilters.status || '')
   const [classToDelete, setClassToDelete] = useState<ClassItem | null>(null)
+  const queryClient = useQueryClient()
   const [selectedRows, setSelectedRows] = useState<string[]>([])
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const debouncedSearch = useDebounce(searchInput, 500)
@@ -165,23 +167,28 @@ export function ClassesTable({
     }
   }, [])
 
-  const handleDelete = async () => {
+  const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.classes.delete,
+    mutationFn: (id: string) => deleteClass({ data: id }),
+    onSuccess: () => {
+      toast.success(t.common.deleteSuccess())
+      if (classToDelete) {
+        setSelectedRows(prev =>
+          prev.filter(id => id !== classToDelete.class.id),
+        )
+      }
+      queryClient.invalidateQueries({ queryKey: ['classes'] })
+      setClassToDelete(null)
+    },
+    onError: () => {
+      toast.error(t.common.error())
+    },
+  })
+
+  const handleDelete = () => {
     if (!classToDelete)
       return
-    try {
-      await deleteClass({ data: classToDelete.class.id })
-      toast.success(t.common.deleteSuccess())
-      setSelectedRows(prev =>
-        prev.filter(id => id !== classToDelete.class.id),
-      )
-      refetch()
-    }
-    catch {
-      toast.error(t.common.error())
-    }
-    finally {
-      setClassToDelete(null)
-    }
+    deleteMutation.mutate(classToDelete.class.id)
   }
 
   const columns = useMemo<ColumnDef<ClassItem>[]>(
@@ -740,6 +747,7 @@ export function ClassesTable({
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
+              disabled={deleteMutation.isPending}
             >
               {t.dialogs.deleteConfirmation.delete()}
             </AlertDialogAction>

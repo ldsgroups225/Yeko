@@ -25,6 +25,7 @@ import ReactCrop, { centerCrop, makeAspectCrop } from 'react-image-crop'
 
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { getPresignedUploadUrl } from '@/school/functions/storage'
 import 'react-image-crop/dist/ReactCrop.css'
 
@@ -78,6 +79,7 @@ export function PhotoUploadDialog({
   }
 
   const uploadMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.uploadPhoto,
     mutationFn: async (croppedImageBlob: Blob) => {
       // Get presigned URL from server
       const result = await getPresignedUploadUrl({

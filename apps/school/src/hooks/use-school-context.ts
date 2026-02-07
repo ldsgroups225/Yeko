@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { getCurrentSchoolContext } from '@/school/functions/school-context'
 import { setSchoolContext } from '@/school/middleware/school-context'
 
@@ -15,6 +16,7 @@ export function useSchoolContext() {
   })
 
   const switchSchool = useMutation({
+    mutationKey: schoolMutationKeys.context.selectSchool,
     mutationFn: async (schoolId: string) => await setSchoolContext({ data: schoolId }),
     onSuccess: () => {
       // Invalidate all queries to refetch with new school context

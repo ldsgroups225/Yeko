@@ -17,6 +17,7 @@ import { AccountFormDialog, AccountsTable } from '@/components/finance'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { accountsKeys, accountsOptions } from '@/lib/queries'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingAccount } from '@/school/functions/accounts'
 
 export const Route = createFileRoute('/_auth/accounting/accounts')({
@@ -56,6 +57,7 @@ function AccountsPage() {
   const { data: accountsTree, isLoading } = useQuery(accountsOptions.tree())
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.accounts.delete,
     mutationFn: (id: string) => deleteExistingAccount({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: accountsKeys.all })

@@ -65,6 +65,7 @@ import { toast } from 'sonner'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { downloadExcelFile, exportStudentsToExcel } from '@/lib/excel-export'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
 import {
   deleteStudent,
@@ -175,6 +176,7 @@ export function StudentsList() {
   // Filters are now calculated in useQuery directly to avoid hoisting issues
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.delete,
     mutationFn: (id: string) => deleteStudent({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
@@ -187,6 +189,7 @@ export function StudentsList() {
   })
 
   const statusMutation = useMutation({
+    mutationKey: schoolMutationKeys.students.update,
     mutationFn: (input: {
       id: string
       status: StudentStatus

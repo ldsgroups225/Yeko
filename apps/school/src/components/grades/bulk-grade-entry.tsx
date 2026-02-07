@@ -31,6 +31,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { useTranslations } from '@/i18n'
 import { gradesKeys } from '@/lib/queries/grades'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { cn } from '@/lib/utils'
 import { createBulkGrades } from '@/school/functions/student-grades'
 
@@ -74,6 +75,7 @@ export function BulkGradeEntry({
   )
 
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.grades.bulkSave,
     mutationFn: (params: Parameters<typeof createBulkGrades>[0]['data']) =>
       createBulkGrades({ data: params }),
     onSuccess: () => {

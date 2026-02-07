@@ -66,6 +66,7 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classesOptions } from '@/lib/queries/classes'
 import { enrollmentsKeys, enrollmentsOptions } from '@/lib/queries/enrollments'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   cancelEnrollment,
   confirmEnrollment,
@@ -124,6 +125,7 @@ export function EnrollmentsList() {
   })
 
   const confirmMutation = useMutation({
+    mutationKey: schoolMutationKeys.enrollments.confirm,
     mutationFn: (id: string) => confirmEnrollment({ data: id }),
     onSuccess: (result) => {
       if (result.success) {
@@ -140,6 +142,7 @@ export function EnrollmentsList() {
   })
 
   const cancelMutation = useMutation({
+    mutationKey: schoolMutationKeys.enrollments.cancel,
     mutationFn: (data: { id: string, reason?: string }) =>
       cancelEnrollment({ data }),
     onSuccess: (result) => {

@@ -35,6 +35,7 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { discountsKeys } from '@/lib/queries/discounts'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   calculationTypeLabels,
   calculationTypes,
@@ -123,6 +124,9 @@ export function DiscountFormDialog({
   const isEditing = !!initialData
 
   const mutation = useMutation({
+    mutationKey: isEditing
+      ? schoolMutationKeys.discounts.update
+      : schoolMutationKeys.discounts.create,
     mutationFn: (data: DiscountFormData) => {
       if (isEditing) {
         return updateExistingDiscount({

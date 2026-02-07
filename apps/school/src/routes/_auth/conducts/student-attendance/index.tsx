@@ -17,6 +17,7 @@ import { StudentAttendanceGrid } from '@/components/attendance/student/student-a
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { classAttendanceOptions } from '@/lib/queries/student-attendance'
 import { getClasses } from '@/school/functions/classes'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -77,6 +78,7 @@ function StudentAttendancePage() {
   })
 
   const mutation = useMutation({
+    mutationKey: schoolMutationKeys.studentAttendance.bulkSave,
     mutationFn: (params: { classId: string, date: string, entries: Array<{ studentId: string, status: 'present' | 'late' | 'absent' | 'excused', arrivalTime?: string | null, reason?: string | null }> }) =>
       bulkRecordClassAttendance({ data: params }),
     onSuccess: () => {

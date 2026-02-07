@@ -55,6 +55,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   schoolYearsKeys,
   schoolYearsOptions,
@@ -87,6 +88,7 @@ function SchoolYearsSettingsPage() {
 
   // Set active mutation
   const setActiveMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolYears.setActive,
     mutationFn: (id: string) => setActiveSchoolYear({ data: { id } }),
     onMutate: async (id) => {
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
@@ -124,6 +126,7 @@ function SchoolYearsSettingsPage() {
 
   // Delete mutation
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolYears.delete,
     mutationFn: (id: string) => deleteSchoolYear({ data: { id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: schoolYearsKeys.all })
@@ -395,6 +398,7 @@ function CreateSchoolYearDialog({
   }
 
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolYears.create,
     mutationFn: () =>
       createSchoolYear({
         data: {

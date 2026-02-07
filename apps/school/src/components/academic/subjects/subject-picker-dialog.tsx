@@ -25,6 +25,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   schoolSubjectsKeys,
   schoolSubjectsOptions,
@@ -73,6 +74,7 @@ export function SubjectPickerDialog({
   const subjects: CoreSubject[] = result || []
 
   const addMutation = useMutation({
+    mutationKey: schoolMutationKeys.schoolSubjects.import,
     mutationFn: (subjectIds: string[]) =>
       addSubjectsToSchool({
         data: {

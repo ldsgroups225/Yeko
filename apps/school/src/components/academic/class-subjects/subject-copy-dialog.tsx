@@ -34,6 +34,7 @@ import { z } from 'zod'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classSubjectsKeys } from '@/lib/queries/class-subjects'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { copyClassSubjects } from '@/school/functions/class-subjects'
 import { getClasses } from '@/school/functions/classes'
 
@@ -80,6 +81,7 @@ export function SubjectCopyDialog({
   })
 
   const copyMutation = useMutation({
+    mutationKey: schoolMutationKeys.classSubjects.copy,
     mutationFn: (values: CopyFormValues) =>
       copyClassSubjects({
         data: {

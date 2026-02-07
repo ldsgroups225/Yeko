@@ -60,6 +60,7 @@ import { toast } from 'sonner'
 import { EmptyState } from '@/components/hr/empty-state'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { parentsKeys, parentsOptions } from '@/lib/queries/parents'
 import { deleteParent, sendParentInvitation } from '@/school/functions/parents'
 
@@ -104,6 +105,7 @@ export function ParentsList() {
   const data = parentsResult || null
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.parents.delete,
     mutationFn: (id: string) => deleteParent({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: parentsKeys.all })
@@ -117,6 +119,7 @@ export function ParentsList() {
   })
 
   const inviteMutation = useMutation({
+    mutationKey: schoolMutationKeys.parents.invite,
     mutationFn: (id: string) => sendParentInvitation({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: parentsKeys.all })

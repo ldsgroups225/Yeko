@@ -28,6 +28,7 @@ import { ClassSubjectManager } from '@/components/academic/class-subjects/class-
 import { ClassStudentList } from '@/components/academic/classes/class-student-list'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteClass, getClassById } from '@/school/functions/classes'
 
 export const Route = createFileRoute('/_auth/classes/$classId/')({
@@ -50,6 +51,7 @@ function ClassDetailPage() {
   const classInfo = result?.success ? result.data : null
 
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.classes.delete,
     mutationFn: () => deleteClass({ data: classId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] })

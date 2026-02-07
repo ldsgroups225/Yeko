@@ -49,6 +49,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useTranslations } from '@/i18n'
+import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   createReportCardTemplate,
   deleteReportCardTemplate,
@@ -79,6 +80,7 @@ function ReportCardTemplatesSettingsPage() {
 
   // Set default mutation
   const setDefaultMutation = useMutation({
+    mutationKey: schoolMutationKeys.reportCards.update,
     mutationFn: (id: string) =>
       updateReportCardTemplate({ data: { id, isDefault: true } }),
     onSuccess: () => {
@@ -92,6 +94,7 @@ function ReportCardTemplatesSettingsPage() {
 
   // Delete mutation
   const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.reportCards.delete,
     mutationFn: (id: string) => deleteReportCardTemplate({ data: { id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['report-card-templates'] })
@@ -336,6 +339,7 @@ function CreateTemplateDialog({
   }
 
   const createMutation = useMutation({
+    mutationKey: schoolMutationKeys.reportCards.create,
     mutationFn: () =>
       createReportCardTemplate({
         data: {
