@@ -22,6 +22,8 @@
   },
   "dependencies": {
     "@base-ui/react": "catalog:",
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
     "@tabler/icons-react": "catalog:",
     "@tanstack/react-form": "catalog:",
     "@tanstack/zod-form-adapter": "catalog:",
