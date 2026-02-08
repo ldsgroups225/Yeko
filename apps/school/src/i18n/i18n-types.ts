@@ -471,6 +471,14 @@ type RootTranslation = {
 		 * R​é​i​n​i​t​i​a​l​i​s​e​r
 		 */
 		reset: string
+		/**
+		 * T​e​r​m​i​n​e​r
+		 */
+		finish: string
+		/**
+		 * A​j​o​u​t​e​r
+		 */
+		add: string
 	}
 	nav: {
 		/**
@@ -3932,6 +3940,279 @@ type RootTranslation = {
 				 * A​n​n​u​l​é
 				 */
 				cancelled: string
+			}
+		}
+		fiscalYears: {
+			/**
+			 * A​n​n​é​e​s​ ​f​i​s​c​a​l​e​s
+			 */
+			title: string
+			/**
+			 * G​é​r​e​r​ ​l​e​s​ ​p​é​r​i​o​d​e​s​ ​c​o​m​p​t​a​b​l​e​s
+			 */
+			description: string
+			/**
+			 * C​r​é​e​r​ ​u​n​e​ ​a​n​n​é​e​ ​f​i​s​c​a​l​e
+			 */
+			create: string
+			/**
+			 * C​l​ô​t​u​r​e​r​ ​l​'​a​n​n​é​e
+			 */
+			close: string
+			/**
+			 * Ê​t​e​s​-​v​o​u​s​ ​s​û​r​ ​d​e​ ​v​o​u​l​o​i​r​ ​c​l​ô​t​u​r​e​r​ ​c​e​t​t​e​ ​a​n​n​é​e​ ​f​i​s​c​a​l​e​ ​?​ ​C​e​t​t​e​ ​a​c​t​i​o​n​ ​e​s​t​ ​i​r​r​é​v​e​r​s​i​b​l​e​.
+			 */
+			closeConfirm: string
+			/**
+			 * D​a​t​e​ ​d​e​ ​d​é​b​u​t
+			 */
+			startDate: string
+			/**
+			 * D​a​t​e​ ​d​e​ ​f​i​n
+			 */
+			endDate: string
+			/**
+			 * A​u​c​u​n​e​ ​a​n​n​é​e​ ​f​i​s​c​a​l​e​ ​t​r​o​u​v​é​e
+			 */
+			noFiscalYears: string
+			status: {
+				/**
+				 * O​u​v​e​r​t​e
+				 */
+				open: string
+				/**
+				 * C​l​ô​t​u​r​é​e
+				 */
+				closed: string
+				/**
+				 * V​e​r​r​o​u​i​l​l​é​e
+				 */
+				locked: string
+			}
+		}
+		paymentPlanTemplates: {
+			/**
+			 * M​o​d​è​l​e​s​ ​d​e​ ​p​l​a​n​s​ ​d​e​ ​p​a​i​e​m​e​n​t
+			 */
+			title: string
+			/**
+			 * G​é​r​e​r​ ​l​e​s​ ​é​c​h​é​a​n​c​i​e​r​s​ ​t​y​p​e​s
+			 */
+			description: string
+			/**
+			 * C​r​é​e​r​ ​u​n​ ​m​o​d​è​l​e
+			 */
+			create: string
+			/**
+			 * N​o​m​b​r​e​ ​d​'​é​c​h​é​a​n​c​e​s
+			 */
+			installmentsCount: string
+			/**
+			 * P​a​r​ ​d​é​f​a​u​t
+			 */
+			isDefault: string
+			/**
+			 * A​u​c​u​n​ ​m​o​d​è​l​e​ ​c​o​n​f​i​g​u​r​é
+			 */
+			noTemplates: string
+		}
+		wizard: {
+			/**
+			 * C​o​n​f​i​g​u​r​a​t​i​o​n​ ​c​o​m​p​t​a​b​l​e
+			 */
+			title: string
+			/**
+			 * S​u​i​v​e​z​ ​c​e​s​ ​é​t​a​p​e​s​ ​p​o​u​r​ ​c​o​n​f​i​g​u​r​e​r​ ​v​o​t​r​e​ ​c​o​m​p​t​a​b​i​l​i​t​é
+			 */
+			description: string
+			/**
+			 * P​r​é​p​a​r​e​z​ ​v​o​t​r​e​ ​s​y​s​t​è​m​e​ ​p​o​u​r​ ​l​a​ ​n​o​u​v​e​l​l​e​ ​a​n​n​é​e​ ​s​c​o​l​a​i​r​e​.
+			 */
+			pageDescription: string
+			/**
+			 * C​o​n​f​i​g​u​r​a​t​i​o​n​ ​t​e​r​m​i​n​é​e
+			 */
+			complete: string
+			/**
+			 * S​u​i​v​a​n​t
+			 */
+			next: string
+			/**
+			 * R​e​t​o​u​r
+			 */
+			back: string
+			/**
+			 * T​e​r​m​i​n​e​r
+			 */
+			finish: string
+			/**
+			 * L​a​n​c​e​r​ ​l​'​a​s​s​i​s​t​a​n​t
+			 */
+			launchWizard: string
+			/**
+			 * G​é​r​e​r
+			 */
+			manage: string
+			steps: {
+				/**
+				 * A​n​n​é​e​ ​s​c​o​l​a​i​r​e
+				 */
+				step0: string
+				/**
+				 * V​é​r​i​f​i​c​a​t​i​o​n​ ​d​e​ ​l​'​a​n​n​é​e​ ​s​c​o​l​a​i​r​e​ ​a​c​t​i​v​e​.
+				 */
+				step0Description: string
+				/**
+				 * A​n​n​é​e​ ​S​c​o​l​a​i​r​e​ ​A​c​t​i​v​e
+				 */
+				step0ActiveYear: string
+				/**
+				 * {​n​a​m​e​}​ ​e​s​t​ ​a​c​t​u​e​l​l​e​m​e​n​t​ ​a​c​t​i​v​e​.
+				 * @param {unknown} name
+				 */
+				step0YearActive: RequiredParams<'name'>
+				/**
+				 * A​u​c​u​n​e​ ​a​n​n​é​e​ ​s​c​o​l​a​i​r​e​ ​a​c​t​i​v​e​ ​t​r​o​u​v​é​e​.​ ​V​e​u​i​l​l​e​z​ ​e​n​ ​a​c​t​i​v​e​r​ ​u​n​e​.
+				 */
+				step0NoActiveYear: string
+				/**
+				 * L​'​a​n​n​é​e​ ​s​c​o​l​a​i​r​e​ ​e​s​t​ ​l​a​ ​b​a​s​e​ ​t​e​m​p​o​r​e​l​l​e​ ​i​n​d​i​s​p​e​n​s​a​b​l​e​.​ ​T​o​u​t​e​s​ ​l​e​s​ ​d​o​n​n​é​e​s​ ​f​i​n​a​n​c​i​è​r​e​s​ ​(​f​r​a​i​s​,​ ​p​a​i​e​m​e​n​t​s​,​ ​b​u​d​g​e​t​s​)​ ​y​ ​s​o​n​t​ ​r​a​t​t​a​c​h​é​e​s​.
+				 */
+				step0Explanation: string
+				/**
+				 * P​l​a​n​ ​c​o​m​p​t​a​b​l​e
+				 */
+				step1: string
+				/**
+				 * C​o​n​f​i​g​u​r​a​t​i​o​n​ ​d​e​s​ ​c​o​m​p​t​e​s​ ​d​'​a​c​t​i​f​s​,​ ​p​a​s​s​i​f​s​,​ ​r​e​v​e​n​u​s​ ​e​t​ ​c​r​é​a​n​c​e​s​.
+				 */
+				step1Description: string
+				/**
+				 * C​o​m​p​t​e​ ​c​o​n​f​i​g​u​r​é
+				 */
+				step1AccountConfigured: string
+				/**
+				 * C​o​m​p​t​e​ ​m​a​n​q​u​a​n​t
+				 */
+				step1AccountMissing: string
+				/**
+				 * P​r​o​d​u​i​t​s​ ​(​F​r​a​i​s​ ​d​e​ ​S​c​o​l​a​r​i​t​é​)
+				 */
+				step1RevenueLabel: string
+				/**
+				 * C​r​é​a​n​c​e​s​ ​(​É​l​è​v​e​s​)
+				 */
+				step1ReceivableLabel: string
+				/**
+				 * T​r​é​s​o​r​e​r​i​e​ ​(​B​a​n​q​u​e​/​C​a​i​s​s​e​)
+				 */
+				step1TreasuryLabel: string
+				/**
+				 * P​l​a​n​ ​C​o​m​p​t​a​b​l​e
+				 */
+				step1ChartOfAccounts: string
+				/**
+				 * C​'​e​s​t​ ​l​a​ ​b​a​s​e​ ​d​e​ ​t​o​u​t​e​ ​l​a​ ​c​o​m​p​t​a​b​i​l​i​t​é​.​ ​V​o​u​s​ ​d​e​v​e​z​ ​d​é​f​i​n​i​r​ ​l​e​s​ ​c​o​m​p​t​e​s​ ​d​'​a​c​t​i​f​s​,​ ​d​e​ ​p​a​s​s​i​f​s​,​ ​d​e​ ​r​e​v​e​n​u​s​ ​e​t​ ​d​e​ ​c​r​é​a​n​c​e​s​ ​a​v​a​n​t​ ​d​e​ ​p​o​u​v​o​i​r​ ​c​r​é​e​r​ ​d​e​s​ ​t​y​p​e​s​ ​d​e​ ​f​r​a​i​s​.
+				 */
+				step1ChartExplanation: string
+				/**
+				 * G​é​r​e​r​ ​l​e​ ​p​l​a​n​ ​c​o​m​p​t​a​b​l​e
+				 */
+				step1ManageAccounts: string
+				/**
+				 * A​n​n​é​e​ ​f​i​s​c​a​l​e
+				 */
+				step2: string
+				/**
+				 * D​é​f​i​n​i​t​i​o​n​ ​d​e​ ​l​a​ ​p​é​r​i​o​d​e​ ​c​o​m​p​t​a​b​l​e​.
+				 */
+				step2Description: string
+				/**
+				 * T​y​p​e​s​ ​d​e​ ​f​r​a​i​s
+				 */
+				step3: string
+				/**
+				 * C​a​t​é​g​o​r​i​s​a​t​i​o​n​ ​d​e​s​ ​f​r​a​i​s​ ​(​S​c​o​l​a​r​i​t​é​,​ ​C​a​n​t​i​n​e​,​ ​e​t​c​.​)
+				 */
+				step3Description: string
+				/**
+				 * S​t​r​u​c​t​u​r​e​s​ ​t​a​r​i​f​a​i​r​e​s
+				 */
+				step4: string
+				/**
+				 * F​i​x​a​t​i​o​n​ ​d​e​s​ ​m​o​n​t​a​n​t​s​ ​p​a​r​ ​n​i​v​e​a​u​ ​e​t​ ​s​é​r​i​e​.
+				 */
+				step4Description: string
+				/**
+				 * R​é​d​u​c​t​i​o​n​s
+				 */
+				step5: string
+				/**
+				 * P​o​l​i​t​i​q​u​e​s​ ​d​e​ ​b​o​u​r​s​e​s​ ​e​t​ ​r​é​d​u​c​t​i​o​n​s​.
+				 */
+				step5Description: string
+				/**
+				 * P​l​a​n​s​ ​d​e​ ​p​a​i​e​m​e​n​t
+				 */
+				step6: string
+				/**
+				 * M​o​d​è​l​e​s​ ​d​'​é​c​h​é​a​n​c​i​e​r​s​ ​d​e​ ​p​a​i​e​m​e​n​t​.
+				 */
+				step6Description: string
+			}
+			cards: {
+				/**
+				 * P​l​a​n​ ​C​o​m​p​t​a​b​l​e
+				 */
+				step1Title: string
+				/**
+				 * D​é​f​i​n​i​s​s​e​z​ ​v​o​s​ ​c​o​m​p​t​e​s​ ​d​e​ ​r​e​v​e​n​u​s​ ​e​t​ ​d​e​ ​c​r​é​a​n​c​e​s​.
+				 */
+				step1Description: string
+				/**
+				 * A​n​n​é​e​ ​F​i​s​c​a​l​e
+				 */
+				step2Title: string
+				/**
+				 * O​u​v​r​e​z​ ​l​a​ ​p​é​r​i​o​d​e​ ​c​o​m​p​t​a​b​l​e​ ​p​o​u​r​ ​l​'​a​n​n​é​e​ ​e​n​ ​c​o​u​r​s​.
+				 */
+				step2Description: string
+				/**
+				 * T​y​p​e​s​ ​d​e​ ​F​r​a​i​s
+				 */
+				step3Title: string
+				/**
+				 * C​r​é​e​z​ ​l​e​s​ ​c​a​t​é​g​o​r​i​e​s​ ​d​e​ ​f​r​a​i​s​ ​(​S​c​o​l​a​r​i​t​é​,​ ​e​t​c​.​)
+				 */
+				step3Description: string
+				/**
+				 * S​t​r​u​c​t​u​r​e​s​ ​d​e​ ​F​r​a​i​s
+				 */
+				step4Title: string
+				/**
+				 * F​i​x​e​z​ ​l​e​s​ ​t​a​r​i​f​s​ ​p​a​r​ ​c​l​a​s​s​e​ ​e​t​ ​p​a​r​ ​s​é​r​i​e​.
+				 */
+				step4Description: string
+				/**
+				 * R​é​d​u​c​t​i​o​n​s
+				 */
+				step5Title: string
+				/**
+				 * C​o​n​f​i​g​u​r​e​z​ ​l​e​s​ ​b​o​u​r​s​e​s​ ​e​t​ ​r​e​m​i​s​e​s​ ​a​u​t​o​m​a​t​i​q​u​e​s​.
+				 */
+				step5Description: string
+				/**
+				 * P​l​a​n​s​ ​d​e​ ​P​a​i​e​m​e​n​t
+				 */
+				step6Title: string
+				/**
+				 * D​é​f​i​n​i​s​s​e​z​ ​l​e​s​ ​é​c​h​é​a​n​c​i​e​r​s​ ​t​y​p​e​s​ ​(​M​e​n​s​u​e​l​,​ ​e​t​c​.​)
+				 */
+				step6Description: string
+				/**
+				 * É​t​a​p​e
+				 */
+				stepLabel: string
 			}
 		}
 	}
@@ -8480,6 +8761,14 @@ export type TranslationFunctions = {
 		 * Réinitialiser
 		 */
 		reset: () => LocalizedString
+		/**
+		 * Terminer
+		 */
+		finish: () => LocalizedString
+		/**
+		 * Ajouter
+		 */
+		add: () => LocalizedString
 	}
 	nav: {
 		/**
@@ -11908,6 +12197,278 @@ export type TranslationFunctions = {
 				 * Annulé
 				 */
 				cancelled: () => LocalizedString
+			}
+		}
+		fiscalYears: {
+			/**
+			 * Années fiscales
+			 */
+			title: () => LocalizedString
+			/**
+			 * Gérer les périodes comptables
+			 */
+			description: () => LocalizedString
+			/**
+			 * Créer une année fiscale
+			 */
+			create: () => LocalizedString
+			/**
+			 * Clôturer l'année
+			 */
+			close: () => LocalizedString
+			/**
+			 * Êtes-vous sûr de vouloir clôturer cette année fiscale ? Cette action est irréversible.
+			 */
+			closeConfirm: () => LocalizedString
+			/**
+			 * Date de début
+			 */
+			startDate: () => LocalizedString
+			/**
+			 * Date de fin
+			 */
+			endDate: () => LocalizedString
+			/**
+			 * Aucune année fiscale trouvée
+			 */
+			noFiscalYears: () => LocalizedString
+			status: {
+				/**
+				 * Ouverte
+				 */
+				open: () => LocalizedString
+				/**
+				 * Clôturée
+				 */
+				closed: () => LocalizedString
+				/**
+				 * Verrouillée
+				 */
+				locked: () => LocalizedString
+			}
+		}
+		paymentPlanTemplates: {
+			/**
+			 * Modèles de plans de paiement
+			 */
+			title: () => LocalizedString
+			/**
+			 * Gérer les échéanciers types
+			 */
+			description: () => LocalizedString
+			/**
+			 * Créer un modèle
+			 */
+			create: () => LocalizedString
+			/**
+			 * Nombre d'échéances
+			 */
+			installmentsCount: () => LocalizedString
+			/**
+			 * Par défaut
+			 */
+			isDefault: () => LocalizedString
+			/**
+			 * Aucun modèle configuré
+			 */
+			noTemplates: () => LocalizedString
+		}
+		wizard: {
+			/**
+			 * Configuration comptable
+			 */
+			title: () => LocalizedString
+			/**
+			 * Suivez ces étapes pour configurer votre comptabilité
+			 */
+			description: () => LocalizedString
+			/**
+			 * Préparez votre système pour la nouvelle année scolaire.
+			 */
+			pageDescription: () => LocalizedString
+			/**
+			 * Configuration terminée
+			 */
+			complete: () => LocalizedString
+			/**
+			 * Suivant
+			 */
+			next: () => LocalizedString
+			/**
+			 * Retour
+			 */
+			back: () => LocalizedString
+			/**
+			 * Terminer
+			 */
+			finish: () => LocalizedString
+			/**
+			 * Lancer l'assistant
+			 */
+			launchWizard: () => LocalizedString
+			/**
+			 * Gérer
+			 */
+			manage: () => LocalizedString
+			steps: {
+				/**
+				 * Année scolaire
+				 */
+				step0: () => LocalizedString
+				/**
+				 * Vérification de l'année scolaire active.
+				 */
+				step0Description: () => LocalizedString
+				/**
+				 * Année Scolaire Active
+				 */
+				step0ActiveYear: () => LocalizedString
+				/**
+				 * {name} est actuellement active.
+				 */
+				step0YearActive: (arg: { name: unknown }) => LocalizedString
+				/**
+				 * Aucune année scolaire active trouvée. Veuillez en activer une.
+				 */
+				step0NoActiveYear: () => LocalizedString
+				/**
+				 * L'année scolaire est la base temporelle indispensable. Toutes les données financières (frais, paiements, budgets) y sont rattachées.
+				 */
+				step0Explanation: () => LocalizedString
+				/**
+				 * Plan comptable
+				 */
+				step1: () => LocalizedString
+				/**
+				 * Configuration des comptes d'actifs, passifs, revenus et créances.
+				 */
+				step1Description: () => LocalizedString
+				/**
+				 * Compte configuré
+				 */
+				step1AccountConfigured: () => LocalizedString
+				/**
+				 * Compte manquant
+				 */
+				step1AccountMissing: () => LocalizedString
+				/**
+				 * Produits (Frais de Scolarité)
+				 */
+				step1RevenueLabel: () => LocalizedString
+				/**
+				 * Créances (Élèves)
+				 */
+				step1ReceivableLabel: () => LocalizedString
+				/**
+				 * Trésorerie (Banque/Caisse)
+				 */
+				step1TreasuryLabel: () => LocalizedString
+				/**
+				 * Plan Comptable
+				 */
+				step1ChartOfAccounts: () => LocalizedString
+				/**
+				 * C'est la base de toute la comptabilité. Vous devez définir les comptes d'actifs, de passifs, de revenus et de créances avant de pouvoir créer des types de frais.
+				 */
+				step1ChartExplanation: () => LocalizedString
+				/**
+				 * Gérer le plan comptable
+				 */
+				step1ManageAccounts: () => LocalizedString
+				/**
+				 * Année fiscale
+				 */
+				step2: () => LocalizedString
+				/**
+				 * Définition de la période comptable.
+				 */
+				step2Description: () => LocalizedString
+				/**
+				 * Types de frais
+				 */
+				step3: () => LocalizedString
+				/**
+				 * Catégorisation des frais (Scolarité, Cantine, etc.)
+				 */
+				step3Description: () => LocalizedString
+				/**
+				 * Structures tarifaires
+				 */
+				step4: () => LocalizedString
+				/**
+				 * Fixation des montants par niveau et série.
+				 */
+				step4Description: () => LocalizedString
+				/**
+				 * Réductions
+				 */
+				step5: () => LocalizedString
+				/**
+				 * Politiques de bourses et réductions.
+				 */
+				step5Description: () => LocalizedString
+				/**
+				 * Plans de paiement
+				 */
+				step6: () => LocalizedString
+				/**
+				 * Modèles d'échéanciers de paiement.
+				 */
+				step6Description: () => LocalizedString
+			}
+			cards: {
+				/**
+				 * Plan Comptable
+				 */
+				step1Title: () => LocalizedString
+				/**
+				 * Définissez vos comptes de revenus et de créances.
+				 */
+				step1Description: () => LocalizedString
+				/**
+				 * Année Fiscale
+				 */
+				step2Title: () => LocalizedString
+				/**
+				 * Ouvrez la période comptable pour l'année en cours.
+				 */
+				step2Description: () => LocalizedString
+				/**
+				 * Types de Frais
+				 */
+				step3Title: () => LocalizedString
+				/**
+				 * Créez les catégories de frais (Scolarité, etc.)
+				 */
+				step3Description: () => LocalizedString
+				/**
+				 * Structures de Frais
+				 */
+				step4Title: () => LocalizedString
+				/**
+				 * Fixez les tarifs par classe et par série.
+				 */
+				step4Description: () => LocalizedString
+				/**
+				 * Réductions
+				 */
+				step5Title: () => LocalizedString
+				/**
+				 * Configurez les bourses et remises automatiques.
+				 */
+				step5Description: () => LocalizedString
+				/**
+				 * Plans de Paiement
+				 */
+				step6Title: () => LocalizedString
+				/**
+				 * Définissez les échéanciers types (Mensuel, etc.)
+				 */
+				step6Description: () => LocalizedString
+				/**
+				 * Étape
+				 */
+				stepLabel: () => LocalizedString
 			}
 		}
 	}

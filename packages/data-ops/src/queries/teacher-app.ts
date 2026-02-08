@@ -399,7 +399,9 @@ export function getClassStudents(params: {
         ),
       )
       .orderBy(asc(students.lastName), asc(students.firstName)),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'students.getFailed'), { code: 'GET_CLASS_STUDENTS_FAILED' }),
+    (e) => {
+      return DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'students.getFailed'), { code: 'GET_CLASS_STUDENTS_FAILED' })
+    },
   ).mapErr(tapLogErr(databaseLogger, params))
 }
 

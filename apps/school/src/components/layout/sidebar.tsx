@@ -280,6 +280,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 permission: { resource: 'finance', action: 'view' },
               },
               {
+                title: t.finance.accounts.title(),
+                href: '/accounting/accounts',
+                icon: IconBuilding,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
                 title: t.finance.feeTypes.title(),
                 href: '/accounting/fee-types',
                 icon: IconReceipt,
@@ -289,6 +295,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 title: t.finance.feeStructures.title(),
                 href: '/accounting/fee-structures',
                 icon: IconLayoutGrid,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.discounts.title(),
+                href: '/accounting/discounts',
+                icon: IconCreditCard,
                 permission: { resource: 'finance', action: 'view' },
               },
               {

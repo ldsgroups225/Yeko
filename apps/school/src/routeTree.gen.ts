@@ -52,9 +52,12 @@ import { Route as AuthGradesEntryRouteImport } from './routes/_auth/grades/entry
 import { Route as AuthConductsSettingsRouteImport } from './routes/_auth/conducts/settings'
 import { Route as AuthClassesAssignmentsRouteImport } from './routes/_auth/classes/assignments'
 import { Route as AuthAccountingStudentFeesRouteImport } from './routes/_auth/accounting/student-fees'
+import { Route as AuthAccountingSetupRouteImport } from './routes/_auth/accounting/setup'
 import { Route as AuthAccountingRefundsRouteImport } from './routes/_auth/accounting/refunds'
 import { Route as AuthAccountingPaymentsRouteImport } from './routes/_auth/accounting/payments'
 import { Route as AuthAccountingPaymentPlansRouteImport } from './routes/_auth/accounting/payment-plans'
+import { Route as AuthAccountingPaymentPlanTemplatesRouteImport } from './routes/_auth/accounting/payment-plan-templates'
+import { Route as AuthAccountingFiscalYearsRouteImport } from './routes/_auth/accounting/fiscal-years'
 import { Route as AuthAccountingFeeTypesRouteImport } from './routes/_auth/accounting/fee-types'
 import { Route as AuthAccountingFeeStructuresRouteImport } from './routes/_auth/accounting/fee-structures'
 import { Route as AuthAccountingDiscountsRouteImport } from './routes/_auth/accounting/discounts'
@@ -315,6 +318,11 @@ const AuthAccountingStudentFeesRoute =
     path: '/student-fees',
     getParentRoute: () => AuthAccountingRoute,
   } as any)
+const AuthAccountingSetupRoute = AuthAccountingSetupRouteImport.update({
+  id: '/setup',
+  path: '/setup',
+  getParentRoute: () => AuthAccountingRoute,
+} as any)
 const AuthAccountingRefundsRoute = AuthAccountingRefundsRouteImport.update({
   id: '/refunds',
   path: '/refunds',
@@ -329,6 +337,18 @@ const AuthAccountingPaymentPlansRoute =
   AuthAccountingPaymentPlansRouteImport.update({
     id: '/payment-plans',
     path: '/payment-plans',
+    getParentRoute: () => AuthAccountingRoute,
+  } as any)
+const AuthAccountingPaymentPlanTemplatesRoute =
+  AuthAccountingPaymentPlanTemplatesRouteImport.update({
+    id: '/payment-plan-templates',
+    path: '/payment-plan-templates',
+    getParentRoute: () => AuthAccountingRoute,
+  } as any)
+const AuthAccountingFiscalYearsRoute =
+  AuthAccountingFiscalYearsRouteImport.update({
+    id: '/fiscal-years',
+    path: '/fiscal-years',
     getParentRoute: () => AuthAccountingRoute,
   } as any)
 const AuthAccountingFeeTypesRoute = AuthAccountingFeeTypesRouteImport.update({
@@ -568,9 +588,12 @@ export interface FileRoutesByFullPath {
   '/accounting/discounts': typeof AuthAccountingDiscountsRoute
   '/accounting/fee-structures': typeof AuthAccountingFeeStructuresRoute
   '/accounting/fee-types': typeof AuthAccountingFeeTypesRoute
+  '/accounting/fiscal-years': typeof AuthAccountingFiscalYearsRoute
+  '/accounting/payment-plan-templates': typeof AuthAccountingPaymentPlanTemplatesRoute
   '/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
   '/accounting/payments': typeof AuthAccountingPaymentsRoute
   '/accounting/refunds': typeof AuthAccountingRefundsRoute
+  '/accounting/setup': typeof AuthAccountingSetupRoute
   '/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
   '/classes/assignments': typeof AuthClassesAssignmentsRoute
   '/conducts/settings': typeof AuthConductsSettingsRoute
@@ -646,9 +669,12 @@ export interface FileRoutesByTo {
   '/accounting/discounts': typeof AuthAccountingDiscountsRoute
   '/accounting/fee-structures': typeof AuthAccountingFeeStructuresRoute
   '/accounting/fee-types': typeof AuthAccountingFeeTypesRoute
+  '/accounting/fiscal-years': typeof AuthAccountingFiscalYearsRoute
+  '/accounting/payment-plan-templates': typeof AuthAccountingPaymentPlanTemplatesRoute
   '/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
   '/accounting/payments': typeof AuthAccountingPaymentsRoute
   '/accounting/refunds': typeof AuthAccountingRefundsRoute
+  '/accounting/setup': typeof AuthAccountingSetupRoute
   '/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
   '/classes/assignments': typeof AuthClassesAssignmentsRoute
   '/conducts/settings': typeof AuthConductsSettingsRoute
@@ -734,9 +760,12 @@ export interface FileRoutesById {
   '/_auth/accounting/discounts': typeof AuthAccountingDiscountsRoute
   '/_auth/accounting/fee-structures': typeof AuthAccountingFeeStructuresRoute
   '/_auth/accounting/fee-types': typeof AuthAccountingFeeTypesRoute
+  '/_auth/accounting/fiscal-years': typeof AuthAccountingFiscalYearsRoute
+  '/_auth/accounting/payment-plan-templates': typeof AuthAccountingPaymentPlanTemplatesRoute
   '/_auth/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
   '/_auth/accounting/payments': typeof AuthAccountingPaymentsRoute
   '/_auth/accounting/refunds': typeof AuthAccountingRefundsRoute
+  '/_auth/accounting/setup': typeof AuthAccountingSetupRoute
   '/_auth/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
   '/_auth/classes/assignments': typeof AuthClassesAssignmentsRoute
   '/_auth/conducts/settings': typeof AuthConductsSettingsRoute
@@ -822,9 +851,12 @@ export interface FileRouteTypes {
     | '/accounting/discounts'
     | '/accounting/fee-structures'
     | '/accounting/fee-types'
+    | '/accounting/fiscal-years'
+    | '/accounting/payment-plan-templates'
     | '/accounting/payment-plans'
     | '/accounting/payments'
     | '/accounting/refunds'
+    | '/accounting/setup'
     | '/accounting/student-fees'
     | '/classes/assignments'
     | '/conducts/settings'
@@ -900,9 +932,12 @@ export interface FileRouteTypes {
     | '/accounting/discounts'
     | '/accounting/fee-structures'
     | '/accounting/fee-types'
+    | '/accounting/fiscal-years'
+    | '/accounting/payment-plan-templates'
     | '/accounting/payment-plans'
     | '/accounting/payments'
     | '/accounting/refunds'
+    | '/accounting/setup'
     | '/accounting/student-fees'
     | '/classes/assignments'
     | '/conducts/settings'
@@ -987,9 +1022,12 @@ export interface FileRouteTypes {
     | '/_auth/accounting/discounts'
     | '/_auth/accounting/fee-structures'
     | '/_auth/accounting/fee-types'
+    | '/_auth/accounting/fiscal-years'
+    | '/_auth/accounting/payment-plan-templates'
     | '/_auth/accounting/payment-plans'
     | '/_auth/accounting/payments'
     | '/_auth/accounting/refunds'
+    | '/_auth/accounting/setup'
     | '/_auth/accounting/student-fees'
     | '/_auth/classes/assignments'
     | '/_auth/conducts/settings'
@@ -1365,6 +1403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAccountingStudentFeesRouteImport
       parentRoute: typeof AuthAccountingRoute
     }
+    '/_auth/accounting/setup': {
+      id: '/_auth/accounting/setup'
+      path: '/setup'
+      fullPath: '/accounting/setup'
+      preLoaderRoute: typeof AuthAccountingSetupRouteImport
+      parentRoute: typeof AuthAccountingRoute
+    }
     '/_auth/accounting/refunds': {
       id: '/_auth/accounting/refunds'
       path: '/refunds'
@@ -1384,6 +1429,20 @@ declare module '@tanstack/react-router' {
       path: '/payment-plans'
       fullPath: '/accounting/payment-plans'
       preLoaderRoute: typeof AuthAccountingPaymentPlansRouteImport
+      parentRoute: typeof AuthAccountingRoute
+    }
+    '/_auth/accounting/payment-plan-templates': {
+      id: '/_auth/accounting/payment-plan-templates'
+      path: '/payment-plan-templates'
+      fullPath: '/accounting/payment-plan-templates'
+      preLoaderRoute: typeof AuthAccountingPaymentPlanTemplatesRouteImport
+      parentRoute: typeof AuthAccountingRoute
+    }
+    '/_auth/accounting/fiscal-years': {
+      id: '/_auth/accounting/fiscal-years'
+      path: '/fiscal-years'
+      fullPath: '/accounting/fiscal-years'
+      preLoaderRoute: typeof AuthAccountingFiscalYearsRouteImport
       parentRoute: typeof AuthAccountingRoute
     }
     '/_auth/accounting/fee-types': {
@@ -1668,9 +1727,12 @@ interface AuthAccountingRouteChildren {
   AuthAccountingDiscountsRoute: typeof AuthAccountingDiscountsRoute
   AuthAccountingFeeStructuresRoute: typeof AuthAccountingFeeStructuresRoute
   AuthAccountingFeeTypesRoute: typeof AuthAccountingFeeTypesRoute
+  AuthAccountingFiscalYearsRoute: typeof AuthAccountingFiscalYearsRoute
+  AuthAccountingPaymentPlanTemplatesRoute: typeof AuthAccountingPaymentPlanTemplatesRoute
   AuthAccountingPaymentPlansRoute: typeof AuthAccountingPaymentPlansRoute
   AuthAccountingPaymentsRoute: typeof AuthAccountingPaymentsRoute
   AuthAccountingRefundsRoute: typeof AuthAccountingRefundsRoute
+  AuthAccountingSetupRoute: typeof AuthAccountingSetupRoute
   AuthAccountingStudentFeesRoute: typeof AuthAccountingStudentFeesRoute
   AuthAccountingIndexRoute: typeof AuthAccountingIndexRoute
 }
@@ -1681,9 +1743,13 @@ const AuthAccountingRouteChildren: AuthAccountingRouteChildren = {
   AuthAccountingDiscountsRoute: AuthAccountingDiscountsRoute,
   AuthAccountingFeeStructuresRoute: AuthAccountingFeeStructuresRoute,
   AuthAccountingFeeTypesRoute: AuthAccountingFeeTypesRoute,
+  AuthAccountingFiscalYearsRoute: AuthAccountingFiscalYearsRoute,
+  AuthAccountingPaymentPlanTemplatesRoute:
+    AuthAccountingPaymentPlanTemplatesRoute,
   AuthAccountingPaymentPlansRoute: AuthAccountingPaymentPlansRoute,
   AuthAccountingPaymentsRoute: AuthAccountingPaymentsRoute,
   AuthAccountingRefundsRoute: AuthAccountingRefundsRoute,
+  AuthAccountingSetupRoute: AuthAccountingSetupRoute,
   AuthAccountingStudentFeesRoute: AuthAccountingStudentFeesRoute,
   AuthAccountingIndexRoute: AuthAccountingIndexRoute,
 }
