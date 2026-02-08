@@ -1,10 +1,11 @@
 import type { UserFormData } from '@/schemas/user'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconCamera, IconDeviceFloppy, IconInfoCircle, IconLoader2, IconMail, IconPhone, IconShield, IconUserPlus } from '@tabler/icons-react'
+import { IconCamera, IconDeviceFloppy, IconInfoCircle, IconLoader2, IconMail, IconShield, IconUserPlus } from '@tabler/icons-react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
+import { PhoneInput } from '@workspace/ui/components/phone-number'
 import {
   Select,
   SelectContent,
@@ -13,7 +14,7 @@ import {
   SelectValue,
 } from '@workspace/ui/components/select'
 import { AnimatePresence, motion } from 'motion/react'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { RoleSelector } from '@/components/hr/users/role-selector'
 import { useTranslations } from '@/i18n'
@@ -37,6 +38,7 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
     formState: { errors },
     setValue,
     watch,
+    control,
   } = useForm({
     resolver: zodResolver(userCreateSchema),
     defaultValues: user
@@ -182,16 +184,18 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="phone" className="font-semibold text-foreground">{t.hr.common.phone()}</Label>
-            <div className="relative">
-              <IconPhone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="phone"
-                type="tel"
-                {...register('phone')}
-                placeholder={t.hr.users.phonePlaceholder()}
-                className="pl-10 rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all"
-              />
-            </div>
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  defaultCountry="CI"
+                  placeholder={t.hr.users.phonePlaceholder()}
+                  className="rounded-xl border-border/40 bg-background/50 focus:bg-background transition-all"
+                />
+              )}
+            />
           </div>
 
           <div className="space-y-2">

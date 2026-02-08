@@ -74,3 +74,38 @@ export function getFinanceStats(schoolId: string): ResultAsync<FinanceStats, Dat
     err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'stats.fetchFailed')),
   ).mapErr(tapLogErr(databaseLogger, { schoolId }))
 }
+
+export interface MonthlyRevenue {
+  month: string
+  revenue: number
+}
+
+export function getMonthlyRevenue(schoolId: string, months: number = 6): ResultAsync<MonthlyRevenue[], DatabaseError> {
+  const db = getDb()
+
+  return ResultAsync.fromPromise(
+    (async () => {
+      const rows = await db
+        .select({
+          month: sql<string>`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`,
+          revenue: sum(payments.amount),
+        })
+        .from(payments)
+        .where(
+          and(
+            eq(payments.schoolId, schoolId),
+            eq(payments.status, 'completed'),
+            sql`${payments.paymentDate} >= CURRENT_DATE - INTERVAL '${sql.raw(String(months))} months'`,
+          ),
+        )
+        .groupBy(sql`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`)
+        .orderBy(sql`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`)
+
+      return rows.map(row => ({
+        month: row.month,
+        revenue: Number(row.revenue ?? 0),
+      }))
+    })(),
+    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'stats.fetchFailed')),
+  ).mapErr(tapLogErr(databaseLogger, { schoolId, months }))
+}

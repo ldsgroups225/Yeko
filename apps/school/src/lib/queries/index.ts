@@ -5,6 +5,7 @@ export * from './classes'
 // Query keys and options for TanStack Query
 export * from './classrooms'
 export * from './curriculum-progress'
+export * from './dashboard'
 export * from './discounts'
 export * from './fee-structures'
 export * from './fee-types'

@@ -1,4 +1,6 @@
 import { IconAlertCircle, IconBook, IconChartBar, IconChartPie, IconCurrencyDollar, IconSchool, IconTrendingUp, IconUsers } from '@tabler/icons-react'
+import { useQuery } from '@tanstack/react-query'
+import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
 import {
   Area,
@@ -8,13 +10,15 @@ import {
   CartesianGrid,
   Cell,
   Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from 'recharts'
 import { useTranslations } from '@/i18n'
-import { generateUUID } from '@/utils/generateUUID'
+import { dashboardOptions } from '@/lib/queries/dashboard'
+import { formatCompact, formatCurrency, formatNumber } from '@/utils/formatNumber'
 
 const container = {
   hidden: { opacity: 0 },
@@ -44,8 +48,73 @@ const tooltipItemStyle = { color: 'var(--foreground)' }
 
 const barTooltipCursor = { fill: 'var(--muted)', opacity: 0.2 }
 
+const MONTH_LABELS: Record<string, Record<string, string>> = {
+  fr: {
+    '01': 'Jan',
+    '02': 'Fév',
+    '03': 'Mar',
+    '04': 'Avr',
+    '05': 'Mai',
+    '06': 'Juin',
+    '07': 'Juil',
+    '08': 'Août',
+    '09': 'Sep',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Déc',
+  },
+  en: {
+    '01': 'Jan',
+    '02': 'Feb',
+    '03': 'Mar',
+    '04': 'Apr',
+    '05': 'May',
+    '06': 'Jun',
+    '07': 'Jul',
+    '08': 'Aug',
+    '09': 'Sep',
+    '10': 'Oct',
+    '11': 'Nov',
+    '12': 'Dec',
+  },
+}
+
+function formatMonthLabel(yearMonth: string): string {
+  const month = yearMonth.split('-')[1] ?? ''
+  const labels = MONTH_LABELS.fr ?? {}
+  return labels[month] ?? month
+}
+
 export function AdminDashboard() {
   const t = useTranslations()
+  const { data, isPending } = useQuery(dashboardOptions.admin())
+
+  if (isPending) {
+    return <DashboardSkeleton />
+  }
+
+  const metrics = data?.metrics
+  const charts = data?.charts
+
+  const totalStudents = metrics?.totalStudents ?? 0
+  const totalGender = charts?.genderDistribution?.reduce((sum, g) => sum + g.count, 0) ?? 0
+
+  const revenueChartData = (charts?.revenueLast6Months ?? []).map(m => ({
+    name: formatMonthLabel(m.month),
+    value: m.revenue,
+  }))
+
+  const enrollmentChartData = (charts?.enrollmentByGrade ?? []).map(g => ({
+    name: g.gradeName,
+    value: g.count,
+  }))
+
+  const genderData = (charts?.genderDistribution ?? []).map(g => ({
+    name: g.gender === 'M' ? t.students.male() : g.gender === 'F' ? t.students.female() : t.students.other(),
+    value: g.count,
+    color: g.gender === 'F' ? '#ec4899' : '#3b82f6',
+  }))
+
   return (
     <motion.div
       className="space-y-6"
@@ -60,7 +129,6 @@ export function AdminDashboard() {
         </p>
       </div>
 
-      {/* Key Metrics */}
       <motion.div
         variants={container}
         initial="hidden"
@@ -69,37 +137,35 @@ export function AdminDashboard() {
       >
         <MetricCard
           title={t.dashboard.totalStudents()}
-          value="1,234"
-          change="+12%"
-          trend="up"
+          value={formatNumber(totalStudents)}
+          change=""
+          trend="neutral"
           icon={IconSchool}
         />
         <MetricCard
           title={t.dashboard.teachers()}
-          value="89"
-          change="+3"
-          trend="up"
+          value={formatNumber(metrics?.totalTeachers ?? 0)}
+          change=""
+          trend="neutral"
           icon={IconUsers}
         />
         <MetricCard
           title={t.dashboard.activeClasses()}
-          value="42"
-          change="0"
+          value={formatNumber(metrics?.activeClasses ?? 0)}
+          change=""
           trend="neutral"
           icon={IconBook}
         />
         <MetricCard
           title={t.dashboard.revenueThisMonth()}
-          value="245,000 FCFA"
-          change="+8%"
-          trend="up"
+          value={formatCurrency(metrics?.revenueThisMonth ?? 0)}
+          change=""
+          trend="neutral"
           icon={IconCurrencyDollar}
         />
       </motion.div>
 
-      {/* Analytics Charts Grid */}
       <div className="grid gap-4 lg:grid-cols-2">
-        {/* Revenue Chart (Area) */}
         <motion.div
           variants={item}
           className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm"
@@ -113,10 +179,9 @@ export function AdminDashboard() {
               <p className="text-sm text-muted-foreground">{t.dashboard.revenueSubtitle()}</p>
             </div>
           </div>
-          <RevenueChart />
+          <RevenueChart data={revenueChartData} />
         </motion.div>
 
-        {/* New: Attendance/Enrollment Chart (Bar) */}
         <motion.div
           variants={item}
           className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm"
@@ -130,12 +195,11 @@ export function AdminDashboard() {
               <p className="text-sm text-muted-foreground">{t.dashboard.enrollmentChartSubtitle()}</p>
             </div>
           </div>
-          <EnrollmentBarChart />
+          <EnrollmentBarChart data={enrollmentChartData} />
         </motion.div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        {/* New: Gender Distribution (Pie) */}
         <motion.div
           variants={item}
           className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm"
@@ -147,10 +211,9 @@ export function AdminDashboard() {
             </h2>
             <p className="text-sm text-muted-foreground">{t.dashboard.genderChartSubtitle()}</p>
           </div>
-          <GenderPieChart />
+          <GenderPieChart data={genderData} total={totalGender} />
         </motion.div>
 
-        {/* Existing: Quick Actions (Spanning 2 columns) */}
         <motion.div variants={item} className="lg:col-span-2 rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.quickActions()}</h2>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -162,7 +225,6 @@ export function AdminDashboard() {
         </motion.div>
       </div>
 
-      {/* Recent IconActivity & Alerts */}
       <div className="grid gap-4 lg:grid-cols-2">
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.recentActivity()}</h2>
@@ -188,25 +250,46 @@ export function AdminDashboard() {
         <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.alerts()}</h2>
           <div className="space-y-3">
-            <AlertItem
-              type="warning"
-              title={t.dashboard.alertsSection.overduePayments()}
-              description={t.dashboard.alertsSection.overduePaymentsDesc({ count: 23 })}
-            />
+            {(metrics?.overdueAmount ?? 0) > 0 && (
+              <AlertItem
+                type="warning"
+                title={t.dashboard.alertsSection.overduePayments()}
+                description={`${formatCurrency(metrics?.overdueAmount ?? 0)} ${t.dashboard.alertsSection.overduePaymentsDesc({ count: 0 })}`}
+              />
+            )}
             <AlertItem
               type="info"
               title={t.dashboard.alertsSection.termEnd()}
               description={t.dashboard.alertsSection.termEndDesc({ days: 15 })}
             />
-            <AlertItem
-              type="warning"
-              title={t.dashboard.alertsSection.classCapacity()}
-              description={t.dashboard.alertsSection.classCapacityDesc({ count: 3 })}
-            />
           </div>
         </motion.div>
       </div>
     </motion.div>
+  )
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div>
+        <Skeleton className="h-9 w-64" />
+        <Skeleton className="mt-2 h-5 w-96" />
+      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }, (_, i) => `metric-${i}`).map(key => (
+          <Skeleton key={key} className="h-32 rounded-xl" />
+        ))}
+      </div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Skeleton className="h-[380px] rounded-xl" />
+        <Skeleton className="h-[380px] rounded-xl" />
+      </div>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Skeleton className="h-[300px] rounded-xl" />
+        <Skeleton className="lg:col-span-2 h-[300px] rounded-xl" />
+      </div>
+    </div>
   )
 }
 
@@ -234,16 +317,18 @@ function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps
       </div>
       <div className="mt-2">
         <div className="text-2xl font-bold">{value}</div>
-        <p
-          className={`text-xs ${trend === 'up'
-            ? 'text-green-600 dark:text-green-400'
-            : trend === 'down'
-              ? 'text-red-600 dark:text-red-400'
-              : 'text-muted-foreground'
-          }`}
-        >
-          {change}
-        </p>
+        {change && (
+          <p
+            className={`text-xs ${trend === 'up'
+              ? 'text-green-600 dark:text-green-400'
+              : trend === 'down'
+                ? 'text-red-600 dark:text-red-400'
+                : 'text-muted-foreground'
+            }`}
+          >
+            {change}
+          </p>
+        )}
       </div>
     </motion.div>
   )
@@ -314,20 +399,23 @@ function AlertItem({ type, title, description }: AlertItemProps) {
   )
 }
 
-function RevenueChart() {
-  const chartData = [
-    { name: 'Jan', value: 150 },
-    { name: 'Fév', value: 230 },
-    { name: 'Mar', value: 180 },
-    { name: 'Avr', value: 290 },
-    { name: 'Mai', value: 320 },
-    { name: 'Juin', value: 380 },
-  ]
+interface RevenueChartProps {
+  data: Array<{ name: string, value: number }>
+}
+
+function RevenueChart({ data }: RevenueChartProps) {
+  if (data.length === 0) {
+    return (
+      <div className="flex h-[300px] items-center justify-center text-sm text-muted-foreground">
+        Aucune donnée disponible
+      </div>
+    )
+  }
 
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={chartData} margin={chartMargin}>
+        <AreaChart data={data} margin={chartMargin}>
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
@@ -348,12 +436,13 @@ function RevenueChart() {
             fontSize={12}
             tickLine={false}
             axisLine={false}
-            tickFormatter={value => `${value}k`}
+            tickFormatter={value => formatCompact(value)}
             dx={-10}
           />
           <Tooltip
             contentStyle={tooltipContentStyle}
             itemStyle={tooltipItemStyle}
+            formatter={(value: number | undefined) => [formatCurrency(Number(value ?? 0)), '']}
           />
           <Area
             type="monotone"
@@ -369,21 +458,23 @@ function RevenueChart() {
   )
 }
 
-function EnrollmentBarChart() {
-  const enrollmentData = [
-    { name: '6ème', value: 120 },
-    { name: '5ème', value: 98 },
-    { name: '4ème', value: 86 },
-    { name: '3ème', value: 75 },
-    { name: '2nde', value: 65 },
-    { name: '1ère', value: 55 },
-    { name: 'Tle', value: 45 },
-  ]
+interface EnrollmentBarChartProps {
+  data: Array<{ name: string, value: number }>
+}
+
+function EnrollmentBarChart({ data }: EnrollmentBarChartProps) {
+  if (data.length === 0) {
+    return (
+      <div className="flex h-[300px] items-center justify-center text-sm text-muted-foreground">
+        Aucune donnée disponible
+      </div>
+    )
+  }
 
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={enrollmentData} margin={chartMargin}>
+        <BarChart data={data} margin={chartMargin}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
           <XAxis
             dataKey="name"
@@ -404,6 +495,7 @@ function EnrollmentBarChart() {
             cursor={barTooltipCursor}
             contentStyle={tooltipContentStyle}
             itemStyle={tooltipItemStyle}
+            formatter={(value: number | undefined) => [formatNumber(Number(value ?? 0)), '']}
           />
           <Bar dataKey="value" fill="var(--primary)" radius={[4, 4, 0, 0]} maxBarSize={40} />
         </BarChart>
@@ -412,20 +504,26 @@ function EnrollmentBarChart() {
   )
 }
 
-function GenderPieChart() {
-  const t = useTranslations()
+interface GenderPieChartProps {
+  data: Array<{ name: string, value: number, color: string }>
+  total: number
+}
 
-  const genderData = [
-    { name: t.students.female(), value: 540, color: '#ec4899' }, // Pink-500
-    { name: t.students.male(), value: 694, color: '#3b82f6' }, // Blue-500
-  ]
+function GenderPieChart({ data, total }: GenderPieChartProps) {
+  if (data.length === 0) {
+    return (
+      <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
+        Aucune donnée disponible
+      </div>
+    )
+  }
 
   return (
     <div className="h-[200px] w-full">
       <ResponsiveContainer width="100%" height="100%">
-        <IconChartPie>
+        <PieChart>
           <Pie
-            data={genderData}
+            data={data}
             cx="50%"
             cy="50%"
             innerRadius={60}
@@ -433,25 +531,26 @@ function GenderPieChart() {
             paddingAngle={5}
             dataKey="value"
           >
-            {genderData.map(entry => (
-              <Cell key={`cell-${generateUUID()}`} fill={entry.color} />
+            {data.map(entry => (
+              <Cell key={entry.name} fill={entry.color} />
             ))}
           </Pie>
           <Tooltip
             contentStyle={tooltipContentStyle}
             itemStyle={tooltipItemStyle}
+            formatter={(value: number | undefined) => [formatNumber(Number(value ?? 0)), '']}
           />
-        </IconChartPie>
+        </PieChart>
       </ResponsiveContainer>
       <div className="flex justify-center gap-6">
-        {genderData.map(entry => (
+        {data.map(entry => (
           <div key={entry.name} className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
             <span className="text-sm text-muted-foreground">
               {entry.name}
               {' '}
               (
-              {Math.round((entry.value / 1234) * 100)}
+              {total > 0 ? Math.round((entry.value / total) * 100) : 0}
               %)
             </span>
           </div>

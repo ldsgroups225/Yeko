@@ -27,7 +27,7 @@ export type PermissionResource
     | 'dashboard'
     | 'report_cards'
     | 'timetables'
-  // Phase 15: Grading (uses 'grades' above)
+// Phase 15: Grading (uses 'grades' above)
 
 /**
  * IconCheck if the current user has a specific permission
