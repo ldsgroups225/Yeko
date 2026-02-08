@@ -1,4 +1,4 @@
-import { IconChevronRight, IconSchool } from '@tabler/icons-react'
+import { IconChevronRight } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
@@ -19,8 +19,8 @@ function IndexComponent() {
             <div className="flex justify-center">
               <div className="relative">
                 <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse" />
-                <div className="relative bg-primary/10 p-4 rounded-2xl ring-1 ring-primary/20">
-                  <IconSchool className="w-12 h-12 text-primary" stroke={1.5} />
+                <div className="relative bg-primary/10 p-5 rounded-2xl ring-1 ring-primary/20">
+                  <img src="/icon.png" alt="Yeko logo" className="w-12 h-12 object-contain" />
                 </div>
               </div>
             </div>

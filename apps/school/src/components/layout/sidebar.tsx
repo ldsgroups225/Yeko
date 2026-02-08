@@ -572,23 +572,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       className="border-r border-border/40 bg-white/70 backdrop-blur-2xl dark:bg-black/70 transition-all duration-300"
       {...props}
     >
-      <SidebarHeader className="border-b border-border/10 p-5">
+      <SidebarHeader className="p-6 border-b border-border/5">
         <motion.div
-          className="flex items-center gap-3"
-          initial={{ opacity: 0, x: -20 }}
+          className="flex items-center gap-4"
+          initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-linear-to-br from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/20">
-            <IconSchool className="size-6" />
+          <div className="relative group shrink-0">
+            <img
+              src="/icon.png"
+              alt="Yeko logo"
+              className="size-12 rounded-lg object-contain shadow-lg shadow-primary/20 ring-1 ring-border/10 transition-transform duration-300 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 rounded-lg bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
-          <div className="grid flex-1 text-left">
-            <span className="truncate text-base font-bold leading-none">
+          <div className="flex flex-col gap-0.5 overflow-hidden">
+            <span className="truncate text-lg font-black tracking-tight text-foreground/90 font-outfit uppercase">
               {t.sidebar.schoolName()}
             </span>
-            <span className="truncate text-xs font-medium text-muted-foreground">
-              {t.sidebar.schoolSubtitle()}
-            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="shrink-0 size-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="truncate text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+                {t.sidebar.schoolSubtitle()}
+              </span>
+            </div>
           </div>
         </motion.div>
       </SidebarHeader>

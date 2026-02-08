@@ -14,9 +14,9 @@ import {
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { useTranslations } from '@/i18n'
 import { formatPhone } from '@/utils/formatPhone'
 import { generateUUID } from '@/utils/generateUUID'
-import { useTranslations } from '@/i18n'
 
 interface ImportRow {
   name: string

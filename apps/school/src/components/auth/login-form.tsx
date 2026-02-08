@@ -135,11 +135,22 @@ export function LoginForm() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="flex items-center gap-3 mb-8">
-              <div className="size-12 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
-                <span className="text-2xl font-bold text-white">Y</span>
+            <div className="flex items-center gap-4 mb-10">
+              <div className="relative group shrink-0">
+                <img
+                  src="/icon.png"
+                  alt="Yeko logo"
+                  className="size-16 rounded-2xl object-contain shadow-[0_20px_50px_rgba(0,0,0,0.3)] ring-1 ring-white/20 transition-transform duration-500 group-hover:scale-110"
+                />
               </div>
-              <span className="text-2xl font-bold text-white">{appName}</span>
+              <div className="flex flex-col">
+                <span className="text-3xl font-black tracking-tighter text-white font-outfit uppercase">
+                  {appName}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50">
+                  Administration
+                </span>
+              </div>
             </div>
             <h1 className="text-4xl xl:text-5xl font-bold text-white mb-4 leading-tight">
               {tagline}
@@ -187,13 +198,20 @@ export function LoginForm() {
                 variants={itemVariants}
                 className="lg:hidden text-center mb-8"
               >
-                <div className="inline-flex items-center gap-2">
-                  <div className="size-10 rounded-xl bg-primary flex items-center justify-center">
-                    <span className="text-xl font-bold text-primary-foreground">
-                      Y
+                <div className="inline-flex items-center gap-3">
+                  <img
+                    src="/icon.png"
+                    alt="Yeko logo"
+                    className="size-12 rounded-xl object-contain shadow-lg"
+                  />
+                  <div className="flex flex-col text-left">
+                    <span className="text-xl font-black tracking-tighter uppercase font-outfit">
+                      {appName}
+                    </span>
+                    <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+                      Administration
                     </span>
                   </div>
-                  <span className="text-xl font-bold">{appName}</span>
                 </div>
               </motion.div>
 
