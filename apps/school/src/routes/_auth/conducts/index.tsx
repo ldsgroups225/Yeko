@@ -1,4 +1,4 @@
-import { IconAlertTriangle, IconArrowRight, IconBell, IconSettings, IconSparkles, IconUserCheck, IconUsers } from '@tabler/icons-react'
+import { IconAlertTriangle, IconArrowRight, IconBell, IconSettings, IconUserCheck, IconUsers } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
@@ -70,9 +70,6 @@ function SchoolLifeDashboard() {
         animate={{ opacity: 1, scale: 1 }}
         className="relative overflow-hidden rounded-3xl border border-primary/20 bg-primary/5 p-8 text-primary"
       >
-        <div className="absolute top-0 right-0 p-4 opacity-10">
-          <IconSparkles className="size-32" />
-        </div>
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
           <div className="p-4 rounded-2xl bg-primary/10 backdrop-blur-xl border border-primary/20 shadow-lg">
             <IconAlertTriangle className="size-12" />

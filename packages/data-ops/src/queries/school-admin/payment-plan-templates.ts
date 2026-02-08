@@ -2,12 +2,12 @@ import type { PaymentPlanTemplateInsert } from '../../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, desc, eq } from 'drizzle-orm'
-import { ResultAsync, errAsync } from 'neverthrow'
+import { errAsync, ResultAsync } from 'neverthrow'
 import { getDb } from '../../database/setup'
 import { paymentPlanTemplates } from '../../drizzle/school-schema'
 import { DatabaseError } from '../../errors'
 import { getNestedErrorMessage } from '../../i18n'
-import { PAGINATION, SCHOOL_ERRORS } from './constants'
+import { SCHOOL_ERRORS } from './constants'
 
 export function getPaymentPlanTemplatesBySchool(
   schoolId: string,

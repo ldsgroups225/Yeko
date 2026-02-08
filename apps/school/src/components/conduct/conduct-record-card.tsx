@@ -1,9 +1,4 @@
-import {
-  IconCalendar,
-  IconDots,
-  IconMapPin,
-  IconSparkles,
-} from '@tabler/icons-react'
+import { IconCalendar, IconDots, IconMapPin } from '@tabler/icons-react'
 import {
   Avatar,
   AvatarFallback,
@@ -87,9 +82,6 @@ export function ConductRecordCard({
           className,
         )}
       >
-        <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
-          <IconSparkles className="size-16" />
-        </div>
 
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div className="flex items-center gap-4">

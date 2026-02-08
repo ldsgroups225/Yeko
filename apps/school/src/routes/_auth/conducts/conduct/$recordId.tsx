@@ -1,4 +1,4 @@
-import { IconArrowLeft, IconCalendar, IconClock, IconHistory, IconMapPin, IconSparkles, IconUser } from '@tabler/icons-react'
+import { IconArrowLeft, IconCalendar, IconClock, IconHistory, IconMapPin, IconUser } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
@@ -131,9 +131,7 @@ function ConductRecordDetailPage() {
             transition={{ delay: 0.1 }}
           >
             <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
-              <div className="absolute top-0 right-0 p-6 opacity-5">
-                <IconSparkles className="size-32" />
-              </div>
+
               <CardHeader className="relative pb-0">
                 <div className="space-y-4">
                   <div className="flex flex-wrap gap-2">

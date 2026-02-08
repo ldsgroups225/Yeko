@@ -1,4 +1,4 @@
-import { IconArrowLeft, IconHistory, IconSearch, IconSparkles } from '@tabler/icons-react'
+import { IconArrowLeft, IconSearch } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -62,9 +62,7 @@ function StudentAttendanceHistoryPage() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconHistory className="size-8 text-primary" />
-          </div>
+
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.attendance.history()}</h1>
             <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.attendance.historyDescription()}</p>
@@ -135,16 +133,7 @@ function StudentAttendanceHistoryPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="rounded-[2.5rem] border border-dashed border-primary/20 bg-primary/5 p-20 flex flex-col items-center text-center space-y-6"
               >
-                <div className="relative">
-                  <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full animate-pulse" />
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                    className="relative p-6 rounded-4xl bg-card/50 border border-primary/10 shadow-2xl"
-                  >
-                    <IconSparkles className="size-16 text-primary" />
-                  </motion.div>
-                </div>
+
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black uppercase tracking-tight text-primary/60 italic">{t.attendance.searchStudent()}</h3>
                   <p className="text-base font-medium text-muted-foreground/40 italic max-w-xs">{t.attendance.selectStudent()}</p>

@@ -77,7 +77,7 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
           <div className="w-64 border-r border-border/40 bg-muted/10 p-4 hidden md:flex flex-col gap-2">
             {steps.map((step, index) => (
               <div
-                key={index}
+                key={step.title}
                 className={cn(
                   'flex items-center gap-3 p-3 rounded-xl transition-all duration-200',
                   currentStep === index

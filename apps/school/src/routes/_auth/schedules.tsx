@@ -3,7 +3,7 @@ import type { TimetableSessionData } from '@/components/timetables/timetable-ses
 import type { SessionFormInput } from '@/components/timetables/timetable-session-dialog'
 import type { CreateTimetableSessionInput, UpdateTimetableSessionInput } from '@/schemas/timetable'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-import { IconCalendar, IconCalendarSearch, IconDownload, IconSparkles, IconUpload } from '@tabler/icons-react'
+import { IconCalendar, IconCalendarSearch, IconDownload, IconUpload } from '@tabler/icons-react'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
@@ -355,9 +355,6 @@ function TimetablesPage() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconSparkles className="size-8 text-primary" />
-          </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.timetables.title()}</h1>
             <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.timetables.description()}</p>

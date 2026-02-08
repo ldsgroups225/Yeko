@@ -1,5 +1,4 @@
 import type { FeeTypeCategory } from '@repo/data-ops'
-import type { CreateFeeTypeTemplateInput, UpdateFeeTypeTemplateInput } from '@/schemas/catalog'
 import {
   IconCheck,
   IconCircleX,
@@ -15,7 +14,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
+import { Card, CardContent, CardHeader } from '@workspace/ui/components/card'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import {
   DropdownMenu,
@@ -38,7 +37,7 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { Textarea } from '@workspace/ui/components/textarea'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import {
   createFeeTypeTemplateMutationOptions,
@@ -248,10 +247,10 @@ function FeeTypeTemplatesPage() {
               <TableBody>
                 {isLoading
                   ? (
-                      Array.from({ length: 5 }).map((_, i) => (
-                        <TableRow key={i}>
-                          {Array.from({ length: 8 }).map((_, j) => (
-                            <TableCell key={j}><Skeleton className="h-4 w-full" /></TableCell>
+                      [1, 2, 3, 4, 5].map(item1 => (
+                        <TableRow key={item1}>
+                          {[1, 2, 3, 4, 5, 6, 7, 8].map(item2 => (
+                            <TableCell key={item2}><Skeleton className="h-4 w-full" /></TableCell>
                           ))}
                         </TableRow>
                       ))

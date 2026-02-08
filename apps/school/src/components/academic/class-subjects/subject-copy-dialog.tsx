@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconAlertCircle, IconCheck, IconCopy, IconLoader2, IconSparkles } from '@tabler/icons-react'
+import { IconAlertCircle, IconCheck, IconCopy, IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -146,7 +146,7 @@ export function SubjectCopyDialog({
               render={({ field }) => (
                 <FormItem className="space-y-3">
                   <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
-                    <IconSparkles className="h-3 w-3" />
+                    <IconCopy className="h-3 w-3" />
                     {t.academic.classes.sourceClass()}
                   </FormLabel>
                   <Select

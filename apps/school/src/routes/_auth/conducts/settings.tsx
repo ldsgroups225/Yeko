@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconBell, IconDeviceFloppy, IconSchool, IconSettings, IconSparkles, IconUserCheck } from '@tabler/icons-react'
+import { IconBell, IconDeviceFloppy, IconLoader2, IconSchool, IconSettings, IconUserCheck } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -322,7 +322,7 @@ function AttendanceSettingsPage() {
               {mutation.isPending
                 ? (
                     <>
-                      <IconSparkles className="mr-2 size-4 animate-spin" />
+                      <IconLoader2 className="mr-2 size-4 animate-spin" />
                       {t.common.saving()}
                     </>
                   )

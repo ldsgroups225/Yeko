@@ -1,5 +1,5 @@
 import type { TranslationFunctions } from '@/i18n'
-import { IconBook, IconCheck, IconLoader2, IconSparkles } from '@tabler/icons-react'
+import { IconBook, IconCheck, IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
@@ -105,7 +105,7 @@ export function TeacherAssignmentDialog({
           <DialogHeader>
             <div className="flex items-center gap-3 mb-1">
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <IconSparkles className="h-5 w-5 text-primary" />
+                <IconBook className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.assignments.dialogTitle()}</DialogTitle>

@@ -1,4 +1,4 @@
-import { IconAlertCircle, IconBook, IconChartBar, IconChevronRight, IconCircleCheck, IconClock, IconSparkles, IconTrendingUp } from '@tabler/icons-react'
+import { IconAlertCircle, IconBook, IconChartBar, IconChevronRight, IconCircleCheck, IconClock, IconTrendingUp } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
@@ -140,9 +140,6 @@ function GradesIndexPage() {
           transition={{ duration: 0.4, delay: 0.3 }}
         >
           <Card className="border-amber-500/20 bg-amber-500/5 backdrop-blur-sm overflow-hidden relative group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500 mt-2">
-              <IconSparkles className="size-20" />
-            </div>
             <CardContent className="flex flex-col sm:flex-row items-center gap-6 py-6 relative z-10">
               <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-500/20 text-amber-600 shadow-inner">
                 <IconAlertCircle className="size-7" />

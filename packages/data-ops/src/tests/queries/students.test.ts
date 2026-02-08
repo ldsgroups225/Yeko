@@ -1,10 +1,8 @@
-import type { ResultAsync } from 'neverthrow'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { DatabaseError } from '../../errors'
 import { getStudentById, getStudents } from '../../queries/students'
 import {
   createMockDbClient,
-  expectDatabaseErrorType,
   expectResultError,
   expectResultSuccess,
   mockDatabaseError,
@@ -90,7 +88,9 @@ describe('students queries', () => {
 
       const result = getStudents({ schoolId: 'school-1' })
 
-      await expectDatabaseErrorType(result as unknown as ResultAsync<unknown, DatabaseError>, 'INTERNAL_ERROR')
+      const error = await expectResultError(result)
+      expect(error).toBeInstanceOf(DatabaseError)
+      expect((error as DatabaseError).type).toBe('INTERNAL_ERROR')
     })
 
     test('should apply filters correctly', async () => {
@@ -201,7 +201,9 @@ describe('students queries', () => {
 
       const result = getStudentById('non-existent-id')
 
-      await expectDatabaseErrorType(result as unknown as ResultAsync<unknown, DatabaseError>, 'NOT_FOUND')
+      const error = await expectResultError(result)
+      expect(error).toBeInstanceOf(DatabaseError)
+      expect((error as DatabaseError).type).toBe('NOT_FOUND')
     })
 
     test('should handle database connection errors', async () => {

@@ -1,4 +1,4 @@
-import { IconCheck, IconInfoCircle, IconLoader2, IconShield, IconShieldExclamation, IconSparkles, IconX } from '@tabler/icons-react'
+import { IconCheck, IconInfoCircle, IconLoader2, IconShield, IconShieldExclamation, IconX } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
@@ -130,7 +130,7 @@ export function RoleSelector({
             onClick={handleSelectAll}
             disabled={disabled || filteredRoles.length === selectedRoleIds.length}
           >
-            <IconSparkles className="mr-1.5 h-3 w-3" />
+
             {t.hr.roles.selectAll()}
           </Button>
           <Button

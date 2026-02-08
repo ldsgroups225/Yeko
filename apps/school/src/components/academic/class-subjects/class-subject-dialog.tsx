@@ -1,4 +1,4 @@
-import { IconCheck, IconClock, IconHash, IconLoader2, IconSparkles } from '@tabler/icons-react'
+import { IconCheck, IconClock, IconHash, IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -94,7 +94,7 @@ export function ClassSubjectDialog({
           <DialogHeader>
             <div className="flex items-center gap-3 mb-1">
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <IconSparkles className="h-5 w-5 text-primary" />
+                <IconHash className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.classes.addSubjectTitle()}</DialogTitle>

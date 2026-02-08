@@ -1,4 +1,3 @@
-import { IconSparkles } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Skeleton } from '@workspace/ui/components/skeleton'
@@ -67,9 +66,6 @@ function FinanceDashboardPage() {
         animate={{ opacity: 1, x: 0 }}
         className="flex items-center gap-4"
       >
-        <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <IconSparkles className="size-8 text-primary" />
-        </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.dashboard.title()}</h1>
           <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.finance.title()}</p>

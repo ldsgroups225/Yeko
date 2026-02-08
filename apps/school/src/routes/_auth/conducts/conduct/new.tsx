@@ -1,4 +1,3 @@
-import { IconPlus, IconSparkles } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
@@ -99,9 +98,7 @@ function NewConductRecordPage() {
         animate={{ opacity: 1, x: 0 }}
         className="flex items-center gap-4"
       >
-        <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <IconPlus className="size-8 text-primary" />
-        </div>
+
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.conduct.newRecord()}</h1>
           <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.conduct.newRecordDescription()}</p>
@@ -114,9 +111,7 @@ function NewConductRecordPage() {
         transition={{ delay: 0.1 }}
       >
         <Card className="max-w-4xl relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
-          <div className="absolute top-0 right-0 p-6 opacity-5">
-            <IconSparkles className="size-32" />
-          </div>
+
           <CardHeader className="relative border-b border-border/10 bg-muted/20">
             <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{t.conduct.form.title()}</CardTitle>
           </CardHeader>

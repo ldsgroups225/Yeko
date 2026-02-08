@@ -1,5 +1,5 @@
 import type { GradeType } from '@/schemas/grade'
-import { IconCalendar, IconClipboardCheck, IconLayoutGrid, IconListCheck, IconRotate, IconSettings, IconSparkles, IconUserCheck } from '@tabler/icons-react'
+import { IconCalendar, IconClipboardCheck, IconLayoutGrid, IconListCheck, IconRotate, IconSettings, IconUserCheck } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -241,12 +241,7 @@ function GradeEntryPage() {
                             {selectedSubjectId && (() => {
                               const selectedItem = classSubjectsData.find(cs => cs.subject.id === selectedSubjectId)
                               return selectedItem
-                                ? (
-                                    <div className="flex items-center gap-2">
-                                      <IconSparkles className="size-3.5 text-primary/60" />
-                                      <span className="font-semibold">{selectedItem.subject.name}</span>
-                                    </div>
-                                  )
+                                ? <span className="font-semibold">{selectedItem.subject.name}</span>
                                 : null
                             })()}
                           </SelectValue>
@@ -254,10 +249,7 @@ function GradeEntryPage() {
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                           {classSubjectsData.map(cs => (
                             <SelectItem key={cs.subject.id} value={cs.subject.id} className="rounded-lg">
-                              <div className="flex items-center gap-2">
-                                <IconSparkles className="size-3.5 text-primary/60" />
-                                <span className="font-semibold">{cs.subject.name}</span>
-                              </div>
+                              <span className="font-semibold">{cs.subject.name}</span>
                             </SelectItem>
                           ))}
                         </SelectContent>

@@ -40,7 +40,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@workspace/ui/components/sidebar'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import * as React from 'react'
 
 import { useAuthorization } from '@/hooks/use-authorization'
@@ -511,49 +511,42 @@ function SidebarMenuSubItemWrapper({
         />
       </SidebarMenuButton>
 
-      <div
-        className={cn(
-          'overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]',
-          isOpen
-            ? 'h-auto opacity-100 mt-1 scale-100 origin-top'
-            : 'h-0 opacity-0 mt-0 scale-95 origin-top',
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <SidebarMenuSub className="ml-4 border-l border-border/10 space-y-0.5 mt-1">
+              {item.children?.map(child => (
+                <SidebarMenuSubItem key={child.href}>
+                  <SidebarMenuSubButton
+                    onClick={() => navigate({ to: child.href })}
+                    isActive={pathname === child.href}
+                    className={cn(
+                      'transition-all duration-200 rounded-lg',
+                      pathname === child.href
+                        ? 'bg-primary/10 text-primary font-bold'
+                        : 'text-muted-foreground hover:bg-primary/5 hover:text-primary',
+                    )}
+                  >
+                    <child.icon
+                      className={cn(
+                        'size-3.5',
+                        pathname === child.href && 'text-primary',
+                      )}
+                    />
+                    <span>{child.title}</span>
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              ))}
+            </SidebarMenuSub>
+          </motion.div>
         )}
-      >
-        <SidebarMenuSub>
-          {item.children?.map((child, index) => (
-            <SidebarMenuSubItem
-              key={child.href}
-              className={cn(
-                'transition-all duration-500',
-                isOpen
-                  ? 'translate-x-0 opacity-100'
-                  : '-translate-x-4 opacity-0',
-              )}
-              style={{
-                transitionDelay: isOpen ? `${index * 50}ms` : '0ms',
-              }}
-            >
-              <SidebarMenuSubButton
-                onClick={() => navigate({ to: child.href })}
-                isActive={pathname === child.href}
-                className={`transition-all duration-200 ${
-                  pathname === child.href
-                    ? 'bg-primary/10 text-primary font-medium'
-                    : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:pl-4 hover:text-foreground'
-                }`}
-              >
-                <child.icon
-                  className={cn(
-                    'size-3.5 transition-transform duration-300 group-hover:scale-110',
-                    pathname === child.href && 'scale-110',
-                  )}
-                />
-                <span>{child.title}</span>
-              </SidebarMenuSubButton>
-            </SidebarMenuSubItem>
-          ))}
-        </SidebarMenuSub>
-      </div>
+      </AnimatePresence>
     </div>
   )
 }

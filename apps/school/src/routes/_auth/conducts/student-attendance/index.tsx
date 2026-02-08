@@ -1,4 +1,4 @@
-import { IconCalendar, IconChartBar, IconClipboardCheck, IconHistory, IconSparkles } from '@tabler/icons-react'
+import { IconCalendar, IconChartBar, IconHistory } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -136,9 +136,6 @@ function StudentAttendancePage() {
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconClipboardCheck className="size-8 text-primary" />
-          </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.studentAttendance()}</h1>
             <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.attendance.studentAttendanceDescription()}</p>
@@ -219,9 +216,7 @@ function StudentAttendancePage() {
                 animate={{ opacity: 1 }}
                 className="rounded-3xl border border-dashed border-border/60 bg-card/10 backdrop-blur-sm p-20 flex flex-col items-center text-center space-y-4"
               >
-                <div className="p-4 rounded-full bg-primary/5">
-                  <IconSparkles className="size-12 text-primary/40" />
-                </div>
+
                 <div className="space-y-1">
                   <h3 className="text-xl font-black uppercase tracking-tight text-muted-foreground/60">{t.attendance.selectClass()}</h3>
                   <p className="text-sm font-medium text-muted-foreground/40 italic">{t.attendance.selectClassAndDate()}</p>
