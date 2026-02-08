@@ -50,7 +50,6 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
-import { format } from 'date-fns'
 import { AnimatePresence, motion } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
@@ -60,6 +59,8 @@ import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingUser, getUsers } from '@/school/functions/users'
+import { formatDate } from '@/utils/formatDate'
+import { formatPhone } from '@/utils/formatPhone'
 
 interface IconUser {
   id: string
@@ -147,7 +148,7 @@ export function UsersTable({ filters }: UsersTableProps) {
               ? (
                   <>
                     <IconPhone className="h-3.5 w-3.5" />
-                    {row.original.phone}
+                    {formatPhone(row.original.phone)}
                   </>
                 )
               : (
@@ -205,7 +206,7 @@ export function UsersTable({ filters }: UsersTableProps) {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <IconCalendar className="h-3.5 w-3.5" />
             {row.original.lastLoginAt
-              ? format(new Date(row.original.lastLoginAt), 'dd MMM yyyy HH:mm')
+              ? formatDate(new Date(row.original.lastLoginAt), 'SHORT', 'fr')
               : t.hr.users.neverLoggedIn()}
           </div>
         ),

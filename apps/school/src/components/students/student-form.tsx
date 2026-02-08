@@ -15,8 +15,9 @@ import {
   FormMessage,
 } from '@workspace/ui/components/form'
 import { Input } from '@workspace/ui/components/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
+import { PhoneInput } from '@workspace/ui/components/phone-number'
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { motion } from 'motion/react'
@@ -531,7 +532,10 @@ export function StudentForm({ student, mode }: StudentFormProps) {
                       <FormItem>
                         <FormLabel>{t.students.emergencyPhone()}</FormLabel>
                         <FormControl>
-                          <Input {...field} type="tel" />
+                          <PhoneInput
+                            defaultCountry="CI"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

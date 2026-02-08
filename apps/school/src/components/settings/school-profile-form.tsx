@@ -5,8 +5,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/av
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
+import { PhoneInput } from '@workspace/ui/components/phone-number'
 import { Textarea } from '@workspace/ui/components/textarea'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { useTranslations } from '@/i18n'
 import { updateSchoolProfileSchema } from '@/schemas/school-profile'
 
@@ -135,11 +136,17 @@ export function SchoolProfileForm({
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="phone" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.profile.phone()}</Label>
-            <Input
-              id="phone"
-              {...form.register('phone')}
-              placeholder="+225 01 02 03 04 05"
-              className={inputClass}
+            <Controller
+              name="phone"
+              control={form.control}
+              render={({ field }) => (
+                <PhoneInput
+                  {...field}
+                  defaultCountry="CI"
+                  placeholder={t.hr.users.phonePlaceholder()}
+                  className={inputClass}
+                />
+              )}
             />
           </div>
 

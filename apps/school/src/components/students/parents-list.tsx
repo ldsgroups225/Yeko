@@ -63,6 +63,7 @@ import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { parentsKeys, parentsOptions } from '@/lib/queries/parents'
 import { deleteParent, sendParentInvitation } from '@/school/functions/parents'
+import { formatPhone } from '@/utils/formatPhone'
 
 import { generateUUID } from '@/utils/generateUUID'
 import { AutoMatchDialog } from './auto-match-dialog'
@@ -342,7 +343,7 @@ export function ParentsList() {
                           <TableCell>
                             <div className="flex items-center gap-1">
                               <IconPhone className="h-3 w-3 text-muted-foreground" />
-                              {item.phone}
+                              {formatPhone(item.phone)}
                             </div>
                           </TableCell>
                           <TableCell>

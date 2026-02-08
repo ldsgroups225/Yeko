@@ -42,6 +42,7 @@ import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
 import { updateStudent } from '@/school/functions/students'
 import { formatDate } from '@/utils/formatDate'
+import { formatPhone } from '@/utils/formatPhone'
 import { generateUUID } from '@/utils/generateUUID'
 import { EnrollmentDialog } from './enrollment-dialog'
 import { EnrollmentTimeline } from './enrollment-timeline'
@@ -380,7 +381,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                   />
                   <InfoRow
                     label={t.students.emergencyPhone()}
-                    value={student.emergencyPhone}
+                    value={formatPhone(student.emergencyPhone)}
                   />
                 </CardContent>
               </Card>
@@ -499,7 +500,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                                 {item.parent.phone && (
                                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <IconPhone className="h-3 w-3" />
-                                    {item.parent.phone}
+                                    {formatPhone(item.parent.phone)}
                                   </div>
                                 )}
                                 {item.parent.email && (

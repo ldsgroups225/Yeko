@@ -20,6 +20,7 @@ import {
 } from '@workspace/ui/components/form'
 import { Input } from '@workspace/ui/components/input'
 
+import { PhoneInput } from '@workspace/ui/components/phone-number'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
@@ -181,7 +182,8 @@ export function ParentFormDialog({
                       *
                     </FormLabel>
                     <FormControl>
-                      <Input
+                      <PhoneInput
+                        defaultCountry="CI"
                         placeholder={t.parents.placeholders.phone()}
                         {...field}
                       />
@@ -200,7 +202,8 @@ export function ParentFormDialog({
                   <FormItem>
                     <FormLabel>{t.parents.phone2()}</FormLabel>
                     <FormControl>
-                      <Input
+                      <PhoneInput
+                        defaultCountry="CI"
                         placeholder={t.parents.placeholders.phone()}
                         {...field}
                       />

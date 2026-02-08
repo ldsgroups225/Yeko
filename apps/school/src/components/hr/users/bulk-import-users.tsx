@@ -14,8 +14,9 @@ import {
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useTranslations } from '@/i18n'
+import { formatPhone } from '@/utils/formatPhone'
 import { generateUUID } from '@/utils/generateUUID'
+import { useTranslations } from '@/i18n'
 
 interface ImportRow {
   name: string
@@ -273,7 +274,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                           ? (
                               <div className="flex items-center gap-1.5">
                                 <IconPhone className="h-3 w-3" />
-                                {row.phone}
+                                {formatPhone(row.phone)}
                               </div>
                             )
                           : '-'}

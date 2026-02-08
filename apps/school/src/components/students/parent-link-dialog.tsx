@@ -18,6 +18,7 @@ import {
 
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
+import { PhoneInput } from '@workspace/ui/components/phone-number'
 import {
   RadioGroup,
   RadioGroupItem,
@@ -377,10 +378,10 @@ export function ParentLinkDialog({
                   {' '}
                   <span className="text-destructive">*</span>
                 </Label>
-                <Input
+                <PhoneInput
                   value={phone}
-                  onChange={e => setPhone(e.target.value)}
-                  type="tel"
+                  onChange={v => setPhone(v || '')}
+                  defaultCountry="CI"
                 />
               </div>
               <div className="space-y-2">
