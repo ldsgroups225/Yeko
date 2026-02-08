@@ -621,6 +621,50 @@ type RootTranslation = {
 		 * M​o​d​è​l​e​s​ ​d​e​ ​b​u​l​l​e​t​i​n​s
 		 */
 		reportCardTemplates: string
+		/**
+		 * P​r​é​s​e​n​c​e​ ​e​n​s​e​i​g​n​a​n​t​s
+		 */
+		teacherAttendance: string
+		/**
+		 * H​i​s​t​o​r​i​q​u​e
+		 */
+		studentAttendanceHistory: string
+		/**
+		 * S​t​a​t​i​s​t​i​q​u​e​s
+		 */
+		studentAttendanceStatistics: string
+		/**
+		 * R​a​p​p​o​r​t​s
+		 */
+		teacherAttendanceReports: string
+		/**
+		 * R​a​p​p​o​r​t​s
+		 */
+		conductReports: string
+		/**
+		 * I​n​c​i​d​e​n​t​s
+		 */
+		conductIncidents: string
+		/**
+		 * T​o​u​s​ ​l​e​s​ ​u​t​i​l​i​s​a​t​e​u​r​s
+		 */
+		allUsers: string
+		/**
+		 * I​m​p​o​r​t​e​r
+		 */
+		importUsers: string
+		/**
+		 * P​r​o​g​r​a​m​m​e​s
+		 */
+		programs: string
+		/**
+		 * C​o​n​f​i​g​u​r​a​t​i​o​n​ ​b​u​l​l​e​t​i​n​s
+		 */
+		reportCardConfig: string
+		/**
+		 * P​o​i​n​t​a​g​e
+		 */
+		pointage: string
 	}
 	sidebar: {
 		/**
@@ -659,6 +703,18 @@ type RootTranslation = {
 		 * A​d​m​i​n​i​s​t​r​a​t​i​o​n
 		 */
 		administration: string
+		/**
+		 * R​a​c​c​o​u​r​c​i​s
+		 */
+		shortcuts: string
+		/**
+		 * V​i​e​ ​S​c​o​l​a​i​r​e
+		 */
+		schoolLife: string
+		/**
+		 * E​x​a​m​e​n​s​ ​&​ ​B​u​l​l​e​t​i​n​s
+		 */
+		examsBulletins: string
 		/**
 		 * Y​e​k​o​ ​S​c​h​o​o​l
 		 */
@@ -8911,6 +8967,50 @@ export type TranslationFunctions = {
 		 * Modèles de bulletins
 		 */
 		reportCardTemplates: () => LocalizedString
+		/**
+		 * Présence enseignants
+		 */
+		teacherAttendance: () => LocalizedString
+		/**
+		 * Historique
+		 */
+		studentAttendanceHistory: () => LocalizedString
+		/**
+		 * Statistiques
+		 */
+		studentAttendanceStatistics: () => LocalizedString
+		/**
+		 * Rapports
+		 */
+		teacherAttendanceReports: () => LocalizedString
+		/**
+		 * Rapports
+		 */
+		conductReports: () => LocalizedString
+		/**
+		 * Incidents
+		 */
+		conductIncidents: () => LocalizedString
+		/**
+		 * Tous les utilisateurs
+		 */
+		allUsers: () => LocalizedString
+		/**
+		 * Importer
+		 */
+		importUsers: () => LocalizedString
+		/**
+		 * Programmes
+		 */
+		programs: () => LocalizedString
+		/**
+		 * Configuration bulletins
+		 */
+		reportCardConfig: () => LocalizedString
+		/**
+		 * Pointage
+		 */
+		pointage: () => LocalizedString
 	}
 	sidebar: {
 		/**
@@ -8949,6 +9049,18 @@ export type TranslationFunctions = {
 		 * Administration
 		 */
 		administration: () => LocalizedString
+		/**
+		 * Raccourcis
+		 */
+		shortcuts: () => LocalizedString
+		/**
+		 * Vie Scolaire
+		 */
+		schoolLife: () => LocalizedString
+		/**
+		 * Examens & Bulletins
+		 */
+		examsBulletins: () => LocalizedString
 		/**
 		 * Yeko School
 		 */

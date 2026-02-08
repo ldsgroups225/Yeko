@@ -25,7 +25,7 @@ export const getDailyAttendance = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await requirePermission('teacher_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     return (await getDailyTeacherAttendance(context.school.schoolId, data.date)).match(
       result => ({ success: true as const, data: result }),
@@ -47,7 +47,7 @@ export const getAttendanceRange = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await requirePermission('teacher_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     return (await getTeacherAttendanceRange({
       schoolId: context.school.schoolId,
@@ -68,7 +68,7 @@ export const recordAttendance = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('teacher_attendance', 'create')
+    await requirePermission('attendance', 'create')
 
     // Get school settings for expected arrival time
     const settingsResult = await getAttendanceSettings(schoolId)
@@ -122,7 +122,7 @@ export const bulkRecordAttendance = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('teacher_attendance', 'create')
+    await requirePermission('attendance', 'create')
 
     // Get school settings
     const settingsResult = await getAttendanceSettings(schoolId)
@@ -173,7 +173,7 @@ export const getPunctualityReport = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await requirePermission('teacher_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     return (await getTeacherPunctualityReport({
       schoolId: context.school.schoolId,
@@ -194,7 +194,7 @@ export const removeAttendance = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('teacher_attendance', 'delete')
+    await requirePermission('attendance', 'delete')
 
     return (await deleteTeacherAttendance(data.id, schoolId)).match(
       async () => {

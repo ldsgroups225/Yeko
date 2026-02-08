@@ -35,7 +35,7 @@ export const getClassAttendanceForDate = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await requirePermission('student_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     return (await getClassAttendance(data)).match(
       result => ({ success: true as const, data: result }),
@@ -59,7 +59,7 @@ export const getStudentHistory = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await requirePermission('student_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     return (await getStudentAttendanceHistory(data)).match(
       result => ({ success: true as const, data: result }),
@@ -77,7 +77,7 @@ export const recordStudentAttendance = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('student_attendance', 'create')
+    await requirePermission('attendance', 'create')
 
     // Get school settings
     const settingsResult = await getAttendanceSettings(schoolId)
@@ -123,7 +123,7 @@ export const bulkRecordClassAttendance = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('student_attendance', 'create')
+    await requirePermission('attendance', 'create')
 
     return (await bulkUpsertClassAttendance({
       classId: data.classId,
@@ -168,7 +168,7 @@ export const excuseAbsence = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('student_attendance', 'edit')
+    await requirePermission('attendance', 'edit')
 
     return (await excuseStudentAbsence({
       ...data,
@@ -205,7 +205,7 @@ export const notifyParent = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('student_attendance', 'edit')
+    await requirePermission('attendance', 'edit')
 
     // TODO: Implement actual notification sending
     return (await markParentNotified({
@@ -242,7 +242,7 @@ export const getStatistics = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await requirePermission('student_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     return (await getAttendanceStatistics({
       schoolId: context.school.schoolId,
@@ -268,7 +268,7 @@ export const checkChronicAbsence = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await requirePermission('student_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     const { schoolId } = context.school
     const settingsResult = await getAttendanceSettings(schoolId)
@@ -317,7 +317,7 @@ export const removeStudentAttendance = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('student_attendance', 'delete')
+    await requirePermission('attendance', 'delete')
 
     return (await deleteStudentAttendance(data.id, schoolId)).match(
       async () => {

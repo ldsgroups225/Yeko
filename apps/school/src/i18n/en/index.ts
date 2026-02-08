@@ -156,6 +156,17 @@ const en: Translation = {
     classrooms: 'Classrooms',
     schoolYears: 'School Years',
     reportCardTemplates: 'Report Card Templates',
+    teacherAttendance: 'Teacher Attendance',
+    studentAttendanceHistory: 'History',
+    studentAttendanceStatistics: 'Statistics',
+    teacherAttendanceReports: 'Reports',
+    conductReports: 'Reports',
+    conductIncidents: 'Incidents',
+    allUsers: 'All Users',
+    importUsers: 'Import',
+    programs: 'Programs',
+    reportCardConfig: 'Report Card Config',
+    pointage: 'Daily Check',
   },
   sidebar: {
     // New Hubs
@@ -169,6 +180,10 @@ const en: Translation = {
     dailyOperations: 'Daily Operations',
     academicOperations: 'Academic Operations',
     administration: 'Administration',
+
+    shortcuts: 'Shortcuts',
+    schoolLife: 'School Life',
+    examsBulletins: 'Exams & Report Cards',
 
     schoolName: 'Yeko School',
     schoolSubtitle: 'Administration',

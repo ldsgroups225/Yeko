@@ -22,7 +22,7 @@ export const getActiveAlerts = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId } = context.school
-    await requirePermission('student_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     return (await getActiveAlertsQuery(schoolId)).match(
       alerts => ({
@@ -51,7 +51,7 @@ export const getAlerts = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId } = context.school
-    await requirePermission('student_attendance', 'view')
+    await requirePermission('attendance', 'view')
 
     return (await getAlertsQuery({
       schoolId,
@@ -81,7 +81,7 @@ export const acknowledgeAlert = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { auth, school } = context
-    await requirePermission('student_attendance', 'edit')
+    await requirePermission('attendance', 'edit')
 
     return (await acknowledgeAlertQuery(data.id, auth.userId, school.schoolId)).match(
       async (alert) => {
@@ -114,7 +114,7 @@ export const dismissAlert = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { auth, school } = context
-    await requirePermission('student_attendance', 'edit')
+    await requirePermission('attendance', 'edit')
 
     return (await dismissAlertQuery(data.id, auth.userId, school.schoolId)).match(
       async (alert) => {
@@ -147,7 +147,7 @@ export const resolveAlert = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
-    await requirePermission('student_attendance', 'edit')
+    await requirePermission('attendance', 'edit')
 
     return (await resolveAlertQuery(data.id, schoolId)).match(
       async (alert) => {

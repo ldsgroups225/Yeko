@@ -42,7 +42,7 @@ export const listConductRecords = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     try {
-      await requirePermission('conduct_records', 'view')
+      await requirePermission('conduct', 'view')
       const result = await getConductRecords({
         schoolId: context.school.schoolId,
         ...data,
@@ -64,7 +64,7 @@ export const getConductRecordById = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     try {
-      await requirePermission('conduct_records', 'view')
+      await requirePermission('conduct', 'view')
       const result = await getConductRecord(data.id)
       if (!result)
         return { success: false as const, error: 'Dossier de conduite non trouvé' }
@@ -86,7 +86,7 @@ export const createRecord = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'create')
+      await requirePermission('conduct', 'create')
       const result = await createConductRecord({
         ...data,
         schoolId,
@@ -124,7 +124,7 @@ export const updateRecord = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'edit')
+      await requirePermission('conduct', 'edit')
       const { id, ...updateData } = data
       const result = await updateConductRecord(id, updateData)
 
@@ -155,7 +155,7 @@ export const changeStatus = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'edit')
+      await requirePermission('conduct', 'edit')
       const result = await updateConductStatus({
         id: data.id,
         status: data.status,
@@ -190,7 +190,7 @@ export const addFollowUp = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'edit')
+      await requirePermission('conduct', 'edit')
       const result = await addConductFollowUp({
         ...data,
         createdBy: userId,
@@ -230,7 +230,7 @@ export const markFollowUpComplete = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'edit')
+      await requirePermission('conduct', 'edit')
       const result = await completeFollowUp(data.id, data.outcome)
 
       await createAuditLog({
@@ -264,7 +264,7 @@ export const notifyParentOfConduct = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'edit')
+      await requirePermission('conduct', 'edit')
       // TODO: Implement actual notification sending
       const result = await markConductParentNotified(data.conductRecordId)
 
@@ -298,7 +298,7 @@ export const markParentAcknowledged = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'edit')
+      await requirePermission('conduct', 'edit')
       const result = await markConductParentAcknowledged(
         data.conductRecordId,
         data.response,
@@ -333,7 +333,7 @@ export const getStudentSummary = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     try {
-      await requirePermission('conduct_records', 'view')
+      await requirePermission('conduct', 'view')
       const result = await getStudentConductSummary(data.studentId, data.schoolYearId)
       return { success: true as const, data: result }
     }
@@ -353,7 +353,7 @@ export const removeRecord = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'delete')
+      await requirePermission('conduct', 'delete')
       await deleteConductRecord(data.id)
 
       await createAuditLog({
@@ -382,7 +382,7 @@ export const removeFollowUp = authServerFn
 
     const { schoolId, userId } = context.school
     try {
-      await requirePermission('conduct_records', 'delete')
+      await requirePermission('conduct', 'delete')
       await deleteFollowUp(data.id)
 
       await createAuditLog({

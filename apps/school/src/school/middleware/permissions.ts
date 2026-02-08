@@ -22,11 +22,12 @@ export type PermissionResource
     | 'school_subjects'
     | 'coefficients'
     | 'teacher_assignments'
-    | 'teacher_attendance'
-    | 'student_attendance'
-    | 'conduct_records'
-  // Phase 15: Grading
-    | 'student_grades'
+    | 'attendance'
+    | 'conduct'
+    | 'dashboard'
+    | 'report_cards'
+    | 'timetables'
+  // Phase 15: Grading (uses 'grades' above)
 
 /**
  * IconCheck if the current user has a specific permission

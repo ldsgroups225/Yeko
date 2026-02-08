@@ -157,6 +157,17 @@ const fr = {
     classrooms: 'Salles de classe',
     schoolYears: 'Années Scolaires',
     reportCardTemplates: 'Modèles de bulletins',
+    teacherAttendance: 'Présence enseignants',
+    studentAttendanceHistory: 'Historique',
+    studentAttendanceStatistics: 'Statistiques',
+    teacherAttendanceReports: 'Rapports',
+    conductReports: 'Rapports',
+    conductIncidents: 'Incidents',
+    allUsers: 'Tous les utilisateurs',
+    importUsers: 'Importer',
+    programs: 'Programmes',
+    reportCardConfig: 'Configuration bulletins',
+    pointage: 'Pointage',
   },
   sidebar: {
     // Legacy mapping support while transitioning? No, I'll update the keys in keyfile.
@@ -172,6 +183,10 @@ const fr = {
     dailyOperations: 'Opérations Quotidiennes',
     academicOperations: 'Opérations Académiques',
     administration: 'Administration',
+
+    shortcuts: 'Raccourcis',
+    schoolLife: 'Vie Scolaire',
+    examsBulletins: 'Examens & Bulletins',
 
     schoolName: 'Yeko School',
     schoolSubtitle: 'Administration',

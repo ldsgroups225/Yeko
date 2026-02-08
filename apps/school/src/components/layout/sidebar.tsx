@@ -14,11 +14,13 @@ import {
   IconHome,
   IconLayoutDashboard,
   IconLayoutGrid,
+  IconPin,
   IconReceipt,
   IconReportAnalytics,
   IconSchool,
   IconSettings,
   IconShieldCheck,
+  IconUpload,
   IconUserCheck,
   IconUsers,
   IconUsersGroup,
@@ -39,6 +41,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarRail,
+  SidebarSeparator,
 } from '@workspace/ui/components/sidebar'
 import { AnimatePresence, motion } from 'motion/react'
 import * as React from 'react'
@@ -46,7 +49,7 @@ import * as React from 'react'
 import { useAuthorization } from '@/hooks/use-authorization'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
-import { generateUUID } from '@/utils/generateUUID'
+
 
 interface NavItem {
   title: string
@@ -63,14 +66,43 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = useLocation({ select: location => location.pathname })
   const { can } = useAuthorization()
 
-  // Filter sections and items based on permissions
+  const shortcuts = React.useMemo<NavItem[]>(() => {
+    return [
+      {
+        title: t.nav.dashboard(),
+        href: '/dashboard',
+        icon: IconLayoutDashboard,
+        permission: { resource: 'dashboard', action: 'view' },
+      },
+      {
+        title: t.nav.attendance(),
+        href: '/conducts/student-attendance',
+        icon: IconUserCheck,
+        permission: { resource: 'attendance', action: 'view' },
+      },
+      {
+        title: t.nav.grades(),
+        href: '/grades/entry',
+        icon: IconClipboardCheck,
+        permission: { resource: 'grades', action: 'view' },
+      },
+      {
+        title: t.nav.payments(),
+        href: '/accounting/payments',
+        icon: IconCreditCard,
+        permission: { resource: 'finance', action: 'view' },
+      },
+    ].filter(item => !item.permission || can(item.permission.resource, item.permission.action))
+  }, [can, t])
+
   const sections = React.useMemo(() => {
     /*
-       UX 2.0: Consolidated Hubs Navigation
-       Reflecting the "Mission-Based Success" model.
+       UX 3.0: Mission-Based Navigation
+       Organized by what the director DOES daily, not by data entity.
+       All 46 routes accessible — 0 hidden.
     */
     const rawSections = [
-      // 1. PILOTAGE
+      // 1. PILOTAGE — what's happening now
       {
         title: t.sidebar.pilotage(),
         items: [
@@ -80,9 +112,304 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             icon: IconLayoutDashboard,
             permission: { resource: 'dashboard', action: 'view' },
           },
+          {
+            title: t.schoolLife.alerts(),
+            href: '/conducts/alerts',
+            icon: IconAlertTriangle,
+            permission: { resource: 'conduct', action: 'view' },
+          },
+          {
+            title: t.grades.statistics.title(),
+            href: '/grades/statistics',
+            icon: IconChartBar,
+            permission: { resource: 'grades', action: 'view' },
+          },
         ],
       },
-      // 2. COMMUNAUTÉ (People & Structure)
+      // 2. VIE SCOLAIRE — daily attendance & discipline
+      {
+        title: t.sidebar.schoolLife(),
+        items: [
+          {
+            title: t.nav.attendance(),
+            href: '/conducts/student-attendance',
+            icon: IconUserCheck,
+            permission: { resource: 'attendance', action: 'view' },
+            children: [
+              {
+                title: t.nav.pointage(),
+                href: '/conducts/student-attendance',
+                icon: IconClipboardCheck,
+                permission: { resource: 'attendance', action: 'view' },
+              },
+              {
+                title: t.nav.studentAttendanceHistory(),
+                href: '/conducts/student-attendance/history',
+                icon: IconFileSearch,
+                permission: { resource: 'attendance', action: 'view' },
+              },
+              {
+                title: t.nav.studentAttendanceStatistics(),
+                href: '/conducts/student-attendance/statistics',
+                icon: IconChartBar,
+                permission: { resource: 'attendance', action: 'view' },
+              },
+            ],
+          },
+          {
+            title: t.nav.teacherAttendance(),
+            href: '/conducts/teacher-attendance',
+            icon: IconUsers,
+            permission: { resource: 'attendance', action: 'view' },
+            children: [
+              {
+                title: t.nav.pointage(),
+                href: '/conducts/teacher-attendance',
+                icon: IconClipboardCheck,
+                permission: { resource: 'attendance', action: 'view' },
+              },
+              {
+                title: t.nav.teacherAttendanceReports(),
+                href: '/conducts/teacher-attendance/reports',
+                icon: IconReportAnalytics,
+                permission: { resource: 'attendance', action: 'view' },
+              },
+            ],
+          },
+          {
+            title: t.nav.conduct(),
+            href: '/conducts/conduct',
+            icon: IconAlertTriangle,
+            permission: { resource: 'conduct', action: 'view' },
+            children: [
+              {
+                title: t.nav.conductIncidents(),
+                href: '/conducts/conduct',
+                icon: IconAlertTriangle,
+                permission: { resource: 'conduct', action: 'view' },
+              },
+              {
+                title: t.nav.conductReports(),
+                href: '/conducts/conduct/reports',
+                icon: IconReportAnalytics,
+                permission: { resource: 'conduct', action: 'view' },
+              },
+            ],
+          },
+          {
+            title: t.schoolLife.settings(),
+            href: '/conducts/settings',
+            icon: IconSettings,
+            permission: { resource: 'conduct', action: 'manage' },
+          },
+        ],
+      },
+      // 3. PÉDAGOGIE — classes, programs, spaces
+      {
+        title: t.sidebar.pedagogy(),
+        items: [
+          {
+            title: t.nav.classes(),
+            href: '/classes',
+            icon: IconLayoutGrid,
+            permission: { resource: 'classes', action: 'view' },
+            children: [
+              { title: t.nav.classes(), href: '/classes', icon: IconLayoutGrid },
+              {
+                title: t.nav.assignments(),
+                href: '/classes/assignments',
+                icon: IconFileText,
+                permission: { resource: 'teacher_assignments', action: 'view' },
+              },
+            ],
+          },
+          {
+            title: t.nav.programs(),
+            href: '/programs/subjects',
+            icon: IconBook,
+            permission: { resource: 'school_subjects', action: 'view' },
+            children: [
+              {
+                title: t.nav.subjects(),
+                href: '/programs/subjects',
+                icon: IconBook,
+                permission: { resource: 'school_subjects', action: 'view' },
+              },
+              {
+                title: t.nav.coefficients(),
+                href: '/programs/coefficients',
+                icon: IconChartBar,
+                permission: { resource: 'coefficients', action: 'view' },
+              },
+              {
+                title: t.nav.curriculumProgress(),
+                href: '/programs/curriculum-progress',
+                icon: IconReportAnalytics,
+                permission: { resource: 'school_subjects', action: 'view' },
+              },
+            ],
+          },
+          {
+            title: t.nav.timetables(),
+            href: '/schedules',
+            icon: IconCalendar,
+            permission: { resource: 'timetables', action: 'view' },
+          },
+          {
+            title: t.nav.spaces(),
+            href: '/spaces',
+            icon: IconHome,
+            permission: { resource: 'classrooms', action: 'view' },
+            children: [
+              {
+                title: t.nav.classrooms(),
+                href: '/spaces/classrooms',
+                icon: IconBuilding,
+                permission: { resource: 'classrooms', action: 'view' },
+              },
+              {
+                title: t.spaces.availability.title(),
+                href: '/spaces/availability',
+                icon: IconCalendarEvent,
+                permission: { resource: 'classrooms', action: 'view' },
+              },
+            ],
+          },
+        ],
+      },
+      // 4. EXAMENS & BULLETINS
+      {
+        title: t.sidebar.examsBulletins(),
+        items: [
+          {
+            title: t.nav.grades(),
+            href: '/grades',
+            icon: IconClipboardCheck,
+            permission: { resource: 'grades', action: 'view' },
+            children: [
+              {
+                title: t.nav.grades(),
+                href: '/grades/entry',
+                icon: IconFileText,
+                permission: { resource: 'grades', action: 'create' },
+              },
+              { title: t.common.view(), href: '/grades', icon: IconFileSearch },
+              {
+                title: t.grades.validations.title(),
+                href: '/grades/validations',
+                icon: IconClipboardCheck,
+                permission: { resource: 'grades', action: 'validate' },
+              },
+            ],
+          },
+          {
+            title: t.nav.reportCards(),
+            href: '/grades/report-cards',
+            icon: IconReportAnalytics,
+            permission: { resource: 'report_cards', action: 'view' },
+            children: [
+              {
+                title: t.nav.reportCards(),
+                href: '/grades/report-cards',
+                icon: IconReportAnalytics,
+                permission: { resource: 'report_cards', action: 'view' },
+              },
+              {
+                title: t.nav.reportCardConfig(),
+                href: '/settings/report-cards',
+                icon: IconSettings,
+                permission: { resource: 'settings', action: 'edit' },
+              },
+            ],
+          },
+        ],
+      },
+      // 5. TRÉSORERIE — enriched with missing routes
+      {
+        title: t.sidebar.treasury(),
+        items: [
+          {
+            title: t.nav.accounting(),
+            href: '/accounting',
+            icon: IconCurrencyDollar,
+            permission: { resource: 'finance', action: 'view' },
+            children: [
+              {
+                title: t.nav.dashboard(),
+                href: '/accounting/dashboard',
+                icon: IconLayoutDashboard,
+              },
+              {
+                title: t.nav.payments(),
+                href: '/accounting/payments',
+                icon: IconCreditCard,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.studentFees.title(),
+                href: '/accounting/student-fees',
+                icon: IconUsers,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.refunds.title(),
+                href: '/accounting/refunds',
+                icon: IconReceipt,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.nav.paymentPlans(),
+                href: '/accounting/payment-plans',
+                icon: IconFileText,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.paymentPlanTemplates.title(),
+                href: '/accounting/payment-plan-templates',
+                icon: IconFileText,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.feeTypes.title(),
+                href: '/accounting/fee-types',
+                icon: IconReceipt,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.feeStructures.title(),
+                href: '/accounting/fee-structures',
+                icon: IconLayoutGrid,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.discounts.title(),
+                href: '/accounting/discounts',
+                icon: IconCreditCard,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.accounts.title(),
+                href: '/accounting/accounts',
+                icon: IconBuilding,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.fiscalYears.title(),
+                href: '/accounting/fiscal-years',
+                icon: IconCalendar,
+                permission: { resource: 'finance', action: 'view' },
+              },
+              {
+                title: t.finance.wizard.title(),
+                href: '/accounting/setup',
+                icon: IconSettings,
+                permission: { resource: 'finance', action: 'edit' },
+              },
+            ],
+          },
+        ],
+      },
+      // 6. COMMUNAUTÉ — people & records
       {
         title: t.sidebar.community(),
         items: [
@@ -137,6 +464,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 permission: { resource: 'teachers', action: 'view' },
               },
               {
+                title: t.nav.allUsers(),
+                href: '/users/users',
+                icon: IconUsersGroup,
+                permission: { resource: 'users', action: 'view' },
+              },
+              {
+                title: t.nav.importUsers(),
+                href: '/users/users/import',
+                icon: IconUpload,
+                permission: { resource: 'users', action: 'create' },
+              },
+              {
                 title: t.nav.roles(),
                 href: '/users/roles',
                 icon: IconShieldCheck,
@@ -146,180 +485,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         ],
       },
-      // 3. PÉDAGOGIE (Academic)
-      {
-        title: t.sidebar.pedagogy(),
-        items: [
-          {
-            title: t.nav.classes(),
-            href: '/classes',
-            icon: IconLayoutGrid,
-            permission: { resource: 'classes', action: 'view' },
-            children: [
-              { title: t.nav.classes(), href: '/classes', icon: IconLayoutGrid },
-              {
-                title: t.nav.assignments(),
-                href: '/classes/assignments',
-                icon: IconFileText,
-                permission: { resource: 'assignments', action: 'view' },
-              },
-            ],
-          },
-          {
-            title: t.nav.subjects(),
-            href: '/programs/subjects',
-            icon: IconBook,
-            permission: { resource: 'subjects', action: 'view' },
-          },
-          {
-            title: t.nav.timetables(),
-            href: '/schedules',
-            icon: IconCalendar,
-            permission: { resource: 'timetables', action: 'view' },
-          },
-          {
-            title: t.nav.schoolLife(),
-            href: '/conducts',
-            icon: IconUsersGroup,
-            permission: { resource: 'conduct_records', action: 'view' },
-            children: [
-              {
-                title: t.nav.attendance(),
-                href: '/conducts/student-attendance',
-                icon: IconUserCheck,
-                permission: { resource: 'student_attendance', action: 'view' },
-              },
-              {
-                title: t.nav.conduct(),
-                href: '/conducts/conduct',
-                icon: IconAlertTriangle,
-                permission: { resource: 'conduct_records', action: 'view' },
-              },
-            ],
-          },
-          {
-            title: t.nav.spaces(),
-            href: '/spaces',
-            icon: IconHome,
-            permission: { resource: 'classrooms', action: 'view' },
-            children: [
-              {
-                title: t.nav.classrooms(),
-                href: '/spaces/classrooms',
-                icon: IconBuilding,
-                permission: { resource: 'classrooms', action: 'view' },
-              },
-              {
-                title: t.spaces.availability.title(),
-                href: '/spaces/availability',
-                icon: IconCalendarEvent,
-                permission: { resource: 'classrooms', action: 'view' },
-              },
-            ],
-          },
-        ],
-      },
-      // 4. EXAMENS
-      {
-        title: t.sidebar.exams(),
-        items: [
-          {
-            title: t.nav.grades(),
-            href: '/grades',
-            icon: IconClipboardCheck,
-            permission: { resource: 'grades', action: 'view' },
-            children: [
-              {
-                title: t.nav.grades(),
-                href: '/grades/entry',
-                icon: IconFileText,
-                permission: { resource: 'grades', action: 'create' },
-              },
-              { title: t.common.view(), href: '/grades', icon: IconFileSearch },
-              {
-                title: t.grades.validations.title(),
-                href: '/grades/validations',
-                icon: IconClipboardCheck,
-                permission: { resource: 'grades', action: 'validate' },
-              },
-            ],
-          },
-          {
-            title: t.nav.reportCards(),
-            href: '/grades/report-cards',
-            icon: IconReportAnalytics,
-            permission: { resource: 'report_cards', action: 'view' },
-          },
-          {
-            title: t.grades.statistics.title(),
-            href: '/grades/statistics',
-            icon: IconChartBar,
-            permission: { resource: 'grades', action: 'view' },
-          },
-        ],
-      },
-      // 5. TRÉSORERIE
-      {
-        title: t.sidebar.treasury(),
-        items: [
-          {
-            title: t.nav.accounting(),
-            href: '/accounting',
-            icon: IconCurrencyDollar,
-            permission: { resource: 'finance', action: 'view' },
-            children: [
-              {
-                title: t.nav.dashboard(),
-                href: '/accounting/dashboard',
-                icon: IconLayoutDashboard,
-              },
-              {
-                title: t.nav.payments(),
-                href: '/accounting/payments',
-                icon: IconCreditCard,
-                permission: { resource: 'finance', action: 'view' },
-              },
-              {
-                title: t.finance.accounts.title(),
-                href: '/accounting/accounts',
-                icon: IconBuilding,
-                permission: { resource: 'finance', action: 'view' },
-              },
-              {
-                title: t.finance.feeTypes.title(),
-                href: '/accounting/fee-types',
-                icon: IconReceipt,
-                permission: { resource: 'finance', action: 'view' },
-              },
-              {
-                title: t.finance.feeStructures.title(),
-                href: '/accounting/fee-structures',
-                icon: IconLayoutGrid,
-                permission: { resource: 'finance', action: 'view' },
-              },
-              {
-                title: t.finance.discounts.title(),
-                href: '/accounting/discounts',
-                icon: IconCreditCard,
-                permission: { resource: 'finance', action: 'view' },
-              },
-              {
-                title: t.finance.studentFees.title(),
-                href: '/accounting/student-fees',
-                icon: IconUsers,
-                permission: { resource: 'finance', action: 'view' },
-              },
-              {
-                title: t.nav.paymentPlans(),
-                href: '/accounting/payment-plans',
-                icon: IconFileText,
-                permission: { resource: 'finance', action: 'view' },
-              },
-            ],
-          },
-        ],
-      },
-      // 6. CONFIGURATION
+      // 7. CONFIGURATION — enriched with missing settings
       {
         title: t.sidebar.configuration(),
         items: [
@@ -338,6 +504,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 title: t.nav.schoolYears(),
                 href: '/settings/school-years',
                 icon: IconCalendar,
+              },
+              {
+                title: t.settings.pedagogicalStructure.title(),
+                href: '/settings/pedagogical-structure',
+                icon: IconLayoutGrid,
+                permission: { resource: 'settings', action: 'edit' },
+              },
+              {
+                title: t.common.notifications(),
+                href: '/settings/notifications',
+                icon: IconAlertTriangle,
+                permission: { resource: 'settings', action: 'view' },
               },
             ],
           },
@@ -416,8 +594,36 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </motion.div>
       </SidebarHeader>
       <SidebarContent className="px-2 scrollbar-none overflow-x-hidden">
+        {shortcuts.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70 px-4 mb-2 mt-2">
+              <IconPin className="mr-1 inline size-3" />
+              {t.sidebar.shortcuts()}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {shortcuts.map(item => (
+                  <SidebarMenuItem key={`shortcut-${item.href}`}>
+                    <SidebarMenuButton
+                      onClick={() => navigate({ to: item.href })}
+                      isActive={pathname === item.href || pathname.startsWith(item.href)}
+                      tooltip={item.title}
+                      className={`transition-all duration-200 ${pathname === item.href || pathname.startsWith(item.href) ? 'bg-primary/10 text-primary shadow-sm' : 'hover:bg-sidebar-accent/50 hover:pl-4'}`}
+                    >
+                      <item.icon
+                        className={`size-4 transition-transform duration-300 group-hover:scale-110 ${pathname === item.href || pathname.startsWith(item.href) ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`}
+                      />
+                      <span className="font-medium">{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+            <SidebarSeparator className="mx-4 my-1" />
+          </SidebarGroup>
+        )}
         {sections.map(section => (
-          <SidebarGroup key={section.title + generateUUID()}>
+          <SidebarGroup key={section.title}>
             <SidebarGroupLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70 px-4 mb-2 mt-2">
               {section.title}
             </SidebarGroupLabel>
