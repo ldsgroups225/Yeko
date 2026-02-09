@@ -41,27 +41,27 @@ interface EnrollmentTimelineProps {
 const statusConfig = {
   confirmed: {
     icon: IconCircleCheck,
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-    borderColor: 'border-green-500',
+    color: 'text-success',
+    bgColor: 'bg-success/10',
+    borderColor: 'border-success/20',
   },
   pending: {
     icon: IconClock,
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-100',
-    borderColor: 'border-yellow-500',
+    color: 'text-accent',
+    bgColor: 'bg-accent/10',
+    borderColor: 'border-accent',
   },
   cancelled: {
     icon: IconCircleX,
-    color: 'text-red-600',
-    bgColor: 'bg-red-100',
-    borderColor: 'border-red-500',
+    color: 'text-destructive',
+    bgColor: 'bg-destructive/10',
+    borderColor: 'border-destructive/20',
   },
   transferred: {
     icon: IconArrowRight,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-    borderColor: 'border-blue-500',
+    color: 'text-primary',
+    bgColor: 'bg-primary/10',
+    borderColor: 'border-primary/20',
   },
 }
 
@@ -173,7 +173,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.confirmedAt && (
                     <div className="flex items-center gap-1">
-                      <IconCircleCheck className="h-3.5 w-3.5 text-green-600" />
+                      <IconCircleCheck className="h-3.5 w-3.5 text-success" />
                       <span>
                         {t.students.confirmedOn()}
                         :
@@ -184,7 +184,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.transferredAt && (
                     <div className="flex items-center gap-1">
-                      <IconArrowRight className="h-3.5 w-3.5 text-blue-600" />
+                      <IconArrowRight className="h-3.5 w-3.5 text-primary" />
                       <span>
                         {t.students.transferredOn()}
                         :
@@ -195,7 +195,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.cancelledAt && (
                     <div className="flex items-center gap-1">
-                      <IconCircleX className="h-3.5 w-3.5 text-red-600" />
+                      <IconCircleX className="h-3.5 w-3.5 text-destructive" />
                       <span>
                         {t.students.cancelledOn()}
                         :

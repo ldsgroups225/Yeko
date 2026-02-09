@@ -40,7 +40,7 @@ function StatCard({ icon, title, value, color, unit, className }: StatCardProps)
     primary: 'bg-primary/10 text-primary border-primary/20',
     emerald: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
     red: 'bg-red-500/10 text-red-500 border-red-500/20',
-    amber: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+    amber: 'bg-accent/10 text-accent border-accent/20',
     muted: 'bg-muted/50 text-muted-foreground border-border/50',
   }
 

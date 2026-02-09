@@ -211,7 +211,7 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
           ? (
               <div className="space-y-4 py-4">
                 <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm p-6">
-                  <IconCircleCheck className="h-12 w-12 text-green-500" />
+                  <IconCircleCheck className="h-12 w-12 text-success" />
                   <h3 className="text-lg font-semibold">
                     {t.students.autoMatchComplete()}
                   </h3>

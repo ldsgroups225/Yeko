@@ -184,8 +184,8 @@ function MetricCard({
   trend,
 }: MetricCardProps) {
   const trendColors = {
-    positive: 'text-green-600 dark:text-green-400',
-    negative: 'text-red-600 dark:text-red-400',
+    positive: 'text-success',
+    negative: 'text-destructive',
     neutral: 'text-muted-foreground',
   }
 
@@ -223,17 +223,15 @@ function AbsenceItem({
   const statusConfig = {
     justified: {
       label: 'Justifiée',
-      color:
-        'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
+      color: 'bg-success/10 text-success',
     },
     unjustified: {
       label: 'Non justifiée',
-      color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
+      color: 'bg-destructive/10 text-destructive',
     },
     pending: {
       label: 'En attente',
-      color:
-        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+      color: 'bg-accent/10 text-accent-foreground',
     },
   }
 
@@ -271,17 +269,15 @@ function ConductItem({
   const severityConfig = {
     minor: {
       label: 'Mineur',
-      color:
-        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+      color: 'bg-accent/10 text-accent-foreground',
     },
     moderate: {
       label: 'Modéré',
-      color:
-        'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400',
+      color: 'bg-accent/10 text-accent-foreground',
     },
     major: {
       label: 'Grave',
-      color: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
+      color: 'bg-destructive/10 text-destructive',
     },
   }
 

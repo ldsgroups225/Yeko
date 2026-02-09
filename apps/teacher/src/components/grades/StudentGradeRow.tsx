@@ -76,14 +76,14 @@ export function StudentGradeRow({
     if (gradePercentage === null)
       return ''
     if (gradePercentage >= 80)
-      return 'text-green-600 dark:text-green-400'
+      return 'text-success dark:text-success/80'
     if (gradePercentage >= 60)
-      return 'text-emerald-600 dark:text-emerald-400'
+      return 'text-success dark:text-success/80'
     if (gradePercentage >= 50)
-      return 'text-yellow-600 dark:text-yellow-400'
+      return 'text-accent-foreground dark:text-accent-foreground/80'
     if (gradePercentage >= 40)
       return 'text-orange-600 dark:text-orange-400'
-    return 'text-red-600 dark:text-red-400'
+    return 'text-destructive dark:text-destructive/80'
   }
 
   return (

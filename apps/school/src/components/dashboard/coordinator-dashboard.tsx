@@ -203,8 +203,8 @@ interface RiskItemProps {
 function RiskItem({ subject, average, status }: RiskItemProps) {
   const t = useTranslations()
   const statusColors = {
-    critical: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
-    warning: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400',
+    critical: 'bg-destructive/10 text-destructive',
+    warning: 'bg-accent/10 text-accent-foreground',
   }
 
   return (

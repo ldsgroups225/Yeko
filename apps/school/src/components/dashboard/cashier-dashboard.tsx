@@ -193,8 +193,8 @@ function PaymentItem({ name, matricule, amount, method, time, status }: PaymentI
         </p>
         <span
           className={`text-xs ${status === 'completed'
-            ? 'text-green-600 dark:text-green-400'
-            : 'text-yellow-600 dark:text-yellow-400'
+            ? 'text-success'
+            : 'text-accent-foreground'
           }`}
         >
           {status === 'completed' ? t.dashboard.cashier.completed() : t.dashboard.cashier.pending()}

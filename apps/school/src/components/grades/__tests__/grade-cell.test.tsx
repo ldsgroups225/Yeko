@@ -30,7 +30,7 @@ describe('gradeCell Component', () => {
 
     test('should have aria-label for accessibility', () => {
       render(<GradeCell {...defaultProps} />)
-      const input = screen.getByLabelText('Note')
+      const input = screen.getByLabelText('Grade')
       expect(input).toBeInTheDocument()
     })
   })
@@ -198,19 +198,19 @@ describe('gradeCell Component', () => {
     test('should apply submitted styling', () => {
       render(<GradeCell {...defaultProps} status="submitted" />)
       const input = screen.getByRole('textbox')
-      expect(input.className).toContain('bg-blue-50')
+      expect(input.className).toContain('bg-muted')
     })
 
     test('should apply validated styling', () => {
       render(<GradeCell {...defaultProps} status="validated" />)
       const input = screen.getByRole('textbox')
-      expect(input.className).toContain('bg-green-50')
+      expect(input.className).toContain('bg-muted')
     })
 
     test('should apply rejected styling', () => {
       render(<GradeCell {...defaultProps} status="rejected" />)
       const input = screen.getByRole('textbox')
-      expect(input.className).toContain('bg-red-50')
+      expect(input.className).toContain('bg-destructive')
     })
   })
 
@@ -218,13 +218,13 @@ describe('gradeCell Component', () => {
     test('should apply green color for excellent grades (>=16)', () => {
       render(<GradeCell {...defaultProps} value={18} />)
       const input = screen.getByRole('textbox')
-      expect(input.className).toContain('text-green-600')
+      expect(input.className).toContain('text-success')
     })
 
     test('should apply red color for failing grades (<10)', () => {
       render(<GradeCell {...defaultProps} value={8} />)
       const input = screen.getByRole('textbox')
-      expect(input.className).toContain('text-red-600')
+      expect(input.className).toContain('text-destructive')
     })
   })
 

@@ -188,20 +188,20 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                   {watch('status') === 'active'
                     ? (
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                          <div className="h-2 w-2 rounded-full bg-success" />
                           {t.hr.status.active()}
                         </div>
                       )
                     : watch('status') === 'inactive'
                       ? (
                           <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-slate-400" />
+                            <div className="h-2 w-2 rounded-full bg-muted-foreground" />
                             {t.hr.status.inactive()}
                           </div>
                         )
                       : (
                           <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-amber-500" />
+                            <div className="h-2 w-2 rounded-full bg-accent" />
                             {t.hr.status.on_leave()}
                           </div>
                         )}
@@ -210,19 +210,19 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
               <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                 <SelectItem value="active" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <div className="h-2 w-2 rounded-full bg-success" />
                     {t.hr.status.active()}
                   </div>
                 </SelectItem>
                 <SelectItem value="inactive" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-slate-400" />
+                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
                     {t.hr.status.inactive()}
                   </div>
                 </SelectItem>
                 <SelectItem value="on_leave" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-amber-500" />
+                    <div className="h-2 w-2 rounded-full bg-accent" />
                     {t.hr.status.on_leave()}
                   </div>
                 </SelectItem>

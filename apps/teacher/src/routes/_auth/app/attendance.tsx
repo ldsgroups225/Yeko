@@ -283,17 +283,17 @@ function AttendancePage() {
                 :
                 {counts.total}
               </Badge>
-              <Badge className="bg-green-100 text-green-800">
+              <Badge className="bg-success/10 text-success">
                 {LL.attendance.present()}
                 :
                 {counts.present}
               </Badge>
-              <Badge className="bg-red-100 text-red-800">
+              <Badge className="bg-destructive/10 text-destructive">
                 {LL.attendance.absent()}
                 :
                 {counts.absent}
               </Badge>
-              <Badge className="bg-yellow-100 text-yellow-800">
+              <Badge className="bg-accent/10 text-accent-foreground">
                 {LL.attendance.late()}
                 :
                 {counts.late}

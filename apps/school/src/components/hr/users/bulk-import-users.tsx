@@ -213,7 +213,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                   {' '}
                   {t.hr.users.totalRows()}
                 </Badge>
-                <Badge variant="outline" className="rounded-full px-3 py-1 bg-emerald-500/10 text-emerald-600 border-emerald-500/20 font-semibold uppercase text-[10px] tracking-wider">
+                <Badge variant="outline" className="rounded-full px-3 py-1 bg-success/10 text-success border-success/20 font-semibold uppercase text-[10px] tracking-wider">
                   {preview.filter(r => !r.error).length}
                   {' '}
                   {t.hr.users.validRows()}
@@ -257,7 +257,7 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
                               </div>
                             )
                           : (
-                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
+                              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-success/10 text-success">
                                 <IconCircleCheck className="h-4 w-4" />
                               </div>
                             )}
@@ -354,13 +354,13 @@ Jane Smith,jane@example.com,+225 05 06 07 08,academic_coordinator,active`
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2 max-w-2xl">
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 shadow-sm">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-success/5 border border-success/10 shadow-sm">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-success/10 text-success">
                   <IconCircleCheck className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-emerald-600 leading-none">{results.success}</p>
-                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-600/70 mt-1">{t.hr.users.usersImported()}</p>
+                  <p className="text-2xl font-bold text-success leading-none">{results.success}</p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-success/70 mt-1">{t.hr.users.usersImported()}</p>
                 </div>
               </div>
 

@@ -24,8 +24,8 @@ interface GradeCellProps {
 
 const statusStyles: Record<GradeStatus, string> = {
   draft: 'bg-background/50 border-border/40 focus:bg-background',
-  submitted: 'bg-blue-500/5 border-blue-500/20 text-blue-600',
-  validated: 'bg-emerald-500/5 border-emerald-500/20 text-emerald-600',
+  submitted: 'bg-secondary/5 border-secondary/20 text-secondary',
+  validated: 'bg-success/5 border-success/20 text-success',
   rejected: 'bg-destructive/5 border-destructive/20 text-destructive',
 }
 
@@ -33,9 +33,9 @@ function getValueColor(value: number | null): string {
   if (value === null)
     return ''
   if (value >= 16)
-    return 'text-emerald-600 font-bold'
+    return 'text-success font-bold'
   if (value >= 14)
-    return 'text-indigo-600 font-bold'
+    return 'text-secondary font-bold'
   if (value >= 10)
     return 'text-foreground font-semibold'
   return 'text-destructive font-bold'
@@ -185,7 +185,7 @@ export function GradeCell({
             exit={{ opacity: 0, y: -5 }}
             className="absolute -bottom-6 left-0 z-50 pointer-events-none"
           >
-            <div className="bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-0.5 rounded shadow-lg border border-white/10 uppercase tracking-tight whitespace-nowrap">
+            <div className="bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-0.5 rounded shadow-lg border border-border/10 uppercase tracking-tight whitespace-nowrap">
               {error}
             </div>
           </motion.div>

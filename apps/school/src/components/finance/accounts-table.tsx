@@ -75,15 +75,15 @@ export function AccountsTable({
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'asset':
-        return 'bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400'
+        return 'bg-secondary/10 text-secondary border-secondary/20'
       case 'liability':
-        return 'bg-red-500/10 text-red-700 border-red-200 dark:border-red-900/30 dark:text-red-400'
+        return 'bg-destructive/10 text-destructive border-destructive/20'
       case 'equity':
-        return 'bg-purple-500/10 text-purple-700 border-purple-200 dark:border-purple-900/30 dark:text-purple-400'
+        return 'bg-secondary/10 text-secondary border-secondary/20'
       case 'revenue':
-        return 'bg-green-500/10 text-green-700 border-green-200 dark:border-green-900/30 dark:text-green-400'
+        return 'bg-success/10 text-success border-success/20'
       case 'expense':
-        return 'bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400'
+        return 'bg-accent/10 text-accent border-accent/20'
       default:
         return ''
     }

@@ -239,8 +239,8 @@ export function TimetableSessionDialog({
                           const c = classrooms.find(i => i.id === form.watch('classroomId'))
                           return c
                             ? (
-                                <div className="flex items-center gap-2 text-amber-500">
-                                  <div className="size-2 rounded-full bg-amber-500" />
+                                <div className="flex items-center gap-2 text-accent">
+                                  <div className="size-2 rounded-full bg-accent" />
                                   <span>{c.name}</span>
                                 </div>
                               )

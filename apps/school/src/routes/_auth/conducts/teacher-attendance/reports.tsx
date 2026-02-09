@@ -123,9 +123,9 @@ function TeacherPunctualityReportsPage() {
                       <TableRow key={record.teacherId}>
                         <TableCell className="font-medium">{record.teacherName}</TableCell>
                         <TableCell className="text-center">{record.totalDays}</TableCell>
-                        <TableCell className="text-center text-green-600">{record.presentDays}</TableCell>
-                        <TableCell className="text-center text-amber-600">{record.lateDays}</TableCell>
-                        <TableCell className="text-center text-red-600">{record.absentDays}</TableCell>
+                        <TableCell className="text-center text-success">{record.presentDays}</TableCell>
+                        <TableCell className="text-center text-accent-foreground">{record.lateDays}</TableCell>
+                        <TableCell className="text-center text-destructive">{record.absentDays}</TableCell>
                         <TableCell className="text-center">
                           {record.averageLateMinutes.toFixed(0)}
                           {' '}

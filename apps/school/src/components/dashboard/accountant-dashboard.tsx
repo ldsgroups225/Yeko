@@ -135,8 +135,8 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, currency, icon: Icon, trend }: MetricCardProps) {
   const trendColors = {
-    positive: 'text-green-600 dark:text-green-400',
-    negative: 'text-red-600 dark:text-red-400',
+    positive: 'text-success',
+    negative: 'text-destructive',
     neutral: 'text-muted-foreground',
   }
 
@@ -174,8 +174,8 @@ function TransactionItem({ type, description, amount, date }: TransactionItemPro
       </div>
       <p
         className={`text-sm font-bold ${type === 'income'
-          ? 'text-green-600 dark:text-green-400'
-          : 'text-red-600 dark:text-red-400'
+          ? 'text-success'
+          : 'text-destructive'
         }`}
       >
         {type === 'income' ? '+' : '-'}
@@ -201,7 +201,7 @@ function PendingPaymentItem({ name, class: className, amount, daysLate }: Pendin
       <div className="space-y-1">
         <p className="text-sm font-medium">{name}</p>
         <p className="text-xs text-muted-foreground">{className}</p>
-        <p className="text-xs text-red-600 dark:text-red-400">
+        <p className="text-xs text-destructive">
           {daysLate}
           {' '}
           {t.dashboard.accountant.daysAgo()}

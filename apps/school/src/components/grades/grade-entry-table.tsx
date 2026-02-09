@@ -510,7 +510,7 @@ export function GradeEntryTable({
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-accent/10 border border-accent/20 text-accent-foreground"
               >
                 <IconAlertTriangle className="size-4" />
                 <span className="text-xs font-bold uppercase tracking-tight">
@@ -540,9 +540,9 @@ export function GradeEntryTable({
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 10 }}
-                  className="flex items-center gap-2 text-xs font-bold text-emerald-600"
+                  className="flex items-center gap-2 text-xs font-bold text-success"
                 >
-                  <div className="p-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                  <div className="p-1 rounded-full bg-success/10 border border-success/20">
                     <IconCloud className="size-3" />
                   </div>
                   {t.academic.grades.autoSave.saved()}
@@ -587,14 +587,14 @@ export function GradeEntryTable({
                   onClick={handleSavePending}
                   disabled={isPendingAction || isMissingTeacher}
                   variant="outline"
-                  className="rounded-xl border-amber-500/30 font-bold bg-amber-500/5 hover:bg-amber-500/10 text-amber-700"
+                  className="rounded-xl border-accent/30 font-bold bg-accent/5 hover:bg-accent/10 text-accent-foreground"
                 >
                   {createBulkMutation.isPending
                     ? (
-                        <IconLoader2 className="mr-2 size-4 animate-spin text-amber-600" />
+                        <IconLoader2 className="mr-2 size-4 animate-spin text-accent-foreground" />
                       )
                     : (
-                        <IconDeviceFloppy className="mr-2 size-4 text-amber-600" />
+                        <IconDeviceFloppy className="mr-2 size-4 text-accent-foreground" />
                       )}
                   {t.common.save()}
                 </Button>

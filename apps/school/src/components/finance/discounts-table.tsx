@@ -142,7 +142,7 @@ export function DiscountsTable({
                         {discount.autoApply && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] h-5 px-1.5 bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400"
+                            className="text-[10px] h-5 px-1.5 bg-secondary/10 text-secondary border-secondary/20"
                           >
                             Auto
                           </Badge>
@@ -150,7 +150,7 @@ export function DiscountsTable({
                         {discount.requiresApproval && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] h-5 px-1.5 bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400"
+                            className="text-[10px] h-5 px-1.5 bg-accent/10 text-accent border-accent/20"
                           >
                             Approbation
                           </Badge>
@@ -298,7 +298,7 @@ export function DiscountsTable({
                   {discount.autoApply && (
                     <Badge
                       variant="outline"
-                      className="text-[10px] bg-blue-500/10 text-blue-700 border-blue-200 dark:border-blue-900/30 dark:text-blue-400"
+                      className="text-[10px] bg-secondary/10 text-secondary border-secondary/20"
                     >
                       Auto
                     </Badge>
@@ -306,7 +306,7 @@ export function DiscountsTable({
                   {discount.requiresApproval && (
                     <Badge
                       variant="outline"
-                      className="text-[10px] bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400"
+                      className="text-[10px] bg-accent/10 text-accent border-accent/20"
                     >
                       Approbation
                     </Badge>

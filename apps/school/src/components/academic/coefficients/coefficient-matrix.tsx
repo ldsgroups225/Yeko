@@ -303,7 +303,7 @@ export function CoefficientMatrix({
               <span className="text-muted-foreground">{t.academic.coefficients.legend.template()}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-amber-500/20 border border-amber-500/40 ring-1 ring-amber-500/20 ring-offset-1 ring-offset-background" />
+              <div className="w-3 h-3 rounded bg-accent/20 border border-accent/40 ring-1 ring-accent/20 ring-offset-1 ring-offset-background" />
               <span className="text-muted-foreground">{t.academic.coefficients.legend.edited()}</span>
             </div>
           </div>

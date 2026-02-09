@@ -391,14 +391,14 @@ export function AssignmentMatrix({
                                       defaultValue={assignment?.teacherId || 'none'}
                                     >
                                       <SelectTrigger
-                                        className="h-9 w-[150px] bg-white/5 border-white/10 text-xs focus:ring-primary/40"
+                                        className="h-9 w-[150px] bg-white/5 border-border/10 text-xs focus:ring-primary/40"
                                         aria-label={`${t.assignmentMatrix.selectTeacherFor()} ${cls.name} - ${subject.name}`}
                                       >
                                         <SelectValue
                                           placeholder={t.common.select()}
                                         />
                                       </SelectTrigger>
-                                      <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+                                      <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
                                         <SelectItem
                                           value="none"
                                           className="text-xs"
@@ -478,7 +478,7 @@ export function AssignmentMatrix({
                                                         {assignment.teacherName}
                                                       </span>
                                                       {teacherOverloaded && (
-                                                        <IconAlertTriangle className="h-3.5 w-3.5 text-amber-500 shrink-0 animate-pulse" />
+                                                        <IconAlertTriangle className="h-3.5 w-3.5 text-accent shrink-0 animate-pulse" />
                                                       )}
                                                     </div>
                                                   )
@@ -488,7 +488,7 @@ export function AssignmentMatrix({
                                             </Button>
                                           )}
                                         />
-                                        <TooltipContent className="backdrop-blur-xl bg-card/95 border-white/10 text-[11px]">
+                                        <TooltipContent className="backdrop-blur-xl bg-card/95 border-border/10 text-[11px]">
                                           {assignment?.teacherId
                                             ? (
                                                 <div className="space-y-1">
@@ -496,7 +496,7 @@ export function AssignmentMatrix({
                                                     {assignment.teacherName}
                                                   </p>
                                                   {teacherOverloaded && (
-                                                    <p className="text-amber-500 flex items-center gap-1">
+                                                    <p className="text-accent flex items-center gap-1">
                                                       <IconAlertTriangle className="h-3 w-3" />
                                                       {t.assignmentMatrix.overloaded()}
                                                     </p>

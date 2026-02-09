@@ -100,12 +100,12 @@ export function ConductRecordCard({
                   className={cn(
                     'h-1.5 w-1.5 rounded-full animate-pulse',
                     record.type === 'reward'
-                      ? 'bg-emerald-500'
+                      ? 'bg-success'
                       : record.type === 'incident'
-                        ? 'bg-orange-500'
+                        ? 'bg-accent'
                         : record.type === 'sanction'
-                          ? 'bg-red-500'
-                          : 'bg-blue-500',
+                          ? 'bg-destructive'
+                          : 'bg-secondary',
                   )}
                 />
               </div>

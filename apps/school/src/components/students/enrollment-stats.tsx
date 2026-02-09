@@ -66,7 +66,7 @@ function StatCard({ title, value, description, icon, trend }: StatCardProps) {
         )}
         {trend !== undefined && (
           <div
-            className={`flex items-center text-xs ${trend >= 0 ? 'text-green-600' : 'text-red-600'}`}
+            className={`flex items-center text-xs ${trend >= 0 ? 'text-success' : 'text-destructive'}`}
           >
             <IconTrendingUp
               className={`mr-1 h-3 w-3 ${trend < 0 ? 'rotate-180' : ''}`}
@@ -172,19 +172,19 @@ export function EnrollmentStats() {
           title={t.students.confirmedEnrollments()}
           value={data.confirmed}
           description={`${data.total > 0 ? Math.round((data.confirmed / data.total) * 100) : 0}% ${t.students.ofTotal()}`}
-          icon={<IconChartBar className="h-4 w-4 text-green-600" />}
+          icon={<IconChartBar className="h-4 w-4 text-success" />}
         />
         <StatCard
           title={t.students.pendingEnrollments()}
           value={data.pending}
           description={t.students.awaitingConfirmation()}
-          icon={<IconLoader2 className="h-4 w-4 text-yellow-600" />}
+          icon={<IconLoader2 className="h-4 w-4 text-accent-foreground" />}
         />
         <StatCard
           title={t.students.genderRatio()}
           value={`${totalBoys}/${totalGirls}`}
           description={t.students.boysGirls()}
-          icon={<IconUsers className="h-4 w-4 text-blue-600" />}
+          icon={<IconUsers className="h-4 w-4 text-secondary" />}
         />
       </div>
 
@@ -265,7 +265,7 @@ export function EnrollmentStats() {
                           <div className="flex items-center justify-between text-sm">
                             <span className="font-medium">{cls.className}</span>
                             <span
-                              className={`text-xs ${isOverCapacity ? 'text-red-600' : isNearCapacity ? 'text-yellow-600' : 'text-muted-foreground'}`}
+                              className={`text-xs ${isOverCapacity ? 'text-destructive' : isNearCapacity ? 'text-accent-foreground' : 'text-muted-foreground'}`}
                             >
                               {cls.count}
                               /
@@ -274,7 +274,7 @@ export function EnrollmentStats() {
                           </div>
                           <Progress
                             value={Math.min(fillPercent, 100)}
-                            className={`h-2 ${isOverCapacity ? '[&>div]:bg-red-500' : isNearCapacity ? '[&>div]:bg-yellow-500' : ''}`}
+                            className={`h-2 ${isOverCapacity ? '[&>div]:bg-destructive' : isNearCapacity ? '[&>div]:bg-accent' : ''}`}
                           />
                         </div>
                       )
@@ -297,10 +297,10 @@ export function EnrollmentStats() {
           <div className="flex flex-wrap gap-4">
             {byStatus.map((status) => {
               const statusColors: Record<string, string> = {
-                confirmed: 'bg-green-100 text-green-800',
-                pending: 'bg-yellow-100 text-yellow-800',
-                cancelled: 'bg-red-100 text-red-800',
-                transferred: 'bg-blue-100 text-blue-800',
+                confirmed: 'bg-success/10 text-success',
+                pending: 'bg-accent/10 text-accent-foreground',
+                cancelled: 'bg-destructive/10 text-destructive',
+                transferred: 'bg-secondary/10 text-secondary',
               }
               return (
                 <div

@@ -238,58 +238,58 @@ function ConductReportsPage() {
                   </motion.div>
 
                   <motion.div variants={item}>
-                    <Card className="relative overflow-hidden rounded-3xl border-rose-500/20 bg-rose-500/5 backdrop-blur-xl shadow-xl group">
+                    <Card className="relative overflow-hidden rounded-3xl border-destructive/20 bg-destructive/5 backdrop-blur-xl shadow-xl group">
                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <IconAlertTriangle className="size-16 text-rose-500" />
+                        <IconAlertTriangle className="size-16 text-destructive" />
                       </div>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-rose-500/60">{t.conduct.type.incident()}</CardTitle>
+                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-destructive/60">{t.conduct.type.incident()}</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-4xl font-black tracking-tight text-rose-500">{stats.incidents}</div>
+                        <div className="text-4xl font-black tracking-tight text-destructive">{stats.incidents}</div>
                         <Progress
                           value={stats.total > 0 ? (stats.incidents / stats.total) * 100 : 0}
-                          className="mt-4 h-1.5 bg-rose-500/10 [&>div]:bg-rose-500"
+                          className="mt-4 h-1.5 bg-destructive/10 [&>div]:bg-destructive"
                         />
                       </CardContent>
                     </Card>
                   </motion.div>
 
                   <motion.div variants={item}>
-                    <Card className="relative overflow-hidden rounded-3xl border-orange-500/20 bg-orange-500/5 backdrop-blur-xl shadow-xl group">
+                    <Card className="relative overflow-hidden rounded-3xl border-accent/20 bg-accent/5 backdrop-blur-xl shadow-xl group">
                       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <IconShieldCheck className="size-16 text-orange-500" />
+                        <IconShieldCheck className="size-16 text-accent-foreground" />
                       </div>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-orange-500/60">{t.conduct.type.sanction()}</CardTitle>
+                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-accent-foreground/60">{t.conduct.type.sanction()}</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-4xl font-black tracking-tight text-orange-500">{stats.sanctions}</div>
+                        <div className="text-4xl font-black tracking-tight text-accent-foreground">{stats.sanctions}</div>
                         <Progress
                           value={stats.total > 0 ? (stats.sanctions / stats.total) * 100 : 0}
-                          className="mt-4 h-1.5 bg-orange-500/10 [&>div]:bg-orange-500"
+                          className="mt-4 h-1.5 bg-accent/10 [&>div]:bg-accent"
                         />
                       </CardContent>
                     </Card>
                   </motion.div>
 
-                  <motion.div variants={item}>
-                    <Card className="relative overflow-hidden rounded-3xl border-emerald-500/20 bg-emerald-500/5 backdrop-blur-xl shadow-xl group">
-                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <IconTrophy className="size-16 text-emerald-500" />
-                      </div>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60">{t.conduct.type.reward()}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-4xl font-black tracking-tight text-emerald-500">{stats.rewards}</div>
-                        <Progress
-                          value={stats.total > 0 ? (stats.rewards / stats.total) * 100 : 0}
-                          className="mt-4 h-1.5 bg-emerald-500/10 [&>div]:bg-emerald-500"
-                        />
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+                      <motion.div variants={item}>
+                        <Card className="relative overflow-hidden rounded-3xl border-success/20 bg-success/5 backdrop-blur-xl shadow-xl group">
+                          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                            <IconTrophy className="size-16 text-success" />
+                          </div>
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-success/60">{t.conduct.type.reward()}</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="text-4xl font-black tracking-tight text-success">{stats.rewards}</div>
+                            <Progress
+                              value={stats.total > 0 ? (stats.rewards / stats.total) * 100 : 0}
+                              className="mt-4 h-1.5 bg-success/10 [&>div]:bg-success"
+                            />
+                          </CardContent>
+                        </Card>
+                      </motion.div>
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-2">

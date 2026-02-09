@@ -16,24 +16,24 @@ const severityConfig: Record<ConductSeverity, {
   dotClass: string
 }> = {
   low: {
-    colorClass: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-    dotClass: 'bg-blue-600',
+    colorClass: 'bg-secondary/10 text-secondary border-secondary/20',
+    dotClass: 'bg-secondary',
   },
   medium: {
-    colorClass: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
-    dotClass: 'bg-amber-600',
+    colorClass: 'bg-accent/10 text-accent-foreground border-accent/20',
+    dotClass: 'bg-accent-foreground',
   },
   high: {
-    colorClass: 'bg-orange-500/10 text-orange-600 border-orange-500/20',
-    dotClass: 'bg-orange-600',
+    colorClass: 'bg-accent/10 text-accent-foreground border-accent/20',
+    dotClass: 'bg-accent-foreground',
   },
   critical: {
-    colorClass: 'bg-red-500/10 text-red-600 border-red-500/20',
-    dotClass: 'bg-red-600',
+    colorClass: 'bg-destructive/10 text-destructive border-destructive/20',
+    dotClass: 'bg-destructive',
   },
   urgent: {
-    colorClass: 'bg-rose-600 text-white border-rose-700 shadow-lg shadow-rose-500/20',
-    dotClass: 'bg-white',
+    colorClass: 'bg-destructive text-destructive-foreground border-destructive shadow-lg shadow-destructive/20',
+    dotClass: 'bg-destructive-foreground',
   },
 }
 

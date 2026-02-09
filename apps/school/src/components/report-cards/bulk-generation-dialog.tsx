@@ -211,7 +211,7 @@ export function BulkGenerationDialog({
                     <IconCircleCheck className="h-12 w-12 text-green-500" />
                   )
                 : (
-                    <IconAlertCircle className="h-12 w-12 text-yellow-500" />
+                    <IconAlertCircle className="h-12 w-12 text-accent" />
                   )}
             </div>
 

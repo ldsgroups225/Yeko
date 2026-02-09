@@ -30,10 +30,10 @@ const actionIcons = {
 }
 
 const actionColors = {
-  submitted: 'text-blue-600 bg-blue-500/10 border-blue-500/20',
-  validated: 'text-emerald-600 bg-emerald-500/10 border-emerald-500/20',
+  submitted: 'text-primary bg-primary/10 border-primary/20',
+  validated: 'text-success bg-success/10 border-success/20',
   rejected: 'text-destructive bg-destructive/10 border-destructive/20',
-  edited: 'text-amber-600 bg-amber-500/10 border-amber-500/20',
+  edited: 'text-warning bg-warning/10 border-warning/20',
 }
 
 export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {

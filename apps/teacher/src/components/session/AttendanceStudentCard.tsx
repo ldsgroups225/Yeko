@@ -31,9 +31,9 @@ const statusConfig = {
     iconColor: 'text-red-500',
   },
   late: {
-    bg: 'bg-amber-500/10 border-amber-500/30',
+    bg: 'bg-accent/10 border-accent/30',
     icon: IconClock,
-    iconColor: 'text-amber-500',
+    iconColor: 'text-accent',
   },
 }
 
@@ -78,7 +78,7 @@ export function AttendanceStudentCard({
               'absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center border-2 border-card',
               status === 'present' && 'bg-emerald-500',
               status === 'absent' && 'bg-red-500',
-              status === 'late' && 'bg-amber-500',
+              status === 'late' && 'bg-accent',
             )}
             >
               <StatusIcon className="w-3 h-3 text-white" />
@@ -107,8 +107,8 @@ export function AttendanceStudentCard({
                   className={cn(
                     'h-9 px-3 rounded-lg font-semibold transition-all',
                     status === 'late'
-                      ? 'bg-amber-500 text-white border-amber-500 hover:bg-amber-600'
-                      : 'bg-muted/50 hover:bg-amber-500/20 hover:border-amber-500/50',
+                      ? 'bg-accent text-white border-accent hover:bg-accent'
+                      : 'bg-muted/50 hover:bg-accent/20 hover:border-accent/50',
                   )}
                   onClick={() => onUpdateStatus(student.id, status === 'late' ? 'absent' : 'late')}
                 >
@@ -153,8 +153,8 @@ export function AttendanceStudentCard({
                     className={cn(
                       'h-9 w-9 rounded-lg transition-all',
                       status === 'late'
-                        ? 'bg-amber-500 text-white hover:bg-amber-600'
-                        : 'bg-muted/50 hover:bg-amber-500/20',
+                        ? 'bg-accent text-white hover:bg-accent'
+                        : 'bg-muted/50 hover:bg-accent/20',
                     )}
                     onClick={() => onUpdateStatus(student.id, 'late')}
                     title={LL.attendance.status.late()}

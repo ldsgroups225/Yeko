@@ -219,7 +219,7 @@ export function CreateAdminDialog({
                 </DialogHeader>
 
                 <div className="space-y-4">
-                  <Alert className="bg-green-50 border-green-200">
+                  <Alert className="bg-success/10 border-success/20">
                     <AlertDescription>
                       ✅ Le compte administrateur a été créé avec succès.
                     </AlertDescription>
@@ -243,7 +243,7 @@ export function CreateAdminDialog({
                         >
                           {copiedField === 'email'
                             ? (
-                                <IconCheck className="h-4 w-4 text-green-600" />
+                                <IconCheck className="h-4 w-4 text-success" />
                               )
                             : (
                                 <IconCopy className="h-4 w-4" />
@@ -270,7 +270,7 @@ export function CreateAdminDialog({
                         >
                           {copiedField === 'password'
                             ? (
-                                <IconCheck className="h-4 w-4 text-green-600" />
+                                <IconCheck className="h-4 w-4 text-success" />
                               )
                             : (
                                 <IconCopy className="h-4 w-4" />

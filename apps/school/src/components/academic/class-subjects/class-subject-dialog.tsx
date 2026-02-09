@@ -111,7 +111,7 @@ export function ClassSubjectDialog({
             <Label className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground ml-1">
               {t.academic.classes.selectSubject()}
             </Label>
-            <ScrollArea className="h-[240px] rounded-xl border border-white/10 bg-white/5 overflow-hidden">
+            <ScrollArea className="h-[240px] rounded-xl border border-border/10 bg-white/5 overflow-hidden">
               <AnimatePresence mode="wait">
                 {isPending
                   ? (
@@ -183,7 +183,7 @@ export function ClassSubjectDialog({
                 step="0.5"
                 value={coefficient}
                 onChange={e => setCoefficient(Number(e.target.value))}
-                className="h-11 bg-white/5 border-white/10 focus:ring-primary/40 font-mono text-center font-bold"
+                className="h-11 bg-white/5 border-border/10 focus:ring-primary/40 font-mono text-center font-bold"
               />
             </div>
             <div className="space-y-2">
@@ -198,7 +198,7 @@ export function ClassSubjectDialog({
                 step="0.5"
                 value={hours}
                 onChange={e => setHours(Number(e.target.value))}
-                className="h-11 bg-white/5 border-white/10 focus:ring-primary/40 font-mono text-center font-bold"
+                className="h-11 bg-white/5 border-border/10 focus:ring-primary/40 font-mono text-center font-bold"
               />
             </div>
           </div>

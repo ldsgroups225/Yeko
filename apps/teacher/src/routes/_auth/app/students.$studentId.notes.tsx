@@ -71,23 +71,23 @@ function StudentNotesPage() {
               )
             : (
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-red-50 rounded-lg">
-                    <p className="text-2xl font-bold text-red-700">
+                  <div className="text-center p-4 bg-destructive/10 rounded-lg">
+                    <p className="text-2xl font-bold text-destructive">
                       {summary?.summary?.behaviorCount ?? 0}
                     </p>
-                    <p className="text-sm text-red-600">{LL.notes.behavior()}</p>
+                    <p className="text-sm text-destructive/80">{LL.notes.behavior()}</p>
                   </div>
-                  <div className="text-center p-4 bg-blue-50 rounded-lg">
-                    <p className="text-2xl font-bold text-blue-700">
+                  <div className="text-center p-4 bg-secondary/10 rounded-lg">
+                    <p className="text-2xl font-bold text-secondary">
                       {summary?.summary?.academicCount ?? 0}
                     </p>
-                    <p className="text-sm text-blue-600">{LL.notes.academic()}</p>
+                    <p className="text-sm text-secondary/80">{LL.notes.academic()}</p>
                   </div>
-                  <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                    <p className="text-2xl font-bold text-yellow-700">
+                  <div className="text-center p-4 bg-accent/10 rounded-lg">
+                    <p className="text-2xl font-bold text-accent-foreground">
                       {summary?.summary?.highPriorityCount ?? 0}
                     </p>
-                    <p className="text-sm text-yellow-600">{LL.notes.priority()}</p>
+                    <p className="text-sm text-accent-foreground/80">{LL.notes.priority()}</p>
                   </div>
                 </div>
               )}

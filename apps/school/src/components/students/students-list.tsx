@@ -78,11 +78,11 @@ import { ImportDialog } from './import-dialog'
 import { StudentStatusDialog } from './student-status-dialog'
 
 const statusColors = {
-  active: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-  graduated: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+  active: 'bg-success/10 text-success dark:bg-success/20 dark:text-success/80',
+  graduated: 'bg-secondary/10 text-secondary dark:bg-secondary/20 dark:text-secondary/80',
   transferred:
-    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-  withdrawn: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+    'bg-accent/10 text-accent-foreground dark:bg-accent/20 dark:text-accent-foreground/80',
+  withdrawn: 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive/80',
 }
 
 type StudentItem = StudentWithDetails
@@ -473,7 +473,7 @@ export function StudentsList() {
               Array.from({ length: 5 }, () => (
                 <div
                   key={`card-skeleton-${generateUUID()}`}
-                  className="rounded-xl border border-white/10 bg-white/30 p-4 backdrop-blur-sm"
+                  className="rounded-xl border border-border/10 bg-white/30 p-4 backdrop-blur-sm"
                 >
                   <div className="flex items-center gap-3">
                     <Skeleton className="h-12 w-12 rounded-full" />
@@ -488,7 +488,7 @@ export function StudentsList() {
             )
           : data?.data.length === 0
             ? (
-                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-white/20 bg-white/30 p-8 text-center backdrop-blur-sm">
+                <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-border/20 bg-white/30 p-8 text-center backdrop-blur-sm">
                   <IconUsers className="mx-auto h-12 w-12 text-muted-foreground/50" />
                   <h3 className="mt-4 text-lg font-semibold">
                     {t.students.noStudents()}
@@ -670,7 +670,7 @@ export function StudentsList() {
                   Array.from({ length: 10 }, () => (
                     <TableRow
                       key={`table-skeleton-${generateUUID()}`}
-                      className="border-white/10"
+                      className="border-border/10"
                     >
                       <TableCell>
                         <Skeleton className="h-4 w-4" />

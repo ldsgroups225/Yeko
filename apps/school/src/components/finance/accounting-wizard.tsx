@@ -83,7 +83,7 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
                   currentStep === index
                     ? 'bg-primary/10 text-primary shadow-sm'
                     : index < currentStep
-                      ? 'text-green-600 dark:text-green-400'
+                      ? 'text-success'
                       : 'text-muted-foreground hover:bg-muted/50',
                 )}
               >
@@ -93,7 +93,7 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
                     currentStep === index
                       ? 'border-primary bg-primary text-white'
                       : index < currentStep
-                        ? 'border-green-500 bg-green-500 text-white'
+                        ? 'border-success bg-success text-white'
                         : 'border-muted-foreground/30',
                   )}
                 >

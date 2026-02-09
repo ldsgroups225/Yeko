@@ -95,9 +95,9 @@ export function ProgressCard({
             <span
               className={cn(
                 'flex items-center gap-1 font-medium',
-                isAhead && 'text-blue-600 dark:text-blue-400',
-                isBehind && 'text-red-600 dark:text-red-400',
-                !isAhead && !isBehind && 'text-green-600 dark:text-green-400',
+                isAhead && 'text-secondary dark:text-secondary/80',
+                isBehind && 'text-destructive dark:text-destructive/80',
+                !isAhead && !isBehind && 'text-success dark:text-success/80',
               )}
             >
               {isAhead && <IconTrendingUp className="h-4 w-4" />}

@@ -51,11 +51,11 @@ import { PhotoUploadDialog } from './photo-upload-dialog'
 import { TransferDialog } from './transfer-dialog'
 
 const statusColors = {
-  active: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-  graduated: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+  active: 'bg-success/10 text-success dark:bg-success/20 dark:text-success/80',
+  graduated: 'bg-secondary/10 text-secondary dark:bg-secondary/20 dark:text-secondary/80',
   transferred:
-    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-  withdrawn: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300',
+    'bg-accent/10 text-accent-foreground dark:bg-accent/20 dark:text-accent-foreground/80',
+  withdrawn: 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive/80',
 }
 
 interface StudentDetailProps {
@@ -109,7 +109,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
       className="space-y-8"
     >
       {/* Header Profile Card */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-linear-to-br from-primary/10 via-white/50 to-white/80 p-8 backdrop-blur-2xl dark:from-primary/10 dark:via-black/50 dark:to-black/80">
+      <div className="relative overflow-hidden rounded-3xl border border-border/20 bg-linear-to-br from-primary/10 via-background/50 to-background/80 p-8 backdrop-blur-2xl dark:from-primary/10 dark:via-card/50 dark:to-card/80">
         <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/20 blur-3xl opacity-50" />
 
         <div className="relative z-10 flex flex-col items-center gap-6 md:flex-row md:items-start md:justify-between">
@@ -120,7 +120,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               className="group relative cursor-pointer"
               title={t.students.changePhoto()}
             >
-              <div className="relative h-28 w-28 rounded-full border-4 border-white overflow-hidden dark:border-white/10">
+              <div className="relative h-28 w-28 rounded-full border-4 border-white overflow-hidden dark:border-border/10">
                 <Avatar className="h-full w-full">
                   <AvatarImage
                     src={student.photoUrl ?? undefined}
@@ -148,7 +148,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
                 <Badge
                   variant="outline"
-                  className="text-sm px-3 py-1 font-mono uppercase tracking-widest bg-white/50 dark:bg-black/20"
+                  className="text-sm px-3 py-1 font-mono uppercase tracking-widest bg-white/50 dark:bg-card/20"
                 >
                   {student.matricule}
                 </Badge>
@@ -186,7 +186,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
       </div>
 
       <Tabs defaultValue="info" className="w-full">
-        <TabsList className="mb-8 p-1 h-auto bg-white/40 dark:bg-black/40 backdrop-blur-md rounded-full border border-white/20 dark:border-white/10 w-full md:w-auto inline-flex justify-start">
+        <TabsList className="mb-8 p-1 h-auto bg-white/40 dark:bg-card/40 backdrop-blur-md rounded-full border border-border/20 dark:border-border/10 w-full md:w-auto inline-flex justify-start">
           <TabsTrigger
             value="info"
             className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
@@ -220,7 +220,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               animate="show"
               transition={{ delay: 0.1 }}
             >
-              <Card className="h-full border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
+              <Card className="h-full border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-primary">
                     <div className="p-2 rounded-lg bg-primary/10">
@@ -278,7 +278,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               animate="show"
               transition={{ delay: 0.2 }}
             >
-              <Card className="h-full border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
+              <Card className="h-full border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-primary">
                     <div className="p-2 rounded-lg bg-primary/10">
@@ -360,7 +360,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               animate="show"
               transition={{ delay: 0.3 }}
             >
-              <Card className="h-full border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
+              <Card className="h-full border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-primary">
                     <div className="p-2 rounded-lg bg-primary/10">
@@ -397,7 +397,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               animate="show"
               transition={{ delay: 0.4 }}
             >
-              <Card className="h-full border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
+              <Card className="h-full border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg text-pink-500">
                     <div className="p-2 rounded-lg bg-pink-500/10">
@@ -423,8 +423,8 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
         {/* Parents Tab */}
         <TabsContent value="parents" className="space-y-4">
-          <Card className="border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-white/10 bg-white/30 px-6 py-4">
+          <Card className="border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-border/10 bg-white/30 px-6 py-4">
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <IconUsers className="h-5 w-5 text-primary" />
@@ -453,10 +453,10 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
                           initial={{ opacity: 0, scale: 0.95 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: idx * 0.1 }}
-                          className="flex items-center justify-between rounded-xl border border-white/20 bg-white/60 p-4 shadow-sm backdrop-blur-md transition-all hover:bg-white/80 dark:bg-white/5"
+                          className="flex items-center justify-between rounded-xl border border-border/20 bg-white/60 p-4 shadow-sm backdrop-blur-md transition-all hover:bg-white/80 dark:bg-white/5"
                         >
                           <div className="flex items-center gap-4">
-                            <Avatar className="h-12 w-12 border border-white/20">
+                            <Avatar className="h-12 w-12 border border-border/20">
                               <AvatarFallback className="bg-primary/5 text-primary font-bold">
                                 {item.parent.firstName[0]}
                                 {item.parent.lastName[0]}
@@ -546,8 +546,8 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
         {/* Enrollment IconHistory Tab */}
         <TabsContent value="enrollments" className="space-y-4">
-          <Card className="border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20">
-            <CardHeader className="flex flex-row items-center justify-between border-b border-white/10 bg-white/30 px-6 py-4">
+          <Card className="border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-border/10 bg-white/30 px-6 py-4">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <IconCalendar className="h-5 w-5 text-primary" />
                 {t.students.enrollmentHistory()}

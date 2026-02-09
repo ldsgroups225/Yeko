@@ -107,7 +107,7 @@ export function ClassCoverageSummary({ subjects }: ClassCoverageSummaryProps) {
                 </div>
               )
             : (
-                <div className="flex items-center text-xs text-amber-500 font-medium bg-amber-500/10 px-2 py-1 rounded-full w-fit">
+                <div className="flex items-center text-xs text-accent font-medium bg-accent/10 px-2 py-1 rounded-full w-fit">
                   <IconAlertCircle className="mr-1 h-3.1 w-3.1" />
                   {t.academic.classes.unassignedCount({
                     count: totalSubjects - assignedSubjects,

@@ -569,7 +569,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-border/40 bg-white/70 backdrop-blur-2xl dark:bg-black/70 transition-all duration-300"
+      className="border-r border-border/40 bg-white/70 backdrop-blur-2xl dark:bg-card/70 transition-all duration-300"
       {...props}
     >
       <SidebarHeader className="p-6 border-b border-border/5">

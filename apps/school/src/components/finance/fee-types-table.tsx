@@ -131,7 +131,7 @@ export function FeeTypesTable({
                         {feeType.isMandatory && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] uppercase font-bold tracking-wider bg-red-500/5 text-red-600 border-red-200 dark:border-red-900/30"
+                            className="text-[10px] uppercase font-bold tracking-wider bg-destructive/5 text-destructive border-destructive/20"
                           >
                             Obligatoire
                           </Badge>
@@ -139,7 +139,7 @@ export function FeeTypesTable({
                         {feeType.isRecurring && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] uppercase font-bold tracking-wider bg-blue-500/5 text-blue-600 border-blue-200 dark:border-blue-900/30"
+                            className="text-[10px] uppercase font-bold tracking-wider bg-secondary/5 text-secondary border-secondary/20"
                           >
                             Récurrent
                           </Badge>
@@ -252,7 +252,7 @@ export function FeeTypesTable({
                 {feeType.isMandatory && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] uppercase font-bold tracking-wider bg-red-500/5 text-red-600 border-red-200 dark:border-red-900/30"
+                    className="text-[10px] uppercase font-bold tracking-wider bg-destructive/5 text-destructive border-destructive/20"
                   >
                     Obligatoire
                   </Badge>
@@ -260,7 +260,7 @@ export function FeeTypesTable({
                 {feeType.isRecurring && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] uppercase font-bold tracking-wider bg-blue-500/5 text-blue-600 border-blue-200 dark:border-blue-900/30"
+                    className="text-[10px] uppercase font-bold tracking-wider bg-secondary/5 text-secondary border-secondary/20"
                   >
                     Récurrent
                   </Badge>

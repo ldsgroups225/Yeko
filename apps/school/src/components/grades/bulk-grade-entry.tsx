@@ -243,14 +243,14 @@ export function BulkGradeEntry({
               className={cn(
                 'flex h-8 px-3 items-center gap-2 rounded-full border text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all',
                 filledCount > 0
-                  ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600'
+                  ? 'bg-success/10 border-success/20 text-success'
                   : 'bg-muted/50 border-border/40 text-muted-foreground',
               )}
             >
               <div
                 className={cn(
                   'size-2 rounded-full animate-pulse',
-                  filledCount > 0 ? 'bg-emerald-500' : 'bg-muted-foreground/40',
+                  filledCount > 0 ? 'bg-success' : 'bg-muted-foreground/40',
                 )}
               />
               {t.academic.grades.bulk.filled({

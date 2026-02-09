@@ -86,7 +86,7 @@ export function GradeValidationDialog({
           <div className="flex items-center gap-4 mb-2">
             <div className={cn(
               'flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner transition-transform group-hover:scale-110',
-              isReject ? 'bg-destructive/10 text-destructive' : 'bg-emerald-500/10 text-emerald-600',
+              isReject ? 'bg-destructive/10 text-destructive' : 'bg-success/10 text-success',
             )}
             >
               {isReject ? <IconCircleX className="size-6" /> : <IconCircleCheck className="size-6" />}
@@ -164,7 +164,7 @@ export function GradeValidationDialog({
             disabled={isPending}
             className={cn(
               'rounded-xl font-bold uppercase tracking-widest text-[10px] px-8 shadow-lg transition-all',
-              !isReject && 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20',
+              !isReject && 'bg-success hover:bg-success/90 shadow-success/20',
               isReject && 'shadow-destructive/20',
             )}
           >

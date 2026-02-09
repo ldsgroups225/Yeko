@@ -178,19 +178,19 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
         exit={{ opacity: 0, y: -20 }}
         className="space-y-2"
       >
-        <Card className={result.success ? 'border-green-500' : 'border-red-500'}>
+        <Card className={result.success ? 'border-success' : 'border-destructive'}>
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               {result.success
                 ? (
                     <>
-                      <IconCheck className="h-5 w-5 text-green-500" />
+                      <IconCheck className="h-5 w-5 text-success" />
                       {LL.sync.success()}
                     </>
                   )
                 : (
                     <>
-                      <IconAlertTriangle className="h-5 w-5 text-red-500" />
+                      <IconAlertTriangle className="h-5 w-5 text-destructive" />
                       {LL.sync.error()}
                     </>
                   )}
@@ -198,14 +198,14 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {result.syncedNotes.length > 0 && (
-              <p className="text-green-600 dark:text-green-400">
+              <p className="text-success dark:text-success/80">
                 ✓
                 {' '}
                 {LL.sync.notesPublished({ count: result.syncedNotes.length })}
               </p>
             )}
             {result.failedNotes.length > 0 && (
-              <p className="text-red-600 dark:text-red-400">
+              <p className="text-destructive dark:text-destructive/80">
                 ✗
                 {' '}
                 {LL.sync.notesFailed({ count: result.failedNotes.length })}
@@ -290,13 +290,13 @@ export function SyncStatusCard({
           {isOnline
             ? (
                 <>
-                  <IconWifi className="h-4 w-4 text-green-500" />
+                  <IconWifi className="h-4 w-4 text-success" />
                   <span className="text-muted-foreground">{LL.sync.online()}</span>
                 </>
               )
             : (
                 <>
-                  <IconWifiOff className="h-4 w-4 text-red-500" />
+                  <IconWifiOff className="h-4 w-4 text-destructive" />
                   <span className="text-muted-foreground">{LL.sync.offline()}</span>
                 </>
               )}

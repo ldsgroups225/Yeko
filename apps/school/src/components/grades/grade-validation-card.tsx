@@ -129,7 +129,7 @@ export function GradeValidationCard({
             size="sm"
             onClick={onValidate}
             disabled={isPending}
-            className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-500/20"
+            className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-success hover:bg-success/90 shadow-lg shadow-success/20"
           >
             <IconCircleCheck className="mr-1.5 size-3.5" />
             {t.academic.grades.validations.validate()}

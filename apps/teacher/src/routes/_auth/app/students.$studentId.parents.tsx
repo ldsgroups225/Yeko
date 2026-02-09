@@ -118,7 +118,7 @@ function ParentCard({ parent }: { parent: Parent }) {
               </span>
             )}
             {parent.isVerified && (
-              <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-700">
+              <span className="rounded-full bg-success/10 px-2 py-1 text-xs font-medium text-success">
                 {LL.parents.verified()}
               </span>
             )}

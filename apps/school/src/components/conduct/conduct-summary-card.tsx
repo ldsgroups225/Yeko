@@ -22,10 +22,10 @@ export function ConductSummaryCard({ studentName, summary, className }: ConductS
   const t = useTranslations()
 
   const stats = [
-    { label: t.conduct.type.incident(), value: summary.incidents, icon: IconAlertTriangle, color: 'text-orange-500', bg: 'bg-orange-500/10' },
-    { label: t.conduct.type.sanction(), value: summary.sanctions, icon: IconBan, color: 'text-red-500', bg: 'bg-red-500/10' },
-    { label: t.conduct.type.reward(), value: summary.rewards, icon: IconAward, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { label: t.conduct.type.note(), value: summary.notes, icon: IconFileText, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+    { label: t.conduct.type.incident(), value: summary.incidents, icon: IconAlertTriangle, color: 'text-accent-foreground', bg: 'bg-accent/10' },
+    { label: t.conduct.type.sanction(), value: summary.sanctions, icon: IconBan, color: 'text-destructive', bg: 'bg-destructive/10' },
+    { label: t.conduct.type.reward(), value: summary.rewards, icon: IconAward, color: 'text-success', bg: 'bg-success/10' },
+    { label: t.conduct.type.note(), value: summary.notes, icon: IconFileText, color: 'text-secondary', bg: 'bg-secondary/10' },
   ]
 
   return (

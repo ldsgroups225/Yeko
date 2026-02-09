@@ -82,7 +82,7 @@ export function GradingScaleConfig({
   const gradeCategories = [
     { key: 'excellent' as const, color: 'bg-green-500', shadow: 'shadow-green-500/20' },
     { key: 'good' as const, color: 'bg-blue-500', shadow: 'shadow-blue-500/20' },
-    { key: 'average' as const, color: 'bg-yellow-500', shadow: 'shadow-yellow-500/20' },
+    { key: 'average' as const, color: 'bg-accent', shadow: 'shadow-accent/20' },
     { key: 'fail' as const, color: 'bg-red-500', shadow: 'shadow-red-500/20' },
   ]
 

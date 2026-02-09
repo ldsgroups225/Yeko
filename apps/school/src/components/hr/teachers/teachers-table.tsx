@@ -153,9 +153,9 @@ export function TeachersTable({ filters }: TeachersTableProps) {
             | 'inactive'
             | 'on_leave'
           const variants = {
-            active: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
-            inactive: 'bg-slate-500/10 text-slate-600 border-slate-500/20',
-            on_leave: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+            active: 'bg-success/10 text-success border-success/20',
+            inactive: 'bg-muted text-muted-foreground border-muted',
+            on_leave: 'bg-accent/10 text-accent-foreground border-accent/20',
           } as const
           return (
             <Badge

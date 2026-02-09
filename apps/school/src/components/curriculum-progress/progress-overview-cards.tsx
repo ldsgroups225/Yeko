@@ -53,19 +53,19 @@ export function ProgressOverviewCards({ data, isPending }: ProgressOverviewCards
       title: t.curriculum.totalClasses(),
       value: data.totalClasses,
       icon: IconBook,
-      color: 'text-blue-500',
+      color: 'text-secondary',
     },
     {
       title: t.curriculum.onTrack(),
       value: data.onTrack + data.ahead,
       icon: IconCircleCheck,
-      color: 'text-green-500',
+      color: 'text-success',
     },
     {
       title: t.curriculum.behind(),
       value: data.slightlyBehind + data.significantlyBehind,
       icon: IconTrendingDown,
-      color: 'text-red-500',
+      color: 'text-destructive',
     },
     {
       title: t.curriculum.averageProgress(),

@@ -93,13 +93,13 @@ function Support() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'critical':
-        return 'text-red-600 bg-red-100 dark:bg-red-900/30'
+        return 'text-destructive bg-destructive/10 dark:bg-destructive/20'
       case 'high':
         return 'text-orange-600 bg-orange-100 dark:bg-orange-900/30'
       case 'medium':
-        return 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30'
+        return 'text-accent-foreground bg-accent/10 dark:bg-accent/20'
       case 'low':
-        return 'text-green-600 bg-green-100 dark:bg-green-900/30'
+        return 'text-success bg-success/10 dark:bg-success/20'
       default:
         return 'text-muted-foreground bg-muted'
     }
@@ -444,8 +444,8 @@ function Support() {
       <Card>
         <CardContent className="py-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-              <IconCircleCheck className="h-5 w-5 text-green-600 dark:text-green-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success/10 dark:bg-success/20">
+              <IconCircleCheck className="h-5 w-5 text-success dark:text-success/80" />
             </div>
             <div>
               <h3 className="text-lg font-semibold">

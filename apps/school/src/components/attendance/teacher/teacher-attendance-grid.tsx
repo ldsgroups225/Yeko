@@ -53,42 +53,42 @@ const statusConfig: Record<TeacherAttendanceStatus, {
   present: {
     label: t => t.attendance.status.present(),
     icon: IconUserCheck,
-    color: 'text-emerald-500',
-    bgColor: 'bg-emerald-500/10',
-    borderColor: 'border-emerald-500/20',
-    indicatorColor: 'bg-emerald-500',
+    color: 'text-success',
+    bgColor: 'bg-success/10',
+    borderColor: 'border-success/20',
+    indicatorColor: 'bg-success',
   },
   late: {
     label: t => t.attendance.status.late(),
     icon: IconClock,
-    color: 'text-amber-500',
-    bgColor: 'bg-amber-500/10',
-    borderColor: 'border-amber-500/20',
-    indicatorColor: 'bg-amber-500',
+    color: 'text-accent-foreground',
+    bgColor: 'bg-accent/10',
+    borderColor: 'border-accent/20',
+    indicatorColor: 'bg-accent',
   },
   on_leave: {
     label: t => t.attendance.status.on_leave(),
     icon: IconUserMinus,
-    color: 'text-blue-600 dark:text-blue-400',
-    bgColor: 'bg-blue-50/50 dark:bg-blue-900/20',
-    borderColor: 'border-blue-100 dark:border-blue-800',
-    indicatorColor: 'bg-blue-500',
+    color: 'text-secondary',
+    bgColor: 'bg-secondary/10',
+    borderColor: 'border-secondary/20',
+    indicatorColor: 'bg-secondary',
   },
   absent: {
     label: t => t.attendance.status.absent(),
     icon: IconUserX,
-    color: 'text-rose-500',
-    bgColor: 'bg-rose-500/10',
-    borderColor: 'border-rose-500/20',
-    indicatorColor: 'bg-rose-500',
+    color: 'text-destructive',
+    bgColor: 'bg-destructive/10',
+    borderColor: 'border-destructive/20',
+    indicatorColor: 'bg-destructive',
   },
   excused: {
     label: t => t.attendance.status.excused(),
     icon: IconUserMinus,
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-500/10',
-    borderColor: 'border-blue-500/20',
-    indicatorColor: 'bg-blue-500',
+    color: 'text-secondary',
+    bgColor: 'bg-secondary/10',
+    borderColor: 'border-secondary/20',
+    indicatorColor: 'bg-secondary',
   },
 }
 
@@ -163,7 +163,7 @@ export function TeacherAttendanceGrid({
             <Button
               variant="outline"
               onClick={handleMarkAllPresent}
-              className="h-9 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-emerald-500/10 hover:text-emerald-500 transition-all px-4"
+              className="h-9 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-success/10 hover:text-success transition-all px-4"
             >
               <IconCircleCheck className="mr-2 h-4 w-4" />
               {t.attendance.markAllPresent()}

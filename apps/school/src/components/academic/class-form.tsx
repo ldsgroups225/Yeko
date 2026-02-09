@@ -153,12 +153,12 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             control={control}
             render={({ field }) => (
               <Select value={field.value || ''} onValueChange={field.onChange}>
-                <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
+                <SelectTrigger className="bg-white/5 border-border/10 focus:ring-primary/40 h-11">
                   <SelectValue placeholder={t.classes.selectGrade()}>
                     {grades.find(g => g.id === field.value)?.name}
                   </SelectValue>
                 </SelectTrigger>
-                <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+                <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
                   {grades.map(g => (
                     <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
                   ))}
@@ -180,14 +180,14 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             {t.classes.series()}
           </Label>
           <Select value={watch('seriesId') || '__none__'} onValueChange={v => setValue('seriesId', v === '__none__' ? null : v)}>
-            <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
+            <SelectTrigger className="bg-white/5 border-border/10 focus:ring-primary/40 h-11">
               <SelectValue placeholder={t.classes.selectSeries()}>
                 {watch('seriesId')
                   ? series.find(s => s.id === watch('seriesId'))?.name
                   : t.common.none()}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+            <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
               {series.map(s => (
                 <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
@@ -208,7 +208,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             id="section"
             {...register('section')}
             placeholder={t.placeholders.classSection()}
-            className="bg-white/5 border-white/10 focus:ring-primary/40 h-11"
+            className="bg-white/5 border-border/10 focus:ring-primary/40 h-11"
           />
           {errors.section && (
             <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="text-[11px] font-medium text-destructive">
@@ -229,7 +229,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             id="maxStudents"
             type="number"
             {...register('maxStudents', { valueAsNumber: true })}
-            className="bg-white/5 border-white/10 focus:ring-primary/40 h-11 font-mono"
+            className="bg-white/5 border-border/10 focus:ring-primary/40 h-11 font-mono"
           />
           {errors.maxStudents && (
             <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="text-[11px] font-medium text-destructive">
@@ -245,7 +245,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             {t.classes.classroom()}
           </Label>
           <Select value={watch('classroomId') || '__none__'} onValueChange={v => setValue('classroomId', v === '__none__' ? null : v)}>
-            <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
+            <SelectTrigger className="bg-white/5 border-border/10 focus:ring-primary/40 h-11">
               <SelectValue placeholder={t.classes.selectClassroom()}>
                 {watch('classroomId')
                   ? (() => {
@@ -254,7 +254,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
                         ? (
                             <div className="flex items-center gap-2">
                               <span>{c.name}</span>
-                              <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.code}</Badge>
+                              <Badge variant="outline" className="text-[10px] bg-white/5 border-border/10">{c.code}</Badge>
                             </div>
                           )
                         : null
@@ -262,13 +262,13 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
                   : t.common.none()}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+            <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
               {classrooms.map(c => (
                 <SelectItem key={c.id} value={c.id}>
                   <div className="flex items-center justify-between w-full gap-2">
                     <span>{c.name}</span>
-                    <Badge variant="outline" className="text-[10px] bg-white/5 border-white/10">{c.code}</Badge>
+                    <Badge variant="outline" className="text-[10px] bg-white/5 border-border/10">{c.code}</Badge>
                   </div>
                 </SelectItem>
               ))}
@@ -283,14 +283,14 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             {t.classes.homeroomTeacher()}
           </Label>
           <Select value={watch('homeroomTeacherId') || '__none__'} onValueChange={v => setValue('homeroomTeacherId', v === '__none__' ? null : v)}>
-            <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
+            <SelectTrigger className="bg-white/5 border-border/10 focus:ring-primary/40 h-11">
               <SelectValue placeholder={t.classes.selectTeacher()}>
                 {watch('homeroomTeacherId')
                   ? teachersData.teachers.find(tr => tr.id === watch('homeroomTeacherId'))?.user.name
                   : t.common.none()}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+            <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
               <SelectItem value="__none__">{t.common.none()}</SelectItem>
               {teachersData.teachers.map(teacher => (
                 <SelectItem key={teacher.id} value={teacher.id}>
@@ -310,7 +310,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
             *
           </Label>
           <Select value={watch('status') || 'active'} onValueChange={v => setValue('status', v as 'active' | 'archived')}>
-            <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary/40 h-11">
+            <SelectTrigger className="bg-white/5 border-border/10 focus:ring-primary/40 h-11">
               <SelectValue>
                 {watch('status') === 'active'
                   ? (
@@ -327,7 +327,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
                     )}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+            <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
               <SelectItem value="active">
                 <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-primary" />

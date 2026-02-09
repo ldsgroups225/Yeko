@@ -515,7 +515,7 @@ function TimetablesPage() {
                                   return teacher
                                     ? (
                                         <div className="flex items-center gap-2">
-                                          <div className="size-2 rounded-full bg-emerald-500" />
+                                          <div className="size-2 rounded-full bg-success" />
                                           <span>{teacher.user?.name}</span>
                                         </div>
                                       )

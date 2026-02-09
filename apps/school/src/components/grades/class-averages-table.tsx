@@ -31,9 +31,9 @@ interface ClassAveragesTableProps {
 
 function getAverageColor(average: number): string {
   if (average >= 16)
-    return 'text-emerald-500 font-bold'
+    return 'text-success font-bold'
   if (average >= 14)
-    return 'text-indigo-500 font-bold'
+    return 'text-secondary font-bold'
   if (average >= 10)
     return 'text-foreground font-semibold'
   return 'text-destructive font-bold'
@@ -41,11 +41,11 @@ function getAverageColor(average: number): string {
 
 function getRankStyles(rank: number): string {
   if (rank === 1)
-    return 'bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-amber-500/10'
+    return 'bg-accent/10 text-accent-foreground border-accent/20 shadow-accent/10'
   if (rank === 2)
-    return 'bg-slate-400/10 text-slate-500 border-slate-400/20'
+    return 'bg-muted text-muted-foreground border-muted'
   if (rank === 3)
-    return 'bg-orange-500/10 text-orange-600 border-orange-500/20'
+    return 'bg-accent/10 text-accent-foreground border-accent/20'
   return 'bg-muted/50 text-muted-foreground border-border/40'
 }
 
@@ -86,14 +86,14 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
             </div>
 
             <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-background/50 border border-border/40 shadow-sm">
-              <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600">
+              <div className="p-1.5 rounded-lg bg-success/10 text-success">
                 <IconPercentage className="size-3.5" />
               </div>
               <div className="flex flex-col">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70 leading-none mb-1">
                   {t.academic.grades.statistics.passRate()}
                 </span>
-                <span className={cn('text-sm font-bold tabular-nums', passRate >= 50 ? 'text-emerald-600' : 'text-destructive')}>
+                <span className={cn('text-sm font-bold tabular-nums', passRate >= 50 ? 'text-success' : 'text-destructive')}>
                   {passRate.toFixed(1)}
                   %
                 </span>

@@ -251,10 +251,10 @@ export function ConductRecordForm({
               <SelectValue placeholder={t.conduct.form.selectSeverity()}>
                 {form.watch('severity') && (() => {
                   const severityConfig = {
-                    low: { color: 'bg-blue-500', label: t.conduct.severity.low(), icon: '🔵' },
-                    medium: { color: 'bg-yellow-500', label: t.conduct.severity.medium(), icon: '🟡' },
-                    high: { color: 'bg-orange-500', label: t.conduct.severity.high(), icon: '🟠' },
-                    critical: { color: 'bg-red-500', label: t.conduct.severity.critical(), icon: '🔴' },
+                    low: { color: 'bg-secondary', label: t.conduct.severity.low(), icon: '🔵' },
+                    medium: { color: 'bg-accent', label: t.conduct.severity.medium(), icon: '🟡' },
+                    high: { color: 'bg-accent', label: t.conduct.severity.high(), icon: '🟠' },
+                    critical: { color: 'bg-destructive', label: t.conduct.severity.critical(), icon: '🔴' },
                   }
                   const config = severityConfig[form.watch('severity') as keyof typeof severityConfig]
                   return (

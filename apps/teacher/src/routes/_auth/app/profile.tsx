@@ -96,8 +96,8 @@ function ProfilePage() {
   }
 
   const stats = [
-    { label: LL.profile.stats.schools(), value: statsData?.schoolsCount ?? '-', icon: IconSchool, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { label: LL.profile.stats.classes(), value: statsData?.classesCount ?? '-', icon: IconChartBar, color: 'text-green-500', bg: 'bg-green-500/10' },
+    { label: LL.profile.stats.schools(), value: statsData?.schoolsCount ?? '-', icon: IconSchool, color: 'text-secondary', bg: 'bg-secondary/10' },
+    { label: LL.profile.stats.classes(), value: statsData?.classesCount ?? '-', icon: IconChartBar, color: 'text-success', bg: 'bg-success/10' },
   ]
 
   const user = session?.user

@@ -153,8 +153,8 @@ export const progressStatusLabels: Record<ProgressStatus, string> = {
 
 export const progressStatusColors: Record<ProgressStatus, { bg: string, text: string, border: string }> = {
   on_track: {
-    bg: 'bg-green-100 dark:bg-green-900/30',
-    text: 'text-green-700 dark:text-green-400',
+    bg: 'bg-success dark:bg-green-900/30',
+    text: 'text-success dark:text-green-400',
     border: 'border-green-200 dark:border-green-800',
   },
   slightly_behind: {
@@ -163,13 +163,13 @@ export const progressStatusColors: Record<ProgressStatus, { bg: string, text: st
     border: 'border-yellow-200 dark:border-yellow-800',
   },
   significantly_behind: {
-    bg: 'bg-red-100 dark:bg-red-900/30',
-    text: 'text-red-700 dark:text-red-400',
+    bg: 'bg-destructive dark:bg-red-900/30',
+    text: 'text-destructive dark:text-red-400',
     border: 'border-red-200 dark:border-red-800',
   },
   ahead: {
-    bg: 'bg-blue-100 dark:bg-blue-900/30',
-    text: 'text-blue-700 dark:text-blue-400',
+    bg: 'bg-primary dark:bg-blue-900/30',
+    text: 'text-primary dark:text-blue-400',
     border: 'border-blue-200 dark:border-blue-800',
   },
 }
@@ -180,12 +180,12 @@ export const classSessionStatusColors: Record<ClassSessionStatus, { bg: string, 
     text: 'text-gray-700 dark:text-gray-300',
   },
   completed: {
-    bg: 'bg-green-100 dark:bg-green-900/30',
-    text: 'text-green-700 dark:text-green-400',
+    bg: 'bg-success dark:bg-green-900/30',
+    text: 'text-success dark:text-green-400',
   },
   cancelled: {
-    bg: 'bg-red-100 dark:bg-red-900/30',
-    text: 'text-red-700 dark:text-red-400',
+    bg: 'bg-destructive dark:bg-red-900/30',
+    text: 'text-destructive dark:text-red-400',
   },
   rescheduled: {
     bg: 'bg-yellow-100 dark:bg-yellow-900/30',

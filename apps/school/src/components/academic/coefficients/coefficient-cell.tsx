@@ -66,14 +66,14 @@ export function CoefficientCell({
               'w-full h-9 rounded-lg border font-medium transition-all relative overflow-hidden group',
               'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-1 focus:ring-offset-background',
               isEdited
-                ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20'
+                ? 'border-accent/50 bg-accent/10 text-accent hover:bg-accent/20'
                 : isOverride
                   ? 'border-primary/50 bg-primary/10 text-primary hover:bg-primary/20'
                   : 'border-border/60 bg-white/5 hover:border-primary/40 hover:bg-white/10 text-muted-foreground hover:text-foreground',
             )}
           >
             {effectiveWeight}
-            <div className="absolute inset-0 bg-linear-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-linear-to-br from-background/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </motion.button>
         )}
       />
@@ -88,7 +88,7 @@ export function CoefficientCell({
               <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               {t.academic.coefficients.cell.edit()}
             </h4>
-            <div className="grid gap-2 p-3 rounded-lg bg-white/5 border border-white/5 text-[11px]">
+            <div className="grid gap-2 p-3 rounded-lg bg-white/5 border border-border/5 text-[11px]">
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
                   {t.academic.coefficients.cell.template()}
@@ -96,7 +96,7 @@ export function CoefficientCell({
                 <span className="font-mono font-bold">{templateWeight}</span>
               </div>
               {isOverride && (
-                <div className="flex items-center justify-between border-t border-white/5 pt-2">
+                <div className="flex items-center justify-between border-t border-border/5 pt-2">
                   <span className="text-muted-foreground">
                     {t.academic.coefficients.cell.currentOverride()}
                   </span>
@@ -122,7 +122,7 @@ export function CoefficientCell({
               max="20"
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
-              className="h-10 bg-white/5 border-white/10 focus:ring-primary/40 text-center font-mono text-lg font-bold"
+              className="h-10 bg-white/5 border-border/10 focus:ring-primary/40 text-center font-mono text-lg font-bold"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleSave()

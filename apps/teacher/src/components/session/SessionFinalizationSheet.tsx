@@ -134,7 +134,7 @@ export function SessionFinalizationSheet({
                   {LL.session.statsLate()}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-black text-amber-500">{attendanceStats.late}</span>
+                  <span className="text-xl font-black text-accent">{attendanceStats.late}</span>
                   <span className="text-sm text-muted-foreground">{LL.common.students()}</span>
                 </div>
               </div>
@@ -239,9 +239,9 @@ export function SessionFinalizationSheet({
 
           {/* Warning if homework form is open but empty */}
           {showHomeworkForm && !homeworkTitle.trim() && (
-            <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
-              <IconAlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-              <p className="text-xs font-medium text-amber-700/80 leading-relaxed">
+            <div className="p-4 rounded-xl bg-accent/5 border border-accent/10 flex items-start gap-3">
+              <IconAlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+              <p className="text-xs font-medium text-accent/80 leading-relaxed">
                 {LL.session.homeworkWarning()}
               </p>
             </div>

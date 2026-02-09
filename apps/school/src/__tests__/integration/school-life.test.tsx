@@ -210,19 +210,19 @@ describe('school Life Management Integration', () => {
         <ConductSeverityBadge severity="low" />,
       )
       let badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-blue-600')
+      expect(badge?.className).toContain('text-secondary')
 
       rerender(<ConductSeverityBadge severity="medium" />)
       badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-amber-600')
+      expect(badge?.className).toContain('text-accent-foreground')
 
       rerender(<ConductSeverityBadge severity="high" />)
       badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-orange-600')
+      expect(badge?.className).toContain('text-accent-foreground')
 
       rerender(<ConductSeverityBadge severity="critical" />)
       badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-red-600')
+      expect(badge?.className).toContain('text-destructive')
     })
 
     test('should apply correct color classes for attendance statuses', () => {
@@ -230,19 +230,19 @@ describe('school Life Management Integration', () => {
         <StudentAttendanceStatusBadge status="present" />,
       )
       let badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-green-600')
+      expect(badge?.className).toContain('text-success')
 
       rerender(<StudentAttendanceStatusBadge status="late" />)
       badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-amber-600')
+      expect(badge?.className).toContain('text-accent-foreground')
 
       rerender(<StudentAttendanceStatusBadge status="absent" />)
       badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-red-600')
+      expect(badge?.className).toContain('text-destructive')
 
       rerender(<StudentAttendanceStatusBadge status="excused" />)
       badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-blue-600')
+      expect(badge?.className).toContain('text-secondary')
     })
   })
 })

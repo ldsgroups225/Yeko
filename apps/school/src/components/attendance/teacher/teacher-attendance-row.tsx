@@ -36,11 +36,11 @@ const statusButtons: { status: TeacherAttendanceStatus, label: string, shortLabe
 ]
 
 const statusColors: Record<TeacherAttendanceStatus, string> = {
-  present: 'bg-green-500 hover:bg-green-600 text-white',
-  late: 'bg-amber-500 hover:bg-amber-600 text-white',
-  absent: 'bg-red-500 hover:bg-red-600 text-white',
-  excused: 'bg-blue-500 hover:bg-blue-600 text-white',
-  on_leave: 'bg-purple-500 hover:bg-purple-600 text-white',
+  present: 'bg-success text-success-foreground hover:bg-success/90',
+  late: 'bg-accent text-accent-foreground hover:bg-accent/90',
+  absent: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+  excused: 'bg-secondary text-secondary-foreground hover:bg-secondary/90',
+  on_leave: 'bg-secondary text-secondary-foreground hover:bg-secondary/90',
 }
 
 export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowProps) {
@@ -127,7 +127,7 @@ export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowPr
       </TableCell>
       <TableCell>
         {entry.lateMinutes && entry.lateMinutes > 0 && (
-          <span className="text-amber-600 font-medium">
+          <span className="text-accent-foreground font-medium">
             +
             {entry.lateMinutes}
             {' '}

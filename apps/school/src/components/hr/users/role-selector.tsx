@@ -193,7 +193,7 @@ export function RoleSelector({
                                 {role.name}
                               </p>
                               {role.scope === 'system' && (
-                                <Badge variant="secondary" className="px-1.5 py-0 text-[10px] uppercase bg-amber-500/10 text-amber-600 border-amber-500/20 font-bold">
+                                <Badge variant="secondary" className="px-1.5 py-0 text-[10px] uppercase bg-accent/10 text-accent-foreground border-accent/20 font-bold">
                                   {t.hr.roles.system()}
                                 </Badge>
                               )}
@@ -259,7 +259,7 @@ export function RoleSelector({
                                 {role.name}
                               </p>
                               {role.scope === 'system' && (
-                                <Badge variant="secondary" className="px-1.5 py-0 text-[10px] uppercase bg-amber-500/10 text-amber-600 border-amber-500/20 font-bold">
+                                <Badge variant="secondary" className="px-1.5 py-0 text-[10px] uppercase bg-accent/10 text-accent-foreground border-accent/20 font-bold">
                                   {t.hr.roles.system()}
                                 </Badge>
                               )}

@@ -39,7 +39,7 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
               </div>
               <CardTitle className="text-xl font-bold tracking-tight">{t.academic.grades.statistics.title()}</CardTitle>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 text-success border border-success/20">
               <IconPercentage className="size-3.5" />
               <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
                 {t.academic.grades.statistics.passRate()}
@@ -66,8 +66,8 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
               label={t.academic.grades.statistics.min()}
               value={statistics.min.toFixed(2)}
               icon={IconChevronsDown}
-              color="bg-amber-500/10 text-amber-600"
-              valueClassName="text-amber-600"
+              color="bg-accent/10 text-accent-foreground"
+              valueClassName="text-accent-foreground"
             />
             <StatItem
               label={t.academic.grades.statistics.max()}
@@ -87,8 +87,8 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
               label={t.academic.grades.statistics.above15()}
               value={statistics.above15}
               icon={IconStar}
-              color="bg-emerald-500/10 text-emerald-600"
-              valueClassName="text-emerald-600"
+              color="bg-success/10 text-success"
+              valueClassName="text-success"
             />
           </div>
 
@@ -106,7 +106,7 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
               </div>
               <div className={cn(
                 'flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg transition-transform group-hover:scale-110 duration-500',
-                passRate >= 50 ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-destructive/10 text-destructive border-destructive/20',
+                passRate >= 50 ? 'bg-success/10 text-success border-success/20' : 'bg-destructive/10 text-destructive border-destructive/20',
               )}
               >
                 <IconTrendingUp className={cn('size-6', passRate < 50 && 'rotate-180')} />
@@ -120,7 +120,7 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
                 transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
                 className={cn(
                   'h-full relative transition-colors duration-1000',
-                  passRate >= 80 ? 'bg-indigo-500' : passRate >= 50 ? 'bg-emerald-500' : 'bg-destructive',
+                  passRate >= 80 ? 'bg-indigo-500' : passRate >= 50 ? 'bg-success' : 'bg-destructive',
                 )}
               >
                 <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-size-[200%_100%] animate-shimmer" />
@@ -167,7 +167,7 @@ function getAverageBgColor(average: number): string {
   if (average >= 16)
     return 'bg-indigo-500/10 text-indigo-600'
   if (average >= 14)
-    return 'bg-emerald-500/10 text-emerald-600'
+    return 'bg-success/10 text-success'
   if (average >= 10)
     return 'bg-primary/10 text-primary'
   return 'bg-destructive/10 text-destructive'
@@ -177,7 +177,7 @@ function getAverageTextColor(average: number): string {
   if (average >= 16)
     return 'text-indigo-600 font-black'
   if (average >= 14)
-    return 'text-emerald-600 font-black'
+    return 'text-success font-black'
   if (average >= 10)
     return 'text-primary font-bold'
   return 'text-destructive font-black'

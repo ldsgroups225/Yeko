@@ -16,10 +16,10 @@ const typeConfig: Record<ConductType, {
   icon: typeof IconAlertTriangle
   colorClass: string
 }> = {
-  incident: { icon: IconAlertTriangle, colorClass: 'bg-orange-500/10 text-orange-600 border-orange-500/20' },
-  sanction: { icon: IconBan, colorClass: 'bg-red-500/10 text-red-600 border-red-500/20' },
-  reward: { icon: IconAward, colorClass: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
-  note: { icon: IconFileText, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
+  incident: { icon: IconAlertTriangle, colorClass: 'bg-accent/10 text-accent-foreground border-accent/20' },
+  sanction: { icon: IconBan, colorClass: 'bg-destructive/10 text-destructive border-destructive/20' },
+  reward: { icon: IconAward, colorClass: 'bg-success/10 text-success border-success/20' },
+  note: { icon: IconFileText, colorClass: 'bg-secondary/10 text-secondary border-secondary/20' },
 }
 
 export function ConductTypeBadge({

@@ -10,10 +10,10 @@ interface DeliveryStatusBadgeProps {
 }
 
 const methodVariants: Record<DeliveryMethod, string> = {
-  email: 'bg-blue-100 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-400',
-  in_app: 'bg-purple-100 text-purple-700 hover:bg-purple-100 dark:bg-purple-900/30 dark:text-purple-400',
-  sms: 'bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400',
-  print: 'bg-gray-100 text-gray-700 hover:bg-gray-100 dark:bg-gray-900/30 dark:text-gray-400',
+  email: 'bg-secondary/10 text-secondary hover:bg-secondary/20 border-secondary/20',
+  in_app: 'bg-secondary/10 text-secondary hover:bg-secondary/20 border-secondary/20',
+  sms: 'bg-success/10 text-success hover:bg-success/20 border-success/20',
+  print: 'bg-muted text-muted-foreground hover:bg-muted/80 border-muted',
 }
 
 const methodIcons: Record<DeliveryMethod, React.ReactNode> = {

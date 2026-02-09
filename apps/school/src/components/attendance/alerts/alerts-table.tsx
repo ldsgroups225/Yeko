@@ -131,11 +131,11 @@ export function AlertsTable({
               variant="outline"
               className={
                 status === 'active'
-                  ? 'bg-red-50 text-red-600 border-red-200'
+                  ? 'bg-destructive/10 text-destructive border-destructive/20'
                   : status === 'acknowledged'
-                    ? 'bg-blue-50 text-blue-600 border-blue-200'
+                    ? 'bg-secondary/10 text-secondary border-secondary/20'
                     : status === 'dismissed'
-                      ? 'bg-gray-50 text-gray-600 border-gray-200'
+                      ? 'bg-muted text-muted-foreground border-muted'
                       : ''
               }
             >

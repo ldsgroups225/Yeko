@@ -1625,6 +1625,11 @@ const fr = {
         pendingCount: '{count} note(s) en attente',
         submittedBy: 'Soumis par',
         submittedAt: 'Soumis',
+        details: {
+          evaluation: 'Informations Évaluation',
+          submission: 'Soumission',
+          stats: 'Statistiques',
+        },
         confirmSubmitTitle: 'Confirmer la soumission',
         confirmSubmitDescription:
           'Voulez-vous soumettre {count} note(s) pour validation ? Une fois soumises, elles ne pourront plus être modifiées.',

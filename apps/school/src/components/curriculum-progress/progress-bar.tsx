@@ -21,10 +21,10 @@ interface ProgressBarProps {
 }
 
 const statusColors: Record<ProgressStatus, string> = {
-  on_track: '[&>div]:bg-green-500',
-  slightly_behind: '[&>div]:bg-yellow-500',
-  significantly_behind: '[&>div]:bg-red-500',
-  ahead: '[&>div]:bg-blue-500',
+  on_track: '[&>div]:bg-success',
+  slightly_behind: '[&>div]:bg-accent',
+  significantly_behind: '[&>div]:bg-destructive',
+  ahead: '[&>div]:bg-secondary',
 }
 
 export function ProgressBar({

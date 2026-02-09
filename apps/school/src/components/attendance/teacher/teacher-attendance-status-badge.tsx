@@ -16,11 +16,11 @@ const statusConfig: Record<TeacherAttendanceStatus, {
   icon: typeof IconCircleCheck
   colorClass: string
 }> = {
-  present: { variant: 'default', icon: IconCircleCheck, colorClass: 'bg-green-500/10 text-green-600 border-green-200' },
-  late: { variant: 'secondary', icon: IconClock, colorClass: 'bg-amber-500/10 text-amber-600 border-amber-200' },
-  absent: { variant: 'destructive', icon: IconCircleX, colorClass: 'bg-red-500/10 text-red-600 border-red-200' },
-  excused: { variant: 'outline', icon: IconFileCheck, colorClass: 'bg-blue-500/10 text-blue-600 border-blue-200' },
-  on_leave: { variant: 'outline', icon: IconCalendar, colorClass: 'bg-purple-500/10 text-purple-600 border-purple-200' },
+  present: { variant: 'default', icon: IconCircleCheck, colorClass: 'bg-success/10 text-success border-success/20' },
+  late: { variant: 'secondary', icon: IconClock, colorClass: 'bg-accent/10 text-accent-foreground border-accent/20' },
+  absent: { variant: 'destructive', icon: IconCircleX, colorClass: 'bg-destructive/10 text-destructive border-destructive/20' },
+  excused: { variant: 'outline', icon: IconFileCheck, colorClass: 'bg-secondary/10 text-secondary border-secondary/20' },
+  on_leave: { variant: 'outline', icon: IconCalendar, colorClass: 'bg-secondary/10 text-secondary border-secondary/20' },
 }
 
 export function TeacherAttendanceStatusBadge({

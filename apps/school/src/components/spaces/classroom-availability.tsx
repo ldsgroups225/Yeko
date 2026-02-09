@@ -64,8 +64,8 @@ function StatsCards({
       title: t.spaces.classrooms.maintenance(),
       value: maintenance,
       icon: IconBuilding,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-500/10 border-yellow-500/20',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10 border-accent/20',
       description: 'Intervention requise',
     },
     {

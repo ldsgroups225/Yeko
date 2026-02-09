@@ -171,13 +171,13 @@ export function SubjectPickerDialog({
               placeholder={t.academic.subjects.searchPlaceholder()}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="pl-10 h-10 bg-white/5 border-white/10 focus:ring-primary/40 shadow-none text-sm transition-all focus:bg-white/10"
+              className="pl-10 h-10 bg-white/5 border-border/10 focus:ring-primary/40 shadow-none text-sm transition-all focus:bg-white/10"
             />
           </div>
           <div className="flex items-center gap-2">
             <IconFilter className="h-4 w-4 text-muted-foreground hidden sm:block" />
             <Select value={categoryFilter} onValueChange={val => val && setCategoryFilter(val)}>
-              <SelectTrigger id="category-filter" className="w-full sm:w-[180px] h-10 bg-white/5 border-white/10 focus:ring-primary/40 shadow-none text-sm">
+              <SelectTrigger id="category-filter" className="w-full sm:w-[180px] h-10 bg-white/5 border-border/10 focus:ring-primary/40 shadow-none text-sm">
                 <SelectValue placeholder={t.academic.subjects.allCategories()}>
                   {categoryFilter && (() => {
                     const categoryConfig = {
@@ -201,7 +201,7 @@ export function SubjectPickerDialog({
                   })()}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+              <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
                 <SelectItem value="all">{t.academic.subjects.allCategories()}</SelectItem>
                 <SelectItem value="Scientifique">{t.academic.subjects.categories.scientifique()}</SelectItem>
                 <SelectItem value="Littéraire">{t.academic.subjects.categories.litteraire()}</SelectItem>
@@ -272,7 +272,7 @@ export function SubjectPickerDialog({
                                 id={`category-${category}`}
                                 checked={allSelected}
                                 className={cn(
-                                  'h-4 w-4 rounded border-white/20 data-[state=checked]:bg-primary',
+                                  'h-4 w-4 rounded border-border/20 data-[state=checked]:bg-primary',
                                   someSelected && !allSelected && 'data-[state=unchecked]:bg-primary/40',
                                 )}
                                 onCheckedChange={() => handleSelectAll(category)}

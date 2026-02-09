@@ -5764,6 +5764,20 @@ type RootTranslation = {
 				 * S​o​u​m​i​s
 				 */
 				submittedAt: string
+				details: {
+					/**
+					 * I​n​f​o​r​m​a​t​i​o​n​s​ ​É​v​a​l​u​a​t​i​o​n
+					 */
+					evaluation: string
+					/**
+					 * S​o​u​m​i​s​s​i​o​n
+					 */
+					submission: string
+					/**
+					 * S​t​a​t​i​s​t​i​q​u​e​s
+					 */
+					stats: string
+				}
 				/**
 				 * C​o​n​f​i​r​m​e​r​ ​l​a​ ​s​o​u​m​i​s​s​i​o​n
 				 */
@@ -14055,6 +14069,20 @@ export type TranslationFunctions = {
 				 * Soumis
 				 */
 				submittedAt: () => LocalizedString
+				details: {
+					/**
+					 * Informations Évaluation
+					 */
+					evaluation: () => LocalizedString
+					/**
+					 * Soumission
+					 */
+					submission: () => LocalizedString
+					/**
+					 * Statistiques
+					 */
+					stats: () => LocalizedString
+				}
 				/**
 				 * Confirmer la soumission
 				 */

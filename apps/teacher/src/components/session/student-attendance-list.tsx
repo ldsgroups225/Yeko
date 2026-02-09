@@ -45,17 +45,17 @@ export function StudentAttendanceList({
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex gap-2 text-sm">
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+          <Badge variant="outline" className="bg-success/10 text-success border-success/20">
             {stats.present}
             {' '}
             P
           </Badge>
-          <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+          <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
             {stats.absent}
             {' '}
             A
           </Badge>
-          <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
+          <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
             {stats.late}
             {' '}
             R
@@ -73,7 +73,7 @@ export function StudentAttendanceList({
           return (
             <div
               key={student.id}
-              className={`rounded-lg border p-3 transition-colors ${status === 'absent' ? 'bg-red-50/50' : 'bg-card'}`}
+              className={`rounded-lg border p-3 transition-colors ${status === 'absent' ? 'bg-destructive/5' : 'bg-card'}`}
             >
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
@@ -96,7 +96,7 @@ export function StudentAttendanceList({
                   <Button
                     size="icon"
                     variant={status === 'present' ? 'default' : 'outline'}
-                    className={`h-8 w-8 ${status === 'present' ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                    className={`h-8 w-8 ${status === 'present' ? 'bg-success hover:bg-success/90' : ''}`}
                     onClick={() => onStatusChange(student.id, 'present')}
                     title={LL.attendance.present()}
                   >
@@ -114,7 +114,7 @@ export function StudentAttendanceList({
                   <Button
                     size="icon"
                     variant={status === 'late' ? 'secondary' : 'outline'}
-                    className={`h-8 w-8 ${status === 'late' ? 'bg-orange-100 text-orange-700 hover:bg-orange-200' : ''}`}
+                    className={`h-8 w-8 ${status === 'late' ? 'bg-warning/10 text-warning hover:bg-warning/20' : ''}`}
                     onClick={() => onStatusChange(student.id, 'late')}
                     title={LL.attendance.late()}
                   >

@@ -145,9 +145,9 @@ function TeacherDetailsPage() {
                   className={cn(
                     'text-[10px] uppercase font-bold tracking-widest px-2',
                     teacher.status === 'active'
-                      ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
+                      ? 'bg-success/10 text-success border-success/20'
                       : teacher.status === 'on_leave'
-                        ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                        ? 'bg-accent/10 text-accent-foreground border-accent/20'
                         : 'bg-muted text-muted-foreground',
                   )}
                   variant="outline"
@@ -271,9 +271,9 @@ function TeacherDetailsPage() {
                       className={cn(
                         'size-8 rounded-lg flex items-center justify-center border',
                         teacher.status === 'active'
-                          ? 'bg-emerald-500/10 border-emerald-500/20'
+                          ? 'bg-success/10 border-success/20'
                           : teacher.status === 'on_leave'
-                            ? 'bg-amber-500/10 border-amber-500/20'
+                            ? 'bg-accent/10 border-accent/20'
                             : 'bg-muted border-border/40',
                       )}
                     >
@@ -281,9 +281,9 @@ function TeacherDetailsPage() {
                         className={cn(
                           'size-2 rounded-full',
                           teacher.status === 'active'
-                            ? 'bg-emerald-500 animate-pulse'
+                            ? 'bg-success animate-pulse'
                             : teacher.status === 'on_leave'
-                              ? 'bg-amber-500'
+                              ? 'bg-accent'
                               : 'bg-muted-foreground',
                         )}
                       />

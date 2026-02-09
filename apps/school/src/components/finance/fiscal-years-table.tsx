@@ -64,9 +64,9 @@ export function FiscalYearsTable({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'open':
-        return 'bg-green-500/10 text-green-700 border-green-200 dark:border-green-900/30 dark:text-green-400'
+        return 'bg-success/10 text-success border-success/20 dark:border-success/30 dark:text-success/80'
       case 'closed':
-        return 'bg-red-500/10 text-red-700 border-red-200 dark:border-red-900/30 dark:text-red-400'
+        return 'bg-destructive/10 text-destructive border-destructive/20 dark:border-destructive/30 dark:text-destructive/80'
       case 'locked':
         return 'bg-orange-500/10 text-orange-700 border-orange-200 dark:border-orange-900/30 dark:text-orange-400'
       default:

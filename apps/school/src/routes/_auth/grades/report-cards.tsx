@@ -182,7 +182,7 @@ function ReportCardsPage() {
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-500 shadow-inner">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
             <IconChecks className="size-8" />
           </div>
           <div>
@@ -316,7 +316,7 @@ function ReportCardsPage() {
               </Button>
               <Button
                 variant="default"
-                className="h-11 px-6 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                className="h-11 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold uppercase tracking-widest text-[10px]"
                 onClick={() => setIsGenerationDialogOpen(true)}
               >
                 <IconFileText className="mr-2 h-4 w-4" />

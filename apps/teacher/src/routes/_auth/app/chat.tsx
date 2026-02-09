@@ -166,7 +166,7 @@ function MessageItem({ message, teacherId, locale }: MessageItemProps) {
             </div>
             <div className="flex flex-col items-center gap-1">
               {message.isStarred && (
-                <IconStar className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                <IconStar className="h-4 w-4 fill-accent text-accent" />
               )}
               {!message.isRead && (
                 <Badge variant="default" className="h-2 w-2 rounded-full p-0" />

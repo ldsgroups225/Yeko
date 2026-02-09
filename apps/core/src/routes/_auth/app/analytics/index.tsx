@@ -277,17 +277,17 @@ function Analytics() {
                     <StatusBar
                       label="Actives"
                       count={schoolsPerf?.byStatus?.active || 0}
-                      color="bg-green-500"
+                      color="bg-success"
                     />
                     <StatusBar
                       label="Inactives"
                       count={schoolsPerf?.byStatus?.inactive || 0}
-                      color="bg-gray-400"
+                      color="bg-muted"
                     />
                     <StatusBar
                       label="Suspendues"
                       count={schoolsPerf?.byStatus?.suspended || 0}
-                      color="bg-red-500"
+                      color="bg-destructive"
                     />
                   </div>
                 )}
@@ -422,7 +422,7 @@ function KpiCard({
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         <p
-          className={`text-xs ${positive ? 'text-green-600' : 'text-red-600'}`}
+          className={`text-xs ${positive ? 'text-success' : 'text-destructive'}`}
         >
           {change}
           {' '}

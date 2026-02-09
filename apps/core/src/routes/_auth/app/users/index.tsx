@@ -211,7 +211,7 @@ function UserManagement() {
                       <TableCell>
                         <Badge
                           variant={user.status === 'active' ? 'default' : 'secondary'}
-                          className={`capitalize rounded-lg px-2.5 py-1 text-[10px] font-bold ${user.status === 'active' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20' : 'bg-muted text-muted-foreground'}`}
+                          className={`capitalize rounded-lg px-2.5 py-1 text-[10px] font-bold ${user.status === 'active' ? 'bg-success/10 text-success border-success/20 hover:bg-success/20' : 'bg-muted text-muted-foreground'}`}
                         >
                           {user.status === 'active' ? t.status.active() : t.status.inactive()}
                         </Badge>

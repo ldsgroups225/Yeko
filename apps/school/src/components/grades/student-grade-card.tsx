@@ -42,7 +42,7 @@ function getGradeColor(value: number): string {
   if (value >= 14)
     return 'text-indigo-500 font-bold'
   if (value >= 10)
-    return 'text-amber-500 font-semibold'
+    return 'text-accent font-semibold'
   return 'text-destructive font-bold'
 }
 
@@ -104,7 +104,7 @@ export function StudentGradeCard({
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg shadow-amber-500/30 ring-2 ring-background z-20"
+                    className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 ring-2 ring-background z-20"
                   >
                     <IconStar className="size-3.5 fill-current" />
                   </motion.div>
@@ -262,7 +262,7 @@ export function StudentGradeCard({
               animate={{ opacity: 1, y: 0 }}
               className="mt-10 pt-8 border-t border-border/20 relative"
             >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 rounded-full bg-background border border-border/20 text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500 shadow-sm">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 rounded-full bg-background border border-border/20 text-[10px] font-bold uppercase tracking-[0.2em] text-accent shadow-sm">
                 En attente
               </div>
 
@@ -273,10 +273,10 @@ export function StudentGradeCard({
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="flex items-center gap-4 rounded-2xl border border-dashed border-border/40 bg-background/40 pl-4 pr-2 py-2 transition-all hover:border-amber-500/50 hover:bg-amber-500/5 shadow-sm"
+                    className="flex items-center gap-4 rounded-2xl border border-dashed border-border/40 bg-background/40 pl-4 pr-2 py-2 transition-all hover:border-accent/50 hover:bg-accent/5 shadow-sm"
                   >
                     <div className="flex flex-col">
-                      <span className="font-mono text-sm font-bold tracking-tighter text-foreground decoration-amber-500/20 underline underline-offset-4">
+                      <span className="font-mono text-sm font-bold tracking-tighter text-foreground decoration-accent/20 underline underline-offset-4">
                         {Number(grade.value).toFixed(1)}
                       </span>
                       <span className="text-[8px] font-bold uppercase text-muted-foreground/60 leading-none mt-0.5">

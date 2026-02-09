@@ -40,8 +40,8 @@ export function BehindScheduleAlert({
     <Alert
       variant="destructive"
       className={cn(
-        'border-yellow-200 bg-yellow-50 text-yellow-900 dark:border-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-100',
-        significantlyBehind.length > 0 && 'border-red-200 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-900/20 dark:text-red-100',
+        'border-accent bg-accent/5 text-accent-foreground dark:border-accent/80 dark:bg-accent/10 dark:text-accent-foreground/90',
+        significantlyBehind.length > 0 && 'border-destructive bg-destructive/5 text-destructive-foreground dark:border-destructive/80 dark:bg-destructive/10 dark:text-destructive-foreground/90',
         className,
       )}
     >

@@ -189,7 +189,7 @@ export function AdminDashboard() {
           <div className="mb-6 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold flex items-center gap-2">
-                <IconChartBar className="h-5 w-5 text-purple-500" />
+                <IconChartBar className="h-5 w-5 text-secondary" />
                 {t.dashboard.enrollmentChartTitle()}
               </h2>
               <p className="text-sm text-muted-foreground">{t.dashboard.enrollmentChartSubtitle()}</p>
@@ -217,10 +217,10 @@ export function AdminDashboard() {
         <motion.div variants={item} className="lg:col-span-2 rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.quickActions()}</h2>
           <div className="grid gap-3 sm:grid-cols-2">
-            <QuickActionButton icon={IconUsers} label={t.dashboard.addUser()} color="bg-blue-500/10 text-blue-600" />
-            <QuickActionButton icon={IconSchool} label={t.dashboard.enrollStudent()} color="bg-green-500/10 text-green-600" />
-            <QuickActionButton icon={IconBook} label={t.dashboard.createClass()} color="bg-orange-500/10 text-orange-600" />
-            <QuickActionButton icon={IconCurrencyDollar} label={t.dashboard.recordPayment()} color="bg-purple-500/10 text-purple-600" />
+            <QuickActionButton icon={IconUsers} label={t.dashboard.addUser()} color="bg-secondary/10 text-secondary" />
+            <QuickActionButton icon={IconSchool} label={t.dashboard.enrollStudent()} color="bg-success/10 text-success" />
+            <QuickActionButton icon={IconBook} label={t.dashboard.createClass()} color="bg-accent/10 text-accent-foreground" />
+            <QuickActionButton icon={IconCurrencyDollar} label={t.dashboard.recordPayment()} color="bg-secondary/10 text-secondary" />
           </div>
         </motion.div>
       </div>
@@ -320,9 +320,9 @@ function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps
         {change && (
           <p
             className={`text-xs ${trend === 'up'
-              ? 'text-green-600 dark:text-green-400'
+              ? 'text-success'
               : trend === 'down'
-                ? 'text-red-600 dark:text-red-400'
+                ? 'text-destructive'
                 : 'text-muted-foreground'
             }`}
           >
@@ -383,9 +383,9 @@ interface AlertItemProps {
 
 function AlertItem({ type, title, description }: AlertItemProps) {
   const colors = {
-    warning: 'text-yellow-600 dark:text-yellow-400',
-    info: 'text-blue-600 dark:text-blue-400',
-    error: 'text-red-600 dark:text-red-400',
+    warning: 'text-accent-foreground',
+    info: 'text-secondary',
+    error: 'text-destructive',
   }
 
   return (

@@ -94,35 +94,35 @@ export function FinancialDashboard({
       value: formatCurrency(totalExpectedRevenue),
       suffix: 'FCFA',
       icon: IconPigMoney,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-500/10 border-blue-500/20',
-      gradient: 'from-blue-500/10 to-transparent',
+      color: 'text-secondary',
+      bgColor: 'bg-secondary/10 border-secondary/20',
+      gradient: 'from-secondary/10 to-transparent',
     },
     {
       title: t.finance.dashboard.collected(),
       value: formatCurrency(totalCollected),
       suffix: 'FCFA',
       icon: IconTrendingUp,
-      color: 'text-green-600',
-      bgColor: 'bg-green-500/10 border-green-500/20',
-      gradient: 'from-green-500/10 to-transparent',
+      color: 'text-success',
+      bgColor: 'bg-success/10 border-success/20',
+      gradient: 'from-success/10 to-transparent',
     },
     {
       title: t.finance.dashboard.outstanding(),
       value: formatCurrency(totalOutstanding),
       suffix: 'FCFA',
       icon: IconTrendingDown,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-500/10 border-orange-500/20',
-      gradient: 'from-orange-500/10 to-transparent',
+      color: 'text-accent',
+      bgColor: 'bg-accent/10 border-accent/20',
+      gradient: 'from-accent/10 to-transparent',
     },
     {
       title: t.finance.dashboard.paymentsThisMonth(),
       value: paymentsThisMonth.toString(),
       icon: IconCreditCard,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-500/10 border-purple-500/20',
-      gradient: 'from-purple-500/10 to-transparent',
+      color: 'text-secondary',
+      bgColor: 'bg-secondary/10 border-secondary/20',
+      gradient: 'from-secondary/10 to-transparent',
     },
   ]
 
@@ -235,7 +235,7 @@ export function FinancialDashboard({
                 </div>
               </div>
               {refundsPending > 0 && (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-700 dark:text-yellow-500">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-accent/10 border border-accent/20 text-accent dark:text-accent">
                   <IconReceipt className="h-5 w-5" />
                   <span className="text-sm font-semibold">
                     {refundsPending}

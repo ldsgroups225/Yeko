@@ -11,22 +11,22 @@ interface GradeStatusBadgeProps {
 
 const statusVariants: Record<GradeStatus, { bg: string, text: string, dot: string, border: string }> = {
   draft: {
-    bg: 'bg-slate-500/10',
-    text: 'text-slate-600 dark:text-slate-400',
-    dot: 'bg-slate-400',
-    border: 'border-slate-500/20',
+    bg: 'bg-muted',
+    text: 'text-muted-foreground',
+    dot: 'bg-muted-foreground',
+    border: 'border-muted',
   },
   submitted: {
-    bg: 'bg-blue-500/10',
-    text: 'text-blue-600 dark:text-blue-400',
-    dot: 'bg-blue-500',
-    border: 'border-blue-500/20',
+    bg: 'bg-secondary/10',
+    text: 'text-secondary',
+    dot: 'bg-secondary',
+    border: 'border-secondary/20',
   },
   validated: {
-    bg: 'bg-emerald-500/10',
-    text: 'text-emerald-600 dark:text-emerald-400',
-    dot: 'bg-emerald-500',
-    border: 'border-emerald-500/20',
+    bg: 'bg-success/10',
+    text: 'text-success',
+    dot: 'bg-success',
+    border: 'border-success/20',
   },
   rejected: {
     bg: 'bg-destructive/10',

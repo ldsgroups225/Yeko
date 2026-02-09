@@ -181,9 +181,9 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                 <SelectValue>
                   {watch('status') && (() => {
                     const statusConfig = {
-                      active: { color: 'bg-emerald-500', label: t.hr.status.active() },
-                      inactive: { color: 'bg-slate-400', label: t.hr.status.inactive() },
-                      on_leave: { color: 'bg-amber-500', label: t.hr.status.on_leave() },
+                      active: { color: 'bg-success', label: t.hr.status.active() },
+                      inactive: { color: 'bg-muted-foreground', label: t.hr.status.inactive() },
+                      on_leave: { color: 'bg-accent', label: t.hr.status.on_leave() },
                     }
                     const config = statusConfig[watch('status') as keyof typeof statusConfig]
                     return (
@@ -198,19 +198,19 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
               <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                 <SelectItem value="active" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <div className="h-2 w-2 rounded-full bg-success" />
                     {t.hr.status.active()}
                   </div>
                 </SelectItem>
                 <SelectItem value="inactive" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-slate-400" />
+                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
                     {t.hr.status.inactive()}
                   </div>
                 </SelectItem>
                 <SelectItem value="on_leave" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-amber-500" />
+                    <div className="h-2 w-2 rounded-full bg-accent" />
                     {t.hr.status.on_leave()}
                   </div>
                 </SelectItem>

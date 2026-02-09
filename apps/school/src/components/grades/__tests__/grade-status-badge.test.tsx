@@ -45,19 +45,19 @@ describe('gradeStatusBadge Component', () => {
     test('should apply blue style for submitted', () => {
       render(<GradeStatusBadge status="submitted" />)
       const badge = screen.getByRole('status')
-      expect(badge.className).toContain('bg-blue-100')
+      expect(badge.className).toContain('bg-secondary')
     })
 
     test('should apply green style for validated', () => {
       render(<GradeStatusBadge status="validated" />)
       const badge = screen.getByRole('status')
-      expect(badge.className).toContain('bg-green-100')
+      expect(badge.className).toContain('bg-success')
     })
 
     test('should apply red style for rejected', () => {
       render(<GradeStatusBadge status="rejected" />)
       const badge = screen.getByRole('status')
-      expect(badge.className).toContain('bg-red-100')
+      expect(badge.className).toContain('bg-destructive')
     })
 
     test('should accept custom className', () => {

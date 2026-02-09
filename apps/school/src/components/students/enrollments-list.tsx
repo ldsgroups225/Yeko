@@ -77,12 +77,10 @@ import { BulkReEnrollDialog } from './bulk-reenroll-dialog'
 import { EnrollmentStats } from './enrollment-stats'
 
 const statusColors: Record<string, string> = {
-  pending:
-    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  confirmed:
-    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-  transferred: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+  pending: 'bg-accent/10 text-accent-foreground',
+  confirmed: 'bg-success/10 text-success',
+  cancelled: 'bg-destructive/10 text-destructive',
+  transferred: 'bg-secondary/10 text-secondary',
 }
 
 export function EnrollmentsList() {
@@ -411,7 +409,7 @@ export function EnrollmentsList() {
                                         confirmMutation.mutate(item.enrollment.id)}
                                       disabled={confirmMutation.isPending}
                                     >
-                                      <IconCheck className="mr-2 h-4 w-4 text-green-600" />
+                                      <IconCheck className="mr-2 h-4 w-4 text-success" />
                                       {t.enrollments.confirm()}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem

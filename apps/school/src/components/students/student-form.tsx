@@ -158,7 +158,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Tabs defaultValue="personal" className="w-full space-y-8">
-          <TabsList className="p-1 h-auto bg-white/40 dark:bg-black/40 backdrop-blur-md rounded-full border border-white/20 dark:border-white/10 w-full md:w-auto inline-flex justify-start">
+          <TabsList className="p-1 h-auto bg-white/40 dark:bg-card/40 backdrop-blur-md rounded-full border border-border/20 dark:border-border/10 w-full md:w-auto inline-flex justify-start">
             <TabsTrigger value="personal" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">{t.students.personalInfo()}</TabsTrigger>
             <TabsTrigger value="contact" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">{t.students.contactInfo()}</TabsTrigger>
             <TabsTrigger value="medical" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">{t.students.medicalInfo()}</TabsTrigger>
@@ -169,9 +169,9 @@ export function StudentForm({ student, mode }: StudentFormProps) {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl border border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20"
+              className="rounded-xl border border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20"
             >
-              <div className="border-b border-white/10 bg-white/30 px-6 py-4">
+              <div className="border-b border-border/10 bg-white/30 px-6 py-4">
                 <h3 className="text-lg font-semibold">{t.students.personalInfo()}</h3>
               </div>
               <div className="p-6 space-y-8">
@@ -487,9 +487,9 @@ export function StudentForm({ student, mode }: StudentFormProps) {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl border border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20"
+              className="rounded-xl border border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20"
             >
-              <div className="border-b border-white/10 bg-white/30 px-6 py-4">
+              <div className="border-b border-border/10 bg-white/30 px-6 py-4">
                 <h3 className="text-lg font-semibold">{t.students.contactInfo()}</h3>
               </div>
               <div className="p-6 space-y-6">
@@ -551,9 +551,9 @@ export function StudentForm({ student, mode }: StudentFormProps) {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-xl border border-white/20 bg-white/50 backdrop-blur-xl dark:bg-black/20"
+              className="rounded-xl border border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20"
             >
-              <div className="border-b border-white/10 bg-white/30 px-6 py-4">
+              <div className="border-b border-border/10 bg-white/30 px-6 py-4">
                 <h3 className="text-lg font-semibold">{t.students.medicalInfo()}</h3>
               </div>
               <div className="p-6 space-y-6">
@@ -612,7 +612,7 @@ export function StudentForm({ student, mode }: StudentFormProps) {
         </Tabs>
 
         {/* Form Actions */}
-        <div className="flex justify-end gap-3 sticky bottom-4 z-10 p-4 rounded-xl border border-white/20 bg-white/80 backdrop-blur-md shadow-sm dark:bg-black/80 dark:border-white/10">
+        <div className="flex justify-end gap-3 sticky bottom-4 z-10 p-4 rounded-xl border border-border/20 bg-white/80 backdrop-blur-md shadow-sm dark:bg-card/80 dark:border-border/10">
           <Button
             type="button"
             variant="ghost"

@@ -52,14 +52,14 @@ export function ChapterChecklist({
               className={cn(
                 'flex items-center gap-3 rounded-md p-2 transition-colors',
                 !readOnly && 'hover:bg-muted',
-                chapter.isCompleted && 'bg-green-50 dark:bg-green-900/10',
+                chapter.isCompleted && 'bg-success/5 dark:bg-success/10',
               )}
             >
               {readOnly
                 ? (
                     chapter.isCompleted
                       ? (
-                          <IconCircleCheck className="h-5 w-5 text-green-500 shrink-0" />
+                          <IconCircleCheck className="h-5 w-5 text-success shrink-0" />
                         )
                       : (
                           <IconCircle className="h-5 w-5 text-muted-foreground shrink-0" />
@@ -84,7 +84,7 @@ export function ChapterChecklist({
                           )
                         : chapter.isCompleted
                           ? (
-                              <IconCircleCheck className="h-5 w-5 text-green-500" />
+                              <IconCircleCheck className="h-5 w-5 text-success" />
                             )
                           : (
                               <IconCircle className="h-5 w-5 text-muted-foreground" />

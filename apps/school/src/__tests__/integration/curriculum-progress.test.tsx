@@ -70,10 +70,10 @@ describe('curriculum Progress Integration', () => {
       const { container, rerender } = render(
         <ProgressBar completed={8} total={10} status="on_track" />,
       )
-      expect(container.querySelector('[class*="bg-green"]')).toBeInTheDocument()
+      expect(container.querySelector('[class*="bg-success"]')).toBeInTheDocument()
 
       rerender(<ProgressBar completed={5} total={10} status="significantly_behind" />)
-      expect(container.querySelector('[class*="bg-red"]')).toBeInTheDocument()
+      expect(container.querySelector('[class*="bg-destructive"]')).toBeInTheDocument()
     })
 
     test('should hide label when showLabel is false', () => {
@@ -241,7 +241,7 @@ describe('curriculum Progress Integration', () => {
   describe('status Colors', () => {
     test('should apply green color for on_track status', () => {
       const { container } = render(<ProgressStatusBadge status="on_track" />)
-      expect(container.querySelector('[class*="green"]')).toBeInTheDocument()
+      expect(container.querySelector('[class*="success"]')).toBeInTheDocument()
     })
 
     test('should apply yellow color for slightly_behind status', () => {
@@ -251,12 +251,12 @@ describe('curriculum Progress Integration', () => {
 
     test('should apply red color for significantly_behind status', () => {
       const { container } = render(<ProgressStatusBadge status="significantly_behind" />)
-      expect(container.querySelector('[class*="red"]')).toBeInTheDocument()
+      expect(container.querySelector('[class*="destructive"]')).toBeInTheDocument()
     })
 
     test('should apply blue color for ahead status', () => {
       const { container } = render(<ProgressStatusBadge status="ahead" />)
-      expect(container.querySelector('[class*="blue"]')).toBeInTheDocument()
+      expect(container.querySelector('[class*="primary"]')).toBeInTheDocument()
     })
   })
 

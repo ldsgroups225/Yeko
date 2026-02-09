@@ -218,13 +218,13 @@ function ConductRecordDetailPage() {
               >
                 <div className="flex items-center gap-2 ml-1">
                   <div className="h-px flex-1 bg-border/20" />
-                  <IconHistory className="size-4 text-emerald-500" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500/60">{t.conduct.resolution()}</span>
+                  <IconHistory className="size-4 text-success" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-success/60">{t.conduct.resolution()}</span>
                   <div className="h-px flex-1 bg-border/20" />
                 </div>
-                <Card className="rounded-3xl border-emerald-500/20 bg-emerald-500/5 backdrop-blur-xl">
+                <Card className="rounded-3xl border-success/20 bg-success/5 backdrop-blur-xl">
                   <CardContent className="p-8">
-                    <p className="font-medium text-emerald-950/70 dark:text-emerald-50/70 tracking-tight leading-relaxed">{record.resolutionNotes}</p>
+                    <p className="font-medium text-success tracking-tight leading-relaxed">{record.resolutionNotes}</p>
                   </CardContent>
                 </Card>
               </motion.div>

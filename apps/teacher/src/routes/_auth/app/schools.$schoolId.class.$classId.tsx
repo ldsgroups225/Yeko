@@ -105,24 +105,24 @@ function getPerformanceColor(average: number | null): string {
   if (average === null)
     return 'text-muted-foreground'
   if (average >= PERFORMANCE_THRESHOLDS.EXCELLENT)
-    return 'text-emerald-500'
+    return 'text-success'
   if (average >= PERFORMANCE_THRESHOLDS.GOOD)
-    return 'text-amber-500'
+    return 'text-info'
   if (average >= PERFORMANCE_THRESHOLDS.PASSING)
-    return 'text-orange-500'
-  return 'text-red-500'
+    return 'text-warning'
+  return 'text-destructive'
 }
 
 function getPerformanceBgColor(average: number | null): string {
   if (average === null)
     return 'bg-muted/30'
   if (average >= PERFORMANCE_THRESHOLDS.EXCELLENT)
-    return 'bg-emerald-500/10'
+    return 'bg-success'
   if (average >= PERFORMANCE_THRESHOLDS.GOOD)
-    return 'bg-amber-500/10'
+    return 'bg-info'
   if (average >= PERFORMANCE_THRESHOLDS.PASSING)
-    return 'bg-orange-500/10'
-  return 'bg-red-500/10'
+    return 'bg-warning'
+  return 'bg-destructive'
 }
 
 function getPerformanceIcon(average: number | null, classAvg: number | null) {
@@ -130,9 +130,9 @@ function getPerformanceIcon(average: number | null, classAvg: number | null) {
     return <IconMinus className="w-3 h-3" />
   const diff = average - classAvg
   if (diff > 1)
-    return <IconTrendingUp className="w-3 h-3 text-emerald-500" />
+    return <IconTrendingUp className="w-3 h-3 text-success" />
   if (diff < -1)
-    return <IconTrendingDown className="w-3 h-3 text-red-500" />
+    return <IconTrendingDown className="w-3 h-3 text-destructive" />
   return <IconMinus className="w-3 h-3 text-muted-foreground" />
 }
 

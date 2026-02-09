@@ -156,14 +156,14 @@ export function SubjectCopyDialog({
                     <FormControl>
                       <SelectTrigger
                         disabled={isPendingClasses}
-                        className="h-11 bg-white/5 border-white/10 focus:ring-primary/40"
+                        className="h-11 bg-white/5 border-border/10 focus:ring-primary/40"
                       >
                         <SelectValue
                           placeholder={t.academic.classes.selectSourceClassError()}
                         />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="backdrop-blur-xl bg-card/95 border-white/10">
+                    <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
                       {sourceClasses.map(cls => (
                         <SelectItem key={cls.class.id} value={cls.class.id}>
                           <div className="flex flex-col">
@@ -190,10 +190,10 @@ export function SubjectCopyDialog({
               control={form.control}
               name="overwrite"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-xl border border-white/5 bg-white/5 p-4 transition-colors hover:bg-white/10">
+                <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/5 bg-white/5 p-4 transition-colors hover:bg-white/10">
                   <div className="space-y-1">
                     <FormLabel className="text-sm font-bold flex items-center gap-2">
-                      <IconAlertCircle className="h-3.5 w-3.5 text-amber-500" />
+                      <IconAlertCircle className="h-3.5 w-3.5 text-accent" />
                       {t.academic.classes.overwriteExisting()}
                     </FormLabel>
                     <FormDescription className="text-[11px] leading-relaxed max-w-[200px]">

@@ -211,13 +211,13 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
                 <SelectValue placeholder={t.hr.common.status()}>
                   {watch('status') === 'active' && (
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                      <div className="h-2 w-2 rounded-full bg-success" />
                       {t.hr.status.active()}
                     </div>
                   )}
                   {watch('status') === 'inactive' && (
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-slate-400" />
+                      <div className="h-2 w-2 rounded-full bg-muted" />
                       {t.hr.status.inactive()}
                     </div>
                   )}
