@@ -216,7 +216,9 @@ function ReportCardsPage() {
                     <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                       <div className="flex items-center gap-2">
                         <IconCalendar className="size-3.5 text-muted-foreground" />
-                        <SelectValue placeholder={t.schoolYear.select()} />
+                        <SelectValue placeholder={t.schoolYear.select()}>
+                          {schoolYears?.find(y => y.id === effectiveYearId)?.template.name}
+                        </SelectValue>
                       </div>
                     </SelectTrigger>
                     <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
@@ -247,7 +249,9 @@ function ReportCardsPage() {
                     disabled={!effectiveYearId}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                      <SelectValue placeholder={t.terms.select()} />
+                      <SelectValue placeholder={t.terms.select()}>
+                        {currentTerm?.template.name}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                       {terms?.map(term => (
@@ -278,7 +282,9 @@ function ReportCardsPage() {
                     <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                       <div className="flex items-center gap-2">
                         <IconLayoutGrid className="size-3.5 text-muted-foreground" />
-                        <SelectValue placeholder={t.classes.select()} />
+                        <SelectValue placeholder={t.classes.select()}>
+                          {currentClass ? `${currentClass.grade.name} ${currentClass.class.section}` : null}
+                        </SelectValue>
                       </div>
                     </SelectTrigger>
                     <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">

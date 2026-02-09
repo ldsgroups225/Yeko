@@ -174,7 +174,9 @@ function StudentAttendancePage() {
         <div className="flex flex-wrap gap-4">
           <Select value={classId} onValueChange={val => setClassId(val ?? '')}>
             <SelectTrigger className="w-[280px] h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-              <SelectValue placeholder={t.attendance.selectClass()} />
+              <SelectValue placeholder={t.attendance.selectClass()}>
+                {selectedClass ? `${selectedClass.grade?.name ?? ''} ${selectedClass.class.section}` : null}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
               {classes.map(c => (

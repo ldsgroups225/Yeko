@@ -16,7 +16,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent } from '@workspace/ui/components/card'
 import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   DropdownMenu,

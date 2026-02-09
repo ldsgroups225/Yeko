@@ -1590,6 +1590,11 @@ const en: Translation = {
         pendingCount: '{count} grade(s) pending',
         submittedBy: 'Submitted by',
         submittedAt: 'Submitted',
+        details: {
+          evaluation: 'Evaluation Information',
+          submission: 'Submission',
+          stats: 'Statistics',
+        },
         confirmSubmitTitle: 'Confirm Submission',
         confirmSubmitDescription:
           'Do you want to submit {count} grade(s) for validation? Once submitted, they cannot be modified.',

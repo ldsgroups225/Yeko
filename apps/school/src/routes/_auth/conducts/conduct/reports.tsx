@@ -273,23 +273,23 @@ function ConductReportsPage() {
                     </Card>
                   </motion.div>
 
-                      <motion.div variants={item}>
-                        <Card className="relative overflow-hidden rounded-3xl border-success/20 bg-success/5 backdrop-blur-xl shadow-xl group">
-                          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                            <IconTrophy className="size-16 text-success" />
-                          </div>
-                          <CardHeader className="pb-2">
-                            <CardTitle className="text-[10px] font-black uppercase tracking-widest text-success/60">{t.conduct.type.reward()}</CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="text-4xl font-black tracking-tight text-success">{stats.rewards}</div>
-                            <Progress
-                              value={stats.total > 0 ? (stats.rewards / stats.total) * 100 : 0}
-                              className="mt-4 h-1.5 bg-success/10 [&>div]:bg-success"
-                            />
-                          </CardContent>
-                        </Card>
-                      </motion.div>
+                  <motion.div variants={item}>
+                    <Card className="relative overflow-hidden rounded-3xl border-success/20 bg-success/5 backdrop-blur-xl shadow-xl group">
+                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                        <IconTrophy className="size-16 text-success" />
+                      </div>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-success/60">{t.conduct.type.reward()}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-4xl font-black tracking-tight text-success">{stats.rewards}</div>
+                        <Progress
+                          value={stats.total > 0 ? (stats.rewards / stats.total) * 100 : 0}
+                          className="mt-4 h-1.5 bg-success/10 [&>div]:bg-success"
+                        />
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 </div>
 
                 <div className="grid gap-8 md:grid-cols-2">
