@@ -34,6 +34,12 @@ export interface PaymentPlanTemplateTableItem {
   installmentsCount: number
   isDefault: boolean
   status: 'active' | 'inactive'
+  schedule: {
+    number: number
+    percentage: number
+    dueDaysFromStart: number
+    label: string
+  }[]
 }
 
 interface PaymentPlanTemplatesTableProps {
@@ -147,7 +153,10 @@ export function PaymentPlanTemplatesTable({
                         className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
                       >
                         <DropdownMenuItem
-                          onClick={() => onEdit?.(template)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onEdit?.(template)
+                          }}
                           className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
                         >
                           <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -155,7 +164,10 @@ export function PaymentPlanTemplatesTable({
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-border/40" />
                         <DropdownMenuItem
-                          onClick={() => onDelete?.(template)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onDelete?.(template)
+                          }}
                           className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
                         >
                           <IconTrash className="mr-2 h-4 w-4" />
@@ -207,7 +219,10 @@ export function PaymentPlanTemplatesTable({
                     className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
                   >
                     <DropdownMenuItem
-                      onClick={() => onEdit?.(template)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEdit?.(template)
+                      }}
                       className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
                     >
                       <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
@@ -215,7 +230,10 @@ export function PaymentPlanTemplatesTable({
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-border/40" />
                     <DropdownMenuItem
-                      onClick={() => onDelete?.(template)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onDelete?.(template)
+                      }}
                       className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
                     >
                       <IconTrash className="mr-2 h-4 w-4" />
