@@ -6,15 +6,18 @@ import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { grades, programTemplateChapters, schools, subjects } from '../drizzle/core-schema'
 import {
+  chapterCompletions,
   classes,
   classSessions,
   classSubjects,
+  curriculumProgress,
   enrollments,
   homework,
   homeworkSubmissions,
   messageTemplates,
   parents,
   participationGrades,
+  studentAttendance,
   studentGrades,
   studentParents,
   students,
@@ -1718,5 +1721,147 @@ export function getClassSubjectInfo(params: {
       .limit(1)
       .then(result => result[0] ?? null),
     e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'classes.infoFailed'), { code: 'GET_CLASS_UBJECT_INFO_FAILED' }),
+  ).mapErr(tapLogErr(databaseLogger, params))
+}
+
+// ============================================
+// SESSION FINALIZATION HELPERS
+// ============================================
+
+/**
+ * Upsert student attendance records
+ */
+export function upsertStudentAttendance(params: {
+  schoolId: string
+  classId: string
+  classSessionId: string
+  teacherId: string // recordedBy
+  date: string
+  records: Array<{
+    studentId: string
+    status: 'present' | 'late' | 'absent' | 'excused'
+  }>
+}): ResultAsync<{ success: boolean, count: number }, DatabaseError> {
+  const db = getDb()
+
+  if (params.records.length === 0) {
+    return ResultAsync.fromSafePromise(Promise.resolve({ success: true, count: 0 }))
+  }
+
+  return ResultAsync.fromPromise(
+    db
+      .insert(studentAttendance)
+      .values(params.records.map(r => ({
+        id: crypto.randomUUID(),
+        studentId: r.studentId,
+        classId: params.classId,
+        schoolId: params.schoolId,
+        classSessionId: params.classSessionId,
+        date: params.date,
+        status: r.status,
+        recordedBy: params.teacherId,
+      })))
+      .onConflictDoUpdate({
+        target: [studentAttendance.studentId, studentAttendance.date, studentAttendance.classId, studentAttendance.classSessionId],
+        set: {
+          status: sql`excluded.status`,
+          updatedAt: new Date(),
+        },
+      })
+      .returning()
+      .then(results => ({ success: true, count: results.length })),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'attendance.upsertFailed'), { code: 'UPSERT_ATTENDANCE_FAILED' }),
+  ).mapErr(tapLogErr(databaseLogger, params))
+}
+
+/**
+ * Record chapter completion
+ */
+export function recordChapterCompletion(params: {
+  classId: string
+  subjectId: string
+  chapterId: string
+  classSessionId: string
+  teacherId: string
+  notes?: string
+}): ResultAsync<{ success: boolean }, DatabaseError> {
+  const db = getDb()
+
+  return ResultAsync.fromPromise(
+    db
+      .insert(chapterCompletions)
+      .values({
+        id: crypto.randomUUID(),
+        classId: params.classId,
+        subjectId: params.subjectId,
+        chapterId: params.chapterId,
+        classSessionId: params.classSessionId,
+        teacherId: params.teacherId,
+        notes: params.notes,
+        completedAt: new Date(),
+      })
+      .onConflictDoNothing()
+      .then(() => ({ success: true })),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'curriculum.completionFailed'), { code: 'RECORD_CHAPTER_COMPLETION_FAILED' }),
+  ).mapErr(tapLogErr(databaseLogger, params))
+}
+
+/**
+ * Update curriculum progress
+ */
+export function updateCurriculumProgress(params: {
+  classId: string
+  subjectId: string
+  termId?: string
+}): ResultAsync<{ success: boolean }, DatabaseError> {
+  const db = getDb()
+
+  return ResultAsync.fromPromise(
+    (async () => {
+      // 1. Find the active progress record
+      const conditions = [
+        eq(curriculumProgress.classId, params.classId),
+        eq(curriculumProgress.subjectId, params.subjectId),
+      ]
+      if (params.termId) {
+        conditions.push(eq(curriculumProgress.termId, params.termId))
+      }
+
+      const progressRecord = await db
+        .select()
+        .from(curriculumProgress)
+        .where(and(...conditions))
+        .limit(1)
+        .then(res => res[0])
+
+      if (!progressRecord) {
+        // If no record exists, we likely need to check if there is a program template and initialize one
+        // For now, we return false or success: false to indicate no update made
+        return { success: false }
+      }
+
+      // Check if we already incremented for this chapter/session?
+      // Simpler approach: Just increment
+      const newCompletedCount = progressRecord.completedChapters + 1
+      // Cap at total
+      const safeCompletedCount = Math.min(newCompletedCount, progressRecord.totalChapters)
+
+      const percent = progressRecord.totalChapters > 0
+        ? (safeCompletedCount / progressRecord.totalChapters) * 100
+        : 0
+
+      await db
+        .update(curriculumProgress)
+        .set({
+          completedChapters: safeCompletedCount,
+          progressPercentage: percent.toFixed(2),
+          lastChapterCompletedAt: new Date(),
+          calculatedAt: new Date(),
+        })
+        .where(eq(curriculumProgress.id, progressRecord.id))
+
+      return { success: true }
+    })(),
+    e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'curriculum.updateFailed'), { code: 'UPDATE_CURRICULUM_PROGRESS_FAILED' }),
   ).mapErr(tapLogErr(databaseLogger, params))
 }

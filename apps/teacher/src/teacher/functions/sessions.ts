@@ -69,7 +69,19 @@ export const completeSession = createServerFn({ method: 'POST' })
     const {
       upsertParticipationGrades,
       createHomeworkAssignment,
+      upsertStudentAttendance,
+      recordChapterCompletion,
+      updateCurriculumProgress,
+      getTeacherClassSessionById,
     } = await import('@repo/data-ops/queries/teacher-app')
+
+    // 0. Fetch session details first (needed for schoolId and sync)
+    // We need to verify the session exists and get context info
+    const sessionResult = await getTeacherClassSessionById(data.sessionId)
+    if (sessionResult.isErr() || !sessionResult.value) {
+      return { success: false, error: 'Session not found' }
+    }
+    const session = sessionResult.value
 
     // 1. Update session status and basic info
     const updatedResult = await completeTeacherClassSession({
@@ -103,27 +115,58 @@ export const completeSession = createServerFn({ method: 'POST' })
       })
     }
 
-    // 3. Create homework if provided
-    if (data.homework) {
-      const sessionResult = await getTeacherClassSessionById(data.sessionId)
-      if (sessionResult.isOk() && sessionResult.value) {
-        const session = sessionResult.value
-        await createHomeworkAssignment({
-          schoolId: session.schoolId,
-          classId: session.classId,
-          subjectId: session.subjectId,
-          teacherId: session.teacherId,
-          classSessionId: session.id,
-          title: data.homework.title,
-          description: data.homework.description,
-          dueDate: data.homework.dueDate,
-          status: 'active',
-        })
-      }
+    // 3. Upsert student attendance records
+    if (data.attendanceRecords) {
+      const records = Object.entries(data.attendanceRecords).map(([studentId, status]) => ({
+        studentId,
+        status: status as 'present' | 'late' | 'absent' | 'excused',
+      }))
+
+      await upsertStudentAttendance({
+        schoolId: session.schoolId,
+        classId: session.classId,
+        classSessionId: session.id,
+        teacherId: data.teacherId ?? '',
+        date: session.date,
+        records,
+      })
     }
 
-    // TODO: In Phase 13/14, we should also store attendanceRecords (per student)
-    // For now, we only store totals in the session table
+    // 4. Create homework if provided
+    if (data.homework) {
+      await createHomeworkAssignment({
+        schoolId: session.schoolId,
+        classId: session.classId,
+        subjectId: session.subjectId,
+        teacherId: session.teacherId,
+        classSessionId: session.id,
+        title: data.homework.title,
+        description: data.homework.description ?? undefined,
+        dueDate: data.homework.dueDate,
+        status: 'active',
+      })
+    }
+
+    // 5. Record Chapter Completion & Update Progress
+    if (data.lessonCompleted && data.chapterId) {
+      // Record the completion
+      await recordChapterCompletion({
+        classId: session.classId,
+        subjectId: session.subjectId,
+        chapterId: data.chapterId,
+        classSessionId: session.id,
+        teacherId: data.teacherId ?? '',
+        notes: data.notes,
+      })
+
+      // Update curriculum progress
+      // Note: We don't have termId explicitly, but updateCurriculumProgress
+      // will try to find the active record for this class/subject
+      await updateCurriculumProgress({
+        classId: session.classId,
+        subjectId: session.subjectId,
+      })
+    }
 
     return { success: true }
   })

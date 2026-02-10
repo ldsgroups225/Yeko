@@ -66,6 +66,7 @@ import { AttendanceStudentCard, ParticipationStudentCard, SessionFinalizationShe
 import { useAttendanceRecords } from '@/hooks/use-attendance-records'
 import { useParticipationManagement } from '@/hooks/use-participation-management'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
+import { useSync } from '@/hooks/useSync'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { localNotesService } from '@/lib/db/local-notes'
 import {
@@ -127,7 +128,7 @@ function getPerformanceBgColor(average: number | null): string {
 
 function getPerformanceIcon(average: number | null, classAvg: number | null) {
   if (average === null || classAvg === null)
-    return <IconMinus className="w-3 h-3" />
+    return null
   const diff = average - classAvg
   if (diff > 1)
     return <IconTrendingUp className="w-3 h-3 text-success" />
@@ -161,6 +162,7 @@ interface SortConfig {
 function ClassDetailPage() {
   const { LL } = useI18nContext()
   const queryClient = useQueryClient()
+  const { publishNotes } = useSync()
 
   const { schoolId, classId } = Route.useParams()
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
@@ -407,7 +409,7 @@ function ClassDetailPage() {
           }, {} as Record<string, 'present' | 'absent' | 'late'>),
           participationGrades: participations.map(p => ({
             studentId: p.studentId,
-            grade: 10, // Default grade for participation, could be configurable
+            grade: 1, // Default grade for participation, could be configurable
             comment: p.comment,
           })),
           homework: data.homework,
@@ -570,7 +572,17 @@ function ClassDetailPage() {
       // Mark as published locally
       await localNotesService.publishNote(unpublishedNote.id)
 
-      toast.success(LL.grades.publishedSuccess())
+      // Sync to remote Neon database (should be a queue processing later)
+      const syncResult = await publishNotes({ noteIds: [unpublishedNote.id] })
+
+      if (!syncResult.success) {
+        console.error('Remote sync failed:', syncResult.errors)
+        toast.warning(`${LL.grades.publishedSuccess()} (sync en attente)`)
+      }
+      else {
+        toast.success(LL.grades.publishedSuccess())
+      }
+
       setIsUnpublishedSheetOpen(false)
       setIsConfirmDialogOpen(false)
       refetchUnpublished()
@@ -746,7 +758,7 @@ function ClassDetailPage() {
           >
             <IconChartBar className="w-5 h-5 text-muted-foreground mb-1" />
             <span className={cn('text-xl font-black', getPerformanceColor(classStats.average))}>
-              {classStats.average?.toFixed(2) ?? LL.common.notAvailable()}
+              {classStats.average?.toFixed(2) ?? '-'}
             </span>
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
               {LL.common.average()}
@@ -760,7 +772,7 @@ function ClassDetailPage() {
             className="flex flex-col items-center justify-center p-3 rounded-xl bg-linear-to-br from-muted/50 to-muted/30 border border-border/40"
           >
             <IconBook className="w-5 h-5 text-muted-foreground mb-1" />
-            <span className="text-xl font-black text-foreground">{LL.common.notAvailable()}</span>
+            <span className="text-xl font-black text-foreground">-</span>
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
               {LL.grades.title()}
             </span>
@@ -1463,8 +1475,12 @@ function StudentCard({
                     )}
                   >
                     {getPerformanceIcon(studentAverage, classAverage)}
-                    <span className={getPerformanceColor(studentAverage)}>
-                      {studentAverage !== null ? studentAverage.toFixed(2) : LL.common.notAvailable()}
+                    <span className={cn(
+                      getPerformanceColor(studentAverage),
+                      !!getPerformanceColor(studentAverage) && 'mx-auto',
+                    )}
+                    >
+                      {studentAverage !== null ? studentAverage.toFixed(2) : '-'}
                     </span>
                   </div>
                 </div>
@@ -1493,15 +1509,15 @@ function StudentCard({
               <div className="grid grid-cols-3 gap-3 text-xs">
                 <div className="flex flex-col rounded-md bg-background p-2">
                   <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.quizzes()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">{LL.common.notAvailable()}</span>
+                  <span className="font-semibold text-base text-muted-foreground">-</span>
                 </div>
                 <div className="flex flex-col rounded-md bg-background p-2">
                   <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.tests()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">{LL.common.notAvailable()}</span>
+                  <span className="font-semibold text-base text-muted-foreground">-</span>
                 </div>
                 <div className="flex flex-col rounded-md bg-background p-2">
                   <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.level_tests()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">{LL.common.notAvailable()}</span>
+                  <span className="font-semibold text-base text-muted-foreground">-</span>
                 </div>
               </div>
 

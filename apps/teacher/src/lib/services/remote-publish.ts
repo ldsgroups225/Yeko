@@ -96,6 +96,11 @@ export const remotePublishHandler: RemotePublishHandler = async (note: NoteWithD
  */
 function mapNoteTypeToGradeType(type: string): 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project' {
   const mapping: Record<string, 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project'> = {
+    // Local PGlite note types
+    tests: 'test',
+    quizzes: 'quiz',
+    level_tests: 'exam',
+    // Legacy uppercase types
     CLASS_TEST: 'test',
     WRITING_QUESTION: 'quiz',
     EXAM: 'exam',

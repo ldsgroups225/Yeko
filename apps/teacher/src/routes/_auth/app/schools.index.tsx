@@ -10,6 +10,7 @@ import { memo } from 'react'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { getTeacherSchoolsQuery } from '@/teacher/functions/schools'
+import { formatPhone } from '@/utils/formatPhone'
 
 export const Route = createFileRoute('/_auth/app/schools/')({
   component: SchoolsPage,
@@ -48,7 +49,7 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
       params={{ schoolId: school.id }}
       className="block group w-full"
     >
-      <Card className="flex flex-col sm:flex-row min-h-[160px] overflow-hidden border-border/40 bg-card/30 backdrop-blur-xl transition-all hover:border-primary/40 hover:bg-card/50 hover:shadow-2xl active:scale-[0.99] border relative">
+      <Card className="pt-0 flex flex-col sm:flex-row min-h-[160px] overflow-hidden border-border/40 bg-card/30 backdrop-blur-xl transition-all hover:border-primary/40 hover:bg-card/50 hover:shadow-2xl active:scale-[0.99] border relative max-w-full">
         <div className="relative w-full sm:w-56 h-40 sm:h-auto shrink-0 overflow-hidden bg-muted/20">
           <Avatar className="h-full w-full rounded-none">
             <AvatarImage
@@ -64,10 +65,10 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
           <div className="absolute inset-0 bg-linear-to-t from-card/90 via-transparent to-transparent sm:bg-linear-to-r sm:from-transparent sm:to-card/90" />
         </div>
 
-        <CardContent className="flex-1 p-6 sm:p-8 flex flex-col justify-center min-w-0 relative z-10">
+        <CardContent className="flex-1 p-4 sm:p-8 flex flex-col justify-center min-w-0 overflow-hidden relative z-10">
           <div className="space-y-5">
             <div className="space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-black leading-tight tracking-tight text-foreground group-hover:text-primary transition-colors truncate">
+              <h2 className="text-xl sm:text-3xl font-black leading-tight tracking-tight text-foreground group-hover:text-primary transition-colors truncate">
                 {school.name}
               </h2>
               <div className="flex items-center gap-2.5 flex-wrap">
@@ -96,7 +97,7 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
                   <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-muted/40 text-primary/60 border border-border/20">
                     <IconPhone className="h-4 w-4" />
                   </div>
-                  <span>{school.phone}</span>
+                  <span className="truncate">{formatPhone(school.phone)}</span>
                 </div>
               )}
             </div>
@@ -135,8 +136,8 @@ function SchoolsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background/50 flex flex-col items-center">
-      <div className="w-full max-w-4xl px-4 py-10 sm:py-16 flex flex-col gap-10">
+    <div className="min-h-screen bg-background/50 flex flex-col items-center overflow-x-hidden">
+      <div className="w-full max-w-4xl px-4 py-10 sm:py-16 flex flex-col gap-10 overflow-hidden">
         <header className="space-y-3 px-2 text-center sm:text-left">
           <motion.div
             initial={{ opacity: 0, y: -20 }}

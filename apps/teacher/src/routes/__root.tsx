@@ -37,7 +37,7 @@ export const Route = createRootRouteWithContext<{
         content: 'Application mobile pour les enseignants Yeko',
       },
       { name: 'theme-color', content: '#2563eb' },
-      { name: 'apple-mobile-web-app-capable', content: 'yes' },
+      { name: 'mobile-web-app-capable', content: 'yes' },
       { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
     ],
     links: [

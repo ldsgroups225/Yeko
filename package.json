@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "setup": "pnpm i && pnpm run build:data-ops && pnpm run build:logger",
+    "setup": "pnpm i && pnpm run build:logger && pnpm run build:data-ops",
     "build:data-ops": "pnpm run --filter data-ops build",
     "build:logger": "pnpm run --filter @repo/logger build",
     "dev:yeko-core": "pnpm run --filter yeko-core dev",
