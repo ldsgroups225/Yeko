@@ -1,6 +1,6 @@
+import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq, sql } from 'drizzle-orm'
-import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { grades, subjects } from '../drizzle/core-schema'
 import {
@@ -13,12 +13,12 @@ import { DatabaseError } from '../errors'
 /**
  * Get detailed schedule for a teacher
  */
-export function getTeacherDetailedSchedule(params: {
+export async function getTeacherDetailedSchedule(params: {
   teacherId: string
   schoolYearId: string
   startDate?: string
   endDate?: string
-}): ResultAsync<{
+}): R.ResultAsync<{
   timetableSessions: Array<{
     id: string
     dayOfWeek: number
@@ -44,48 +44,52 @@ export function getTeacherDetailedSchedule(params: {
 }, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const sessions = await db
-        .select({
-          id: timetableSessions.id,
-          dayOfWeek: timetableSessions.dayOfWeek,
-          startTime: timetableSessions.startTime,
-          endTime: timetableSessions.endTime,
-          class: {
-            id: timetableSessions.classId,
-            name: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-          },
-          subject: {
-            id: timetableSessions.subjectId,
-            name: subjects.name,
-            shortName: subjects.shortName,
-          },
-          classroom: {
-            id: classrooms.id,
-            name: classrooms.name,
-            code: classrooms.code,
-          },
-        })
-        .from(timetableSessions)
-        .innerJoin(classes, eq(timetableSessions.classId, classes.id))
-        .innerJoin(grades, eq(classes.gradeId, grades.id))
-        .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
-        .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
-        .where(
-          and(
-            eq(timetableSessions.teacherId, params.teacherId),
-            eq(classes.schoolYearId, params.schoolYearId),
-          ),
-        )
-        .orderBy(timetableSessions.dayOfWeek, timetableSessions.startTime)
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const sessions = await db
+          .select({
+            id: timetableSessions.id,
+            dayOfWeek: timetableSessions.dayOfWeek,
+            startTime: timetableSessions.startTime,
+            endTime: timetableSessions.endTime,
+            class: {
+              id: timetableSessions.classId,
+              name: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+            },
+            subject: {
+              id: timetableSessions.subjectId,
+              name: subjects.name,
+              shortName: subjects.shortName,
+            },
+            classroom: {
+              id: classrooms.id,
+              name: classrooms.name,
+              code: classrooms.code,
+            },
+          })
+          .from(timetableSessions)
+          .innerJoin(classes, eq(timetableSessions.classId, classes.id))
+          .innerJoin(grades, eq(classes.gradeId, grades.id))
+          .innerJoin(subjects, eq(timetableSessions.subjectId, subjects.id))
+          .leftJoin(classrooms, eq(timetableSessions.classroomId, classrooms.id))
+          .where(
+            and(
+              eq(timetableSessions.teacherId, params.teacherId),
+              eq(classes.schoolYearId, params.schoolYearId),
+            ),
+          )
+          .orderBy(timetableSessions.dayOfWeek, timetableSessions.startTime)
 
-      return {
-        timetableSessions: sessions,
-        substitutionMap: {},
-        cancellationMap: {},
-      }
-    })(),
-    e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher detailed schedule'),
-  ).mapErr(tapLogErr(databaseLogger, params))
+        return {
+          timetableSessions: sessions,
+          substitutionMap: {},
+          cancellationMap: {},
+        }
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get teacher detailed schedule'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }

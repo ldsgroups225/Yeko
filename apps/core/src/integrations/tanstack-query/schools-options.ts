@@ -1,3 +1,4 @@
+import type { School } from '@repo/data-ops/drizzle/core-schema'
 import type {
   BulkUpdateSchoolsInput,
   CreateSchoolInput,
@@ -42,7 +43,15 @@ export interface SchoolsQueryParams {
 }
 
 export function schoolsQueryOptions(params: SchoolsQueryParams) {
-  return queryOptions({
+  return queryOptions<{
+    data: School[]
+    meta: {
+      page: number
+      limit: number
+      total: number
+      totalPages: number
+    }
+  }>({
     queryKey: schoolsKeys.list(params),
     queryFn: () => getSchools({ data: params }),
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -54,7 +63,7 @@ export function schoolsQueryOptions(params: SchoolsQueryParams) {
 }
 
 export function schoolQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<School | null>({
     queryKey: schoolsKeys.detail(id),
     queryFn: () => getSchoolById({ data: { id } }),
     staleTime: 1000 * 60 * 2, // 2 minutes

@@ -1,6 +1,6 @@
+import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq, sql, sum } from 'drizzle-orm'
-import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import {
   installments,
@@ -18,61 +18,65 @@ export interface FinanceStats {
   overdueAmount: number
 }
 
-export function getFinanceStats(schoolId: string): ResultAsync<FinanceStats, DatabaseError> {
+export async function getFinanceStats(schoolId: string): R.ResultAsync<FinanceStats, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [revenueResult] = await db
-        .select({
-          amount: sum(payments.amount),
-          count: sql<number>`count(*)::int`,
-        })
-        .from(payments)
-        .where(
-          and(
-            eq(payments.schoolId, schoolId),
-            eq(payments.status, 'completed'),
-          ),
-        )
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [revenueResult] = await db
+          .select({
+            amount: sum(payments.amount),
+            count: sql<number>`count(*)::int`,
+          })
+          .from(payments)
+          .where(
+            and(
+              eq(payments.schoolId, schoolId),
+              eq(payments.status, 'completed'),
+            ),
+          )
 
-      const [pendingResult] = await db
-        .select({
-          amount: sum(payments.amount),
-        })
-        .from(payments)
-        .where(
-          and(
-            eq(payments.schoolId, schoolId),
-            eq(payments.status, 'pending'),
-          ),
-        )
+        const [pendingResult] = await db
+          .select({
+            amount: sum(payments.amount),
+          })
+          .from(payments)
+          .where(
+            and(
+              eq(payments.schoolId, schoolId),
+              eq(payments.status, 'pending'),
+            ),
+          )
 
-      const now = new Date().toISOString().split('T')[0]
-      const [overdueResult] = await db
-        .select({
-          amount: sum(installments.balance),
-        })
-        .from(installments)
-        .innerJoin(paymentPlans, eq(installments.paymentPlanId, paymentPlans.id))
-        .innerJoin(schoolYears, eq(paymentPlans.schoolYearId, schoolYears.id))
-        .where(
-          and(
-            eq(schoolYears.schoolId, schoolId),
-            sql`${installments.dueDate} < ${now}`,
-            sql`${installments.balance} > 0`,
-          ),
-        )
+        const now = new Date().toISOString().split('T')[0]
+        const [overdueResult] = await db
+          .select({
+            amount: sum(installments.balance),
+          })
+          .from(installments)
+          .innerJoin(paymentPlans, eq(installments.paymentPlanId, paymentPlans.id))
+          .innerJoin(schoolYears, eq(paymentPlans.schoolYearId, schoolYears.id))
+          .where(
+            and(
+              eq(schoolYears.schoolId, schoolId),
+              sql`${installments.dueDate} < ${now}`,
+              sql`${installments.balance} > 0`,
+            ),
+          )
 
-      return {
-        totalRevenue: Number(revenueResult?.amount ?? 0),
-        totalPayments: Number(revenueResult?.count ?? 0),
-        pendingPayments: Number(pendingResult?.amount ?? 0),
-        overdueAmount: Number(overdueResult?.amount ?? 0),
-      }
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'stats.fetchFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId }))
+        return {
+          totalRevenue: Number(revenueResult?.amount ?? 0),
+          totalPayments: Number(revenueResult?.count ?? 0),
+          pendingPayments: Number(pendingResult?.amount ?? 0),
+          overdueAmount: Number(overdueResult?.amount ?? 0),
+        }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'stats.fetchFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId })),
+  )
 }
 
 export interface MonthlyRevenue {
@@ -80,32 +84,36 @@ export interface MonthlyRevenue {
   revenue: number
 }
 
-export function getMonthlyRevenue(schoolId: string, months: number = 6): ResultAsync<MonthlyRevenue[], DatabaseError> {
+export async function getMonthlyRevenue(schoolId: string, months: number = 6): R.ResultAsync<MonthlyRevenue[], DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const rows = await db
-        .select({
-          month: sql<string>`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`,
-          revenue: sum(payments.amount),
-        })
-        .from(payments)
-        .where(
-          and(
-            eq(payments.schoolId, schoolId),
-            eq(payments.status, 'completed'),
-            sql`${payments.paymentDate} >= CURRENT_DATE - INTERVAL '${sql.raw(String(months))} months'`,
-          ),
-        )
-        .groupBy(sql`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`)
-        .orderBy(sql`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`)
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select({
+            month: sql<string>`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`,
+            revenue: sum(payments.amount),
+          })
+          .from(payments)
+          .where(
+            and(
+              eq(payments.schoolId, schoolId),
+              eq(payments.status, 'completed'),
+              sql`${payments.paymentDate} >= CURRENT_DATE - INTERVAL '${sql.raw(String(months))} months'`,
+            ),
+          )
+          .groupBy(sql`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`)
+          .orderBy(sql`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`)
 
-      return rows.map(row => ({
-        month: row.month,
-        revenue: Number(row.revenue ?? 0),
-      }))
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'stats.fetchFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, months }))
+        return rows.map(row => ({
+          month: row.month,
+          revenue: Number(row.revenue ?? 0),
+        }))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'stats.fetchFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, months })),
+  )
 }

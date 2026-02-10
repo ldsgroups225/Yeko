@@ -1,4 +1,5 @@
 import type { SchoolStatus, SubjectCategory } from '../drizzle/core-schema'
+import { Result as R } from '@praha/byethrow'
 import { beforeEach, describe, expect, test } from 'vitest'
 import {
   bulkCreateSeries,
@@ -75,7 +76,7 @@ describe('query Functions Tests - Schools', () => {
     testSchoolIds = []
 
     // Create test data
-    const school1 = (await createSchool({
+    const school1 = R.unwrap(await createSchool({
       name: 'Test Primary School',
       code: `TPS-${Date.now()}`,
       email: 'primary@test.com',
@@ -87,10 +88,10 @@ describe('query Functions Tests - Schools', () => {
         maxStudents: 500,
         academicYear: '2024-2025',
       },
-    }))._unsafeUnwrap()
+    }))
     testSchoolIds.push(school1.id)
 
-    const school2 = (await createSchool({
+    const school2 = R.unwrap(await createSchool({
       name: 'Test Secondary School',
       code: `TSS-${Date.now()}`,
       email: 'secondary@test.com',
@@ -101,17 +102,17 @@ describe('query Functions Tests - Schools', () => {
         maxStudents: 1000,
         academicYear: '2024-2025',
       },
-    }))._unsafeUnwrap()
+    }))
     testSchoolIds.push(school2.id)
 
-    const school3 = (await createSchool({
+    const school3 = R.unwrap(await createSchool({
       name: 'Test High School',
       code: `THS-${Date.now()}`,
       email: 'high@test.com',
       phone: '+237555555555',
       address: '789 Test Boulevard',
       status: 'suspended',
-    }))._unsafeUnwrap()
+    }))
     testSchoolIds.push(school3.id)
   })
 
@@ -132,7 +133,7 @@ describe('query Functions Tests - Schools', () => {
         },
       }
 
-      const school = (await createSchool(schoolData))._unsafeUnwrap()
+      const school = R.unwrap(await createSchool(schoolData))
 
       expect(school).toBeDefined()
       expect(school.id).toBeDefined()
@@ -155,7 +156,7 @@ describe('query Functions Tests - Schools', () => {
         code: `MS-${Date.now()}`,
       }
 
-      const school = (await createSchool(schoolData))._unsafeUnwrap()
+      const school = R.unwrap(await createSchool(schoolData))
 
       expect(school).toBeDefined()
       expect(school.id).toBeDefined()
@@ -178,16 +179,16 @@ describe('query Functions Tests - Schools', () => {
         code: duplicateCode,
       })
 
-      expect((await createSchool({
+      expect(R.unwrap(await createSchool({
         name: 'Second School',
         code: duplicateCode,
-      })).isErr()).toBe(true)
+      }))).toBe(true)
     })
   })
 
   describe('read Operations', () => {
     test('should get all schools with pagination', async () => {
-      const result = (await getSchools({ page: 1, limit: 10 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ page: 1, limit: 10 }))
 
       expect(result.schools).toBeDefined()
       expect(result.schools.length).toBeGreaterThan(0)
@@ -199,7 +200,7 @@ describe('query Functions Tests - Schools', () => {
     })
 
     test('should get schools with search filter by name', async () => {
-      const result = (await getSchools({ search: 'Test Primary School' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ search: 'Test Primary School' }))
 
       expect(result.schools.length).toBeGreaterThanOrEqual(1)
       expect(result.schools.some((school: any) => school.name.includes('Test Primary School'))).toBe(true)
@@ -207,45 +208,45 @@ describe('query Functions Tests - Schools', () => {
 
     test('should get schools with search filter by code', async () => {
       // Create a school with known code for searching
-      const searchSchool = (await createSchool({
+      const searchSchool = R.unwrap(await createSchool({
         name: 'Search Test School',
         code: 'SEARCH-123',
         email: 'search@test.com',
         phone: '+237123456789',
         address: '123 Search Street',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
       testSchoolIds.push(searchSchool.id)
 
-      const result = (await getSchools({ search: 'SEARCH-123' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ search: 'SEARCH-123' }))
 
       expect(result.schools).toHaveLength(1)
       expect(result.schools[0]?.code).toBe('SEARCH-123')
     })
 
     test('should get schools with search filter by email', async () => {
-      const result = (await getSchools({ search: 'primary@test.com' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ search: 'primary@test.com' }))
 
       expect(result.schools.length).toBeGreaterThanOrEqual(1)
       expect(result.schools.some((school: any) => school.email === 'primary@test.com')).toBe(true)
     })
 
     test('should get schools with status filter (active)', async () => {
-      const result = (await getSchools({ status: 'active' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ status: 'active' }))
 
       expect(result.schools.length).toBeGreaterThanOrEqual(1)
       expect(result.schools.every((school: any) => school.status === 'active')).toBe(true)
     })
 
     test('should get schools with status filter (inactive)', async () => {
-      const result = (await getSchools({ status: 'inactive' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ status: 'inactive' }))
 
       expect(result.schools.length).toBeGreaterThanOrEqual(1)
       expect(result.schools.every((school: any) => school.status === 'inactive')).toBe(true)
     })
 
     test('should get schools with multiple status filters', async () => {
-      const result = (await getSchools({ status: ['active', 'inactive'] }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ status: ['active', 'inactive'] }))
 
       expect(result.schools.length).toBeGreaterThanOrEqual(2)
       expect(result.schools.every((school: any) =>
@@ -254,7 +255,7 @@ describe('query Functions Tests - Schools', () => {
     })
 
     test('should get schools sorted by name (asc)', async () => {
-      const result = (await getSchools({ sortBy: 'name', sortOrder: 'asc' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ sortBy: 'name', sortOrder: 'asc' }))
 
       expect(result.schools.length).toBeGreaterThanOrEqual(3)
 
@@ -265,7 +266,7 @@ describe('query Functions Tests - Schools', () => {
     })
 
     test('should get schools sorted by name (desc)', async () => {
-      const result = (await getSchools({ sortBy: 'name', sortOrder: 'desc' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ sortBy: 'name', sortOrder: 'desc' }))
 
       expect(result.schools.length).toBeGreaterThanOrEqual(3)
 
@@ -276,7 +277,7 @@ describe('query Functions Tests - Schools', () => {
     })
 
     test('should get schools sorted by creation date', async () => {
-      const result = (await getSchools({ sortBy: 'createdAt', sortOrder: 'desc' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ sortBy: 'createdAt', sortOrder: 'desc' }))
 
       expect(result.schools.length).toBeGreaterThanOrEqual(3)
 
@@ -290,7 +291,7 @@ describe('query Functions Tests - Schools', () => {
 
     test('should get single school by ID', async () => {
       const [firstSchool] = testSchoolIds
-      const school = (await getSchoolById(firstSchool!))._unsafeUnwrap()
+      const school = R.unwrap(await getSchoolById(firstSchool!))
 
       expect(school).toBeDefined()
       expect(school!.id).toBe(firstSchool)
@@ -299,13 +300,13 @@ describe('query Functions Tests - Schools', () => {
     })
 
     test('should return null for non-existent school', async () => {
-      const school = (await getSchoolById('00000000-0000-0000-0000-000000000000'))._unsafeUnwrap()
+      const school = R.unwrap(await getSchoolById('00000000-0000-0000-0000-000000000000'))
 
       expect(school).toBeNull()
     })
 
     test('should get schools with empty result set', async () => {
-      const result = (await getSchools({ search: 'NonExistentSchool' }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ search: 'NonExistentSchool' }))
 
       expect(result.schools).toHaveLength(0)
       expect(result.pagination.total).toBe(0)
@@ -314,24 +315,24 @@ describe('query Functions Tests - Schools', () => {
 
     test('should handle pagination with various page sizes', async () => {
       // Test page size 1
-      const page1 = (await getSchools({ page: 1, limit: 1 }))._unsafeUnwrap()
+      const page1 = R.unwrap(await getSchools({ page: 1, limit: 1 }))
       expect(page1.schools).toHaveLength(1)
       expect(page1.pagination.page).toBe(1)
       expect(page1.pagination.limit).toBe(1)
 
       // Test page size 2
-      const page2 = (await getSchools({ page: 1, limit: 2 }))._unsafeUnwrap()
+      const page2 = R.unwrap(await getSchools({ page: 1, limit: 2 }))
       expect(page2.schools).toHaveLength(2)
       expect(page2.pagination.limit).toBe(2)
 
       // Test second page
-      const secondPage = (await getSchools({ page: 2, limit: 1 }))._unsafeUnwrap()
+      const secondPage = R.unwrap(await getSchools({ page: 2, limit: 1 }))
       expect(secondPage.schools.length).toBeGreaterThanOrEqual(0)
       expect(secondPage.pagination.page).toBe(2)
     })
 
     test('should get schools by status helper function', async () => {
-      const activeSchools = (await getSchoolsByStatus('active'))._unsafeUnwrap()
+      const activeSchools = R.unwrap(await getSchoolsByStatus('active'))
 
       expect(activeSchools.length).toBeGreaterThanOrEqual(1)
       expect(activeSchools.every(school => school.status === 'active')).toBe(true)
@@ -345,30 +346,30 @@ describe('query Functions Tests - Schools', () => {
     })
 
     test('should get schools by status with limit', async () => {
-      const activeSchools = (await getSchoolsByStatus('active', 1))._unsafeUnwrap()
+      const activeSchools = R.unwrap(await getSchoolsByStatus('active', 1))
 
       expect(activeSchools.length).toBeLessThanOrEqual(1)
     })
 
     test('should search schools by multiple criteria', async () => {
       // Search by name
-      const nameResults = (await searchSchools('Primary'))._unsafeUnwrap()
+      const nameResults = R.unwrap(await searchSchools('Primary'))
       expect(nameResults.length).toBeGreaterThanOrEqual(1)
       expect(nameResults[0]?.name).toContain('Primary')
 
       // Search by email
-      const emailResults = (await searchSchools('primary@test.com'))._unsafeUnwrap()
+      const emailResults = R.unwrap(await searchSchools('primary@test.com'))
       expect(emailResults.length).toBeGreaterThanOrEqual(1)
       expect(emailResults[0]?.email).toBe('primary@test.com')
 
       // Search by phone
-      const phoneResults = (await searchSchools('+237123456789'))._unsafeUnwrap()
+      const phoneResults = R.unwrap(await searchSchools('+237123456789'))
       expect(phoneResults.length).toBeGreaterThanOrEqual(1)
       expect(phoneResults[0]?.phone).toBe('+237123456789')
     })
 
     test('should limit search results', async () => {
-      const results = (await searchSchools('Test', 2))._unsafeUnwrap()
+      const results = R.unwrap(await searchSchools('Test', 2))
 
       expect(results.length).toBeLessThanOrEqual(2)
     })
@@ -377,12 +378,12 @@ describe('query Functions Tests - Schools', () => {
   describe('update Operations', () => {
     test('should update school name', async () => {
       const schoolId = testSchoolIds[0]!
-      const originalUpdatedAt = (await getSchoolById(schoolId))._unsafeUnwrap()!.updatedAt
+      const originalUpdatedAt = R.unwrap(await getSchoolById(schoolId))!.updatedAt
 
       // Wait a bit to ensure timestamp difference
       await new Promise(resolve => setTimeout(resolve, 10))
 
-      const updatedSchool = (await updateSchool(schoolId, { name: 'Updated School Name' }))._unsafeUnwrap()
+      const updatedSchool = R.unwrap(await updateSchool(schoolId, { name: 'Updated School Name' }))
 
       expect(updatedSchool.name).toBe('Updated School Name')
       expect(updatedSchool.updatedAt.getTime()).toBeGreaterThan(originalUpdatedAt.getTime())
@@ -391,7 +392,7 @@ describe('query Functions Tests - Schools', () => {
     test('should update school status', async () => {
       const [schoolId] = testSchoolIds
 
-      const updatedSchool = (await updateSchool(schoolId!, { status: 'inactive' }))._unsafeUnwrap()
+      const updatedSchool = R.unwrap(await updateSchool(schoolId!, { status: 'inactive' }))
 
       expect(updatedSchool.status).toBe('inactive')
     })
@@ -404,7 +405,7 @@ describe('query Functions Tests - Schools', () => {
         timezone: 'Africa/Douala',
       }
 
-      const updatedSchool = (await updateSchool(schoolId!, { settings: newSettings }))._unsafeUnwrap()
+      const updatedSchool = R.unwrap(await updateSchool(schoolId!, { settings: newSettings }))
 
       expect(updatedSchool.settings).toStrictEqual(newSettings)
     })
@@ -413,7 +414,7 @@ describe('query Functions Tests - Schools', () => {
       const [schoolId] = testSchoolIds
       const newLogo = 'https://example.com/new-logo.png'
 
-      const updatedSchool = (await updateSchool(schoolId!, { logoUrl: newLogo }))._unsafeUnwrap()
+      const updatedSchool = R.unwrap(await updateSchool(schoolId!, { logoUrl: newLogo }))
 
       expect(updatedSchool.logoUrl).toBe(newLogo)
     })
@@ -428,7 +429,7 @@ describe('query Functions Tests - Schools', () => {
         address: '999 Updated Street',
       }
 
-      const updatedSchool = (await updateSchool(schoolId!, updateData))._unsafeUnwrap()
+      const updatedSchool = R.unwrap(await updateSchool(schoolId!, updateData))
 
       expect(updatedSchool.name).toBe(updateData.name)
       expect(updatedSchool.email).toBe(updateData.email)
@@ -440,17 +441,17 @@ describe('query Functions Tests - Schools', () => {
     test('should fail to update non-existent school', async () => {
       const nonExistentId = '00000000-0000-0000-0000-000000000000'
 
-      expect((await updateSchool(nonExistentId, { name: 'Should not work' })).isErr()).toBe(true)
+      expect(R.isFailure(await updateSchool(nonExistentId, { name: 'Should not work' }))).toBe(true)
     })
 
     test('should verify updated_at timestamp changes', async () => {
       const [schoolId] = testSchoolIds
-      const originalSchool = (await getSchoolById(schoolId!))._unsafeUnwrap()!
+      const originalSchool = R.unwrap(await getSchoolById(schoolId!))!
 
       // Wait to ensure different timestamp
       await new Promise(resolve => setTimeout(resolve, 10))
 
-      const updatedSchool = (await updateSchool(schoolId!, { address: 'Updated Address' }))._unsafeUnwrap()
+      const updatedSchool = R.unwrap(await updateSchool(schoolId!, { address: 'Updated Address' }))
 
       expect(updatedSchool.updatedAt.getTime()).toBeGreaterThan(originalSchool.updatedAt.getTime())
     })
@@ -458,20 +459,20 @@ describe('query Functions Tests - Schools', () => {
 
   describe('delete Operations', () => {
     test('should delete existing school', async () => {
-      const testSchool = (await createSchool({
+      const testSchool = R.unwrap(await createSchool({
         name: 'School to Delete',
         code: `DEL-${Date.now()}`,
-      }))._unsafeUnwrap()
+      }))
 
       // Verify school exists
-      let school = (await getSchoolById(testSchool.id))._unsafeUnwrap()
+      let school = R.unwrap(await getSchoolById(testSchool.id))
       expect(school).toBeDefined()
 
       // Delete school
       await deleteSchool(testSchool.id)
 
       // Verify school is deleted
-      school = (await getSchoolById(testSchool.id))._unsafeUnwrap()
+      school = R.unwrap(await getSchoolById(testSchool.id))
       expect(school).toBeNull()
     })
 
@@ -483,20 +484,20 @@ describe('query Functions Tests - Schools', () => {
     })
 
     test('should verify school is removed from database', async () => {
-      const testSchool = (await createSchool({
+      const testSchool = R.unwrap(await createSchool({
         name: 'Another School to Delete',
         code: `DEL2-${Date.now()}`,
-      }))._unsafeUnwrap()
+      }))
 
       // Get all schools before deletion
-      const beforeResult = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const beforeResult = R.unwrap(await getSchools({ limit: 100 }))
       const beforeCount = beforeResult.pagination.total
 
       // Delete school
-      await (await deleteSchool(testSchool.id))._unsafeUnwrap()
+      await R.unwrap(await deleteSchool(testSchool.id))
 
       // Get all schools after deletion
-      const afterResult = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const afterResult = R.unwrap(await getSchools({ limit: 100 }))
       const afterCount = afterResult.pagination.total
 
       expect(afterCount).toBe(beforeCount - 1)
@@ -509,27 +510,27 @@ describe('query Functions Tests - Schools', () => {
       const additionalSchoolIds: string[] = []
 
       for (let i = 0; i < 25; i++) {
-        const school = (await createSchool({
+        const school = R.unwrap(await createSchool({
           name: `Pagination Test School ${i}`,
           code: `PTS-${i}-${Date.now()}`,
-        }))._unsafeUnwrap()
+        }))
         additionalSchoolIds.push(school.id)
       }
 
       try {
         // Test first page
-        const page1 = (await getSchools({ page: 1, limit: 10 }))._unsafeUnwrap()
+        const page1 = R.unwrap(await getSchools({ page: 1, limit: 10 }))
         expect(page1.schools).toHaveLength(10)
         expect(page1.pagination.page).toBe(1)
         expect(page1.pagination.totalPages).toBeGreaterThanOrEqual(3)
 
         // Test second page
-        const page2 = (await getSchools({ page: 2, limit: 10 }))._unsafeUnwrap()
+        const page2 = R.unwrap(await getSchools({ page: 2, limit: 10 }))
         expect(page2.schools).toHaveLength(10)
         expect(page2.pagination.page).toBe(2)
 
         // Test third page
-        const page3 = (await getSchools({ page: 3, limit: 10 }))._unsafeUnwrap()
+        const page3 = R.unwrap(await getSchools({ page: 3, limit: 10 }))
         expect(page3.schools.length).toBeGreaterThanOrEqual(5) // At least our original 3 schools
         expect(page3.pagination.page).toBe(3)
 
@@ -540,14 +541,14 @@ describe('query Functions Tests - Schools', () => {
       finally {
         // Clean up additional schools
         for (const id of additionalSchoolIds) {
-          await (await deleteSchool(id))._unsafeUnwrap()
+          await R.unwrap(await deleteSchool(id))
         }
       }
     })
 
     test('should handle offset calculation correctly', async () => {
-      const page1 = (await getSchools({ page: 1, limit: 2 }))._unsafeUnwrap()
-      const page2 = (await getSchools({ page: 2, limit: 2 }))._unsafeUnwrap()
+      const page1 = R.unwrap(await getSchools({ page: 1, limit: 2 }))
+      const page2 = R.unwrap(await getSchools({ page: 2, limit: 2 }))
 
       // Verify different results
       expect(page1.schools[0]?.id).not.toBe(page2.schools[0]?.id)
@@ -563,23 +564,23 @@ describe('query Functions Tests - Schools', () => {
       const perfSchoolIds: string[] = []
 
       for (let i = 0; i < 50; i++) {
-        const school = (await createSchool({
+        const school = R.unwrap(await createSchool({
           name: `Perf Test School ${i}`,
           code: `PERF-${i}-${Date.now()}`,
           status: i % 2 === 0 ? 'active' : 'inactive',
-        }))._unsafeUnwrap()
+        }))
         perfSchoolIds.push(school.id)
       }
 
       try {
         // Test search performance
         const searchStart = Date.now()
-        const searchResults = (await getSchools({
+        const searchResults = R.unwrap(await getSchools({
           search: 'Perf Test',
           limit: 20,
           sortBy: 'name',
           sortOrder: 'asc',
-        }))._unsafeUnwrap()
+        }))
         const searchTime = Date.now() - searchStart
 
         expect(searchResults.schools.length).toBeGreaterThan(0)
@@ -587,11 +588,11 @@ describe('query Functions Tests - Schools', () => {
 
         // Test filter performance
         const filterStart = Date.now()
-        const filterResults = (await getSchools({
+        const filterResults = R.unwrap(await getSchools({
           status: 'active',
           sortBy: 'createdAt',
           sortOrder: 'desc',
-        }))._unsafeUnwrap()
+        }))
         const filterTime = Date.now() - filterStart
 
         expect(filterResults.schools.length).toBeGreaterThan(0)
@@ -612,7 +613,7 @@ describe('query Functions Tests - Schools', () => {
       finally {
         // Clean up performance test schools
         for (const id of perfSchoolIds) {
-          await (await deleteSchool(id))._unsafeUnwrap()
+          await R.unwrap(await deleteSchool(id))
         }
       }
     })
@@ -629,13 +630,13 @@ describe('query Functions Tests - Catalogs', () => {
     // Clean up existing test data
     try {
       for (const id of testGradeIds)
-        await (await deleteGrade(id))._unsafeUnwrap()
+        await R.unwrap(await deleteGrade(id))
       for (const id of testSeriesIds)
-        await (await deleteSerie(id))._unsafeUnwrap()
+        await R.unwrap(await deleteSerie(id))
       for (const id of testSubjectIds)
-        await (await deleteSubject(id))._unsafeUnwrap()
+        await R.unwrap(await deleteSubject(id))
       for (const id of testTrackIds)
-        await (await deleteTrack(id))._unsafeUnwrap()
+        await R.unwrap(await deleteTrack(id))
     }
     catch {
       // Ignore errors during cleanup
@@ -646,85 +647,85 @@ describe('query Functions Tests - Catalogs', () => {
     testSubjectIds = []
 
     // Create test data
-    const levels = (await getEducationLevels())._unsafeUnwrap()
+    const levels = R.unwrap(await getEducationLevels())
     const levelId = levels[0]?.id
     if (levelId === undefined) {
       throw new Error('No education levels found in database. Seed data might be missing.')
     }
 
-    const track1 = (await createTrack({
+    const track1 = R.unwrap(await createTrack({
       name: 'TEST__ Science Track',
       code: `TEST__ST-${Date.now()}`,
       educationLevelId: levelId,
-    }))._unsafeUnwrap()
+    }))
     testTrackIds.push(track1.id)
 
-    const track2 = (await createTrack({
+    const track2 = R.unwrap(await createTrack({
       name: 'TEST__ Literature Track',
       code: `TEST__LT-${Date.now()}`,
       educationLevelId: levelId,
-    }))._unsafeUnwrap()
+    }))
     testTrackIds.push(track2.id)
 
     // Create grades for track 1
-    const grade1 = (await createGrade({
+    const grade1 = R.unwrap(await createGrade({
       name: 'TEST__ 6th Grade',
       code: `TEST__G6-${Date.now()}`,
       order: 1,
       trackId: track1.id,
-    }))._unsafeUnwrap()
+    }))
     testGradeIds.push(grade1.id)
 
-    const grade2 = (await createGrade({
+    const grade2 = R.unwrap(await createGrade({
       name: 'TEST__ 5th Grade',
       code: `TEST__G5-${Date.now()}`,
       order: 2,
       trackId: track1.id,
-    }))._unsafeUnwrap()
+    }))
     testGradeIds.push(grade2.id)
 
     // Create series for track 1
-    const serie1 = (await createSerie({
+    const serie1 = R.unwrap(await createSerie({
       name: 'TEST__ Science Series A',
       code: `TEST__SSA-${Date.now()}`,
       trackId: track1.id,
-    }))._unsafeUnwrap()
+    }))
     testSeriesIds.push(serie1.id)
 
-    const serie2 = (await createSerie({
+    const serie2 = R.unwrap(await createSerie({
       name: 'TEST__ Science Series B',
       code: `TEST__SSB-${Date.now()}`,
       trackId: track1.id,
-    }))._unsafeUnwrap()
+    }))
     testSeriesIds.push(serie2.id)
 
     // Create subjects
-    const subject1 = (await createSubject({
+    const subject1 = R.unwrap(await createSubject({
       name: 'TEST__ Mathematics',
       shortName: 'TEST__MATH',
       category: 'Scientifique',
-    }))._unsafeUnwrap()
+    }))
     testSubjectIds.push(subject1.id)
 
-    const subject2 = (await createSubject({
+    const subject2 = R.unwrap(await createSubject({
       name: 'TEST__ Physics',
       shortName: 'TEST__PHY',
       category: 'Scientifique',
-    }))._unsafeUnwrap()
+    }))
     testSubjectIds.push(subject2.id)
 
-    const subject3 = (await createSubject({
+    const subject3 = R.unwrap(await createSubject({
       name: 'TEST__ Literature',
       shortName: 'TEST__LIT',
       category: 'Littéraire',
-    }))._unsafeUnwrap()
+    }))
     testSubjectIds.push(subject3.id)
 
-    const subject4 = (await createSubject({
+    const subject4 = R.unwrap(await createSubject({
       name: 'TEST__ History',
       shortName: 'TEST__HIST',
       category: 'Littéraire',
-    }))._unsafeUnwrap()
+    }))
     testSubjectIds.push(subject4.id)
   })
 
@@ -737,7 +738,7 @@ describe('query Functions Tests - Catalogs', () => {
         trackId: testTrackIds[0]!,
       }
 
-      const grade = (await createGrade(gradeData))._unsafeUnwrap()
+      const grade = R.unwrap(await createGrade(gradeData))
 
       expect(grade).toBeDefined()
       expect(grade.id).toBeDefined()
@@ -753,21 +754,21 @@ describe('query Functions Tests - Catalogs', () => {
     test('should create grade with duplicate code per track', async () => {
       const code = `DUP-${Date.now()}`
 
-      const gradeA = (await createGrade({
+      const gradeA = R.unwrap(await createGrade({
         name: 'Grade A',
         code,
         order: 1,
         trackId: testTrackIds[0]!,
-      }))._unsafeUnwrap()
+      }))
 
       // Note: Currently, duplicate grade codes within the same track are allowed
       // This test verifies the current behavior - the application allows it
-      const gradeB = (await createGrade({
+      const gradeB = R.unwrap(await createGrade({
         name: 'Grade B',
         code,
         order: 2,
         trackId: testTrackIds[0]!,
-      }))._unsafeUnwrap()
+      }))
 
       expect(gradeA.code).toBe(code)
       expect(gradeB.code).toBe(code)
@@ -781,7 +782,7 @@ describe('query Functions Tests - Catalogs', () => {
         trackId: testTrackIds[0]!,
       }
 
-      const serie = (await createSerie(seriesData))._unsafeUnwrap()
+      const serie = R.unwrap(await createSerie(seriesData))
 
       expect(serie).toBeDefined()
       expect(serie.id).toBeDefined()
@@ -800,7 +801,7 @@ describe('query Functions Tests - Catalogs', () => {
         category: 'Scientifique' as SubjectCategory,
       }
 
-      const subject = (await createSubject(subjectData))._unsafeUnwrap()
+      const subject = R.unwrap(await createSubject(subjectData))
 
       expect(subject).toBeDefined()
       expect(subject.id).toBeDefined()
@@ -819,7 +820,7 @@ describe('query Functions Tests - Catalogs', () => {
         educationLevelId: 2,
       }
 
-      const track = (await createTrack(trackData))._unsafeUnwrap()
+      const track = R.unwrap(await createTrack(trackData))
 
       expect(track).toBeDefined()
       expect(track.id).toBeDefined()
@@ -834,7 +835,7 @@ describe('query Functions Tests - Catalogs', () => {
 
   describe('read Operations', () => {
     test('should get all grades grouped by track', async () => {
-      const grades = (await getGrades())._unsafeUnwrap()
+      const grades = R.unwrap(await getGrades())
 
       expect(grades).toBeDefined()
       expect(grades.length).toBeGreaterThan(0)
@@ -846,7 +847,7 @@ describe('query Functions Tests - Catalogs', () => {
     })
 
     test('should get grades sorted by order', async () => {
-      const grades = (await getGrades({ trackId: testTrackIds[0]! }))._unsafeUnwrap()
+      const grades = R.unwrap(await getGrades({ trackId: testTrackIds[0]! }))
 
       expect(grades).toBeDefined()
       expect(grades.length).toBeGreaterThanOrEqual(2)
@@ -858,8 +859,8 @@ describe('query Functions Tests - Catalogs', () => {
     })
 
     test('should get grades by track', async () => {
-      const track1Grades = (await getGrades({ trackId: testTrackIds[0]! }))._unsafeUnwrap()
-      const track2Grades = (await getGrades({ trackId: testTrackIds[1] }))._unsafeUnwrap()
+      const track1Grades = R.unwrap(await getGrades({ trackId: testTrackIds[0]! }))
+      const track2Grades = R.unwrap(await getGrades({ trackId: testTrackIds[1] }))
 
       expect(track1Grades.length).toBeGreaterThanOrEqual(2)
       expect(track2Grades).toHaveLength(0) // No grades created for track 2
@@ -868,8 +869,8 @@ describe('query Functions Tests - Catalogs', () => {
     })
 
     test('should get series by track', async () => {
-      const track1Series = (await getSeries({ trackId: testTrackIds[0]! }))._unsafeUnwrap()
-      const track2Series = (await getSeries({ trackId: testTrackIds[1] }))._unsafeUnwrap()
+      const track1Series = R.unwrap(await getSeries({ trackId: testTrackIds[0]! }))
+      const track2Series = R.unwrap(await getSeries({ trackId: testTrackIds[1] }))
 
       expect(track1Series.length).toBeGreaterThanOrEqual(2)
       expect(track2Series).toHaveLength(0) // No series created for track 2
@@ -878,8 +879,8 @@ describe('query Functions Tests - Catalogs', () => {
     })
 
     test('should get subjects by category', async () => {
-      const scientificSubjects = (await getSubjects({ category: 'Scientifique' }))._unsafeUnwrap()
-      const literarySubjects = (await getSubjects({ category: 'Littéraire' }))._unsafeUnwrap()
+      const scientificSubjects = R.unwrap(await getSubjects({ category: 'Scientifique' }))
+      const literarySubjects = R.unwrap(await getSubjects({ category: 'Littéraire' }))
 
       expect(scientificSubjects.subjects.length).toBeGreaterThanOrEqual(2)
       expect(literarySubjects.subjects.length).toBeGreaterThanOrEqual(2)
@@ -889,14 +890,14 @@ describe('query Functions Tests - Catalogs', () => {
     })
 
     test('should get subjects by search', async () => {
-      const searchResults = (await getSubjects({ search: 'Math' }))._unsafeUnwrap()
+      const searchResults = R.unwrap(await getSubjects({ search: 'Math' }))
 
       expect(searchResults.subjects.length).toBeGreaterThanOrEqual(1)
       expect(searchResults.subjects[0]?.name).toContain('Math')
     })
 
     test('should get subjects across all categories', async () => {
-      const allSubjects = (await getSubjects())._unsafeUnwrap()
+      const allSubjects = R.unwrap(await getSubjects())
 
       expect(allSubjects.subjects.length).toBeGreaterThanOrEqual(4)
       expect(allSubjects.pagination.total).toBeGreaterThanOrEqual(4)
@@ -905,18 +906,18 @@ describe('query Functions Tests - Catalogs', () => {
     })
 
     test('should get tracks by education level', async () => {
-      const educationLevels = (await getEducationLevels())._unsafeUnwrap()
+      const educationLevels = R.unwrap(await getEducationLevels())
       const levelId = educationLevels[0]?.id
       expect(levelId).toBeDefined()
 
-      const tracks = (await getTracks({ educationLevelId: levelId! }))._unsafeUnwrap()
+      const tracks = R.unwrap(await getTracks({ educationLevelId: levelId! }))
 
       expect(tracks.length).toBeGreaterThanOrEqual(2)
       expect(tracks.every(track => track.educationLevelId === levelId)).toBe(true)
     })
 
     test('should get education levels', async () => {
-      const educationLevels = (await getEducationLevels())._unsafeUnwrap()
+      const educationLevels = R.unwrap(await getEducationLevels())
 
       expect(educationLevels).toBeDefined()
       expect(educationLevels.length).toBeGreaterThan(0)
@@ -933,11 +934,11 @@ describe('query Functions Tests - Catalogs', () => {
       const [gradeId1, gradeId2] = [testGradeIds[0]!, testGradeIds[1]!]
 
       // Swap orders
-      await (await updateGrade(gradeId1, { order: 2 }))._unsafeUnwrap()
-      await (await updateGrade(gradeId2, { order: 1 }))._unsafeUnwrap()
+      await R.unwrap(await updateGrade(gradeId1, { order: 2 }))
+      await R.unwrap(await updateGrade(gradeId2, { order: 1 }))
 
-      const updatedGrade1 = (await getGradeById(gradeId1))._unsafeUnwrap()
-      const updatedGrade2 = (await getGradeById(gradeId2))._unsafeUnwrap()
+      const updatedGrade1 = R.unwrap(await getGradeById(gradeId1))
+      const updatedGrade2 = R.unwrap(await getGradeById(gradeId2))
 
       expect(updatedGrade1!.order).toBe(2)
       expect(updatedGrade2!.order).toBe(1)
@@ -946,7 +947,7 @@ describe('query Functions Tests - Catalogs', () => {
     test('should update series name', async () => {
       const seriesId = testSeriesIds[0]!
 
-      const updatedSeries = (await updateSerie(seriesId, { name: 'Updated Series Name' }))._unsafeUnwrap()
+      const updatedSeries = R.unwrap(await updateSerie(seriesId, { name: 'Updated Series Name' }))
 
       expect(updatedSeries.name).toBe('Updated Series Name')
     })
@@ -954,7 +955,7 @@ describe('query Functions Tests - Catalogs', () => {
     test('should update subject category', async () => {
       const subjectId = testSubjectIds[0]!
 
-      const updatedSubject = (await updateSubject(subjectId, { category: 'Autre' }))._unsafeUnwrap()
+      const updatedSubject = R.unwrap(await updateSubject(subjectId, { category: 'Autre' }))
 
       expect(updatedSubject.category).toBe('Autre')
     })
@@ -962,31 +963,31 @@ describe('query Functions Tests - Catalogs', () => {
     test('should throw error when updating non-existent subject', async () => {
       const nonExistentId = 'non-existent-subject-id'
 
-      expect((await updateSubject(nonExistentId, { category: 'Autre' })).isErr()).toBe(true)
+      expect(R.isFailure(await updateSubject(nonExistentId, { category: 'Autre' }))).toBe(true)
     })
 
     test('should throw error when updating non-existent grade', async () => {
       const nonExistentId = 'non-existent-grade-id'
 
-      expect((await updateGrade(nonExistentId, { order: 10 })).isErr()).toBe(true)
+      expect(R.isFailure(await updateGrade(nonExistentId, { order: 10 }))).toBe(true)
     })
 
     test('should throw error when updating non-existent serie', async () => {
       const nonExistentId = 'non-existent-serie-id'
 
-      expect((await updateSerie(nonExistentId, { name: 'Updated Name' })).isErr()).toBe(true)
+      expect(R.isFailure(await updateSerie(nonExistentId, { name: 'Updated Name' }))).toBe(true)
     })
 
     test('should bulk update grades order', async () => {
       const [gradeId1, gradeId2] = [testGradeIds[0]!, testGradeIds[1]!]
 
-      await (await bulkUpdateGradesOrder([
+      await R.unwrap(await bulkUpdateGradesOrder([
         { id: gradeId1, order: 10 },
         { id: gradeId2, order: 20 },
-      ]))._unsafeUnwrap()
+      ]))
 
-      const updatedGrade1 = (await getGradeById(gradeId1))._unsafeUnwrap()
-      const updatedGrade2 = (await getGradeById(gradeId2))._unsafeUnwrap()
+      const updatedGrade1 = R.unwrap(await getGradeById(gradeId1))
+      const updatedGrade2 = R.unwrap(await getGradeById(gradeId2))
 
       expect(updatedGrade1!.order).toBe(10)
       expect(updatedGrade2!.order).toBe(20)
@@ -995,60 +996,60 @@ describe('query Functions Tests - Catalogs', () => {
 
   describe('delete Operations', () => {
     test('should delete grade', async () => {
-      const testGrade = (await createGrade({
+      const testGrade = R.unwrap(await createGrade({
         name: 'Grade to Delete',
         code: `DEL-${Date.now()}`,
         order: 99,
         trackId: testTrackIds[0]!,
-      }))._unsafeUnwrap()
+      }))
 
       // Verify grade exists
-      let grade = (await getGradeById(testGrade.id))._unsafeUnwrap()
+      let grade = R.unwrap(await getGradeById(testGrade.id))
       expect(grade).toBeDefined()
 
       // Delete grade
-      await (await deleteGrade(testGrade.id))._unsafeUnwrap()
+      await R.unwrap(await deleteGrade(testGrade.id))
 
       // Verify grade is deleted
-      grade = (await getGradeById(testGrade.id))._unsafeUnwrap()
+      grade = R.unwrap(await getGradeById(testGrade.id))
       expect(grade).toBeNull()
     })
 
     test('should delete series', async () => {
-      const testSerie = (await createSerie({
+      const testSerie = R.unwrap(await createSerie({
         name: 'Series to Delete',
         code: `DEL-${Date.now()}`,
         trackId: testTrackIds[0]!,
-      }))._unsafeUnwrap()
+      }))
 
       // Verify series exists
-      let serie = (await getSerieById(testSerie.id))._unsafeUnwrap()
+      let serie = R.unwrap(await getSerieById(testSerie.id))
       expect(serie).toBeDefined()
 
       // Delete series
-      await (await deleteSerie(testSerie.id))._unsafeUnwrap()
+      await R.unwrap(await deleteSerie(testSerie.id))
 
       // Verify series is deleted
-      serie = (await getSerieById(testSerie.id))._unsafeUnwrap()
+      serie = R.unwrap(await getSerieById(testSerie.id))
       expect(serie).toBeNull()
     })
 
     test('should delete subject', async () => {
-      const testSubject = (await createSubject({
+      const testSubject = R.unwrap(await createSubject({
         name: 'Subject to Delete',
         shortName: 'DEL',
         category: 'Scientifique',
-      }))._unsafeUnwrap()
+      }))
 
       // Verify subject exists
-      let subject = (await getSubjectById(testSubject.id))._unsafeUnwrap()
+      let subject = R.unwrap(await getSubjectById(testSubject.id))
       expect(subject).toBeDefined()
 
       // Delete subject
-      await (await deleteSubject(testSubject.id))._unsafeUnwrap()
+      await R.unwrap(await deleteSubject(testSubject.id))
 
       // Verify subject is deleted
-      subject = (await getSubjectById(testSubject.id))._unsafeUnwrap()
+      subject = R.unwrap(await getSubjectById(testSubject.id))
       expect(subject).toBeNull()
     })
   })
@@ -1073,7 +1074,7 @@ describe('query Functions Tests - Catalogs', () => {
         },
       ]
 
-      const newSeries = (await bulkCreateSeries(seriesData))._unsafeUnwrap()
+      const newSeries = R.unwrap(await bulkCreateSeries(seriesData))
 
       expect(newSeries).toHaveLength(3)
       expect(newSeries[0]!.name).toBe('Bulk Series A')
@@ -1103,7 +1104,7 @@ describe('query Functions Tests - Catalogs', () => {
         },
       ]
 
-      const newSubjects = (await bulkCreateSubjects(subjectsData))._unsafeUnwrap()
+      const newSubjects = R.unwrap(await bulkCreateSubjects(subjectsData))
 
       expect(newSubjects).toHaveLength(3)
       expect(newSubjects[0]!.name).toBe('Bulk Subject A')
@@ -1115,8 +1116,8 @@ describe('query Functions Tests - Catalogs', () => {
     })
 
     test('should handle empty bulk operations', async () => {
-      const emptySeries = (await bulkCreateSeries([]))._unsafeUnwrap()
-      const emptySubjects = (await bulkCreateSubjects([]))._unsafeUnwrap()
+      const emptySeries = R.unwrap(await bulkCreateSeries([]))
+      const emptySubjects = R.unwrap(await bulkCreateSubjects([]))
 
       expect(emptySeries).toHaveLength(0)
       expect(emptySubjects).toHaveLength(0)
@@ -1126,27 +1127,27 @@ describe('query Functions Tests - Catalogs', () => {
       // Create additional grades for testing
       const extraGrades: string[] = []
       for (let i = 0; i < 3; i++) {
-        const grade = (await createGrade({
+        const grade = R.unwrap(await createGrade({
           name: `Extra Grade ${i}`,
           code: `EG${i}-${Date.now()}`,
           order: i + 10,
           trackId: testTrackIds[0]!,
-        }))._unsafeUnwrap()
+        }))
         extraGrades.push(grade.id)
       }
 
       try {
         // Reorder all grades
-        const allGrades = (await getGrades({ trackId: testTrackIds[0]! }))._unsafeUnwrap()
+        const allGrades = R.unwrap(await getGrades({ trackId: testTrackIds[0]! }))
         const reorderData = allGrades.map((grade, index) => ({
           id: grade.id,
           order: index + 1,
         }))
 
-        await (await bulkUpdateGradesOrder(reorderData))._unsafeUnwrap()
+        await R.unwrap(await bulkUpdateGradesOrder(reorderData))
 
         // Verify all orders are correct
-        const reorderedGrades = (await getGrades({ trackId: testTrackIds[0]! }))._unsafeUnwrap()
+        const reorderedGrades = R.unwrap(await getGrades({ trackId: testTrackIds[0]! }))
         expect(reorderedGrades.length).toBeGreaterThan(0)
 
         for (let i = 0; i < reorderedGrades.length; i++) {
@@ -1156,7 +1157,7 @@ describe('query Functions Tests - Catalogs', () => {
       finally {
         // Clean up extra grades
         for (const id of extraGrades) {
-          await (await deleteGrade(id))._unsafeUnwrap()
+          await R.unwrap(await deleteGrade(id))
         }
       }
     })
@@ -1164,7 +1165,7 @@ describe('query Functions Tests - Catalogs', () => {
 
   describe('catalog Stats', () => {
     test('should get catalog statistics', async () => {
-      const stats = (await getCatalogStats())._unsafeUnwrap()
+      const stats = R.unwrap(await getCatalogStats())
 
       expect(stats).toBeDefined()
       expect(typeof stats.educationLevels).toBe('number')
@@ -1186,23 +1187,23 @@ describe('query Functions Tests - Catalogs', () => {
       // Create additional subjects for pagination
       const additionalSubjects: string[] = []
       for (let i = 0; i < 15; i++) {
-        const subject = (await createSubject({
+        const subject = R.unwrap(await createSubject({
           name: `Pagination Subject ${i}`,
           shortName: `PS${i}`,
           category: 'Scientifique',
-        }))._unsafeUnwrap()
+        }))
         additionalSubjects.push(subject.id)
       }
 
       try {
         // Test first page
-        const page1 = (await getSubjects({ page: 1, limit: 5 }))._unsafeUnwrap()
+        const page1 = R.unwrap(await getSubjects({ page: 1, limit: 5 }))
         expect(page1.subjects).toHaveLength(5)
         expect(page1.pagination.page).toBe(1)
         expect(page1.pagination.limit).toBe(5)
 
         // Test second page
-        const page2 = (await getSubjects({ page: 2, limit: 5 }))._unsafeUnwrap()
+        const page2 = R.unwrap(await getSubjects({ page: 2, limit: 5 }))
         expect(page2.subjects).toHaveLength(5)
         expect(page2.pagination.page).toBe(2)
 
@@ -1219,49 +1220,49 @@ describe('query Functions Tests - Catalogs', () => {
       finally {
         // Clean up additional subjects
         for (const id of additionalSubjects) {
-          await (await deleteSubject(id))._unsafeUnwrap()
+          await R.unwrap(await deleteSubject(id))
         }
       }
     })
 
     test('should search subjects by name and short name', async () => {
       // Create specific subjects for search testing
-      const searchSubject1 = (await createSubject({
+      const searchSubject1 = R.unwrap(await createSubject({
         name: 'Advanced Mathematics',
         shortName: 'ADV MATH',
         category: 'Scientifique',
-      }))._unsafeUnwrap()
-      const searchSubject2 = (await createSubject({
+      }))
+      const searchSubject2 = R.unwrap(await createSubject({
         name: 'Basic Mathematics',
         shortName: 'BASIC',
         category: 'Scientifique',
-      }))._unsafeUnwrap()
+      }))
 
       testSubjectIds.push(searchSubject1.id, searchSubject2.id)
 
       // Search by name
-      const nameResults = (await getSubjects({ search: 'Mathematics' }))._unsafeUnwrap()
+      const nameResults = R.unwrap(await getSubjects({ search: 'Mathematics' }))
       expect(nameResults.subjects.length).toBeGreaterThanOrEqual(3) // Original + 2 new
 
       // Search by short name
-      const shortNameResults = (await getSubjects({ search: 'MATH' }))._unsafeUnwrap()
+      const shortNameResults = R.unwrap(await getSubjects({ search: 'MATH' }))
       expect(shortNameResults.subjects.length).toBeGreaterThanOrEqual(2) // Original + 1 new
 
       // Search by case insensitive
-      const caseInsensitiveResults = (await getSubjects({ search: 'math' }))._unsafeUnwrap()
+      const caseInsensitiveResults = R.unwrap(await getSubjects({ search: 'math' }))
       expect(caseInsensitiveResults.subjects.length).toBeGreaterThan(0)
 
       // Search with no results
-      const noResults = (await getSubjects({ search: 'NonExistentSubjectXYZ' }))._unsafeUnwrap()
+      const noResults = R.unwrap(await getSubjects({ search: 'NonExistentSubjectXYZ' }))
       expect(noResults.subjects).toHaveLength(0)
       expect(noResults.pagination.total).toBe(0)
     })
 
     test('should combine category and search filters', async () => {
-      const results = (await getSubjects({
+      const results = R.unwrap(await getSubjects({
         category: 'Scientifique',
         search: 'Math',
-      }))._unsafeUnwrap()
+      }))
 
       expect(results.subjects.length).toBeGreaterThanOrEqual(1)
       expect(results.subjects.every(subject =>
@@ -1283,11 +1284,11 @@ describe('query Functions Tests - Program Templates', () => {
     // Clean up existing test data
     for (const id of [...testSchoolYearIds, ...testSubjectIds, ...testGradeIds, ...testProgramIds, ...testChapterIds]) {
       try {
-        await (await deleteProgramTemplate(id))._unsafeUnwrap()
-        await (await deleteProgramTemplateChapter(id))._unsafeUnwrap()
-        await (await deleteGrade(id))._unsafeUnwrap()
-        await (await deleteSubject(id))._unsafeUnwrap()
-        await (await deleteSchoolYearTemplate(id))._unsafeUnwrap()
+        await R.unwrap(await deleteProgramTemplate(id))
+        await R.unwrap(await deleteProgramTemplateChapter(id))
+        await R.unwrap(await deleteGrade(id))
+        await R.unwrap(await deleteSubject(id))
+        await R.unwrap(await deleteSchoolYearTemplate(id))
       }
       catch {
         // Ignore errors during cleanup
@@ -1300,94 +1301,94 @@ describe('query Functions Tests - Program Templates', () => {
     testChapterIds = []
 
     // Create test data
-    const schoolYear1 = (await createSchoolYearTemplate({
+    const schoolYear1 = R.unwrap(await createSchoolYearTemplate({
       name: `TEST__ 2024-2025 School Year ${Date.now()}`,
       isActive: true,
-    }))._unsafeUnwrap()
+    }))
     testSchoolYearIds.push(schoolYear1.id)
 
-    const schoolYear2 = (await createSchoolYearTemplate({
+    const schoolYear2 = R.unwrap(await createSchoolYearTemplate({
       name: `TEST__ 2025-2026 School Year ${Date.now()}`,
       isActive: false,
-    }))._unsafeUnwrap()
+    }))
     testSchoolYearIds.push(schoolYear2.id)
 
-    const testSubject = (await createSubject({
+    const testSubject = R.unwrap(await createSubject({
       name: `TEST__ Test Subject for Programs ${Date.now()}`,
       shortName: 'TEST__TSP',
       category: 'Scientifique',
-    }))._unsafeUnwrap()
+    }))
     testSubjectIds.push(testSubject.id)
 
     // Create a track first
-    const testTrack = (await createTrack({
+    const testTrack = R.unwrap(await createTrack({
       name: `TEST__ Test Track for Programs ${Date.now()}`,
       code: `TEST__TTP-${Date.now()}`,
       educationLevelId: 2, // Secondary
-    }))._unsafeUnwrap()
+    }))
 
-    const testGrade = (await createGrade({
+    const testGrade = R.unwrap(await createGrade({
       name: `TEST__ Test Grade for Programs ${Date.now()}`,
       code: `TEST__TGP-${Date.now()}`,
       order: 1,
       trackId: testTrack.id,
-    }))._unsafeUnwrap()
+    }))
     testGradeIds.push(testGrade.id)
 
     // Create test programs
-    const program1 = (await createProgramTemplate({
+    const program1 = R.unwrap(await createProgramTemplate({
       name: 'TEST__ Mathematics Program 2024',
       schoolYearTemplateId: schoolYear1.id,
       subjectId: testSubject.id,
       gradeId: testGrade.id,
       status: 'draft',
-    }))._unsafeUnwrap()
+    }))
     testProgramIds.push(program1.id)
 
-    const program2 = (await createProgramTemplate({
+    const program2 = R.unwrap(await createProgramTemplate({
       name: 'TEST__ Physics Program 2024',
       schoolYearTemplateId: schoolYear1.id,
       subjectId: testSubject.id,
       gradeId: testGrade.id,
       status: 'published',
-    }))._unsafeUnwrap()
+    }))
     testProgramIds.push(program2.id)
 
-    const program3 = (await createProgramTemplate({
+    const program3 = R.unwrap(await createProgramTemplate({
       name: 'TEST__ Mathematics Program 2025',
       schoolYearTemplateId: schoolYear2.id,
       subjectId: testSubject.id,
       gradeId: testGrade.id,
       status: 'archived',
-    }))._unsafeUnwrap()
+    }))
     testProgramIds.push(program3.id)
 
     // Create test chapters
-    const chapter1 = (await createProgramTemplateChapter({
+    const chapter1 = R.unwrap(await createProgramTemplateChapter({
       title: 'TEST__ Introduction to Algebra',
       objectives: 'Understand basic algebraic concepts',
       order: 1,
       durationHours: 10,
       programTemplateId: program1.id,
-    }))._unsafeUnwrap()
+    }))
     testChapterIds.push(chapter1.id)
 
-    const chapter2 = (await createProgramTemplateChapter({
+    const chapter2 = R.unwrap(await createProgramTemplateChapter({
       title: 'TEST__ Advanced Algebra',
       objectives: 'Master complex algebraic operations',
       order: 2,
       durationHours: 15,
       programTemplateId: program1.id,
-    }))._unsafeUnwrap()
+    }))
     testChapterIds.push(chapter2.id)
 
-    const chapter3 = (await createProgramTemplateChapter({
+    const chapter3 = R.unwrap(await createProgramTemplateChapter({
       title: 'TEST__ Basic Physics',
       objectives: 'Introduction to physics principles',
       order: 1,
       durationHours: 8,
       programTemplateId: program2.id,
-    }))._unsafeUnwrap()
+    }))
     testChapterIds.push(chapter3.id)
   })
 
@@ -1398,7 +1399,7 @@ describe('query Functions Tests - Program Templates', () => {
         isActive: true,
       }
 
-      const schoolYear = (await createSchoolYearTemplate(schoolYearData))._unsafeUnwrap()
+      const schoolYear = R.unwrap(await createSchoolYearTemplate(schoolYearData))
 
       expect(schoolYear).toBeDefined()
       expect(schoolYear.id).toBeDefined()
@@ -1410,7 +1411,7 @@ describe('query Functions Tests - Program Templates', () => {
     })
 
     test('should get all school year templates', async () => {
-      const schoolYears = (await getSchoolYearTemplates())._unsafeUnwrap()
+      const schoolYears = R.unwrap(await getSchoolYearTemplates())
 
       expect(schoolYears).toBeDefined()
       expect(schoolYears.length).toBeGreaterThan(0)
@@ -1421,7 +1422,7 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should get school year template by ID', async () => {
       const schoolYearId = testSchoolYearIds[0]!
-      const schoolYear = (await getSchoolYearTemplateById(schoolYearId))._unsafeUnwrap()
+      const schoolYear = R.unwrap(await getSchoolYearTemplateById(schoolYearId))
 
       expect(schoolYear).toBeDefined()
       expect(schoolYear!.id).toBe(schoolYearId)
@@ -1429,7 +1430,7 @@ describe('query Functions Tests - Program Templates', () => {
     })
 
     test('should return null for non-existent school year', async () => {
-      const schoolYear = (await getSchoolYearTemplateById('00000000-0000-0000-0000-000000000000'))._unsafeUnwrap()
+      const schoolYear = R.unwrap(await getSchoolYearTemplateById('00000000-0000-0000-0000-000000000000'))
 
       expect(schoolYear).toBeNull()
     })
@@ -1437,30 +1438,30 @@ describe('query Functions Tests - Program Templates', () => {
     test('should update school year template', async () => {
       const schoolYearId = testSchoolYearIds[0]!
 
-      const updatedSchoolYear = (await updateSchoolYearTemplate(schoolYearId, {
+      const updatedSchoolYear = R.unwrap(await updateSchoolYearTemplate(schoolYearId, {
         name: 'TEST__ Updated School Year Name',
         isActive: false,
-      }))._unsafeUnwrap()
+      }))
 
       expect(updatedSchoolYear.name).toBe('TEST__ Updated School Year Name')
       expect(updatedSchoolYear.isActive).toBe(false)
     })
 
     test('should delete school year template', async () => {
-      const testSchoolYear = (await createSchoolYearTemplate({
+      const testSchoolYear = R.unwrap(await createSchoolYearTemplate({
         name: 'TEST__ School Year to Delete',
         isActive: false,
-      }))._unsafeUnwrap()
+      }))
 
       // Verify school year exists
-      let schoolYear = (await getSchoolYearTemplateById(testSchoolYear.id))._unsafeUnwrap()
+      let schoolYear = R.unwrap(await getSchoolYearTemplateById(testSchoolYear.id))
       expect(schoolYear).toBeDefined()
 
       // Delete school year
-      await (await deleteSchoolYearTemplate(testSchoolYear.id))._unsafeUnwrap()
+      await R.unwrap(await deleteSchoolYearTemplate(testSchoolYear.id))
 
       // Verify school year is deleted
-      schoolYear = (await getSchoolYearTemplateById(testSchoolYear.id))._unsafeUnwrap()
+      schoolYear = R.unwrap(await getSchoolYearTemplateById(testSchoolYear.id))
       expect(schoolYear).toBeNull()
     })
   })
@@ -1475,7 +1476,7 @@ describe('query Functions Tests - Program Templates', () => {
         status: 'draft' as const,
       }
 
-      const program = (await createProgramTemplate(programData))._unsafeUnwrap()
+      const program = R.unwrap(await createProgramTemplate(programData))
 
       expect(program).toBeDefined()
       expect(program.id).toBeDefined()
@@ -1490,7 +1491,7 @@ describe('query Functions Tests - Program Templates', () => {
     })
 
     test('should get program templates with relations', async () => {
-      const result = (await getProgramTemplates())._unsafeUnwrap()
+      const result = R.unwrap(await getProgramTemplates())
 
       expect(result.programs).toBeDefined()
       expect(result.programs.length).toBeGreaterThan(0)
@@ -1505,7 +1506,7 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should get programs by school year', async () => {
       const schoolYearId = testSchoolYearIds[0]!
-      const result = (await getProgramTemplates({ schoolYearTemplateId: schoolYearId }))._unsafeUnwrap()
+      const result = R.unwrap(await getProgramTemplates({ schoolYearTemplateId: schoolYearId }))
 
       expect(result.programs.length).toBeGreaterThanOrEqual(2)
       expect(result.programs.every((p: any) => p.schoolYearTemplateId === schoolYearId)).toBe(true)
@@ -1513,7 +1514,7 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should get programs by subject', async () => {
       const subjectId = testSubjectIds[0]!
-      const result = (await getProgramTemplates({ subjectId }))._unsafeUnwrap()
+      const result = R.unwrap(await getProgramTemplates({ subjectId }))
 
       expect(result.programs.length).toBeGreaterThanOrEqual(3)
       expect(result.programs.every((p: any) => p.subjectId === testSubjectIds[0])).toBe(true)
@@ -1521,16 +1522,16 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should get programs by grade', async () => {
       const gradeId = testGradeIds[0]!
-      const result = (await getProgramTemplates({ gradeId }))._unsafeUnwrap()
+      const result = R.unwrap(await getProgramTemplates({ gradeId }))
 
       expect(result.programs.length).toBeGreaterThanOrEqual(3)
       expect(result.programs.every((p: any) => p.gradeId === gradeId)).toBe(true)
     })
 
     test('should get programs by status', async () => {
-      const draftResult = (await getProgramTemplates({ status: 'draft' }))._unsafeUnwrap()
-      const publishedResult = (await getProgramTemplates({ status: 'published' }))._unsafeUnwrap()
-      const archivedResult = (await getProgramTemplates({ status: 'archived' }))._unsafeUnwrap()
+      const draftResult = R.unwrap(await getProgramTemplates({ status: 'draft' }))
+      const publishedResult = R.unwrap(await getProgramTemplates({ status: 'published' }))
+      const archivedResult = R.unwrap(await getProgramTemplates({ status: 'archived' }))
 
       expect(draftResult.programs.length).toBeGreaterThanOrEqual(1)
       expect(publishedResult.programs.length).toBeGreaterThanOrEqual(1)
@@ -1542,7 +1543,7 @@ describe('query Functions Tests - Program Templates', () => {
     })
 
     test('should search programs by name', async () => {
-      const result = (await getProgramTemplates({ search: 'Mathematics' }))._unsafeUnwrap()
+      const result = R.unwrap(await getProgramTemplates({ search: 'Mathematics' }))
 
       expect(result.programs.length).toBeGreaterThanOrEqual(2)
       expect(result.programs.every((p: any) => p.name.includes('Mathematics'))).toBe(true)
@@ -1550,7 +1551,7 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should get single program with relations by ID', async () => {
       const programId = testProgramIds[0]!
-      const program = (await getProgramTemplateById(programId))._unsafeUnwrap()
+      const program = R.unwrap(await getProgramTemplateById(programId))
 
       expect(program).toBeDefined()
       expect(program!.id).toBe(programId)
@@ -1562,23 +1563,23 @@ describe('query Functions Tests - Program Templates', () => {
     test('should update program template', async () => {
       const programId = testProgramIds[0]!
 
-      const updatedProgram = (await updateProgramTemplate(programId, {
+      const updatedProgram = R.unwrap(await updateProgramTemplate(programId, {
         name: 'TEST__ Updated Program Name',
         status: 'published',
-      }))._unsafeUnwrap()
+      }))
 
       expect(updatedProgram.name).toBe('TEST__ Updated Program Name')
       expect(updatedProgram.status).toBe('published')
     })
 
     test('should delete program template with chapters', async () => {
-      const testProgram = (await createProgramTemplate({
+      const testProgram = R.unwrap(await createProgramTemplate({
         name: 'TEST__ Program to Delete',
         schoolYearTemplateId: testSchoolYearIds[0]!,
         subjectId: testSubjectIds[0]!,
         gradeId: testGradeIds[0]!,
         status: 'draft',
-      }))._unsafeUnwrap()
+      }))
 
       // Create a chapter for the program
       await createProgramTemplateChapter({
@@ -1588,14 +1589,14 @@ describe('query Functions Tests - Program Templates', () => {
       })
 
       // Verify program exists
-      let program = (await getProgramTemplateById(testProgram.id))._unsafeUnwrap()
+      let program = R.unwrap(await getProgramTemplateById(testProgram.id))
       expect(program).toBeDefined()
 
       // Delete program (should also delete chapters)
       await deleteProgramTemplate(testProgram.id)
 
       // Verify program is deleted
-      program = (await getProgramTemplateById(testProgram.id))._unsafeUnwrap()
+      program = R.unwrap(await getProgramTemplateById(testProgram.id))
       expect(program).toBeNull()
     })
 
@@ -1603,11 +1604,11 @@ describe('query Functions Tests - Program Templates', () => {
       const sourceProgramId = testProgramIds[0]!
       const targetSchoolYearId = testSchoolYearIds[0]!
 
-      const clonedProgram = (await cloneProgramTemplate(
+      const clonedProgram = R.unwrap(await cloneProgramTemplate(
         sourceProgramId!,
         targetSchoolYearId,
         'TEST__ Cloned Mathematics Program',
-      ))._unsafeUnwrap()
+      ))
 
       expect(clonedProgram).toBeDefined()
       expect(clonedProgram.id).not.toBe(sourceProgramId!)
@@ -1617,7 +1618,7 @@ describe('query Functions Tests - Program Templates', () => {
       expect(clonedProgram.gradeId).toBeDefined()
 
       // Verify chapters were cloned
-      const clonedChapters = (await getProgramTemplateChapters(clonedProgram.id))._unsafeUnwrap()
+      const clonedChapters = R.unwrap(await getProgramTemplateChapters(clonedProgram.id))
       expect(clonedChapters.length).toBeGreaterThanOrEqual(2) // Original had 2 chapters
 
       testProgramIds.push(clonedProgram.id)
@@ -1634,7 +1635,7 @@ describe('query Functions Tests - Program Templates', () => {
         programTemplateId: testProgramIds[0]!,
       }
 
-      const chapter = (await createProgramTemplateChapter(chapterData))._unsafeUnwrap()
+      const chapter = R.unwrap(await createProgramTemplateChapter(chapterData))
 
       expect(chapter).toBeDefined()
       expect(chapter.id).toBeDefined()
@@ -1650,7 +1651,7 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should get chapters for program template', async () => {
       const programId = testProgramIds[0]!
-      const chapters = (await getProgramTemplateChapters(programId))._unsafeUnwrap()
+      const chapters = R.unwrap(await getProgramTemplateChapters(programId))
 
       expect(chapters).toBeDefined()
       expect(chapters.length).toBeGreaterThanOrEqual(2)
@@ -1663,7 +1664,7 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should get chapter by ID', async () => {
       const chapterId = testChapterIds[0]!
-      const chapter = (await getProgramTemplateChapterById(chapterId))._unsafeUnwrap()
+      const chapter = R.unwrap(await getProgramTemplateChapterById(chapterId))
 
       expect(chapter).toBeDefined()
       expect(chapter!.id).toBe(chapterId)
@@ -1673,11 +1674,11 @@ describe('query Functions Tests - Program Templates', () => {
     test('should update program template chapter', async () => {
       const chapterId = testChapterIds[0]!
 
-      const updatedChapter = (await updateProgramTemplateChapter(chapterId, {
+      const updatedChapter = R.unwrap(await updateProgramTemplateChapter(chapterId, {
         title: 'Updated Chapter Title',
         order: 99,
         durationHours: 25,
-      }))._unsafeUnwrap()
+      }))
 
       expect(updatedChapter.title).toBe('Updated Chapter Title')
       expect(updatedChapter.order).toBe(99)
@@ -1685,21 +1686,21 @@ describe('query Functions Tests - Program Templates', () => {
     })
 
     test('should delete program template chapter', async () => {
-      const testChapter = (await createProgramTemplateChapter({
+      const testChapter = R.unwrap(await createProgramTemplateChapter({
         title: 'TEST__ Chapter to Delete',
         order: 99,
         programTemplateId: testProgramIds[0]!,
-      }))._unsafeUnwrap()
+      }))
 
       // Verify chapter exists
-      let chapter = (await getProgramTemplateChapterById(testChapter.id))._unsafeUnwrap()
+      let chapter = R.unwrap(await getProgramTemplateChapterById(testChapter.id))
       expect(chapter).toBeDefined()
 
       // Delete chapter
       await deleteProgramTemplateChapter(testChapter.id)
 
       // Verify chapter is deleted
-      chapter = (await getProgramTemplateChapterById(testChapter.id))._unsafeUnwrap()
+      chapter = R.unwrap(await getProgramTemplateChapterById(testChapter.id))
       expect(chapter).toBeNull()
     })
 
@@ -1725,7 +1726,7 @@ describe('query Functions Tests - Program Templates', () => {
         },
       ]
 
-      const newChapters = (await bulkCreateChapters(testProgramIds[0]!, chaptersData))._unsafeUnwrap()
+      const newChapters = R.unwrap(await bulkCreateChapters(testProgramIds[0]!, chaptersData))
 
       expect(newChapters).toHaveLength(3)
       expect(newChapters[0]!.title).toBe('Chapter 1')
@@ -1739,7 +1740,7 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should bulk update chapters order', async () => {
       const programId = testProgramIds[0]!
-      const chapters = (await getProgramTemplateChapters(programId))._unsafeUnwrap()
+      const chapters = R.unwrap(await getProgramTemplateChapters(programId))
 
       if (chapters.length >= 2) {
         const [chapterId1, chapterId2] = [chapters[0]!.id, chapters[1]!.id]
@@ -1750,8 +1751,8 @@ describe('query Functions Tests - Program Templates', () => {
           { id: chapterId2, order: 10 },
         ])
 
-        const updatedChapter1 = (await getProgramTemplateChapterById(chapterId1))._unsafeUnwrap()
-        const updatedChapter2 = (await getProgramTemplateChapterById(chapterId2))._unsafeUnwrap()
+        const updatedChapter1 = R.unwrap(await getProgramTemplateChapterById(chapterId1))
+        const updatedChapter2 = R.unwrap(await getProgramTemplateChapterById(chapterId2))
 
         expect(updatedChapter1!.order).toBe(20)
         expect(updatedChapter2!.order).toBe(10)
@@ -1759,7 +1760,7 @@ describe('query Functions Tests - Program Templates', () => {
     })
 
     test('should handle empty bulk operations', async () => {
-      const emptyChapters = (await bulkCreateChapters(testProgramIds[0]!, []))._unsafeUnwrap()
+      const emptyChapters = R.unwrap(await bulkCreateChapters(testProgramIds[0]!, []))
 
       expect(emptyChapters).toHaveLength(0)
 
@@ -1773,21 +1774,21 @@ describe('query Functions Tests - Program Templates', () => {
       const programId = testProgramIds[0]!
 
       // Verify initial status
-      const initialProgram = (await getProgramTemplateById(programId))._unsafeUnwrap()
+      const initialProgram = R.unwrap(await getProgramTemplateById(programId))
       expect(initialProgram!.status).toBe('draft')
 
       // Publish program
-      const publishResult = (await publishProgram(programId))._unsafeUnwrap()
+      const publishResult = R.unwrap(await publishProgram(programId))
 
       expect(publishResult.success).toBe(true)
       expect(publishResult.version).toBe(1)
 
       // Verify status changed to published
-      const updatedProgram = (await getProgramTemplateById(programId))._unsafeUnwrap()
+      const updatedProgram = R.unwrap(await getProgramTemplateById(programId))
       expect(updatedProgram!.status).toBe('published')
 
       // Verify version was created
-      const versions = (await getProgramVersions(programId))._unsafeUnwrap()
+      const versions = R.unwrap(await getProgramVersions(programId))
       expect(versions).toHaveLength(1)
       expect(versions[0]!.versionNumber).toBe(1)
       expect(versions[0]!.snapshotData).toBeDefined()
@@ -1795,29 +1796,29 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should publish multiple versions incrementally', async () => {
       // Create a new program for versioning test
-      const testProgram = (await createProgramTemplate({
+      const testProgram = R.unwrap(await createProgramTemplate({
         name: 'TEST__ Versioning Test Program',
         schoolYearTemplateId: testSchoolYearIds[0]!,
         subjectId: testSubjectIds[0]!,
         gradeId: testGradeIds[0]!,
         status: 'draft',
-      }))._unsafeUnwrap()
+      }))
 
       testProgramIds.push(testProgram.id)
 
       // First publish
-      const result1 = (await publishProgram(testProgram.id))._unsafeUnwrap()
+      const result1 = R.unwrap(await publishProgram(testProgram.id))
       expect(result1.version).toBe(1)
 
       // Update program
       await updateProgramTemplate(testProgram.id, { name: 'TEST__ Updated Versioning Program' })
 
       // Second publish
-      const result2 = (await publishProgram(testProgram.id))._unsafeUnwrap()
+      const result2 = R.unwrap(await publishProgram(testProgram.id))
       expect(result2.version).toBe(2)
 
       // Verify versions
-      const versions = (await getProgramVersions(testProgram.id))._unsafeUnwrap()
+      const versions = R.unwrap(await getProgramVersions(testProgram.id))
       expect(versions).toHaveLength(2)
       expect(versions[0]!.versionNumber).toBe(2) // Latest first
       expect(versions[1]!.versionNumber).toBe(1)
@@ -1831,7 +1832,7 @@ describe('query Functions Tests - Program Templates', () => {
       await updateProgramTemplate(programId, { name: 'TEST__ Updated for v2' })
       await publishProgram(programId)
 
-      const versions = (await getProgramVersions(programId))._unsafeUnwrap()
+      const versions = R.unwrap(await getProgramVersions(programId))
 
       expect(versions.length).toBeGreaterThanOrEqual(2)
 
@@ -1843,13 +1844,13 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should restore program from version', async () => {
       // Create program with initial data
-      const testProgram = (await createProgramTemplate({
+      const testProgram = R.unwrap(await createProgramTemplate({
         name: 'TEST__ Original Program Name',
         schoolYearTemplateId: testSchoolYearIds[0]!,
         subjectId: testSubjectIds[0]!,
         gradeId: testGradeIds[0]!,
         status: 'draft',
-      }))._unsafeUnwrap()
+      }))
 
       // Add initial chapters
       await bulkCreateChapters(testProgram.id, [
@@ -1862,7 +1863,7 @@ describe('query Functions Tests - Program Templates', () => {
 
       // Update program
       await updateProgramTemplate(testProgram.id, { name: 'TEST__ Modified Program Name' })
-      const chapters = (await getProgramTemplateChapters(testProgram.id))._unsafeUnwrap()
+      const chapters = R.unwrap(await getProgramTemplateChapters(testProgram.id))
       if (chapters.length > 0) {
         await deleteProgramTemplateChapter(chapters[0]!.id)
       }
@@ -1871,20 +1872,20 @@ describe('query Functions Tests - Program Templates', () => {
       ])
 
       // Get version to restore
-      const versions = (await getProgramVersions(testProgram.id))._unsafeUnwrap()
+      const versions = R.unwrap(await getProgramVersions(testProgram.id))
       const firstVersion = versions[0]!
 
       // Restore from version
-      const restoreResult = (await restoreProgramVersion(firstVersion!.id))._unsafeUnwrap()
+      const restoreResult = R.unwrap(await restoreProgramVersion(firstVersion!.id))
 
       expect(restoreResult.success).toBe(true)
 
       // Verify restoration
-      const restoredProgram = (await getProgramTemplateById(testProgram.id))._unsafeUnwrap()
+      const restoredProgram = R.unwrap(await getProgramTemplateById(testProgram.id))
       expect(restoredProgram!.name).toBe('TEST__ Original Program Name')
       expect(restoredProgram!.status).toBe('draft') // Should revert to draft
 
-      const restoredChapters = (await getProgramTemplateChapters(testProgram.id))._unsafeUnwrap()
+      const restoredChapters = R.unwrap(await getProgramTemplateChapters(testProgram.id))
       expect(restoredChapters).toHaveLength(2) // Should have original 2 chapters
       expect(restoredChapters.some((c: any) => c.title === 'Original Chapter 1')).toBe(true)
       expect(restoredChapters.some((c: any) => c.title === 'Original Chapter 2')).toBe(true)
@@ -1895,7 +1896,7 @@ describe('query Functions Tests - Program Templates', () => {
 
   describe('program Statistics', () => {
     test('should get program statistics', async () => {
-      const stats = (await getProgramStats())._unsafeUnwrap()
+      const stats = R.unwrap(await getProgramStats())
 
       expect(stats).toBeDefined()
       expect(typeof stats.programs).toBe('number')
@@ -1913,25 +1914,25 @@ describe('query Functions Tests - Program Templates', () => {
       // Create additional programs for pagination
       const additionalPrograms: string[] = []
       for (let i = 0; i < 10; i++) {
-        const program = (await createProgramTemplate({
+        const program = R.unwrap(await createProgramTemplate({
           name: `TEST__ Pagination Program ${i}`,
           schoolYearTemplateId: testSchoolYearIds[0]!,
           subjectId: testSubjectIds[0]!,
           gradeId: testGradeIds[0]!,
           status: 'draft',
-        }))._unsafeUnwrap()
+        }))
         additionalPrograms.push(program.id)
       }
 
       try {
         // Test first page
-        const page1 = (await getProgramTemplates({ page: 1, limit: 5 }))._unsafeUnwrap()
+        const page1 = R.unwrap(await getProgramTemplates({ page: 1, limit: 5 }))
         expect(page1.programs).toHaveLength(5)
         expect(page1.pagination.page).toBe(1)
         expect(page1.pagination.limit).toBe(5)
 
         // Test second page
-        const page2 = (await getProgramTemplates({ page: 2, limit: 5 }))._unsafeUnwrap()
+        const page2 = R.unwrap(await getProgramTemplates({ page: 2, limit: 5 }))
         expect(page2.programs).toHaveLength(5)
         expect(page2.pagination.page).toBe(2)
 
@@ -1951,12 +1952,12 @@ describe('query Functions Tests - Program Templates', () => {
 
     test('should combine multiple filters', async () => {
       const [schoolYearId, subjectId] = [testSchoolYearIds[0]!, testSubjectIds[0]!]
-      const result = (await getProgramTemplates({
+      const result = R.unwrap(await getProgramTemplates({
         schoolYearTemplateId: schoolYearId,
         subjectId,
         status: 'draft',
         search: 'Mathematics',
-      }))._unsafeUnwrap()
+      }))
 
       expect(result.programs.length).toBeGreaterThanOrEqual(1)
       expect(result.programs.every((p: any) =>
@@ -1969,7 +1970,7 @@ describe('query Functions Tests - Program Templates', () => {
     })
 
     test('should handle search with no results', async () => {
-      const result = (await getProgramTemplates({ search: 'NonExistentProgramXYZ' }))._unsafeUnwrap()
+      const result = R.unwrap(await getProgramTemplates({ search: 'NonExistentProgramXYZ' }))
 
       expect(result.programs).toHaveLength(0)
       expect(result.pagination.total).toBe(0)

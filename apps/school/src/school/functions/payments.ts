@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getFinanceStats } from '@repo/data-ops/queries/finance-stats'
 import {
   cancelPayment,
@@ -39,13 +40,13 @@ export const getPaymentsList = authServerFn
     const { schoolId } = context.school
     await requirePermission('finance', 'view')
 
-    return (await getPayments({
+    const _result1 = await getPayments({
       schoolId,
       ...filters,
-    })).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des paiements' }),
-    )
+    })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des paiements' }
+    return { success: true as const, data: _result1.value }
   })
 
 /**
@@ -59,10 +60,10 @@ export const getPayment = authServerFn
 
     await requirePermission('finance', 'view')
 
-    return (await getPaymentById(paymentId)).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération du paiement' }),
-    )
+    const _result2 = await getPaymentById(paymentId)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération du paiement' }
+    return { success: true as const, data: _result2.value }
   })
 
 /**
@@ -77,10 +78,10 @@ export const getPaymentByReceipt = authServerFn
     const { schoolId } = context.school
     await requirePermission('finance', 'view')
 
-    return (await getPaymentByReceiptNumber(schoolId, receiptNumber)).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération du paiement par numéro de reçu' }),
-    )
+    const _result3 = await getPaymentByReceiptNumber(schoolId, receiptNumber)
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la récupération du paiement par numéro de reçu' }
+    return { success: true as const, data: _result3.value }
   })
 
 /**
@@ -95,24 +96,22 @@ export const recordPayment = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('finance', 'create')
 
-    return (await createPaymentWithAllocations({
+    const _result4 = await createPaymentWithAllocations({
       schoolId,
       processedBy: userId,
       ...data,
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'payments',
-          recordId: result.payment.id,
-          newValues: data,
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'enregistrement du paiement' }),
-    )
+    })
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de l\'enregistrement du paiement' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'payments',
+      recordId: _result4.value.payment.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result4.value }
   })
 
 /**
@@ -127,20 +126,18 @@ export const cancelExistingPayment = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('finance', 'edit')
 
-    return (await cancelPayment(data.paymentId, userId, data.reason)).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'payments',
-          recordId: data.paymentId,
-          newValues: { status: 'cancelled', reason: data.reason },
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'annulation du paiement' }),
-    )
+    const _result5 = await cancelPayment(data.paymentId, userId, data.reason)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de l\'annulation du paiement' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'payments',
+      recordId: data.paymentId,
+      newValues: { status: 'cancelled', reason: data.reason },
+    })
+    return { success: true as const, data: _result5.value }
   })
 
 /**
@@ -159,10 +156,10 @@ export const getCashierSummary = authServerFn
     await requirePermission('finance', 'view')
 
     const cashierId = data.cashierId || userId
-    return (await getCashierDailySummary(schoolId, cashierId, data.date)).match(
-      data => ({ success: true as const, data }),
-      _error => ({ success: false as const, error: 'Erreur lors de la récupération du résumé de la caisse' }),
-    )
+    const _result6 = await getCashierDailySummary(schoolId, cashierId, data.date)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la récupération du résumé de la caisse' }
+    return { success: true as const, data: _result6.value }
   })
 
 /**
@@ -177,8 +174,8 @@ export const getFinanceDashboardStats = authServerFn
     const { schoolId } = context.school
     await requirePermission('finance', 'view')
 
-    return (await getFinanceStats(schoolId)).match(
-      data => ({ success: true as const, data }),
-      _error => ({ success: false as const, error: 'Erreur lors de la récupération des statistiques financières' }),
-    )
+    const _result7 = await getFinanceStats(schoolId)
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors de la récupération des statistiques financières' }
+    return { success: true as const, data: _result7.value }
   })

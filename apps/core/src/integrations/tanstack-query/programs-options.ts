@@ -1,4 +1,13 @@
 import type {
+  Grade,
+  ProgramTemplate,
+  ProgramTemplateChapter,
+  ProgramTemplateVersion,
+  SchoolYearTemplate,
+  Subject,
+  TermTemplate,
+} from '@repo/data-ops/drizzle/core-schema'
+import type {
   BulkCreateChaptersInput,
   BulkCreateTermTemplatesInput,
   BulkUpdateChaptersOrderInput,
@@ -51,6 +60,13 @@ import {
   updateTermTemplateMutation,
 } from '@/core/functions/programs'
 
+// Define the complex type locally since it's not exported from the query file
+type ProgramWithDetails = ProgramTemplate & {
+  schoolYearTemplate: Pick<SchoolYearTemplate, 'id' | 'name' | 'isActive'> | null
+  subject: Pick<Subject, 'id' | 'name' | 'shortName' | 'category'> | null
+  grade: Pick<Grade, 'id' | 'name' | 'code' | 'order'> | null
+}
+
 // ===== MUTATION KEYS =====
 
 export const programsMutationKeys = {
@@ -77,7 +93,7 @@ export const programsMutationKeys = {
 // ===== SCHOOL YEAR TEMPLATES =====
 
 export function schoolYearTemplatesQueryOptions() {
-  return queryOptions({
+  return queryOptions<SchoolYearTemplate[]>({
     queryKey: ['school-year-templates'],
     queryFn: () => schoolYearTemplatesQuery(),
     staleTime: 1000 * 60 * 10, // 10 minutes
@@ -86,7 +102,7 @@ export function schoolYearTemplatesQueryOptions() {
 }
 
 export function schoolYearTemplateByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<SchoolYearTemplate | null>({
     queryKey: ['school-year-template', id],
     queryFn: () => schoolYearTemplateByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -120,7 +136,15 @@ export function programTemplatesQueryOptions(params: {
   page?: number
   limit?: number
 }) {
-  return queryOptions({
+  return queryOptions<{
+    programs: ProgramWithDetails[]
+    pagination: {
+      page: number
+      limit: number
+      total: number
+      totalPages: number
+    }
+  }>({
     queryKey: ['program-templates', params],
     queryFn: () => programTemplatesQuery({ data: params }),
     staleTime: 1000 * 60 * 5,
@@ -130,7 +154,7 @@ export function programTemplatesQueryOptions(params: {
 }
 
 export function programTemplateByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<ProgramWithDetails | null>({
     queryKey: ['program-template', id],
     queryFn: () => programTemplateByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -162,7 +186,7 @@ export const cloneProgramTemplateMutationOptions = {
 // ===== PROGRAM TEMPLATE CHAPTERS =====
 
 export function programTemplateChaptersQueryOptions(programTemplateId: string) {
-  return queryOptions({
+  return queryOptions<ProgramTemplateChapter[]>({
     queryKey: ['program-template-chapters', programTemplateId],
     queryFn: () => programTemplateChaptersQuery({ data: { id: programTemplateId } }),
     staleTime: 1000 * 60 * 5,
@@ -172,7 +196,7 @@ export function programTemplateChaptersQueryOptions(programTemplateId: string) {
 }
 
 export function programTemplateChapterByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<ProgramTemplateChapter | null>({
     queryKey: ['program-template-chapter', id],
     queryFn: () => programTemplateChapterByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -214,7 +238,7 @@ export const publishProgramMutationOptions = {
 }
 
 export function getProgramVersionsQueryOptions(programTemplateId: string) {
-  return queryOptions({
+  return queryOptions<ProgramTemplateVersion[]>({
     queryKey: ['program-versions', programTemplateId],
     queryFn: () => getProgramVersionsQuery({ data: { id: programTemplateId } }),
     staleTime: 1000 * 60 * 5,
@@ -231,7 +255,11 @@ export const restoreProgramVersionMutationOptions = {
 // ===== PROGRAM STATS =====
 
 export function programStatsQueryOptions() {
-  return queryOptions({
+  return queryOptions<{
+    programs: number
+    chapters: number
+    schoolYears: number
+  }>({
     queryKey: ['program-stats'],
     queryFn: () => programStatsQuery(),
     staleTime: 1000 * 60 * 5,
@@ -242,7 +270,7 @@ export function programStatsQueryOptions() {
 // ===== TERM TEMPLATES =====
 
 export function termTemplatesQueryOptions(schoolYearTemplateId?: string) {
-  return queryOptions({
+  return queryOptions<TermTemplate[]>({
     queryKey: ['term-templates', schoolYearTemplateId],
     queryFn: () => termTemplatesQuery({ data: { schoolYearTemplateId } }),
     staleTime: 1000 * 60 * 10,
@@ -251,7 +279,7 @@ export function termTemplatesQueryOptions(schoolYearTemplateId?: string) {
 }
 
 export function termTemplateByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<TermTemplate | null>({
     queryKey: ['term-template', id],
     queryFn: () => termTemplateByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -261,7 +289,7 @@ export function termTemplateByIdQueryOptions(id: string) {
 }
 
 export function schoolYearTemplatesWithTermsQueryOptions() {
-  return queryOptions({
+  return queryOptions<(SchoolYearTemplate & { terms: TermTemplate[] })[]>({
     queryKey: ['school-year-templates-with-terms'],
     queryFn: () => schoolYearTemplatesWithTermsQuery(),
     staleTime: 1000 * 60 * 10,

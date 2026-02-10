@@ -26,12 +26,12 @@
   "license": "ISC",
   "packageManager": "pnpm@10.28.2",
   "devDependencies": {
+    "@praha/byethrow-docs": "^0.9.0",
     "@types/node": "^25.2.0",
-    "eslint-plugin-neverthrow": "^1.1.4",
     "lefthook": "^2.0.16",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "neverthrow": "^8.2.0"
+    "@praha/byethrow": "^0.9.0"
   }
 }

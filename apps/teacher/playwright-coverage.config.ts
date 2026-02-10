@@ -1,7 +1,20 @@
+import type { PlaywrightTestConfig } from '@playwright/test'
 import process from 'node:process'
 import { defineConfig, devices } from '@playwright/test'
 
-export default defineConfig({
+interface CoverageConfig {
+  provider: string
+  reportDir: string
+  reporter: string[]
+  include: string[]
+  exclude: string[]
+}
+
+type PlaywrightTestConfigWithCoverage = PlaywrightTestConfig & {
+  coverage: CoverageConfig
+}
+
+const config: PlaywrightTestConfigWithCoverage = {
   testDir: './e2e-tests',
   testMatch: /.*\.spec\.ts/,
   fullyParallel: true,
@@ -56,4 +69,6 @@ export default defineConfig({
       '**/.next/**',
     ],
   },
-} as any)
+}
+
+export default defineConfig(config)

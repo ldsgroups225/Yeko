@@ -241,7 +241,7 @@ describe('program Schema Validation', () => {
           schoolYearTemplateId: 'sy-123',
           subjectId: 'subj-456',
           gradeId: 'grade-789',
-          status: 'invalid' as any,
+          status: 'invalid',
         }
 
         const result = CreateProgramTemplateSchema.safeParse(invalidProgram)

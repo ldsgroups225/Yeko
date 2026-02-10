@@ -1,4 +1,8 @@
 import type {
+  FeeTypeCategory,
+  FeeTypeTemplate,
+} from '@repo/data-ops/drizzle/core-schema'
+import type {
   CreateFeeTypeTemplateInput,
   FeeTypeTemplateIdInput,
   GetFeeTypeTemplatesInput,
@@ -21,7 +25,7 @@ export const feeTypeTemplatesMutationKeys = {
 }
 
 export function feeTypeTemplatesQueryOptions(params: GetFeeTypeTemplatesInput = {}) {
-  return queryOptions({
+  return queryOptions<FeeTypeTemplate[]>({
     queryKey: ['fee-type-templates', params],
     queryFn: () => feeTypeTemplatesQuery({ data: params }),
     staleTime: 1000 * 60 * 5,
@@ -29,7 +33,7 @@ export function feeTypeTemplatesQueryOptions(params: GetFeeTypeTemplatesInput = 
 }
 
 export function feeTypeTemplateByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<FeeTypeTemplate | null>({
     queryKey: ['fee-type-template', id],
     queryFn: () => feeTypeTemplateByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -38,7 +42,7 @@ export function feeTypeTemplateByIdQueryOptions(id: string) {
 }
 
 export function feeTypeCategoriesWithCountsQueryOptions() {
-  return queryOptions({
+  return queryOptions<{ category: FeeTypeCategory, count: number }[]>({
     queryKey: ['fee-type-categories-counts'],
     queryFn: () => feeTypeCategoriesWithCountsQuery(),
     staleTime: 1000 * 60 * 10,

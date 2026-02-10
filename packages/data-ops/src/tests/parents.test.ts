@@ -1,4 +1,5 @@
 import type { CreateParentInput } from '../queries/parents'
+import { Result as R } from '@praha/byethrow'
 import { beforeEach, describe, expect, test } from 'vitest'
 import {
   autoMatchParents,
@@ -22,20 +23,20 @@ describe('parents queries', () => {
 
   beforeEach(async () => {
     // Create test school
-    const school = (await createSchool({
+    const school = R.unwrap(await createSchool({
       name: 'TEST__ School for Parents',
       code: `TSP-${Date.now()}`,
       email: `TEST__parents-test-${Date.now()}@test.com`,
       phone: `+225${Date.now().toString().slice(-8)}`,
       status: 'active',
-    }))._unsafeUnwrap()
+    }))
     testSchoolId = school.id
 
     // Create school year
-    const yearTemplate = (await createSchoolYearTemplate({
+    const yearTemplate = R.unwrap(await createSchoolYearTemplate({
       name: `Test Year Template ${Date.now()}`,
       isActive: true,
-    }))._unsafeUnwrap()
+    }))
 
     await createSchoolYear({
       schoolId: testSchoolId,
@@ -46,7 +47,7 @@ describe('parents queries', () => {
     })
 
     // Create test student
-    const student = (await createStudent({
+    const student = R.unwrap(await createStudent({
       schoolId: testSchoolId,
       firstName: 'TEST__Student',
       lastName: 'TEST__Student',
@@ -54,7 +55,7 @@ describe('parents queries', () => {
       gender: 'M',
       matricule: `ST-${Date.now()}`,
       emergencyPhone: `07${Date.now().toString().slice(-8)}`, // For auto-match
-    }))._unsafeUnwrap()
+    }))
 
     testStudentId = student.id
   })
@@ -67,7 +68,7 @@ describe('parents queries', () => {
       email: `TEST__parent-${Date.now()}@test.com`,
       ...data,
     }
-    const parent = (await createParent(parentData))._unsafeUnwrap()
+    const parent = R.unwrap(await createParent(parentData))
 
     testParentIds.push(parent.id)
     return parent
@@ -85,13 +86,13 @@ describe('parents queries', () => {
       const phone = `07${Date.now()}`.slice(0, 10)
       await createTestParent({ phone })
 
-      const result = (await createParent({
+      const result = await createParent({
         firstName: 'Other',
         lastName: 'Parent',
         phone,
-      }))
+      })
 
-      expect(result.isErr()).toBe(true)
+      expect(R.isFailure(result)).toBe(true)
     })
   })
 
@@ -104,7 +105,7 @@ describe('parents queries', () => {
         relationship: 'father',
       })
 
-      const parentsResult = (await getParents(testSchoolId, {}))._unsafeUnwrap()
+      const parentsResult = R.unwrap(await getParents(testSchoolId, {}))
       const parentsData = parentsResult.data
 
       expect(parentsData.length).toBeGreaterThan(0)
@@ -121,7 +122,7 @@ describe('parents queries', () => {
         relationship: 'mother',
       })
 
-      const data = (await getParentById(parent.id))._unsafeUnwrap()
+      const data = R.unwrap(await getParentById(parent.id))
       expect(data).toBeDefined()
       expect(data.id).toBe(parent.id)
       expect(data.children).toHaveLength(1)
@@ -134,7 +135,7 @@ describe('parents queries', () => {
       const parent = await createTestParent()
       const newEmail = `updated-${Date.now()}@test.com`
 
-      const updated = (await updateParent(parent.id, { email: newEmail }))._unsafeUnwrap()
+      const updated = R.unwrap(await updateParent(parent.id, { email: newEmail }))
       expect(updated.email).toBe(newEmail)
     })
   })
@@ -142,21 +143,21 @@ describe('parents queries', () => {
   describe('autoMatchParents', () => {
     test('should suggest match based on student emergency phone', async () => {
       // Need to get the student's emergency phone
-      const student = (await (await import('../queries/students')).getStudentById(testStudentId))._unsafeUnwrap()
+      const student = R.unwrap(await (await import('../queries/students')).getStudentById(testStudentId))
       const phone = student?.emergencyPhone || '0700000001'
 
-      const parent = (await createParent({
+      const parent = R.unwrap(await createParent({
         firstName: 'TEST__Emergency',
         lastName: 'TEST__Contact',
         phone,
         email: `TEST__emergency-${Date.now()}@test.com`,
-      }))._unsafeUnwrap()
+      }))
 
       const parentId = parent.id
       testParentIds.push(parentId)
 
       // Run auto-match
-      const matchData = (await autoMatchParents(testSchoolId))._unsafeUnwrap()
+      const matchData = R.unwrap(await autoMatchParents(testSchoolId))
       const suggestions = matchData.suggestions
 
       expect(suggestions).toBeDefined()

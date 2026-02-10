@@ -99,6 +99,6 @@ export async function importSchoolsFromExcel(file: File): Promise<Partial<School
     }
 
     reader.onerror = () => reject(new Error('Erreur lors de la lecture du fichier'))
-    reader.readAsBinaryString(file)
+    reader.readAsArrayBuffer(file)
   })
 }

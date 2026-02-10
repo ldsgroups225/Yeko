@@ -192,7 +192,7 @@ function SetupCard({ step, title, description, icon, href }: { step: string, tit
           {description}
         </CardDescription>
         <Link
-          to={href as any}
+          to={href}
           className={cn(buttonVariants({ variant: 'ghost' }), 'w-full justify-between rounded-xl hover:bg-primary/5 hover:text-primary')}
         >
           {t.finance.wizard.manage()}

@@ -1,7 +1,7 @@
 import type { PaymentPlanTemplate, PaymentPlanTemplateInsert } from '../drizzle/school-schema'
+import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, eq } from 'drizzle-orm'
-import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { paymentPlanTemplates } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
@@ -12,112 +12,149 @@ export interface GetPaymentPlanTemplatesParams {
   includeInactive?: boolean
 }
 
-export function getPaymentPlanTemplates(params: GetPaymentPlanTemplatesParams): ResultAsync<PaymentPlanTemplate[], DatabaseError> {
+export async function getPaymentPlanTemplates(params: GetPaymentPlanTemplatesParams): R.ResultAsync<PaymentPlanTemplate[], DatabaseError> {
   const db = getDb()
   const { schoolId, schoolYearId, includeInactive = false } = params
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const conditions = [eq(paymentPlanTemplates.schoolId, schoolId), eq(paymentPlanTemplates.schoolYearId, schoolYearId)]
-      if (!includeInactive)
-        conditions.push(eq(paymentPlanTemplates.status, 'active'))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const conditions = [eq(paymentPlanTemplates.schoolId, schoolId), eq(paymentPlanTemplates.schoolYearId, schoolYearId)]
+        if (!includeInactive)
+          conditions.push(eq(paymentPlanTemplates.status, 'active'))
 
-      return db.select().from(paymentPlanTemplates).where(and(...conditions))
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch payment plan templates'),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
+        return await db.select().from(paymentPlanTemplates).where(and(...conditions))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch payment plan templates'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, schoolYearId })),
+  )
 }
 
-export function getPaymentPlanTemplateById(templateId: string): ResultAsync<PaymentPlanTemplate | null, DatabaseError> {
+export async function getPaymentPlanTemplateById(templateId: string): R.ResultAsync<PaymentPlanTemplate | null, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db.select().from(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).limit(1).then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch payment plan template by ID'),
-  ).mapErr(tapLogErr(databaseLogger, { templateId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db.select().from(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).limit(1)
+        return rows[0] ?? null
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch payment plan template by ID'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { templateId })),
+  )
 }
 
-export function getDefaultPaymentPlanTemplate(schoolId: string, schoolYearId: string): ResultAsync<PaymentPlanTemplate | null, DatabaseError> {
+export async function getDefaultPaymentPlanTemplate(schoolId: string, schoolYearId: string): R.ResultAsync<PaymentPlanTemplate | null, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .select()
-      .from(paymentPlanTemplates)
-      .where(and(
-        eq(paymentPlanTemplates.schoolId, schoolId),
-        eq(paymentPlanTemplates.schoolYearId, schoolYearId),
-        eq(paymentPlanTemplates.isDefault, true),
-        eq(paymentPlanTemplates.status, 'active'),
-      ))
-      .limit(1)
-      .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch default payment plan template'),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select()
+          .from(paymentPlanTemplates)
+          .where(and(
+            eq(paymentPlanTemplates.schoolId, schoolId),
+            eq(paymentPlanTemplates.schoolYearId, schoolYearId),
+            eq(paymentPlanTemplates.isDefault, true),
+            eq(paymentPlanTemplates.status, 'active'),
+          ))
+          .limit(1)
+        return rows[0] ?? null
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch default payment plan template'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, schoolYearId })),
+  )
 }
 
 export type CreatePaymentPlanTemplateData = Omit<PaymentPlanTemplateInsert, 'id' | 'createdAt' | 'updatedAt'>
 
-export function createPaymentPlanTemplate(data: CreatePaymentPlanTemplateData): ResultAsync<PaymentPlanTemplate, DatabaseError> {
+export async function createPaymentPlanTemplate(data: CreatePaymentPlanTemplateData): R.ResultAsync<PaymentPlanTemplate, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [template] = await db.insert(paymentPlanTemplates).values({ id: crypto.randomUUID(), ...data }).returning()
-      if (!template) {
-        throw dbError('INTERNAL_ERROR', 'Failed to create payment plan template')
-      }
-      return template
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create payment plan template'),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [template] = await db.insert(paymentPlanTemplates).values({ id: crypto.randomUUID(), ...data }).returning()
+        if (!template) {
+          throw dbError('INTERNAL_ERROR', 'Failed to create payment plan template')
+        }
+        return template
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create payment plan template'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId: data.schoolId })),
+  )
 }
 
 export type UpdatePaymentPlanTemplateData = Partial<Omit<PaymentPlanTemplateInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
 
-export function updatePaymentPlanTemplate(
+export async function updatePaymentPlanTemplate(
   templateId: string,
   data: UpdatePaymentPlanTemplateData,
-): ResultAsync<PaymentPlanTemplate | undefined, DatabaseError> {
+): R.ResultAsync<PaymentPlanTemplate | undefined, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [template] = await db
-        .update(paymentPlanTemplates)
-        .set({ ...data, updatedAt: new Date() })
-        .where(eq(paymentPlanTemplates.id, templateId))
-        .returning()
-      return template
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update payment plan template'),
-  ).mapErr(tapLogErr(databaseLogger, { templateId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [template] = await db
+          .update(paymentPlanTemplates)
+          .set({ ...data, updatedAt: new Date() })
+          .where(eq(paymentPlanTemplates.id, templateId))
+          .returning()
+        return template
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update payment plan template'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { templateId })),
+  )
 }
 
-export function deletePaymentPlanTemplate(templateId: string): ResultAsync<void, DatabaseError> {
+export async function deletePaymentPlanTemplate(templateId: string): R.ResultAsync<void, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db.delete(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete payment plan template'),
-  ).mapErr(tapLogErr(databaseLogger, { templateId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        await db.delete(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete payment plan template'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { templateId })),
+  )
 }
 
-export function setDefaultPaymentPlanTemplate(
+export async function setDefaultPaymentPlanTemplate(
   schoolId: string,
   schoolYearId: string,
   templateId: string,
-): ResultAsync<void, DatabaseError> {
+): R.ResultAsync<void, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db.transaction(async (tx) => {
-      // Remove default from all templates for this school/year
-      await tx
-        .update(paymentPlanTemplates)
-        .set({ isDefault: false, updatedAt: new Date() })
-        .where(and(eq(paymentPlanTemplates.schoolId, schoolId), eq(paymentPlanTemplates.schoolYearId, schoolYearId)))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        await db.transaction(async (tx) => {
+          // Remove default from all templates for this school/year
+          await tx
+            .update(paymentPlanTemplates)
+            .set({ isDefault: false, updatedAt: new Date() })
+            .where(and(eq(paymentPlanTemplates.schoolId, schoolId), eq(paymentPlanTemplates.schoolYearId, schoolYearId)))
 
-      // Set the new default
-      await tx
-        .update(paymentPlanTemplates)
-        .set({ isDefault: true, updatedAt: new Date() })
-        .where(eq(paymentPlanTemplates.id, templateId))
+          // Set the new default
+          await tx
+            .update(paymentPlanTemplates)
+            .set({ isDefault: true, updatedAt: new Date() })
+            .where(eq(paymentPlanTemplates.id, templateId))
+        })
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to set default payment plan template'),
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to set default payment plan template'),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId, templateId }))
+    R.mapError(tapLogErr(databaseLogger, { schoolId, schoolYearId, templateId })),
+  )
 }

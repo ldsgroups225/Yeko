@@ -39,7 +39,7 @@ function createBuilder() {
     return Promise.resolve([...queryResult]).then(onFulfilled, onRejected)
   })
 
-  return builder as unknown as any // Let's try to reach a compromise here or define the full type
+  return builder as any // Let's try to reach a compromise here or define the full type
 }
 
 export const getDb = vi.fn(() => {

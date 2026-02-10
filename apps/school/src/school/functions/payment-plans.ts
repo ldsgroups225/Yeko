@@ -1,5 +1,4 @@
-import type { Installment, PaymentPlan, PaymentPlanSummary, PaymentPlanTemplate } from '@repo/data-ops'
-import type { DatabaseError } from '@repo/data-ops/errors'
+import { Result as R } from '@praha/byethrow'
 import { getInstallmentsByPaymentPlan } from '@repo/data-ops/queries/installments'
 import {
   createPaymentPlanTemplate,
@@ -18,7 +17,6 @@ import {
   getPaymentPlans,
   getPaymentPlansSummary,
 } from '@repo/data-ops/queries/payment-plans'
-import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 import { createPaymentPlanFromTemplateSchema, createPaymentPlanTemplateSchema, updatePaymentPlanTemplateSchema } from '@/schemas/payment-plan'
 import { authServerFn } from '../lib/server-fn'
@@ -45,10 +43,9 @@ export const getPaymentPlanTemplatesList = authServerFn
       includeInactive: filters?.includeInactive,
     })
 
-    return result.match(
-      (data: PaymentPlanTemplate[]) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -67,10 +64,9 @@ export const getDefaultTemplate = authServerFn
 
     const result = await getDefaultPaymentPlanTemplate(school.schoolId, schoolYearId)
 
-    return result.match(
-      (data: PaymentPlanTemplate | null) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -81,10 +77,9 @@ export const getPaymentPlanTemplate = authServerFn
   .handler(async ({ data: templateId }) => {
     const result = await getPaymentPlanTemplateById(templateId)
 
-    return result.match(
-      (data: PaymentPlanTemplate | null) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -101,10 +96,9 @@ export const createNewPaymentPlanTemplate = authServerFn
       ...data,
     })
 
-    return result.match(
-      (data: PaymentPlanTemplate) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -116,10 +110,9 @@ export const updateExistingPaymentPlanTemplate = authServerFn
     const { id, ...updateData } = data
     const result = await updatePaymentPlanTemplate(id, updateData)
 
-    return result.match(
-      (data: PaymentPlanTemplate | undefined) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -138,10 +131,9 @@ export const setDefaultTemplate = authServerFn
 
     const result = await setDefaultPaymentPlanTemplate(school.schoolId, schoolYearId, data.templateId)
 
-    return result.match(
-      () => ({ success: true as const, data: { success: true } }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: { success: true } }
   })
 
 /**
@@ -152,10 +144,9 @@ export const deleteExistingPaymentPlanTemplate = authServerFn
   .handler(async ({ data: templateId }) => {
     const result = await deletePaymentPlanTemplate(templateId)
 
-    return result.match(
-      () => ({ success: true as const, data: { success: true } }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: { success: true } }
   })
 
 // ============ PAYMENT PLANS ============
@@ -183,10 +174,9 @@ export const getPaymentPlansList = authServerFn
       ...filters,
     })
 
-    return result.match(
-      (data: PaymentPlan[]) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -205,10 +195,9 @@ export const getStudentPaymentPlan = authServerFn
 
     const result = await getPaymentPlanForStudent(data.studentId, schoolYearId)
 
-    return result.match(
-      (data: PaymentPlan | null) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -217,15 +206,20 @@ export const getStudentPaymentPlan = authServerFn
 export const getPaymentPlanWithInstallments = authServerFn
   .inputValidator(z.string())
   .handler(async ({ data: paymentPlanId }) => {
-    const result = await ResultAsync.combine([
+    // We execute both promises first
+    const [planParams, installmentsParams] = await Promise.all([
       getPaymentPlanById(paymentPlanId),
       getInstallmentsByPaymentPlan(paymentPlanId),
     ])
 
-    return result.match(
-      ([plan, installments]: [PaymentPlan | null, Installment[]]) => ({ success: true as const, data: { plan, installments } }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    // Then sequence the results using byethrow
+    const result = R.sequence([planParams, installmentsParams])
+
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+
+    const [plan, installments] = result.value
+    return { success: true as const, data: { plan, installments } }
   })
 
 /**
@@ -242,10 +236,9 @@ export const createStudentPaymentPlan = authServerFn
       createdBy: context.school.userId,
     })
 
-    return result.match(
-      (data: { plan: PaymentPlan, installments: Installment[] }) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -256,10 +249,9 @@ export const cancelStudentPaymentPlan = authServerFn
   .handler(async ({ data: paymentPlanId }) => {
     const result = await cancelPaymentPlan(paymentPlanId)
 
-    return result.match(
-      (data: PaymentPlan | undefined) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -278,8 +270,7 @@ export const getPaymentPlansSummaryData = authServerFn
 
     const result = await getPaymentPlansSummary(schoolYearId)
 
-    return result.match(
-      (data: PaymentPlanSummary) => ({ success: true as const, data }),
-      (error: DatabaseError) => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })

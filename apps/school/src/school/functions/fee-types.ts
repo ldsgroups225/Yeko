@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getFeeTypeTemplates } from '@repo/data-ops/queries/fee-type-templates'
 import {
   createFeeType,
@@ -32,10 +33,9 @@ export const getFeeTypesList = authServerFn
       ...filters,
     })
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -46,10 +46,9 @@ export const getFeeType = authServerFn
   .handler(async ({ data: feeTypeId }) => {
     const result = await getFeeTypeById(feeTypeId)
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -66,10 +65,9 @@ export const createNewFeeType = authServerFn
       ...data,
     })
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -81,10 +79,9 @@ export const updateExistingFeeType = authServerFn
     const { id, ...updateData } = data
     const result = await updateFeeType(id, updateData)
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -95,10 +92,9 @@ export const deleteExistingFeeType = authServerFn
   .handler(async ({ data: feeTypeId }) => {
     const result = await deleteFeeType(feeTypeId)
 
-    return result.match(
-      () => ({ success: true as const, data: { success: true } }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: { success: true } }
   })
 
 /**
@@ -107,10 +103,9 @@ export const deleteExistingFeeType = authServerFn
 export const getAvailableTemplates = authServerFn.handler(async () => {
   const result = await getFeeTypeTemplates({})
 
-  return result.match(
-    data => ({ success: true as const, data }),
-    error => ({ success: false as const, error: error.message }),
-  )
+  if (R.isFailure(result))
+    return { success: false as const, error: result.error.message }
+  return { success: true as const, data: result.value }
 })
 
 /**
@@ -128,31 +123,29 @@ export const importFeeTypesFromTemplates = authServerFn
 
     const templatesResult = await getFeeTypeTemplates({})
 
-    return templatesResult.match(
-      async (templates) => {
-        const selectedTemplates = templates.filter(t => data.templateIds.includes(t.id))
-        let created = 0
+    if (R.isFailure(templatesResult))
+      return { success: false as const, error: templatesResult.error.message }
 
-        for (const template of selectedTemplates) {
-          const result = await createFeeType({
-            schoolId: context.school!.schoolId,
-            feeTypeTemplateId: template.id,
-            code: template.code,
-            name: template.name,
-            nameEn: template.nameEn ?? undefined,
-            category: template.category,
-            isMandatory: template.isMandatory,
-            isRecurring: template.isRecurring,
-            displayOrder: template.displayOrder,
-            status: 'active',
-          })
+    const selectedTemplates = templatesResult.value.filter(t => data.templateIds.includes(t.id))
+    let created = 0
 
-          if (result.isOk())
-            created++
-        }
+    for (const template of selectedTemplates) {
+      const result = await createFeeType({
+        schoolId: context.school!.schoolId,
+        feeTypeTemplateId: template.id,
+        code: template.code,
+        name: template.name,
+        nameEn: template.nameEn ?? undefined,
+        category: template.category,
+        isMandatory: template.isMandatory,
+        isRecurring: template.isRecurring,
+        displayOrder: template.displayOrder,
+        status: 'active',
+      })
 
-        return { success: true as const, data: { created } } as const
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+      if (R.isSuccess(result))
+        created++
+    }
+
+    return { success: true as const, data: { created } } as const
   })

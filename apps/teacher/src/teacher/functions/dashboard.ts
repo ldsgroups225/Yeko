@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   getClassStudents,
   getTeacherActiveSession,
@@ -52,12 +53,12 @@ export const getTeacherDashboard = createServerFn()
     ])
 
     // Handle errors and extract values
-    const todaySchedule = todayScheduleResult.isErr() ? [] : todayScheduleResult.value
-    const activeSession = activeSessionResult.isErr() ? null : activeSessionResult.value
-    const pendingGrades = pendingGradesResult.isErr() ? 0 : pendingGradesResult.value
-    const unreadMessages = unreadMessagesResult.isErr() ? 0 : unreadMessagesResult.value
-    const recentMessages = recentMessagesResult.isErr() ? [] : recentMessagesResult.value
-    const notifications = notificationsResult.isErr() ? [] : notificationsResult.value
+    const todaySchedule = R.isFailure(todayScheduleResult) ? [] : todayScheduleResult.value
+    const activeSession = R.isFailure(activeSessionResult) ? null : activeSessionResult.value
+    const pendingGrades = R.isFailure(pendingGradesResult) ? 0 : pendingGradesResult.value
+    const unreadMessages = R.isFailure(unreadMessagesResult) ? 0 : unreadMessagesResult.value
+    const recentMessages = R.isFailure(recentMessagesResult) ? [] : recentMessagesResult.value
+    const notifications = R.isFailure(notificationsResult) ? [] : notificationsResult.value
 
     // Format schedule with class names
     const formattedSchedule = todaySchedule.map((session: typeof todaySchedule[number]) => ({
@@ -171,7 +172,7 @@ export const getTeacherSchedule = createServerFn()
       schoolYearId: data.schoolYearId,
     })
 
-    if (scheduleResult.isErr()) {
+    if (R.isFailure(scheduleResult)) {
       return { sessions: [] }
     }
 
@@ -224,7 +225,7 @@ export const getTeacherClasses = createServerFn()
       schoolYearId: data.schoolYearId,
     })
 
-    if (classesResult.isErr()) {
+    if (R.isFailure(classesResult)) {
       return { classes: [] }
     }
 
@@ -238,7 +239,7 @@ export const getTeacherClasses = createServerFn()
           schoolYearId: data.schoolYearId,
         })
 
-        const students = studentsResult.isErr() ? [] : studentsResult.value
+        const students = R.isFailure(studentsResult) ? [] : studentsResult.value
 
         return {
           id: cls.id,

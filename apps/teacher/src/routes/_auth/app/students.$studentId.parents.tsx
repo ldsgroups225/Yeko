@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getStudentParents } from '@repo/data-ops/queries/parents'
 import { IconMail, IconMessage, IconPhone, IconUser } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
@@ -19,7 +20,7 @@ function StudentParentsPage() {
     queryKey: ['student-parents', studentId],
     queryFn: async () => {
       const result = await getStudentParents(studentId)
-      if (result.isErr())
+      if (R.isFailure(result))
         throw result.error
       return result.value
     },

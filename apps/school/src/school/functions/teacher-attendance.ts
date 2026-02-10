@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getAttendanceSettings } from '@repo/data-ops/queries/attendance-settings'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import {
@@ -27,10 +28,10 @@ export const getDailyAttendance = authServerFn
 
     await requirePermission('attendance', 'view')
 
-    return (await getDailyTeacherAttendance(context.school.schoolId, data.date)).match(
-      result => ({ success: true as const, data: result }),
-      _error => ({ success: false as const, error: 'Erreur lors de la récupération des présences du jour' }),
-    )
+    const _result1 = await getDailyTeacherAttendance(context.school.schoolId, data.date)
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des présences du jour' }
+    return { success: true as const, data: _result1.value }
   })
 
 /**
@@ -49,13 +50,13 @@ export const getAttendanceRange = authServerFn
 
     await requirePermission('attendance', 'view')
 
-    return (await getTeacherAttendanceRange({
+    const _result2 = await getTeacherAttendanceRange({
       schoolId: context.school.schoolId,
       ...data,
-    })).match(
-      result => ({ success: true as const, data: result }),
-      _error => ({ success: false as const, error: 'Erreur lors de la récupération des présences sur la période' }),
-    )
+    })
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération des présences sur la période' }
+    return { success: true as const, data: _result2.value }
   })
 
 /**
@@ -72,44 +73,40 @@ export const recordAttendance = authServerFn
 
     // Get school settings for expected arrival time
     const settingsResult = await getAttendanceSettings(schoolId)
-    if (settingsResult.isErr()) {
+    if (R.isFailure(settingsResult)) {
       return { success: false as const, error: 'Impossible de récupérer les paramètres de présence' }
     }
     const settings = settingsResult.value
 
-    return (await upsertTeacherAttendance({
+    const _result3 = await upsertTeacherAttendance({
       ...data,
       schoolId,
       recordedBy: userId,
       expectedArrival: settings?.teacherExpectedArrival ?? '07:30',
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'teacher_attendance',
-          recordId: result.id,
-          newValues: data,
-        })
-
-        // Check for repeated lateness alert
-        if (data.status === 'late') {
-          const now = new Date()
-          const lateCountResult = await countTeacherLatenessInMonth(
-            data.teacherId,
-            now.getFullYear(),
-            now.getMonth() + 1,
-          )
-
-          if (lateCountResult.isOk() && lateCountResult.value >= (settings?.teacherLatenessAlertCount ?? 3)) {
-            return { success: true as const, data: { ...result, alertTriggered: true, lateCount: lateCountResult.value } }
-          }
-        }
-        return { success: true as const, data: { ...result, alertTriggered: false } }
-      },
-      _error => ({ success: false as const, error: 'Erreur lors de l\'enregistrement de la présence' }),
-    )
+    })
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de l\'enregistrement de la présence' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'teacher_attendance',
+      recordId: _result3.value.id,
+      newValues: data,
+    })
+    // Check for repeated lateness alert
+    if (data.status === 'late') {
+      const now = new Date()
+      const lateCountResult = await countTeacherLatenessInMonth(
+        data.teacherId,
+        now.getFullYear(),
+        now.getMonth() + 1,
+      )
+      if (R.isSuccess(lateCountResult) && lateCountResult.value >= (settings?.teacherLatenessAlertCount ?? 3)) {
+        return { success: true as const, data: { ..._result3.value, alertTriggered: true, lateCount: lateCountResult.value } }
+      }
+    }
+    return { success: true as const, data: { ..._result3.value, alertTriggered: false } }
   })
 
 /**
@@ -126,38 +123,35 @@ export const bulkRecordAttendance = authServerFn
 
     // Get school settings
     const settingsResult = await getAttendanceSettings(schoolId)
-    if (settingsResult.isErr()) {
+    if (R.isFailure(settingsResult)) {
       return { success: false as const, error: 'Impossible de récupérer les paramètres de présence' }
     }
     const settings = settingsResult.value
 
-    return (await bulkUpsertTeacherAttendance({
+    const _result4 = await bulkUpsertTeacherAttendance({
       schoolId,
       date: data.date,
       entries: data.entries,
       recordedBy: userId,
       expectedArrival: settings.teacherExpectedArrival ?? '07:30',
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'teacher_attendance',
-          recordId: 'bulk',
-          newValues: data,
-        })
-
-        return {
-          success: true as const,
-          data: {
-            count: result.length,
-            entries: result,
-          },
-        }
+    })
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de l\'enregistrement groupé des présences' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'teacher_attendance',
+      recordId: 'bulk',
+      newValues: data,
+    })
+    return {
+      success: true as const,
+      data: {
+        count: _result4.value.length,
+        entries: _result4.value,
       },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'enregistrement groupé des présences' }),
-    )
+    }
   })
 
 /**
@@ -175,13 +169,13 @@ export const getPunctualityReport = authServerFn
 
     await requirePermission('attendance', 'view')
 
-    return (await getTeacherPunctualityReport({
+    const _result5 = await getTeacherPunctualityReport({
       schoolId: context.school.schoolId,
       ...data,
-    })).match(
-      result => ({ success: true as const, data: result }),
-      _error => ({ success: false as const, error: 'Erreur lors de la génération du rapport de ponctualité' }),
-    )
+    })
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la génération du rapport de ponctualité' }
+    return { success: true as const, data: _result5.value }
   })
 
 /**
@@ -196,17 +190,15 @@ export const removeAttendance = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('attendance', 'delete')
 
-    return (await deleteTeacherAttendance(data.id, schoolId)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'teacher_attendance',
-          recordId: data.id,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _error => ({ success: false as const, error: 'Erreur lors de la suppression de la présence' }),
-    )
+    const _result6 = await deleteTeacherAttendance(data.id, schoolId)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la suppression de la présence' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'teacher_attendance',
+      recordId: data.id,
+    })
+    return { success: true as const, data: { success: true } }
   })

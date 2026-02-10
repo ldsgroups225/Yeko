@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   getSchoolProfile as getSchoolProfileQuery,
   updateSchoolLogo as updateSchoolLogoQuery,
@@ -21,27 +22,26 @@ export const getSchoolProfile = authServerFn.handler(async ({ context }) => {
 
   const { schoolId } = context.school
 
-  return (await getSchoolProfileQuery(schoolId)).match(
-    (school) => {
-      if (!school)
-        return { success: false as const, error: 'Établissement non trouvé' }
+  const _result1 = await getSchoolProfileQuery(schoolId)
+  if (R.isFailure(_result1))
+    return { success: false as const, error: _result1.error.message || 'Erreur lors de la récupération du profil' }
 
-      // Merge default settings with stored settings
-      const settings = {
-        ...defaultSchoolSettings,
-        ...((school.settings as Record<string, unknown>) ?? {}),
-      }
+  if (!_result1.value)
+    return { success: false as const, error: 'Établissement non trouvé' }
 
-      return {
-        success: true as const,
-        data: {
-          ...school,
-          settings,
-        },
-      }
+  // Merge default settings with stored settings
+  const settings = {
+    ...defaultSchoolSettings,
+    ...((_result1.value.settings as Record<string, unknown>) ?? {}),
+  }
+
+  return {
+    success: true as const,
+    data: {
+      ..._result1.value,
+      settings,
     },
-    error => ({ success: false as const, error: error.message || 'Erreur lors de la récupération du profil' }),
-  )
+  }
 })
 
 /**
@@ -53,25 +53,25 @@ export const updateSchoolProfile = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await updateSchoolProfileQuery(context.school.schoolId, {
+    const _result2 = await updateSchoolProfileQuery(context.school.schoolId, {
       name: data.name,
       address: data.address,
       phone: data.phone,
       email: data.email || null,
-    })).match(
-      (updated) => {
-        if (!updated)
-          return { success: false as const, error: 'Erreur lors de la mise à jour' }
-        return {
-          success: true as const,
-          data: {
-            ...updated,
-            settings: updated.settings as Record<string, any> | null,
-          },
-        }
+    })
+    if (R.isFailure(_result2))
+      return { success: false as const, error: _result2.error.message || 'Erreur lors de la mise à jour' }
+
+    if (!_result2.value)
+      return { success: false as const, error: 'Erreur lors de la mise à jour' }
+
+    return {
+      success: true as const,
+      data: {
+        ..._result2.value,
+        settings: _result2.value.settings as Record<string, any> | null,
       },
-      error => ({ success: false as const, error: error.message || 'Erreur lors de la mise à jour' }),
-    )
+    }
   })
 
 /**
@@ -83,23 +83,23 @@ export const updateSchoolSettings = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await updateSchoolSettingsQuery(context.school.schoolId, {
+    const _result3 = await updateSchoolSettingsQuery(context.school.schoolId, {
       ...defaultSchoolSettings,
       ...data,
-    })).match(
-      (updated) => {
-        if (!updated)
-          return { success: false as const, error: 'Erreur lors de la mise à jour' }
-        return {
-          success: true as const,
-          data: {
-            ...updated,
-            settings: updated.settings as Record<string, any> | null,
-          },
-        }
+    })
+    if (R.isFailure(_result3))
+      return { success: false as const, error: _result3.error.message || 'Erreur lors de la mise à jour des paramètres' }
+
+    if (!_result3.value)
+      return { success: false as const, error: 'Erreur lors de la mise à jour' }
+
+    return {
+      success: true as const,
+      data: {
+        ..._result3.value,
+        settings: _result3.value.settings as Record<string, any> | null,
       },
-      error => ({ success: false as const, error: error.message || 'Erreur lors de la mise à jour des paramètres' }),
-    )
+    }
   })
 
 /**
@@ -111,20 +111,20 @@ export const updateSchoolLogo = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await updateSchoolLogoQuery(context.school.schoolId, data.logoUrl)).match(
-      (updated) => {
-        if (!updated)
-          return { success: false as const, error: 'Erreur lors de la mise à jour' }
-        return {
-          success: true as const,
-          data: {
-            ...updated,
-            settings: updated.settings as Record<string, any> | null,
-          },
-        }
+    const _result4 = await updateSchoolLogoQuery(context.school.schoolId, data.logoUrl)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: _result4.error.message || 'Erreur lors de la mise à jour du logo' }
+
+    if (!_result4.value)
+      return { success: false as const, error: 'Erreur lors de la mise à jour' }
+
+    return {
+      success: true as const,
+      data: {
+        ..._result4.value,
+        settings: _result4.value.settings as Record<string, any> | null,
       },
-      error => ({ success: false as const, error: error.message || 'Erreur lors de la mise à jour du logo' }),
-    )
+    }
   })
 
 /**
@@ -134,18 +134,18 @@ export const removeSchoolLogo = authServerFn.handler(async ({ context }) => {
   if (!context?.school)
     return { success: false as const, error: 'Établissement non sélectionné' }
 
-  return (await updateSchoolLogoQuery(context.school.schoolId, null)).match(
-    (updated) => {
-      if (!updated)
-        return { success: false as const, error: 'Erreur lors de la mise à jour' }
-      return {
-        success: true as const,
-        data: {
-          ...updated,
-          settings: updated.settings as Record<string, any> | null,
-        },
-      }
+  const _result5 = await updateSchoolLogoQuery(context.school.schoolId, null)
+  if (R.isFailure(_result5))
+    return { success: false as const, error: _result5.error.message || 'Erreur lors de la suppression du logo' }
+
+  if (!_result5.value)
+    return { success: false as const, error: 'Erreur lors de la mise à jour' }
+
+  return {
+    success: true as const,
+    data: {
+      ..._result5.value,
+      settings: _result5.value.settings as Record<string, any> | null,
     },
-    error => ({ success: false as const, error: error.message || 'Erreur lors de la suppression du logo' }),
-  )
+  }
 })

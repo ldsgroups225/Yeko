@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   createAccount,
   deleteAccount,
@@ -35,10 +36,9 @@ export const getAccountsList = authServerFn
       includeInactive: filters?.status === 'inactive',
     })
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -51,10 +51,9 @@ export const getAccountsTreeData = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getAccountsTree(context.school.schoolId, data?.includeInactive)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -67,10 +66,9 @@ export const getAccount = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getAccountById(accountId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -87,10 +85,9 @@ export const createNewAccount = authServerFn
       ...data,
     })
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -104,10 +101,9 @@ export const updateExistingAccount = authServerFn
 
     const { id, ...updateData } = data
     const result = await updateAccount(id, updateData)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -120,8 +116,7 @@ export const deleteExistingAccount = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await deleteAccount(accountId)
-    return result.match(
-      () => ({ success: true as const, data: { success: true } }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: { success: true } }
   })

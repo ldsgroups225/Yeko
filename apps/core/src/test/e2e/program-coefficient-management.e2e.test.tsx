@@ -8,14 +8,14 @@
  * Following vitest-dom principles with React Testing Library
  */
 
+import { R } from '@praha/byethrow'
 import * as dataOps from '@repo/data-ops'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ok } from 'neverthrow'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-const mockOk = (val: any) => ok(val)
+const mockOk = (val: any) => R.succeed(val)
 
 // Mock data-ops
 vi.mock('@repo/data-ops', () => ({
@@ -245,7 +245,7 @@ describe('e2E: Program Management Workflows', () => {
 
         const handlePublish = async () => {
           const result = await dataOps.publishProgram('prog-1')
-          if (result.isOk())
+          if (R.isSuccess(result))
             setProgram(result.value as any)
         }
 
@@ -406,7 +406,7 @@ describe('e2E: Program Management Workflows', () => {
 
         const handleClone = async () => {
           const result = await dataOps.cloneProgramTemplate('prog-1', targetYear, 'Math Program 2024')
-          if (result.isOk())
+          if (R.isSuccess(result))
             setCloned(result.value)
         }
 
@@ -421,7 +421,7 @@ describe('e2E: Program Management Workflows', () => {
               </p>
               <p>
                 Chapters:
-                {program.chapters.length}
+                {program.chapters?.length ?? 0}
               </p>
             </div>
 
@@ -447,7 +447,7 @@ describe('e2E: Program Management Workflows', () => {
                 </p>
                 <p>
                   Chapters:
-                  {cloned.chapters.length}
+                  {cloned.chapters?.length ?? 0}
                 </p>
               </div>
             )}
@@ -529,7 +529,7 @@ describe('e2E: Coefficient Management Workflows', () => {
 
         const saveEdit = async (id: string) => {
           const result = await dataOps.updateCoefficientTemplate(id, { weight: editValue })
-          if (result.isOk()) {
+          if (R.isSuccess(result)) {
             const updated = result.value
             setCoefficients(coefficients.map(c => c.id === id ? { ...c, weight: updated.weight } : c))
             setEditingId(null)
@@ -737,7 +737,7 @@ describe('e2E: Coefficient Management Workflows', () => {
 
         const handleCopy = async () => {
           const result = await dataOps.copyCoefficientTemplates(sourceYear, targetYear)
-          if (result.isOk())
+          if (R.isSuccess(result))
             setCopied(result.value)
         }
 

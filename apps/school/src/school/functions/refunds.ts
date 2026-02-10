@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   approveRefund,
   cancelRefund,
@@ -38,10 +39,9 @@ export const getRefundsList = authServerFn
       schoolId: school.schoolId,
       ...filters,
     })
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -54,10 +54,9 @@ export const getRefund = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getRefundById(refundId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -70,10 +69,9 @@ export const getPendingRefunds = authServerFn
 
     const { school } = context
     const result = await getPendingRefundsCount(school.schoolId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -91,10 +89,9 @@ export const requestRefund = authServerFn
       requestedBy: school.userId,
       ...data,
     })
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -108,10 +105,9 @@ export const approveExistingRefund = authServerFn
 
     const { school } = context
     const result = await approveRefund(data.refundId, school.userId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -124,10 +120,9 @@ export const rejectExistingRefund = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await rejectRefund(data.refundId, data.rejectionReason)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -141,10 +136,9 @@ export const processExistingRefund = authServerFn
 
     const { school } = context
     const result = await processRefund(data.refundId, school.userId, data.reference)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -157,8 +151,7 @@ export const cancelExistingRefund = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await cancelRefund(refundId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })

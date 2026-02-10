@@ -491,7 +491,7 @@ describe('catalog Schema Validation', () => {
       test('should reject invalid category', () => {
         const invalidSubject = {
           name: 'Mathématiques',
-          category: 'Invalid' as any,
+          category: 'Invalid',
         }
 
         const result = CreateSubjectSchema.safeParse(invalidSubject)
@@ -596,7 +596,7 @@ describe('catalog Schema Validation', () => {
 
       test('should reject invalid category', () => {
         const queryParams = {
-          category: 'Invalid' as any,
+          category: 'Invalid',
         }
 
         const result = GetSubjectsSchema.safeParse(queryParams)

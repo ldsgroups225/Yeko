@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   getSessionParticipationGrades,
   upsertParticipationGrades,
@@ -28,7 +29,7 @@ export const recordParticipation = createServerFn()
       grades: data.grades,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         success: false,
         error: result.error.message,
@@ -51,7 +52,7 @@ export const getParticipationGrades = createServerFn()
   .handler(async ({ data }) => {
     const gradesResult = await getSessionParticipationGrades(data.classSessionId)
 
-    if (gradesResult.isErr()) {
+    if (R.isFailure(gradesResult)) {
       return {
         grades: [],
       }

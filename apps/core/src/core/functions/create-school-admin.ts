@@ -1,3 +1,9 @@
+import { R } from '@praha/byethrow'
+import { getAuth } from '@repo/data-ops/auth/server'
+import { getRoleBySlug } from '@repo/data-ops/queries/school-admin/roles'
+import { createUserWithSchool } from '@repo/data-ops/queries/school-admin/users'
+import { getSchoolById } from '@repo/data-ops/queries/schools'
+import { sendWelcomeEmail } from '@repo/data-ops/services/email'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { protectedFunctionMiddleware } from '@/core/middleware/auth'
@@ -32,12 +38,6 @@ export const createSchoolAdmin = createServerFn({ method: 'POST' })
   )
   .handler(async ({ data }) => {
     const { email, name, schoolId } = data
-    const { getAuth } = await import('@repo/data-ops/auth/server')
-    const { getRoleBySlug } = await import('@repo/data-ops/queries/school-admin/roles')
-    const { createUserWithSchool } = await import('@repo/data-ops/queries/school-admin/users')
-    const { getSchoolById } = await import('@repo/data-ops/queries/schools')
-    const { sendWelcomeEmail } = await import('@repo/data-ops/services/email')
-
     const auth = getAuth()
 
     try {
@@ -75,7 +75,7 @@ export const createSchoolAdmin = createServerFn({ method: 'POST' })
 
       // Get school name for email
       const schoolResult = await getSchoolById(schoolId)
-      if (schoolResult.isErr())
+      if (R.isFailure(schoolResult))
         throw schoolResult.error
       const school = schoolResult.value
       const schoolName = school?.name || 'Votre école'

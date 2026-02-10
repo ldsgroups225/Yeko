@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getSubjects } from '@repo/data-ops/queries/catalogs'
 import { getSchoolSubjects } from '@repo/data-ops/queries/school-subjects'
 import { z } from 'zod'
@@ -20,10 +21,9 @@ export const getAllSubjects = authServerFn
 
     const result = await getSubjects(data)
 
-    return result.match(
-      value => ({ success: true as const, data: value }),
-      error => ({ success: false as const, error: error.message || 'Erreur lors de la récupération des matières' }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message || 'Erreur lors de la récupération des matières' }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -52,13 +52,12 @@ export const getAllSubjectsOfTheSchoolThisCurrentYear = authServerFn
       limit: 100,
     })
 
-    return result.match(
-      value => ({
-        success: true as const,
-        data: {
-          subjects: value.subjects.map(s => s.subject),
-        },
-      }),
-      error => ({ success: false as const, error: error.message || 'Erreur lors de la récupération des matières de l\'école' }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message || 'Erreur lors de la récupération des matières de l\'école' }
+    return {
+      success: true as const,
+      data: {
+        subjects: result.value.subjects.map(s => s.subject),
+      },
+    }
   })

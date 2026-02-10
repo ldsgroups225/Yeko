@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 /**
  * Attendance Server Functions
  * Handles student attendance tracking during class sessions
@@ -78,7 +79,7 @@ export const getClassRoster = createServerFn()
       date: data.date,
     })
 
-    if (rosterResult.isErr()) {
+    if (R.isFailure(rosterResult)) {
       return {
         success: false,
         error: rosterResult.error.message,
@@ -125,7 +126,7 @@ export const getOrCreateSession = createServerFn()
       endTime: data.endTime,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         success: false,
         error: result.error.message,
@@ -164,7 +165,7 @@ export const saveAttendance = createServerFn()
       teacherId: data.teacherId,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         success: false,
         error: result.error.message,
@@ -202,7 +203,7 @@ export const saveBulkAttendance = createServerFn()
       attendanceRecords: data.attendanceRecords,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         success: false,
         error: result.error.message,
@@ -237,7 +238,7 @@ export const getAttendanceStats = createServerFn()
       endDate: data.endDate,
     })
 
-    if (statsResult.isErr()) {
+    if (R.isFailure(statsResult)) {
       return {
         success: false,
         error: statsResult.error.message,
@@ -275,7 +276,7 @@ export const getStudentAttendanceHistory = createServerFn()
       offset: data.offset,
     })
 
-    if (historyResult.isErr()) {
+    if (R.isFailure(historyResult)) {
       return {
         success: false,
         error: historyResult.error.message,
@@ -314,7 +315,7 @@ export const getStudentAttendanceTrend = createServerFn()
       months: data.months,
     })
 
-    if (trendResult.isErr()) {
+    if (R.isFailure(trendResult)) {
       return {
         success: false,
         error: trendResult.error.message,

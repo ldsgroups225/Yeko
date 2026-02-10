@@ -1,4 +1,5 @@
 import type { StudentAttendance } from '../drizzle/school-schema'
+import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 
 /**
@@ -6,7 +7,6 @@ import { databaseLogger, tapLogErr } from '@repo/logger'
  * Core attendance functions for student tracking
  */
 import { and, asc, count, desc, eq, gte, lte, sql } from 'drizzle-orm'
-import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { grades } from '../drizzle/core-schema'
 import { classes, studentAttendance, students } from '../drizzle/school-schema'
@@ -19,7 +19,7 @@ export function getClassAttendance(params: {
   classId: string
   date: string
   classSessionId?: string
-}): ResultAsync<Array<{
+}): R.ResultAsync<Array<{
   id: string
   studentId: string
   studentName: string
@@ -40,24 +40,30 @@ export function getClassAttendance(params: {
     )
   }
 
-  return ResultAsync.fromPromise(
-    db
-      .select({
-        id: studentAttendance.id,
-        studentId: studentAttendance.studentId,
-        studentName: sql<string>`${students.firstName} || ' ' || ${students.lastName}`,
-        studentMatricule: students.matricule,
-        photoUrl: students.photoUrl,
-        status: studentAttendance.status,
-        reason: studentAttendance.reason,
-        recordedAt: studentAttendance.createdAt,
-      })
-      .from(studentAttendance)
-      .innerJoin(students, eq(studentAttendance.studentId, students.id))
-      .where(and(...conditions))
-      .orderBy(asc(students.lastName), asc(students.firstName)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch class attendance'),
-  ).mapErr(tapLogErr(databaseLogger, params))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        return await db
+          .select({
+            id: studentAttendance.id,
+            studentId: studentAttendance.studentId,
+            studentName: sql<string>`${students.firstName} || ' ' || ${students.lastName}`,
+            studentMatricule: students.matricule,
+            photoUrl: students.photoUrl,
+            status: studentAttendance.status,
+            reason: studentAttendance.reason,
+            recordedAt: studentAttendance.createdAt,
+          })
+          .from(studentAttendance)
+          .innerJoin(students, eq(studentAttendance.studentId, students.id))
+          .where(and(...conditions))
+          .orderBy(asc(students.lastName), asc(students.firstName))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch class attendance'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }
 
 /**
@@ -74,7 +80,7 @@ export function upsertStudentAttendance(params: {
   classSessionId?: string
   recordedBy: string
   lateThresholdMinutes?: number
-}): ResultAsync<StudentAttendance, DatabaseError> {
+}): R.ResultAsync<StudentAttendance, DatabaseError> {
   const db = getDb()
 
   const record = {
@@ -89,27 +95,33 @@ export function upsertStudentAttendance(params: {
     recordedBy: params.recordedBy,
   }
 
-  return ResultAsync.fromPromise(
-    db
-      .insert(studentAttendance)
-      .values(record)
-      .onConflictDoUpdate({
-        target: [
-          studentAttendance.studentId,
-          studentAttendance.date,
-          studentAttendance.classId,
-          studentAttendance.classSessionId,
-        ],
-        set: {
-          status: sql`excluded.status`,
-          reason: sql`excluded.reason`,
-          updatedAt: new Date(),
-        },
-      })
-      .returning()
-      .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to upsert student attendance'),
-  ).mapErr(tapLogErr(databaseLogger, params))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .insert(studentAttendance)
+          .values(record)
+          .onConflictDoUpdate({
+            target: [
+              studentAttendance.studentId,
+              studentAttendance.date,
+              studentAttendance.classId,
+              studentAttendance.classSessionId,
+            ],
+            set: {
+              status: sql`excluded.status`,
+              reason: sql`excluded.reason`,
+              updatedAt: new Date(),
+            },
+          })
+          .returning()
+        return rows[0]!
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to upsert student attendance'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }
 
 /**
@@ -126,45 +138,51 @@ export function bulkUpsertClassAttendance(params: {
     status: 'present' | 'absent' | 'late' | 'excused'
     reason?: string
   }>
-}): ResultAsync<number, DatabaseError> {
+}): R.ResultAsync<number, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    db.transaction(async (tx) => {
-      const records = params.entries.map(entry => ({
-        id: crypto.randomUUID(),
-        schoolId: params.schoolId,
-        studentId: entry.studentId,
-        classId: params.classId,
-        classSessionId: params.classSessionId ?? null,
-        date: params.date,
-        status: entry.status,
-        reason: entry.reason ?? null,
-        recordedBy: params.recordedBy,
-      }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        return await db.transaction(async (tx) => {
+          const records = params.entries.map(entry => ({
+            id: crypto.randomUUID(),
+            schoolId: params.schoolId,
+            studentId: entry.studentId,
+            classId: params.classId,
+            classSessionId: params.classSessionId ?? null,
+            date: params.date,
+            status: entry.status,
+            reason: entry.reason ?? null,
+            recordedBy: params.recordedBy,
+          }))
 
-      for (const record of records) {
-        await tx
-          .insert(studentAttendance)
-          .values(record)
-          .onConflictDoUpdate({
-            target: [
-              studentAttendance.studentId,
-              studentAttendance.date,
-              studentAttendance.classId,
-              studentAttendance.classSessionId,
-            ],
-            set: {
-              status: sql`excluded.status`,
-              reason: sql`excluded.reason`,
-              updatedAt: new Date(),
-            },
-          })
-      }
-      return params.entries.length
+          for (const record of records) {
+            await tx
+              .insert(studentAttendance)
+              .values(record)
+              .onConflictDoUpdate({
+                target: [
+                  studentAttendance.studentId,
+                  studentAttendance.date,
+                  studentAttendance.classId,
+                  studentAttendance.classSessionId,
+                ],
+                set: {
+                  status: sql`excluded.status`,
+                  reason: sql`excluded.reason`,
+                  updatedAt: new Date(),
+                },
+              })
+          }
+          return params.entries.length
+        })
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk upsert student attendance'),
     }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk upsert student attendance'),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId: params.schoolId, classId: params.classId, date: params.date }))
+    R.mapError(tapLogErr(databaseLogger, { schoolId: params.schoolId, classId: params.classId, date: params.date })),
+  )
 }
 
 /**
@@ -175,7 +193,7 @@ export function getStudentAttendanceHistory(params: {
   startDate?: string
   endDate?: string
   classId?: string
-}): ResultAsync<Array<{
+}): R.ResultAsync<Array<{
   id: string
   date: string
   className: string
@@ -193,23 +211,29 @@ export function getStudentAttendanceHistory(params: {
   if (params.classId)
     conditions.push(eq(studentAttendance.classId, params.classId))
 
-  return ResultAsync.fromPromise(
-    db
-      .select({
-        id: studentAttendance.id,
-        date: studentAttendance.date,
-        className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
-        classId: studentAttendance.classId,
-        status: studentAttendance.status,
-        reason: studentAttendance.reason,
-      })
-      .from(studentAttendance)
-      .innerJoin(classes, eq(studentAttendance.classId, classes.id))
-      .innerJoin(grades, eq(classes.gradeId, grades.id))
-      .where(and(...conditions))
-      .orderBy(desc(studentAttendance.date)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student attendance history'),
-  ).mapErr(tapLogErr(databaseLogger, params))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        return await db
+          .select({
+            id: studentAttendance.id,
+            date: studentAttendance.date,
+            className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
+            classId: studentAttendance.classId,
+            status: studentAttendance.status,
+            reason: studentAttendance.reason,
+          })
+          .from(studentAttendance)
+          .innerJoin(classes, eq(studentAttendance.classId, classes.id))
+          .innerJoin(grades, eq(classes.gradeId, grades.id))
+          .where(and(...conditions))
+          .orderBy(desc(studentAttendance.date))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch student attendance history'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }
 
 /**
@@ -220,7 +244,7 @@ export function countStudentAbsences(params: {
   startDate: string
   endDate: string
   excludeExcused?: boolean
-}): ResultAsync<number, DatabaseError> {
+}): R.ResultAsync<number, DatabaseError> {
   const db = getDb()
   const conditions = [
     eq(studentAttendance.studentId, params.studentId),
@@ -233,14 +257,20 @@ export function countStudentAbsences(params: {
     conditions.push(eq(studentAttendance.status, 'absent'))
   }
 
-  return ResultAsync.fromPromise(
-    db
-      .select({ count: sql<number>`count(*)` })
-      .from(studentAttendance)
-      .where(and(...conditions))
-      .then(rows => Number(rows[0]?.count ?? 0)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to count student absences'),
-  ).mapErr(tapLogErr(databaseLogger, params))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select({ count: sql<number>`count(*)` })
+          .from(studentAttendance)
+          .where(and(...conditions))
+        return Number(rows[0]?.count ?? 0)
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to count student absences'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }
 
 /**
@@ -251,57 +281,67 @@ export function excuseStudentAbsence(params: {
   schoolId: string
   excusedBy: string
   reason?: string
-}): ResultAsync<StudentAttendance, DatabaseError> {
+}): R.ResultAsync<StudentAttendance, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .update(studentAttendance)
-      .set({
-        status: 'excused',
-        reason: params.reason ?? null,
-        excusedBy: params.excusedBy,
-        updatedAt: new Date(),
-      })
-      .where(and(
-        eq(studentAttendance.id, params.attendanceId),
-        eq(studentAttendance.schoolId, params.schoolId),
-      ))
-      .returning()
-      .then((rows) => {
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .update(studentAttendance)
+          .set({
+            status: 'excused',
+            reason: params.reason ?? null,
+            excusedBy: params.excusedBy,
+            updatedAt: new Date(),
+          })
+          .where(and(
+            eq(studentAttendance.id, params.attendanceId),
+            eq(studentAttendance.schoolId, params.schoolId),
+          ))
+          .returning()
+
         if (rows.length === 0)
           throw new Error('Attendance record not found')
         return rows[0]!
-      }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to excuse student absence'),
-  ).mapErr(tapLogErr(databaseLogger, params))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to excuse student absence'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }
 
 /**
  * Delete student attendance record
  */
-export function deleteStudentAttendance(attendanceId: string, schoolId: string): ResultAsync<void, DatabaseError> {
+export function deleteStudentAttendance(attendanceId: string, schoolId: string): R.ResultAsync<void, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .delete(studentAttendance)
-      .where(and(
-        eq(studentAttendance.id, attendanceId),
-        eq(studentAttendance.schoolId, schoolId),
-      ))
-      .then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete student attendance'),
-  ).mapErr(tapLogErr(databaseLogger, { attendanceId, schoolId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        await db
+          .delete(studentAttendance)
+          .where(and(
+            eq(studentAttendance.id, attendanceId),
+            eq(studentAttendance.schoolId, schoolId),
+          ))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete student attendance'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { attendanceId, schoolId })),
+  )
 }
 
 /**
  * Get attendance statistics for a class or school
  */
-export function getAttendanceStatistics(params: {
+export async function getAttendanceStatistics(params: {
   schoolId: string
   startDate: string
   endDate: string
   classId?: string
-}): ResultAsync<{
+}): R.ResultAsync<{
   totalRecords: number
   present: number
   absent: number
@@ -322,20 +362,23 @@ export function getAttendanceStatistics(params: {
     conditions.push(eq(studentAttendance.classId, params.classId))
   }
 
-  return ResultAsync.fromPromise(
-    db
-      .select({
-        totalRecords: count(),
-        present: sql<number>`count(*) filter (where ${studentAttendance.status} = 'present')`,
-        absent: sql<number>`count(*) filter (where ${studentAttendance.status} = 'absent')`,
-        late: sql<number>`count(*) filter (where ${studentAttendance.status} = 'late')`,
-        excused: sql<number>`count(*) filter (where ${studentAttendance.status} = 'excused')`,
-        uniqueStudents: sql<number>`count(distinct ${studentAttendance.studentId})`,
-        uniqueDates: sql<number>`count(distinct ${studentAttendance.date})`,
-      })
-      .from(studentAttendance)
-      .where(and(...conditions))
-      .then((rows) => {
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select({
+            totalRecords: count(),
+            present: sql<number>`count(*) filter (where ${studentAttendance.status} = 'present')`,
+            absent: sql<number>`count(*) filter (where ${studentAttendance.status} = 'absent')`,
+            late: sql<number>`count(*) filter (where ${studentAttendance.status} = 'late')`,
+            excused: sql<number>`count(*) filter (where ${studentAttendance.status} = 'excused')`,
+            uniqueStudents: sql<number>`count(distinct ${studentAttendance.studentId})`,
+            uniqueDates: sql<number>`count(distinct ${studentAttendance.date})`,
+          })
+          .from(studentAttendance)
+          .where(and(...conditions))
+
         const s = rows[0] ?? {
           totalRecords: 0,
           present: 0,
@@ -359,9 +402,11 @@ export function getAttendanceStatistics(params: {
           uniqueDates: Number(s.uniqueDates ?? 0),
           attendanceRate: totalRecords ? Number(((present / totalRecords) * 100).toFixed(1)) : 0,
         }
-      }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch attendance statistics'),
-  ).mapErr(tapLogErr(databaseLogger, params))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch attendance statistics'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }
 
 /**
@@ -371,27 +416,32 @@ export function markParentNotified(params: {
   attendanceId: string
   schoolId: string
   method: 'email' | 'sms' | 'in_app'
-}): ResultAsync<StudentAttendance, DatabaseError> {
+}): R.ResultAsync<StudentAttendance, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .update(studentAttendance)
-      .set({
-        parentNotified: true,
-        notifiedAt: new Date(),
-        notificationMethod: params.method,
-        updatedAt: new Date(),
-      })
-      .where(and(
-        eq(studentAttendance.id, params.attendanceId),
-        eq(studentAttendance.schoolId, params.schoolId),
-      ))
-      .returning()
-      .then((rows) => {
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .update(studentAttendance)
+          .set({
+            parentNotified: true,
+            notifiedAt: new Date(),
+            notificationMethod: params.method,
+            updatedAt: new Date(),
+          })
+          .where(and(
+            eq(studentAttendance.id, params.attendanceId),
+            eq(studentAttendance.schoolId, params.schoolId),
+          ))
+          .returning()
+
         if (rows.length === 0)
           throw new Error('Attendance record not found')
         return rows[0]!
-      }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to mark parent as notified'),
-  ).mapErr(tapLogErr(databaseLogger, params))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to mark parent as notified'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }

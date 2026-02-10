@@ -1,7 +1,8 @@
 import type { GradeType } from '@/schemas/grade'
+import { Result as R } from '@praha/byethrow'
 import * as gradeQueries from '@repo/data-ops/queries/grades'
-import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 
+import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
 import {
   bulkGradesSchema,
@@ -27,10 +28,10 @@ export const getGradesByClass = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('grades', 'view')
-    return (await gradeQueries.getGradesByClass({ ...data, schoolId: context.school.schoolId })).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des notes de la classe' }),
-    )
+    const _result1 = await gradeQueries.getGradesByClass({ ...data, schoolId: context.school.schoolId })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des notes de la classe' }
+    return { success: true as const, data: _result1.value }
   })
 
 // Get single grade by ID
@@ -41,10 +42,10 @@ export const getGrade = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('grades', 'view')
-    return (await gradeQueries.getStudentGradeById(context.school.schoolId, data.id)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la note' }),
-    )
+    const _result2 = await gradeQueries.getStudentGradeById(context.school.schoolId, data.id)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération de la note' }
+    return { success: true as const, data: _result2.value }
   })
 
 // Create single grade
@@ -72,22 +73,21 @@ export const createGrade = authServerFn
       status: 'draft',
     })
 
-    return result.match(
-      async (value) => {
-        if (!value)
-          return { success: false as const, error: 'Erreur lors de la création de la note' }
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'student_grades',
-          recordId: value.id,
-          newValues: data,
-        })
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la création de la note' }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: 'Erreur lors de la création de la note' }
+
+    if (!result.value)
+      return { success: false as const, error: 'Erreur lors de la création de la note' }
+
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'student_grades',
+      recordId: result.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: result.value }
   })
 
 // Create bulk grades (for entire class)
@@ -119,7 +119,7 @@ export const createBulkGrades = authServerFn
         status: 'draft',
       })
 
-      if (result.isErr())
+      if (R.isFailure(result))
         return { success: false as const, error: 'Une erreur est survenue lors de la création groupée' }
 
       results.push(result.value)
@@ -165,20 +165,18 @@ export const updateGrade = authServerFn
     if (data.gradeDate !== undefined)
       updateData.gradeDate = data.gradeDate
 
-    return (await gradeQueries.updateStudentGrade(schoolId, data.id, updateData)).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'student_grades',
-          recordId: data.id,
-          newValues: updateData,
-        })
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la note' }),
-    )
+    const _result3 = await gradeQueries.updateStudentGrade(schoolId, data.id, updateData)
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la mise à jour de la note' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'student_grades',
+      recordId: data.id,
+      newValues: updateData,
+    })
+    return { success: true as const, data: _result3.value }
   })
 
 // Delete grade
@@ -210,20 +208,18 @@ export const deleteDraftGrades = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('grades', 'delete')
 
-    return (await gradeQueries.deleteDraftGrades({ ...data, schoolId })).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'student_grades',
-          recordId: 'drafts',
-          newValues: { ...data, count: value.length },
-        })
-        return { success: true as const, data: { count: value.length } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression des brouillons' }),
-    )
+    const _result4 = await gradeQueries.deleteDraftGrades({ ...data, schoolId })
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de la suppression des brouillons' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'student_grades',
+      recordId: 'drafts',
+      newValues: { ...data, count: _result4.value.length },
+    })
+    return { success: true as const, data: { count: _result4.value.length } }
   })
 
 // Submit grades for validation
@@ -236,20 +232,18 @@ export const submitGradesForValidation = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('grades', 'edit')
 
-    return (await gradeQueries.updateGradesStatus(schoolId, data.gradeIds, 'submitted')).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'student_grades',
-          recordId: 'submit',
-          newValues: { count: value.length },
-        })
-        return { success: true as const, data: { count: value.length } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la soumission des notes' }),
-    )
+    const _result5 = await gradeQueries.updateGradesStatus(schoolId, data.gradeIds, 'submitted')
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la soumission des notes' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'student_grades',
+      recordId: 'submit',
+      newValues: { count: _result5.value.length },
+    })
+    return { success: true as const, data: { count: _result5.value.length } }
   })
 
 // Validate grades (coordinator only)
@@ -262,20 +256,18 @@ export const validateGrades = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('grades', 'edit')
 
-    return (await gradeQueries.updateGradesStatus(schoolId, data.gradeIds, 'validated', data.userId)).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'student_grades',
-          recordId: 'validate',
-          newValues: { count: value.length, validatorId: data.userId },
-        })
-        return { success: true as const, data: { count: value.length } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la validation des notes' }),
-    )
+    const _result6 = await gradeQueries.updateGradesStatus(schoolId, data.gradeIds, 'validated', data.userId)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la validation des notes' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'student_grades',
+      recordId: 'validate',
+      newValues: { count: _result6.value.length, validatorId: data.userId },
+    })
+    return { success: true as const, data: { count: _result6.value.length } }
   })
 
 // Reject grades (coordinator only)
@@ -288,20 +280,18 @@ export const rejectGrades = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('grades', 'edit')
 
-    return (await gradeQueries.updateGradesStatus(schoolId, data.gradeIds, 'rejected', data.userId, data.reason)).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'student_grades',
-          recordId: 'reject',
-          newValues: { count: value.length, reason: data.reason },
-        })
-        return { success: true as const, data: { count: value.length } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors du rejet des notes' }),
-    )
+    const _result7 = await gradeQueries.updateGradesStatus(schoolId, data.gradeIds, 'rejected', data.userId, data.reason)
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors du rejet des notes' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'student_grades',
+      recordId: 'reject',
+      newValues: { count: _result7.value.length, reason: data.reason },
+    })
+    return { success: true as const, data: { count: _result7.value.length } }
   })
 
 // Get pending validations (coordinator view)
@@ -312,10 +302,10 @@ export const getPendingValidations = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('grades', 'view')
-    return (await gradeQueries.getPendingValidations({ ...data, schoolId: context.school.schoolId })).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des notes en attente' }),
-    )
+    const _result8 = await gradeQueries.getPendingValidations({ ...data, schoolId: context.school.schoolId })
+    if (R.isFailure(_result8))
+      return { success: false as const, error: 'Erreur lors de la récupération des notes en attente' }
+    return { success: true as const, data: _result8.value }
   })
 
 // Get grade statistics
@@ -326,10 +316,10 @@ export const getGradeStatistics = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('grades', 'view')
-    return (await gradeQueries.getClassGradeStatistics({ ...data, schoolId: context.school.schoolId })).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des statistiques' }),
-    )
+    const _result9 = await gradeQueries.getClassGradeStatistics({ ...data, schoolId: context.school.schoolId })
+    if (R.isFailure(_result9))
+      return { success: false as const, error: 'Erreur lors de la récupération des statistiques' }
+    return { success: true as const, data: _result9.value }
   })
 
 // Get grade validation history
@@ -340,10 +330,10 @@ export const getGradeValidationHistory = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('grades', 'view')
-    return (await gradeQueries.getGradeValidationHistory(data.gradeId)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de l\'historique' }),
-    )
+    const _result10 = await gradeQueries.getGradeValidationHistory(data.gradeId)
+    if (R.isFailure(_result10))
+      return { success: false as const, error: 'Erreur lors de la récupération de l\'historique' }
+    return { success: true as const, data: _result10.value }
   })
 
 // Get submitted grade IDs for validation batch
@@ -358,8 +348,8 @@ export const getSubmittedGradeIds = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('grades', 'view')
-    return (await gradeQueries.getSubmittedGradeIds({ ...data, schoolId: context.school.schoolId })).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des IDs des notes' }),
-    )
+    const _result11 = await gradeQueries.getSubmittedGradeIds({ ...data, schoolId: context.school.schoolId })
+    if (R.isFailure(_result11))
+      return { success: false as const, error: 'Erreur lors de la récupération des IDs des notes' }
+    return { success: true as const, data: _result11.value }
   })

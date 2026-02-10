@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   createDiscount,
   deactivateDiscount,
@@ -33,13 +34,13 @@ export const getDiscountsList = authServerFn
     const { schoolId } = context.school
     await requirePermission('finance', 'view')
 
-    return (await getDiscounts({
+    const _result1 = await getDiscounts({
       schoolId,
       ...filters,
-    })).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des remises' }),
-    )
+    })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des remises' }
+    return { success: true as const, data: _result1.value }
   })
 
 /**
@@ -53,10 +54,10 @@ export const getAutoApplyDiscountsList = authServerFn
     const { schoolId } = context.school
     await requirePermission('finance', 'view')
 
-    return (await getAutoApplyDiscounts(schoolId)).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des remises automatiques' }),
-    )
+    const _result2 = await getAutoApplyDiscounts(schoolId)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération des remises automatiques' }
+    return { success: true as const, data: _result2.value }
   })
 
 /**
@@ -70,10 +71,10 @@ export const getDiscount = authServerFn
 
     await requirePermission('finance', 'view')
 
-    return (await getDiscountById(discountId)).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la remise' }),
-    )
+    const _result3 = await getDiscountById(discountId)
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la récupération de la remise' }
+    return { success: true as const, data: _result3.value }
   })
 
 /**
@@ -88,23 +89,21 @@ export const createNewDiscount = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('finance', 'create')
 
-    return (await createDiscount({
+    const _result4 = await createDiscount({
       schoolId,
       ...data,
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'discounts',
-          recordId: result.id,
-          newValues: data,
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la création de la remise' }),
-    )
+    })
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de la création de la remise' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'discounts',
+      recordId: _result4.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result4.value }
   })
 
 /**
@@ -120,20 +119,18 @@ export const updateExistingDiscount = authServerFn
     await requirePermission('finance', 'edit')
 
     const { id, ...updateData } = data
-    return (await updateDiscount(id, updateData)).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'discounts',
-          recordId: id,
-          newValues: updateData,
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la remise' }),
-    )
+    const _result5 = await updateDiscount(id, updateData)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la mise à jour de la remise' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'discounts',
+      recordId: id,
+      newValues: updateData,
+    })
+    return { success: true as const, data: _result5.value }
   })
 
 /**
@@ -148,20 +145,18 @@ export const deactivateExistingDiscount = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('finance', 'edit')
 
-    return (await deactivateDiscount(discountId)).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'discounts',
-          recordId: discountId,
-          newValues: { status: 'inactive' },
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la désactivation de la remise' }),
-    )
+    const _result6 = await deactivateDiscount(discountId)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la désactivation de la remise' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'discounts',
+      recordId: discountId,
+      newValues: { status: 'inactive' },
+    })
+    return { success: true as const, data: _result6.value }
   })
 
 /**
@@ -176,17 +171,15 @@ export const deleteExistingDiscount = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('finance', 'delete')
 
-    return (await deleteDiscount(discountId)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'discounts',
-          recordId: discountId,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la remise' }),
-    )
+    const _result7 = await deleteDiscount(discountId)
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors de la suppression de la remise' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'discounts',
+      recordId: discountId,
+    })
+    return { success: true as const, data: { success: true } }
   })

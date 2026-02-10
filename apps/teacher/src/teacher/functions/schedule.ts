@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getTeacherDetailedSchedule } from '@repo/data-ops/queries/teacher-schedule'
 import { createServerFn } from '@tanstack/react-start'
 import { addDays, format, parseISO } from 'date-fns'
@@ -21,7 +22,7 @@ export const getDetailedSchedule = createServerFn()
       endDate: data.endDate,
     })
 
-    if (detailedDataResult.isErr()) {
+    if (R.isFailure(detailedDataResult)) {
       return {
         sessions: [],
         substitutions: [],

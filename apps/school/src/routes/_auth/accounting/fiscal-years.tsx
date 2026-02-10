@@ -68,7 +68,7 @@ function FiscalYearsPage() {
 
       <div className="rounded-2xl border border-border/40 bg-card/30 backdrop-blur-md overflow-hidden">
         <FiscalYearsTable
-          fiscalYears={fiscalYears as any}
+          fiscalYears={fiscalYears.map(fy => ({ ...fy, status: fy.status || 'open' }))}
           onClose={fy => setClosingYear(fy)}
         />
       </div>

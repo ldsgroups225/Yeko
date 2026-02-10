@@ -127,7 +127,7 @@ export function DiscountFormDialog({
     mutationKey: isEditing
       ? schoolMutationKeys.discounts.update
       : schoolMutationKeys.discounts.create,
-    mutationFn: (data: DiscountFormData) => {
+    mutationFn: async (data: DiscountFormData) => {
       if (isEditing) {
         return updateExistingDiscount({
           data: {

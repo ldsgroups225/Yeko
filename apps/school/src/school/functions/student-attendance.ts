@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getAttendanceSettings } from '@repo/data-ops/queries/attendance-settings'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import {
@@ -37,10 +38,10 @@ export const getClassAttendanceForDate = authServerFn
 
     await requirePermission('attendance', 'view')
 
-    return (await getClassAttendance(data)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des présences de la classe' }),
-    )
+    const _result1 = await getClassAttendance(data)
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des présences de la classe' }
+    return { success: true as const, data: _result1.value }
   })
 
 /**
@@ -61,10 +62,10 @@ export const getStudentHistory = authServerFn
 
     await requirePermission('attendance', 'view')
 
-    return (await getStudentAttendanceHistory(data)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de l\'historique de présence de l\'étudiant' }),
-    )
+    const _result2 = await getStudentAttendanceHistory(data)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération de l\'historique de présence de l\'étudiant' }
+    return { success: true as const, data: _result2.value }
   })
 
 /**
@@ -81,13 +82,13 @@ export const recordStudentAttendance = authServerFn
 
     // Get school settings
     const settingsResult = await getAttendanceSettings(schoolId)
-    if (settingsResult.isErr()) {
+    if (R.isFailure(settingsResult)) {
       return { success: false as const, error: 'Impossible de récupérer les paramètres de présence' }
     }
 
     const settings = settingsResult.value
 
-    return (await upsertStudentAttendance({
+    const _result3 = await upsertStudentAttendance({
       studentId: data.studentId,
       classId: data.classId,
       date: data.date,
@@ -97,20 +98,18 @@ export const recordStudentAttendance = authServerFn
       schoolId,
       recordedBy: userId,
       lateThresholdMinutes: settings?.studentLateThresholdMinutes ?? 10,
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'student_attendance',
-          recordId: result.id,
-          newValues: data,
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'enregistrement de la présence' }),
-    )
+    })
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de l\'enregistrement de la présence' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'student_attendance',
+      recordId: _result3.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result3.value }
   })
 
 /**
@@ -125,7 +124,7 @@ export const bulkRecordClassAttendance = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('attendance', 'create')
 
-    return (await bulkUpsertClassAttendance({
+    const _result4 = await bulkUpsertClassAttendance({
       classId: data.classId,
       schoolId,
       date: data.date,
@@ -136,26 +135,24 @@ export const bulkRecordClassAttendance = authServerFn
         reason: entry.reason ?? undefined,
       })),
       recordedBy: userId,
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'student_attendance',
-          recordId: 'bulk',
-          newValues: data,
-        })
-        return {
-          success: true as const,
-          data: {
-            count: result,
-            entries: result,
-          },
-        }
+    })
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de l\'enregistrement groupé des présences' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'student_attendance',
+      recordId: 'bulk',
+      newValues: data,
+    })
+    return {
+      success: true as const,
+      data: {
+        count: _result4.value,
+        entries: _result4.value,
       },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'enregistrement groupé des présences' }),
-    )
+    }
   })
 
 /**
@@ -170,24 +167,22 @@ export const excuseAbsence = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('attendance', 'edit')
 
-    return (await excuseStudentAbsence({
+    const _result5 = await excuseStudentAbsence({
       ...data,
       schoolId,
       excusedBy: userId,
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'student_attendance',
-          recordId: data.attendanceId,
-          newValues: { status: 'excused', reason: data.reason },
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la justification de l\'absence' }),
-    )
+    })
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la justification de l\'absence' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'student_attendance',
+      recordId: data.attendanceId,
+      newValues: { status: 'excused', reason: data.reason },
+    })
+    return { success: true as const, data: _result5.value }
   })
 
 /**
@@ -208,23 +203,21 @@ export const notifyParent = authServerFn
     await requirePermission('attendance', 'edit')
 
     // TODO: Implement actual notification sending
-    return (await markParentNotified({
+    const _result6 = await markParentNotified({
       ...data,
       schoolId,
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'student_attendance',
-          recordId: data.attendanceId,
-          newValues: { parentNotified: true, method: data.method },
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la notification des parents' }),
-    )
+    })
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la notification des parents' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'student_attendance',
+      recordId: data.attendanceId,
+      newValues: { parentNotified: true, method: data.method },
+    })
+    return { success: true as const, data: _result6.value }
   })
 
 /**
@@ -244,13 +237,13 @@ export const getStatistics = authServerFn
 
     await requirePermission('attendance', 'view')
 
-    return (await getAttendanceStatistics({
+    const _result7 = await getAttendanceStatistics({
       schoolId: context.school.schoolId,
       ...data,
-    })).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des statistiques de présence' }),
-    )
+    })
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors de la récupération des statistiques de présence' }
+    return { success: true as const, data: _result7.value }
   })
 
 /**
@@ -272,39 +265,38 @@ export const checkChronicAbsence = authServerFn
 
     const { schoolId } = context.school
     const settingsResult = await getAttendanceSettings(schoolId)
-    if (settingsResult.isErr()) {
+    if (R.isFailure(settingsResult)) {
       return { success: false as const, error: 'Impossible de récupérer les paramètres de présence' }
     }
 
     const settings = settingsResult.value
     const threshold = Number(settings.chronicAbsenceThresholdPercent ?? 10)
 
-    return (await countStudentAbsences({
+    const _result8 = await countStudentAbsences({
       ...data,
       excludeExcused: true,
-    })).match(
-      (absenceCount) => {
-        const start = new Date(data.startDate)
-        const end = new Date(data.endDate)
-        const diffTime = Math.abs(end.getTime() - start.getTime())
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-        const schoolDays = Math.floor((diffDays * 5) / 7)
+    })
+    if (R.isFailure(_result8))
+      return { success: false as const, error: 'Erreur lors du calcul de l\'absentéisme chronique' }
 
-        const absenceRate = schoolDays > 0 ? (absenceCount / schoolDays) * 100 : 0
+    const start = new Date(data.startDate)
+    const end = new Date(data.endDate)
+    const diffTime = Math.abs(end.getTime() - start.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    const schoolDays = Math.floor((diffDays * 5) / 7)
 
-        return {
-          success: true as const,
-          data: {
-            absenceCount,
-            schoolDays,
-            absenceRate: Math.round(absenceRate * 100) / 100,
-            isChronicAbsent: absenceRate >= threshold,
-            threshold,
-          },
-        }
+    const absenceRate = schoolDays > 0 ? (_result8.value / schoolDays) * 100 : 0
+
+    return {
+      success: true as const,
+      data: {
+        absenceCount: _result8.value,
+        schoolDays,
+        absenceRate: Math.round(absenceRate * 100) / 100,
+        isChronicAbsent: absenceRate >= threshold,
+        threshold,
       },
-      _ => ({ success: false as const, error: 'Erreur lors du calcul de l\'absentéisme chronique' }),
-    )
+    }
   })
 
 /**
@@ -319,17 +311,15 @@ export const removeStudentAttendance = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('attendance', 'delete')
 
-    return (await deleteStudentAttendance(data.id, schoolId)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'student_attendance',
-          recordId: data.id,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la présence' }),
-    )
+    const _result9 = await deleteStudentAttendance(data.id, schoolId)
+    if (R.isFailure(_result9))
+      return { success: false as const, error: 'Erreur lors de la suppression de la présence' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'student_attendance',
+      recordId: data.id,
+    })
+    return { success: true as const, data: { success: true } }
   })

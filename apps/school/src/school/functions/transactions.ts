@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getOpenFiscalYear } from '@repo/data-ops/queries/fiscal-years'
 import {
   createJournalEntry,
@@ -23,10 +24,9 @@ export const getTransactionsList = authServerFn
       schoolId: school.schoolId,
       ...filters,
     })
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -39,10 +39,9 @@ export const getTransaction = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getTransactionById(transactionId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -56,7 +55,7 @@ export const createEntry = authServerFn
 
     const { school } = context
     const fiscalYearResult = await getOpenFiscalYear(school.schoolId)
-    if (fiscalYearResult.isErr())
+    if (R.isFailure(fiscalYearResult))
       return { success: false as const, error: fiscalYearResult.error.message }
 
     const fiscalYear = fiscalYearResult.value
@@ -81,10 +80,9 @@ export const createEntry = authServerFn
       })),
     })
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -98,8 +96,7 @@ export const voidExistingTransaction = authServerFn
 
     const { school } = context
     const result = await voidTransaction(data.transactionId, school.userId, data.voidReason)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })

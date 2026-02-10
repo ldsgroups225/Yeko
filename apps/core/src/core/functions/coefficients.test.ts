@@ -1,4 +1,5 @@
 // Import the mocked modules to use in tests
+import type { Result } from '@praha/byethrow'
 import * as coefficientsQueries from '@repo/data-ops/queries/coefficients'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {
@@ -36,10 +37,9 @@ vi.mock('@/core/middleware/example-middleware', () => ({
   exampleMiddlewareWithContext: {},
 }))
 
-function mockOk<T>(value: T) {
+function mockOk(value: unknown): Result.Success<any> {
   return {
-    isOk: () => true,
-    isErr: () => false,
+    type: 'Success' as const,
     value,
   }
 }
@@ -85,7 +85,7 @@ describe('coefficients Server Functions', () => {
       vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue(mockOk({
         coefficients: mockCoefficients,
         pagination: { total: 2, page: 1, limit: 10, totalPages: 1 },
-      }) as any)
+      }))
 
       const result = await coefficientTemplatesQuery({
         data: { page: 1, limit: 10, schoolYearTemplateId: '1', gradeId: '1' },
@@ -104,7 +104,7 @@ describe('coefficients Server Functions', () => {
       vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue(mockOk({
         coefficients: [],
         pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
-      }) as any)
+      }))
 
       const result = await coefficientTemplatesQuery({
         data: { page: 1, limit: 10, schoolYearTemplateId: 'nonexistent' },
@@ -118,7 +118,7 @@ describe('coefficients Server Functions', () => {
       vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue(mockOk({
         coefficients: [],
         pagination: { total: 0, page: 2, limit: 5, totalPages: 1 },
-      }) as any)
+      }))
 
       await coefficientTemplatesQuery({
         data: { page: 2, limit: 5, schoolYearTemplateId: '1' },
@@ -136,7 +136,7 @@ describe('coefficients Server Functions', () => {
       vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue(mockOk({
         coefficients: [],
         pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
-      }) as any)
+      }))
 
       // Call with minimal data - the handler should still call the mock
       await coefficientTemplatesQuery({ data: { schoolYearTemplateId: '1' } })
@@ -164,7 +164,7 @@ describe('coefficients Server Functions', () => {
           },
         ],
         pagination: { total: 1, page: 1, limit: 10, totalPages: 1 },
-      }) as any)
+      }))
 
       await coefficientTemplatesQuery({
         data: { schoolYearTemplateId: '1', subjectId: 'math' },
@@ -179,7 +179,7 @@ describe('coefficients Server Functions', () => {
       vi.mocked(coefficientsQueries.getCoefficientTemplates).mockResolvedValue(mockOk({
         coefficients: [],
         pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
-      }) as any)
+      }))
 
       await coefficientTemplatesQuery({
         data: {
@@ -219,7 +219,7 @@ describe('coefficients Server Functions', () => {
       }
 
       vi.mocked(coefficientsQueries.getCoefficientTemplateById).mockResolvedValue(
-        mockOk(mockTemplate) as any,
+        mockOk(mockTemplate),
       )
 
       const result = await coefficientTemplateByIdQuery({ data: { id: '1' } })
@@ -244,7 +244,7 @@ describe('coefficients Server Functions', () => {
         seriesId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as any)
+      }))
 
       const result = await createCoefficientTemplateMutation({
         data: newTemplate,
@@ -269,7 +269,7 @@ describe('coefficients Server Functions', () => {
         seriesId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as any)
+      }))
 
       // Call with valid data to verify the handler works
       const result = await createCoefficientTemplateMutation({
@@ -302,7 +302,7 @@ describe('coefficients Server Functions', () => {
         seriesId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-      }) as any)
+      }))
 
       const result = await updateCoefficientTemplateMutation({
         data: updateData,
@@ -315,7 +315,7 @@ describe('coefficients Server Functions', () => {
 
   describe('deleteCoefficientTemplateMutation', () => {
     test('should delete template by ID', async () => {
-      vi.mocked(coefficientsQueries.deleteCoefficientTemplate).mockResolvedValue(mockOk(undefined) as any)
+      vi.mocked(coefficientsQueries.deleteCoefficientTemplate).mockResolvedValue(mockOk(undefined))
 
       const result = await deleteCoefficientTemplateMutation({
         data: { id: '1' },
@@ -344,7 +344,7 @@ describe('coefficients Server Functions', () => {
         ],
       }
 
-      vi.mocked(coefficientsQueries.bulkCreateCoefficients).mockResolvedValue(mockOk([]) as any)
+      vi.mocked(coefficientsQueries.bulkCreateCoefficients).mockResolvedValue(mockOk([]))
 
       const result = await bulkCreateCoefficientsMutation({
         data: newCoefficients,
@@ -357,7 +357,7 @@ describe('coefficients Server Functions', () => {
     })
 
     test('should handle empty array', async () => {
-      vi.mocked(coefficientsQueries.bulkCreateCoefficients).mockResolvedValue(mockOk([]) as any)
+      vi.mocked(coefficientsQueries.bulkCreateCoefficients).mockResolvedValue(mockOk([]))
 
       const result = await bulkCreateCoefficientsMutation({
         data: { coefficients: [] },
@@ -374,7 +374,7 @@ describe('coefficients Server Functions', () => {
         { id: '2', weight: 5 },
       ]
 
-      vi.mocked(coefficientsQueries.bulkUpdateCoefficients).mockResolvedValue(mockOk({}) as any)
+      vi.mocked(coefficientsQueries.bulkUpdateCoefficients).mockResolvedValue(mockOk({}))
 
       const result = await bulkUpdateCoefficientsMutation({ data: updateData })
 
@@ -384,7 +384,7 @@ describe('coefficients Server Functions', () => {
 
   describe('copyCoefficientsMutation', () => {
     test('should copy coefficients to new school year', async () => {
-      vi.mocked(coefficientsQueries.copyCoefficientTemplates).mockResolvedValue(mockOk([]) as any)
+      vi.mocked(coefficientsQueries.copyCoefficientTemplates).mockResolvedValue(mockOk([]))
 
       const result = await copyCoefficientsMutation({
         data: { sourceYearId: '1', targetYearId: '2' },
@@ -401,7 +401,7 @@ describe('coefficients Server Functions', () => {
         average: 2.5,
       }
 
-      vi.mocked(coefficientsQueries.getCoefficientStats).mockResolvedValue(mockOk(mockStats) as any)
+      vi.mocked(coefficientsQueries.getCoefficientStats).mockResolvedValue(mockOk(mockStats))
 
       const result = await coefficientStatsQuery()
 
@@ -414,7 +414,7 @@ describe('coefficients Server Functions', () => {
         average: 0,
       }
 
-      vi.mocked(coefficientsQueries.getCoefficientStats).mockResolvedValue(mockOk(emptyStats) as any)
+      vi.mocked(coefficientsQueries.getCoefficientStats).mockResolvedValue(mockOk(emptyStats))
 
       const result = await coefficientStatsQuery()
 
@@ -489,7 +489,7 @@ describe('coefficients Server Functions', () => {
 
   describe('error Handling', () => {
     test('should handle not found errors gracefully', async () => {
-      vi.mocked(coefficientsQueries.getCoefficientTemplateById).mockResolvedValue(mockOk(null) as any)
+      vi.mocked(coefficientsQueries.getCoefficientTemplateById).mockResolvedValue(mockOk(null))
 
       const result = await coefficientTemplateByIdQuery({
         data: { id: 'nonexistent' },

@@ -1,5 +1,6 @@
 import type { MonthlyRevenue } from '@repo/data-ops/queries/finance-stats'
 import type { StudentStatistics } from '@repo/data-ops/queries/students'
+import { Result as R } from '@praha/byethrow'
 import { getClasses } from '@repo/data-ops/queries/classes'
 import { getEnrollmentStatistics } from '@repo/data-ops/queries/enrollments'
 import { getFinanceStats, getMonthlyRevenue } from '@repo/data-ops/queries/finance-stats'
@@ -53,36 +54,31 @@ export const getAdminDashboardStats = authServerFn
           : null,
       ])
 
-      const studentStats = studentStatsResult.match(
-        data => data,
-        () => ({ total: 0, byGender: [], byStatus: [], byAge: [], newAdmissions: 0 }),
-      )
+      const studentStats = R.isFailure(studentStatsResult)
+        ? { total: 0, byGender: [], byStatus: [], byAge: [], newAdmissions: 0 }
+        : studentStatsResult.value
 
-      const activeClasses = classesResult.match(
-        data => data.length,
-        () => 0,
-      )
+      const activeClasses = R.isFailure(classesResult)
+        ? 0
+        : classesResult.value.length
 
-      const finance = financeResult.match(
-        data => data,
-        () => ({ totalRevenue: 0, totalPayments: 0, pendingPayments: 0, overdueAmount: 0 }),
-      )
+      const finance = R.isFailure(financeResult)
+        ? { totalRevenue: 0, totalPayments: 0, pendingPayments: 0, overdueAmount: 0 }
+        : financeResult.value
 
-      const monthlyRevenue = monthlyRevenueResult.match(
-        data => data,
-        () => [],
-      )
+      const monthlyRevenue = R.isFailure(monthlyRevenueResult)
+        ? []
+        : monthlyRevenueResult.value
 
       const enrollmentByGrade = enrollmentStatsResult
-        ? enrollmentStatsResult.match(
-            data => data.byGrade.map(g => ({
+        ? R.isFailure(enrollmentStatsResult)
+          ? []
+          : enrollmentStatsResult.value.byGrade.map(g => ({
               gradeName: g.gradeName,
               count: Number(g.count),
               boys: Number(g.boys),
               girls: Number(g.girls),
-            })),
-            () => [],
-          )
+            }))
         : []
 
       const now = new Date()

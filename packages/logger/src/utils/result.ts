@@ -1,18 +1,17 @@
-import type { Result, ResultAsync } from 'neverthrow'
 import type { z } from 'zod'
 import type { YekoLogger } from '../types'
-import { err, ok } from 'neverthrow'
+import { Result as R } from '@praha/byethrow'
 
 /**
- * Type-safe wrapper for Zod's safeParse that returns a neverthrow Result.
+ * Type-safe wrapper for Zod's safeParse that returns a byethrow Result.
  * Standardizes validation errors into the Result-based pipeline.
  */
-export function safeParse<T>(schema: z.Schema<T>, data: unknown): Result<T, z.ZodError> {
+export function safeParse<T>(schema: z.Schema<T>, data: unknown): R.Result<T, z.ZodError> {
   const result = schema.safeParse(data)
   if (result.success) {
-    return ok(result.data)
+    return { type: 'Success', value: result.data }
   }
-  return err(result.error)
+  return { type: 'Failure', error: result.error }
 }
 
 /**
@@ -24,11 +23,11 @@ export function safeParse<T>(schema: z.Schema<T>, data: unknown): Result<T, z.Zo
  * @param context Additional context (e.g. schoolId, userId) for the log
  */
 export function orLog<T, E>(
-  result: Result<T, E>,
+  result: R.Result<T, E>,
   logger: YekoLogger,
   context?: import('../types').YekoLogContext,
-): Result<T, E> {
-  if (result.isErr()) {
+): R.Result<T, E> {
+  if (R.isFailure(result)) {
     const error = result.error instanceof Error ? result.error : new Error(String(result.error))
     logger.error('Operation failed', error, context)
   }
@@ -40,10 +39,10 @@ export function orLog<T, E>(
  * Awaits the ResultAsync and logs the error if present.
  */
 export async function orLogAsync<T, E>(
-  resultAsync: ResultAsync<T, E>,
+  resultAsync: R.ResultAsync<T, E>,
   logger: YekoLogger,
   context?: import('../types').YekoLogContext,
-): Promise<Result<T, E>> {
+): R.ResultAsync<T, E> {
   const result = await resultAsync
   return orLog(result, logger, context)
 }
@@ -52,7 +51,7 @@ export async function orLogAsync<T, E>(
  * Higher-order function for use with Result.mapErr.
  * Allows effortless logging of errors within a Result chain:
  * @example
- * result.mapErr(tapLogErr(logger, { userId }))
+ * Result.pipe(result, Result.mapError(tapLogErr(logger, { userId })))
  */
 export function tapLogErr<E>(logger: YekoLogger, context?: import('../types').YekoLogContext) {
   return (error: E) => {

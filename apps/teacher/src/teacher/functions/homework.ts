@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   createHomeworkAssignment,
   deleteHomeworkAssignment,
@@ -32,7 +33,7 @@ export const createHomework = createServerFn()
       status: data.status,
     })
 
-    if (homeworkResult.isErr()) {
+    if (R.isFailure(homeworkResult)) {
       return {
         success: false,
         error: homeworkResult.error.message,
@@ -68,7 +69,7 @@ export const getHomework = createServerFn()
       pageSize: data.pageSize,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         homework: [],
         total: 0,
@@ -101,7 +102,7 @@ export const getHomeworkDetails = createServerFn()
   .handler(async ({ data }) => {
     const homeworkResult = await getHomeworkById(data.homeworkId)
 
-    if (homeworkResult.isErr() || !homeworkResult.value) {
+    if (R.isFailure(homeworkResult) || !homeworkResult.value) {
       return { homework: null }
     }
 
@@ -148,7 +149,7 @@ export const updateHomework = createServerFn()
       status: data.status,
     })
 
-    if (updatedResult.isErr()) {
+    if (R.isFailure(updatedResult)) {
       return {
         success: false,
         error: updatedResult.error.message,
@@ -175,7 +176,7 @@ export const deleteHomework = createServerFn()
       teacherId: data.teacherId,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         success: false,
         error: result.error.message,

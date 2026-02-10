@@ -1,4 +1,12 @@
-import type { School } from '@repo/data-ops'
+import { R } from '@praha/byethrow'
+import {
+  bulkCreateSchools as bulkCreateSchoolsQuery,
+  createSchool as createSchoolQuery,
+  deleteSchool as deleteSchoolQuery,
+  getSchoolById as getSchoolByIdQuery,
+  getSchools as getSchoolsQuery,
+  updateSchool as updateSchoolQuery,
+} from '@repo/data-ops'
 import { createServerFn } from '@tanstack/react-start'
 import { databaseMiddleware } from '@/core/middleware/database'
 import {
@@ -17,13 +25,12 @@ export const createSchool = createServerFn()
   ])
   .inputValidator(data => CreateSchoolSchema.parse(data))
   .handler(async (ctx) => {
-    const { createSchool: createSchoolQuery } = await import('@repo/data-ops/queries/schools')
     const result = await createSchoolQuery({
       ...ctx.data,
       settings: (ctx.data.settings as Record<string, object>) || {},
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       throw result.error
     }
 
@@ -40,14 +47,13 @@ export const getSchools = createServerFn()
   ])
   .inputValidator(data => GetSchoolsSchema.parse(data))
   .handler(async (ctx) => {
-    const { getSchools: getSchoolsQuery } = await import('@repo/data-ops/queries/schools')
     const result = await getSchoolsQuery(ctx.data)
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       throw result.error
     }
 
     return {
-      data: result.value.schools.map((s: School) => ({
+      data: result.value.schools.map(s => ({
         ...s,
         settings: (s.settings as Record<string, object>) || {},
       })),
@@ -62,13 +68,16 @@ export const getSchoolById = createServerFn()
   ])
   .inputValidator(data => SchoolIdSchema.parse(data))
   .handler(async (ctx) => {
-    const { getSchoolById: getSchoolByIdQuery } = await import('@repo/data-ops/queries/schools')
     const result = await getSchoolByIdQuery(ctx.data.id)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     const s = result.value
 
     if (!s) {
+      // Return null or throw error depending on expected behavior.
+      // The original code passed 's' which could be null?
+      // "const s = result.value; if (!s) throw..."
+      // The query getSchoolById returns School | null (Result<School | null> ?)
       throw new Error('School not found')
     }
     return {
@@ -86,9 +95,8 @@ export const updateSchool = createServerFn()
   .handler(async (ctx) => {
     const { id, ...updateData } = ctx.data
 
-    const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
     const result = await updateSchoolQuery(id, updateData)
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       const error = result.error
       if (error instanceof Error && error.message?.includes('not found')) {
         throw new Error('School not found')
@@ -110,9 +118,8 @@ export const deleteSchool = createServerFn()
   ])
   .inputValidator(data => SchoolIdSchema.parse(data))
   .handler(async (ctx) => {
-    const { deleteSchool: deleteSchoolQuery } = await import('@repo/data-ops/queries/schools')
     const result = await deleteSchoolQuery(ctx.data.id)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return { success: true, id: ctx.data.id }
   })
@@ -126,8 +133,6 @@ export const bulkUpdateSchools = createServerFn()
   .handler(async (ctx) => {
     const { schoolIds, status } = ctx.data
 
-    const { updateSchool: updateSchoolQuery } = await import('@repo/data-ops/queries/schools')
-
     const BATCH_SIZE = 10
     let successCount = 0
 
@@ -136,7 +141,7 @@ export const bulkUpdateSchools = createServerFn()
       const results = await Promise.all(
         batch.map(id => updateSchoolQuery(id, { status })),
       )
-      successCount += results.filter(r => r.isOk()).length
+      successCount += results.filter(r => R.isSuccess(r)).length
     }
 
     return { success: true, count: successCount }
@@ -151,8 +156,6 @@ export const bulkCreateSchools = createServerFn()
   .handler(async (ctx) => {
     const { schools, skipDuplicates } = ctx.data
 
-    const { bulkCreateSchools: bulkCreateSchoolsQuery } = await import('@repo/data-ops/queries/schools')
-
     const result = await bulkCreateSchoolsQuery(
       schools.map(school => ({
         name: school.name,
@@ -166,7 +169,7 @@ export const bulkCreateSchools = createServerFn()
       { skipDuplicates },
     )
 
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     const res = result.value
 

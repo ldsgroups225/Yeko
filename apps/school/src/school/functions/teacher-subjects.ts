@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { getSchoolSubjects } from '@repo/data-ops/queries/school-subjects'
 import {
@@ -31,21 +32,18 @@ export const getAvailableSubjectsForTeacher = authServerFn
     await requirePermission('teachers', 'view')
 
     // Get all school subjects
-    return (await getSchoolSubjects({
+    const _result1 = await getSchoolSubjects({
       schoolId,
       schoolYearId: data.schoolYearId,
-    })).match(
-      async (allSubjectsData) => {
-        // Get currently assigned subjects
-        const assigned = await getTeacherSubjects(data.teacherId)
-        const assignedIds = new Set(assigned.map(a => a.subjectId))
-
-        // Return only those not yet assigned
-        const filteredSubjects = allSubjectsData.subjects.filter(s => !assignedIds.has(s.subjectId))
-        return { success: true as const, data: filteredSubjects }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des matières disponibles' }),
-    )
+    })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des matières disponibles' }
+    // Get currently assigned subjects
+    const assigned = await getTeacherSubjects(data.teacherId)
+    const assignedIds = new Set(assigned.map(a => a.subjectId))
+    // Return only those not yet assigned
+    const filteredSubjects = _result1.value.subjects.filter(s => !assignedIds.has(s.subjectId))
+    return { success: true as const, data: filteredSubjects }
   })
 
 export const saveTeacherAssignments = authServerFn

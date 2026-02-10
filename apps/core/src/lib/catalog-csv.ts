@@ -1,6 +1,6 @@
 import type { Grade, Serie, Subject, SubjectCategory } from '@repo/data-ops'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-import { ResultAsync } from 'neverthrow'
+import { R } from '@praha/byethrow'
 
 import { formatDate } from '@/utils/formatDate'
 
@@ -42,9 +42,9 @@ export function exportSubjectsToExcel(subjects: Subject[]) {
 
 // ... existing imports ...
 
-export function importSubjectsFromExcel(file: File): ResultAsync<Partial<Subject>[], Error> {
-  return ResultAsync.fromPromise(
-    new Promise<Partial<Subject>[]>((resolve, reject) => {
+export async function importSubjectsFromExcel(file: File): Promise<R.Result<Partial<Subject>[], Error>> {
+  try {
+    const result = await new Promise<Partial<Subject>[]>((resolve, reject) => {
       const reader = new FileReader()
 
       reader.onload = async (e) => {
@@ -83,10 +83,13 @@ export function importSubjectsFromExcel(file: File): ResultAsync<Partial<Subject
       }
 
       reader.onerror = () => reject(new Error('Erreur lors de la lecture du fichier'))
-      reader.readAsBinaryString(file)
-    }),
-    err => err instanceof Error ? err : new Error(String(err)),
-  )
+      reader.readAsArrayBuffer(file)
+    })
+    return R.succeed(result)
+  }
+  catch (err) {
+    return R.fail(err instanceof Error ? err : new Error(String(err)))
+  }
 }
 
 // ===== GRADES EXPORT/IMPORT =====
@@ -205,7 +208,7 @@ export async function importSeriesFromExcel(file: File): Promise<Partial<Serie>[
     }
 
     reader.onerror = () => reject(new Error('Erreur lors de la lecture du fichier'))
-    reader.readAsBinaryString(file)
+    reader.readAsArrayBuffer(file)
   })
 }
 

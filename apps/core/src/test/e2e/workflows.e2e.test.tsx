@@ -4,6 +4,7 @@
  * Using vitest-dom with React Testing Library
  */
 
+import { R } from '@praha/byethrow'
 import * as dataOps from '@repo/data-ops'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -13,11 +14,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 // Mock data-ops
 
 function mockOk<T>(value: T) {
-  return {
-    isOk: () => true,
-    isErr: () => false,
-    value,
-  }
+  return R.succeed(value)
 }
 
 vi.mock('@repo/data-ops', () => ({
@@ -93,7 +90,7 @@ describe('e2E: 4.1 End-to-End Workflows', () => {
           const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault()
             const result = await dataOps.createSchool(formData as any)
-            if (result.isOk())
+            if (R.isSuccess(result))
               setSchool(result.value)
           }
 
@@ -185,7 +182,7 @@ describe('e2E: 4.1 End-to-End Workflows', () => {
           const handleSubmit = async (e: React.FormEvent) => {
             e.preventDefault()
             const result = await dataOps.updateSchool('school-1', formData as any)
-            if (result.isOk())
+            if (R.isSuccess(result))
               setSchool(result.value)
           }
 
@@ -439,8 +436,8 @@ describe('catalog Management Workflows', () => {
 
         React.useEffect(() => {
           dataOps.getGrades({ trackId: 'track-1' }).then((res: any) => {
-            if (res.isOk())
-              setGrades(res.value)
+            if (R.isSuccess(res))
+              setGrades(res.value as any)
           })
         }, [])
 
@@ -450,7 +447,7 @@ describe('catalog Management Workflows', () => {
             ...formData,
             trackId: 'track-1',
           } as any)
-          if (result.isOk()) {
+          if (R.isSuccess(result)) {
             setGrades([...grades, result.value])
             setShowForm(false)
             setFormData({ name: '', code: '' })
@@ -553,7 +550,7 @@ describe('catalog Management Workflows', () => {
             ...formData,
             trackId: 'track-1',
           } as any)
-          if (result.isOk()) {
+          if (R.isSuccess(result)) {
             setSeries([...series, result.value])
             setFormData({ name: '', code: '' })
           }
@@ -627,9 +624,9 @@ describe('catalog Management Workflows', () => {
 
         React.useEffect(() => {
           dataOps.getSubjects().then((result: any) => {
-            if (result.isOk()) {
+            if (R.isSuccess(result)) {
               const val = result.value
-              setSubjects(Array.isArray(val) ? val : val.subjects || [])
+              setSubjects(Array.isArray(val) ? (val as any) : (val as any).subjects || [])
             }
           })
         }, [])
@@ -637,7 +634,7 @@ describe('catalog Management Workflows', () => {
         const handleCreate = async (e: React.FormEvent) => {
           e.preventDefault()
           const result = await dataOps.createSubject(formData as any)
-          if (result.isOk()) {
+          if (R.isSuccess(result)) {
             setSubjects([...subjects, result.value])
             setFormData({ name: '', category: 'science' })
           }
@@ -748,7 +745,7 @@ describe('program Management Workflows', () => {
         const handleSubmit = async (e: React.FormEvent) => {
           e.preventDefault()
           const result = await dataOps.createProgramTemplate(formData as any)
-          if (result.isOk())
+          if (R.isSuccess(result))
             setProgram(result.value)
         }
 
@@ -829,7 +826,7 @@ describe('program Management Workflows', () => {
         const handleSubmit = async (e: React.FormEvent) => {
           e.preventDefault()
           const result = await dataOps.updateProgramTemplate('prog-1', { name } as any)
-          if (result.isOk())
+          if (R.isSuccess(result))
             setProgram(result.value)
         }
 
@@ -892,7 +889,7 @@ describe('program Management Workflows', () => {
             selectedYear,
             `${original.name} (Copy)`,
           )
-          if (result.isOk()) {
+          if (R.isSuccess(result)) {
             setPrograms([...programs, result.value])
             setShowCloneForm(false)
           }
@@ -984,7 +981,7 @@ describe('coefficient Management Workflows', () => {
             ...formData,
             weight: Number.parseFloat(formData.weight),
           } as any)
-          if (result.isOk())
+          if (R.isSuccess(result))
             setCoefficient(result.value)
         }
 
@@ -1083,16 +1080,16 @@ describe('coefficient Management Workflows', () => {
 
         React.useEffect(() => {
           dataOps.getCoefficientTemplates({ schoolYearTemplateId: 'y1' }).then((res: any) => {
-            if (res.isOk()) {
+            if (R.isSuccess(res)) {
               const val = res.value
-              setCoefficients(Array.isArray(val) ? val : val.coefficients || [])
+              setCoefficients(Array.isArray(val) ? (val as any) : (val as any).coefficients || [])
             }
           })
         }, [])
 
         const handleEdit = async (id: string, newWeight: number) => {
           const result = await dataOps.updateCoefficientTemplate(id, { weight: newWeight } as any)
-          if (result.isOk()) {
+          if (R.isSuccess(result)) {
             const updated = result.value
             setCoefficients(coefficients.map(c => (c.id === id ? updated : c)))
             setEditingId(null)
@@ -1196,9 +1193,9 @@ describe('coefficient Management Workflows', () => {
 
         React.useEffect(() => {
           dataOps.getCoefficientTemplates().then((res: any) => {
-            if (res.isOk()) {
+            if (R.isSuccess(res)) {
               const val = res.value
-              setCoefficients(Array.isArray(val) ? val : val.coefficients || [])
+              setCoefficients(Array.isArray(val) ? (val as any) : (val as any).coefficients || [])
             }
           })
         }, [])

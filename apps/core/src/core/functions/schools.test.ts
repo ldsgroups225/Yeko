@@ -1,3 +1,4 @@
+import type { Result } from '@praha/byethrow'
 import * as dataOps from '@repo/data-ops'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { bulkUpdateSchools, createSchool, deleteSchool, getSchoolById, getSchools, updateSchool } from './schools'
@@ -39,19 +40,17 @@ vi.mock('@/core/middleware/example-middleware', () => ({
   exampleMiddlewareWithContext: {},
 }))
 
-function mockOk<T>(value: T) {
+function mockOk(value: unknown): Result.Success<any> {
   return {
-    isOk: () => true,
-    isErr: () => false,
+    type: 'Success' as const,
     value,
   }
 }
 
-function mockErr(error: any) {
+function mockErr<E = unknown>(error: unknown): Result.Failure<E> {
   return {
-    isOk: () => false,
-    isErr: () => true,
-    error,
+    type: 'Failure' as const,
+    error: error as E,
   }
 }
 
@@ -69,9 +68,9 @@ describe('schools Server Functions', () => {
       const mockPagination = { total: 2, page: 1, limit: 10, totalPages: 1 }
 
       vi.mocked(dataOps.getSchools).mockResolvedValue(mockOk({
-        schools: mockSchools as any,
+        schools: mockSchools,
         pagination: mockPagination,
-      }) as any)
+      }))
 
       const result = await getSchools({ data: { page: 1, limit: 10 } })
 
@@ -90,9 +89,9 @@ describe('schools Server Functions', () => {
       }))
 
       vi.mocked(dataOps.getSchools).mockResolvedValue(mockOk({
-        schools: mockSchools.slice(0, 10) as any,
+        schools: mockSchools.slice(0, 10),
         pagination: { total: 25, page: 1, limit: 10, totalPages: 3 },
-      }) as any)
+      }))
 
       const result = await getSchools({ data: { page: 1, limit: 10 } })
 
@@ -103,9 +102,9 @@ describe('schools Server Functions', () => {
 
     test('should handle search functionality', async () => {
       vi.mocked(dataOps.getSchools).mockResolvedValue(mockOk({
-        schools: [{ id: '1', name: 'Search Result School', settings: {} }] as any,
+        schools: [{ id: '1', name: 'Search Result School', settings: {} }],
         pagination: { total: 1, page: 1, limit: 10, totalPages: 1 },
-      }) as any)
+      }))
 
       const result = await getSchools({ data: { page: 1, limit: 10, search: 'Search' } })
 
@@ -116,9 +115,9 @@ describe('schools Server Functions', () => {
 
     test('should handle status filtering', async () => {
       vi.mocked(dataOps.getSchools).mockResolvedValue(mockOk({
-        schools: [{ id: '1', name: 'Active School', settings: {}, status: 'active' }] as any,
+        schools: [{ id: '1', name: 'Active School', settings: {}, status: 'active' }],
         pagination: { total: 1, page: 1, limit: 10, totalPages: 1 },
-      }) as any)
+      }))
 
       const result = await getSchools({ data: { page: 1, limit: 10, status: 'active' } })
 
@@ -128,9 +127,9 @@ describe('schools Server Functions', () => {
 
     test('should handle empty results', async () => {
       vi.mocked(dataOps.getSchools).mockResolvedValue(mockOk({
-        schools: [] as any,
+        schools: [],
         pagination: { total: 0, page: 1, limit: 10, totalPages: 0 },
-      }) as any)
+      }))
 
       const result = await getSchools({ data: { page: 1, limit: 10 } })
 
@@ -154,7 +153,7 @@ describe('schools Server Functions', () => {
         updatedAt: new Date(),
       }
 
-      vi.mocked(dataOps.createSchool).mockResolvedValue(mockOk(createdSchool) as any)
+      vi.mocked(dataOps.createSchool).mockResolvedValue(mockOk(createdSchool))
 
       const result = await createSchool({ data: newSchoolData })
 
@@ -176,7 +175,7 @@ describe('schools Server Functions', () => {
         updatedAt: new Date(),
       }
 
-      vi.mocked(dataOps.createSchool).mockResolvedValue(mockOk(createdSchool) as any)
+      vi.mocked(dataOps.createSchool).mockResolvedValue(mockOk(createdSchool))
 
       const result = await createSchool({ data: newSchoolData })
 
@@ -190,7 +189,7 @@ describe('schools Server Functions', () => {
     test('should reject duplicate school codes', async () => {
       const duplicateData = { name: 'Duplicate School', code: 'DUP', status: 'active' as const }
 
-      vi.mocked(dataOps.createSchool).mockResolvedValue(mockErr(new Error('School code already exists')) as any)
+      vi.mocked(dataOps.createSchool).mockResolvedValue(mockErr(new Error('School code already exists')))
 
       await expect(createSchool({ data: duplicateData })).rejects.toThrow('School code already exists')
     })
@@ -199,7 +198,7 @@ describe('schools Server Functions', () => {
   describe('getSchoolById', () => {
     test('should return existing school with settings', async () => {
       const mockSchool = { id: '1', name: 'School 1', settings: { theme: 'light' } }
-      vi.mocked(dataOps.getSchoolById).mockResolvedValue(mockOk(mockSchool) as any)
+      vi.mocked(dataOps.getSchoolById).mockResolvedValue(mockOk(mockSchool))
 
       const result = await getSchoolById({ data: { id: '1' } })
 
@@ -209,14 +208,14 @@ describe('schools Server Functions', () => {
     })
 
     test('should throw error for non-existent school', async () => {
-      vi.mocked(dataOps.getSchoolById).mockResolvedValue(mockOk(null) as any)
+      vi.mocked(dataOps.getSchoolById).mockResolvedValue(mockOk(null))
 
       await expect(getSchoolById({ data: { id: 'nonexistent' } })).rejects.toThrow('School not found')
     })
 
     test('should handle null settings', async () => {
       const mockSchool = { id: '1', name: 'School 1', settings: null }
-      vi.mocked(dataOps.getSchoolById).mockResolvedValue(mockOk(mockSchool) as any)
+      vi.mocked(dataOps.getSchoolById).mockResolvedValue(mockOk(mockSchool))
 
       const result = await getSchoolById({ data: { id: '1' } })
 
@@ -228,7 +227,7 @@ describe('schools Server Functions', () => {
     test('should update single field', async () => {
       const updateData = { id: '1', name: 'Updated School' }
       const updatedSchool = { id: '1', name: 'Updated School', settings: {} }
-      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk(updatedSchool) as any)
+      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk(updatedSchool))
 
       const result = await updateSchool({ data: updateData })
 
@@ -240,7 +239,7 @@ describe('schools Server Functions', () => {
     test('should update multiple fields', async () => {
       const updateData = { id: '1', name: 'Updated School', code: 'UPD', status: 'inactive' as const }
       const updatedSchool = { ...updateData, settings: {} }
-      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk(updatedSchool) as any)
+      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk(updatedSchool))
 
       await updateSchool({ data: updateData })
 
@@ -252,7 +251,7 @@ describe('schools Server Functions', () => {
     })
 
     test('should throw error for non-existent school', async () => {
-      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockErr(new Error('School not found')) as any)
+      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockErr(new Error('School not found')))
 
       await expect(updateSchool({ data: { id: 'nonexistent', name: 'Updated' } })).rejects.toThrow('School not found')
     })
@@ -266,7 +265,7 @@ describe('schools Server Functions', () => {
         settings: {},
         updatedAt: now,
       }
-      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk(updatedSchool) as any)
+      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk(updatedSchool))
 
       const result = await updateSchool({ data: updateData })
 
@@ -276,7 +275,7 @@ describe('schools Server Functions', () => {
 
   describe('deleteSchool', () => {
     test('should delete existing school', async () => {
-      vi.mocked(dataOps.deleteSchool).mockResolvedValue(mockOk(undefined) as any)
+      vi.mocked(dataOps.deleteSchool).mockResolvedValue(mockOk(undefined))
 
       const result = await deleteSchool({ data: { id: '1' } })
 
@@ -285,7 +284,7 @@ describe('schools Server Functions', () => {
     })
 
     test('should handle non-existent school deletion', async () => {
-      vi.mocked(dataOps.deleteSchool).mockResolvedValue(mockErr(new Error('School not found')) as any)
+      vi.mocked(dataOps.deleteSchool).mockResolvedValue(mockErr(new Error('School not found')))
 
       await expect(deleteSchool({ data: { id: 'nonexistent' } })).rejects.toThrow('School not found')
     })
@@ -293,7 +292,7 @@ describe('schools Server Functions', () => {
 
   describe('bulkUpdateSchools', () => {
     test('should update multiple schools status', async () => {
-      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk({ id: '1' }) as any)
+      vi.mocked(dataOps.updateSchool).mockResolvedValue(mockOk({ id: '1' }))
 
       const result = await bulkUpdateSchools({
         data: { schoolIds: ['1', '2', '3'], status: 'inactive' },
@@ -308,9 +307,9 @@ describe('schools Server Functions', () => {
 
     test('should handle non-existent schools gracefully', async () => {
       vi.mocked(dataOps.updateSchool)
-        .mockResolvedValueOnce(mockOk({ id: '1' }) as any)
-        .mockResolvedValueOnce(mockErr(new Error('School not found')) as any)
-        .mockResolvedValueOnce(mockOk({ id: '3' }) as any)
+        .mockResolvedValueOnce(mockOk({ id: '1' }))
+        .mockResolvedValueOnce(mockErr(new Error('School not found')))
+        .mockResolvedValueOnce(mockOk({ id: '3' }))
 
       const result = await bulkUpdateSchools({
         data: { schoolIds: ['1', 'nonexistent', '3'], status: 'active' },

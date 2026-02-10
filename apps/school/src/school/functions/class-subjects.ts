@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import * as classSubjectQueries from '@repo/data-ops/queries/class-subjects'
 import {
   copyClassSubjects as dbCopyClassSubjects,
@@ -23,10 +24,10 @@ export const getClassSubjects = authServerFn
 
     const { schoolId } = context.school
     await requirePermission('classes', 'view')
-    return (await classSubjectQueries.getClassSubjects({ ...data, schoolId })).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des matières de la classe' }),
-    )
+    const _result1 = await classSubjectQueries.getClassSubjects({ ...data, schoolId })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des matières de la classe' }
+    return { success: true as const, data: _result1.value }
   })
 
 export const getAssignmentMatrix = authServerFn
@@ -37,10 +38,10 @@ export const getAssignmentMatrix = authServerFn
 
     const { schoolId } = context.school
     await requirePermission('classes', 'view')
-    return (await classSubjectQueries.getAssignmentMatrix(schoolId, schoolYearId)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la matrice d\'assignation' }),
-    )
+    const _result2 = await classSubjectQueries.getAssignmentMatrix(schoolId, schoolYearId)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération de la matrice d\'assignation' }
+    return { success: true as const, data: _result2.value }
   })
 
 export const assignTeacherToClassSubject = authServerFn
@@ -57,24 +58,22 @@ export const assignTeacherToClassSubject = authServerFn
 
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
-    return (await classSubjectQueries.assignTeacherToClassSubject(
+    const _result3 = await classSubjectQueries.assignTeacherToClassSubject(
       data.classId,
       data.subjectId,
       data.teacherId,
-    )).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'class_subjects',
-          recordId: value.id,
-          newValues: data,
-        })
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'assignation de l\'enseignant' }),
     )
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de l\'assignation de l\'enseignant' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'class_subjects',
+      recordId: _result3.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result3.value }
   })
 
 export const bulkAssignTeacher = authServerFn
@@ -93,20 +92,18 @@ export const bulkAssignTeacher = authServerFn
 
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
-    return (await classSubjectQueries.bulkAssignTeacher(assignments)).match(
-      async (results) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'class_subjects',
-          recordId: 'bulk',
-          newValues: { count: assignments.length },
-        })
-        return { success: true as const, data: results }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'assignation groupée des enseignants' }),
-    )
+    const _result4 = await classSubjectQueries.bulkAssignTeacher(assignments)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de l\'assignation groupée des enseignants' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'class_subjects',
+      recordId: 'bulk',
+      newValues: { count: assignments.length },
+    })
+    return { success: true as const, data: _result4.value }
   })
 
 export const removeTeacherFromClassSubject = authServerFn
@@ -122,23 +119,21 @@ export const removeTeacherFromClassSubject = authServerFn
 
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
-    return (await classSubjectQueries.removeTeacherFromClassSubject(data.classId, data.subjectId)).match(
-      async (value) => {
-        if (value) {
-          await createAuditLog({
-            schoolId,
-            userId,
-            action: 'update',
-            tableName: 'class_subjects',
-            recordId: value.id,
-            oldValues: { teacherId: value.teacherId },
-            newValues: { teacherId: null },
-          })
-        }
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors du retrait de l\'enseignant' }),
-    )
+    const _result5 = await classSubjectQueries.removeTeacherFromClassSubject(data.classId, data.subjectId)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors du retrait de l\'enseignant' }
+    if (_result5.value) {
+      await createAuditLog({
+        schoolId,
+        userId,
+        action: 'update',
+        tableName: 'class_subjects',
+        recordId: _result5.value.id,
+        oldValues: { teacherId: _result5.value.teacherId },
+        newValues: { teacherId: null },
+      })
+    }
+    return { success: true as const, data: _result5.value }
   })
 
 export const detectTeacherConflicts = authServerFn
@@ -153,10 +148,10 @@ export const detectTeacherConflicts = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classes', 'view')
-    return (await classSubjectQueries.detectTeacherConflicts(data.teacherId, data.schoolYearId)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la détection des conflits' }),
-    )
+    const _result6 = await classSubjectQueries.detectTeacherConflicts(data.teacherId, data.schoolYearId)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la détection des conflits' }
+    return { success: true as const, data: _result6.value }
   })
 
 export const saveClassSubject = authServerFn
@@ -174,20 +169,18 @@ export const saveClassSubject = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
 
-    return (await classSubjectQueries.addSubjectToClass(data)).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'class_subjects',
-          recordId: value.id,
-          newValues: data,
-        })
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'ajout de la matière à la classe' }),
-    )
+    const _result7 = await classSubjectQueries.addSubjectToClass(data)
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors de l\'ajout de la matière à la classe' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'class_subjects',
+      recordId: _result7.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result7.value }
   })
 
 export const updateClassSubjectConfig = authServerFn
@@ -204,24 +197,22 @@ export const updateClassSubjectConfig = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
 
-    return (await classSubjectQueries.updateClassSubjectDetails(data.id, {
+    const _result8 = await classSubjectQueries.updateClassSubjectDetails(data.id, {
       coefficient: data.coefficient,
       hoursPerWeek: data.hoursPerWeek,
       status: data.status,
-    })).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'class_subjects',
-          recordId: value.id,
-          newValues: data,
-        })
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la configuration de la matière' }),
-    )
+    })
+    if (R.isFailure(_result8))
+      return { success: false as const, error: 'Erreur lors de la mise à jour de la configuration de la matière' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'class_subjects',
+      recordId: _result8.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result8.value }
   })
 
 export const removeClassSubject = authServerFn
@@ -233,22 +224,20 @@ export const removeClassSubject = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
 
-    return (await dbRemoveSubjectFromClass(data.classId, data.subjectId)).match(
-      async (value) => {
-        if (value) {
-          await createAuditLog({
-            schoolId,
-            userId,
-            action: 'delete',
-            tableName: 'class_subjects',
-            recordId: value.id,
-            newValues: { status: 'deleted' },
-          })
-        }
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la matière de la classe' }),
-    )
+    const _result9 = await dbRemoveSubjectFromClass(data.classId, data.subjectId)
+    if (R.isFailure(_result9))
+      return { success: false as const, error: 'Erreur lors de la suppression de la matière de la classe' }
+    if (_result9.value) {
+      await createAuditLog({
+        schoolId,
+        userId,
+        action: 'delete',
+        tableName: 'class_subjects',
+        recordId: _result9.value.id,
+        newValues: { status: 'deleted' },
+      })
+    }
+    return { success: true as const, data: _result9.value }
   })
 
 export const copyClassSubjects = authServerFn
@@ -266,18 +255,16 @@ export const copyClassSubjects = authServerFn
 
     const { sourceClassId, targetClassId, overwrite } = data
 
-    return (await dbCopyClassSubjects(sourceClassId, targetClassId, { overwrite })).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'class_subjects',
-          recordId: targetClassId,
-          newValues: { sourceClassId, count: value.length },
-        })
-        return { success: true as const, data: { count: value.length } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la copie des matières' }),
-    )
+    const _result10 = await dbCopyClassSubjects(sourceClassId, targetClassId, { overwrite })
+    if (R.isFailure(_result10))
+      return { success: false as const, error: 'Erreur lors de la copie des matières' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'class_subjects',
+      recordId: targetClassId,
+      newValues: { sourceClassId, count: _result10.value.length },
+    })
+    return { success: true as const, data: { count: _result10.value.length } }
   })

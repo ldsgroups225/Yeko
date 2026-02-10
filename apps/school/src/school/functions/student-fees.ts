@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   createStudentFee,
   createStudentFeesBulk,
@@ -58,10 +59,9 @@ export const getStudentFeesList = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getStudentFees(filters ?? {})
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -79,10 +79,9 @@ export const getStudentFeesDetails = authServerFn
       return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getStudentFeesWithDetails(data.studentId, schoolYearId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -100,10 +99,9 @@ export const getStudentFeeSummaryData = authServerFn
       return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getStudentFeeSummary(data.studentId, schoolYearId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -116,10 +114,9 @@ export const getStudentFee = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getStudentFeeById(studentFeeId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -132,10 +129,9 @@ export const createNewStudentFee = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await createStudentFee(data)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -148,10 +144,9 @@ export const bulkCreateStudentFees = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await createStudentFeesBulk(data.fees)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -165,10 +160,9 @@ export const waiveExistingStudentFee = authServerFn
 
     const { school } = context
     const result = await waiveStudentFee(data.studentFeeId, school.userId, data.reason)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -186,8 +180,7 @@ export const getStudentsWithBalance = authServerFn
       return { success: false as const, error: 'Année scolaire non sélectionnée' }
 
     const result = await getStudentsWithOutstandingBalance(school.schoolId, schoolYearId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })

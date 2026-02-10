@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   getMessageDetailsQuery,
   getMessageTemplatesQuery,
@@ -24,7 +25,7 @@ export const getTeacherMessages = createServerFn()
       pageSize: data.pageSize,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         messages: [],
         total: 0,
@@ -75,7 +76,7 @@ export const sendMessage = createServerFn()
       attachments: data.attachments,
     })
 
-    if (messageResult.isErr()) {
+    if (R.isFailure(messageResult)) {
       return {
         success: false,
         error: messageResult.error.message,
@@ -103,7 +104,7 @@ export const getMessageDetails = createServerFn()
       teacherId: data.teacherId,
     })
 
-    if (messageResult.isErr() || !messageResult.value) {
+    if (R.isFailure(messageResult) || !messageResult.value) {
       return { message: null }
     }
 
@@ -158,7 +159,7 @@ export const markMessageRead = createServerFn()
       teacherId: data.teacherId,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         success: false,
         error: result.error.message,
@@ -183,7 +184,7 @@ export const getMessageTemplates = createServerFn()
       category: data.category,
     })
 
-    if (templatesResult.isErr()) {
+    if (R.isFailure(templatesResult)) {
       return { templates: [] }
     }
 
@@ -219,7 +220,7 @@ export const searchParents = createServerFn()
       classId: data.classId,
     })
 
-    if (parentsResult.isErr()) {
+    if (R.isFailure(parentsResult)) {
       return []
     }
 

@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 /**
  * Security Testing: Section 6
  * Authorization, Access Control, and Input Validation Tests
@@ -37,21 +38,21 @@ describe('6.1 Authorization & Access Control', () => {
     const db = getDb()
 
     // Create test schools
-    schoolA = (await createSchool({
+    schoolA = R.unwrap(await createSchool({
       name: 'School A',
       code: 'SA001',
       email: 'schoola@test.com',
       phone: '+1111111111',
       status: 'active',
-    }))._unsafeUnwrap()
+    }))
 
-    schoolB = (await createSchool({
+    schoolB = R.unwrap(await createSchool({
       name: 'School B',
       code: 'SB001',
       email: 'schoolb@test.com',
       phone: '+2222222222',
       status: 'active',
-    }))._unsafeUnwrap()
+    }))
 
     // Verify database is accessible
     const tracks = await db.select().from(grades).limit(1)
@@ -71,7 +72,7 @@ describe('6.1 Authorization & Access Control', () => {
   describe('school Access Control', () => {
     test('should allow access to own school data', async () => {
       // User from School A accessing School A data
-      const result = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ limit: 100 }))
 
       expect(result).toBeDefined()
       expect(Array.isArray(result.schools || result)).toBe(true)
@@ -92,7 +93,7 @@ describe('6.1 Authorization & Access Control', () => {
     })
 
     test('should not expose sensitive school data in list', async () => {
-      const result = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ limit: 100 }))
       const schoolList = Array.isArray(result) ? result : result.schools
 
       if (schoolList && schoolList.length > 0) {
@@ -118,13 +119,13 @@ describe('6.1 Authorization & Access Control', () => {
   describe('role-Based Access', () => {
     test('should validate admin role permissions', async () => {
       // Admin should be able to create schools
-      const newSchool = (await createSchool({
+      const newSchool = R.unwrap(await createSchool({
         name: 'Admin Created School',
         code: 'ACS001',
         email: 'admin@test.com',
         phone: '+3333333333',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(newSchool).toBeDefined()
       expect(newSchool.id).toBeDefined()
@@ -135,14 +136,14 @@ describe('6.1 Authorization & Access Control', () => {
 
     test('should validate teacher role permissions', async () => {
       // Teacher should be able to read school data
-      const result = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ limit: 100 }))
 
       expect(result).toBeDefined()
     })
 
     test('should validate student role permissions', async () => {
       // Student should have read-only access
-      const result = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ limit: 100 }))
 
       expect(result).toBeDefined()
       // Student should not be able to modify
@@ -150,7 +151,7 @@ describe('6.1 Authorization & Access Control', () => {
 
     test('should validate parent role permissions', async () => {
       // Parent should have restricted access
-      const result = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ limit: 100 }))
 
       expect(result).toBeDefined()
     })
@@ -189,19 +190,19 @@ describe('6.1 Authorization & Access Control', () => {
       const trackId = tracks[0]!.trackId
 
       // Create grades for testing
-      const grade1 = (await createGrade({
+      const grade1 = R.unwrap(await createGrade({
         name: 'Grade 1 - School A',
         code: 'G1SA',
         order: 1,
         trackId,
-      }))._unsafeUnwrap()
+      }))
 
-      const grade2 = (await createGrade({
+      const grade2 = R.unwrap(await createGrade({
         name: 'Grade 1 - School B',
         code: 'G1SB',
         order: 1,
         trackId,
-      }))._unsafeUnwrap()
+      }))
 
       // Verify grades are isolated
       expect(grade1.id).not.toBe(grade2.id)
@@ -240,7 +241,7 @@ describe('6.1 Authorization & Access Control', () => {
     test('should reject unauthenticated requests', async () => {
       // In a real scenario, this would test API endpoint authentication
       // For now, verify the query functions work with valid context
-      const result = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ limit: 100 }))
 
       expect(result).toBeDefined()
     })
@@ -258,7 +259,7 @@ describe('6.1 Authorization & Access Control', () => {
     test('should reject expired tokens', async () => {
       // Token expiration would be handled at API layer
       // Verify database queries are stateless
-      const result = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ limit: 100 }))
 
       expect(result).toBeDefined()
     })
@@ -323,13 +324,13 @@ describe('6.2 Input Validation & Sanitization', () => {
       const maliciousInput = '\'; DROP TABLE schools; --'
 
       // Attempt to create school with malicious input
-      const result = (await createSchool({
+      const result = R.unwrap(await createSchool({
         name: maliciousInput,
         code: 'TEST001',
         email: 'test@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       // Should create successfully with escaped input
       expect(result).toBeDefined()
@@ -364,13 +365,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should escape special characters in input', async () => {
       const specialChars = 'School "Test" & <Script>'
 
-      const result = (await createSchool({
+      const result = R.unwrap(await createSchool({
         name: specialChars,
         code: 'SPEC001',
         email: 'special@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(result.name).toBe(specialChars)
 
@@ -381,13 +382,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should handle unicode characters safely', async () => {
       const unicodeInput = 'École Française 学校 مدرسة'
 
-      const result = (await createSchool({
+      const result = R.unwrap(await createSchool({
         name: unicodeInput,
         code: 'UNI001',
         email: 'unicode@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(result.name).toBe(unicodeInput)
 
@@ -396,19 +397,19 @@ describe('6.2 Input Validation & Sanitization', () => {
     })
 
     test('should prevent SQL injection in update operations', async () => {
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'Original Name',
         code: 'UPD001',
         email: 'update@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       const maliciousUpdate = '\'; DROP TABLE schools; --'
 
-      const updated = (await updateSchool(school.id, {
+      const updated = R.unwrap(await updateSchool(school.id, {
         name: maliciousUpdate,
-      }))._unsafeUnwrap()
+      }))
 
       expect(updated.name).toBe(maliciousUpdate)
 
@@ -422,13 +423,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     })
 
     test('should prevent SQL injection in delete operations', async () => {
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'Delete Test',
         code: 'DEL001',
         email: 'delete@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       // Delete with valid ID
       await deleteSchool(school.id)
@@ -563,13 +564,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should sanitize HTML in school name', async () => {
       const xssPayload = '<script>alert("XSS")</script>'
 
-      const result = (await createSchool({
+      const result = R.unwrap(await createSchool({
         name: xssPayload,
         code: 'XSS001',
         email: 'xss@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       // Should store as-is (sanitization happens at UI layer)
       expect(result.name).toBe(xssPayload)
@@ -581,13 +582,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should sanitize event handlers in input', async () => {
       const xssPayload = 'School" onload="alert(1)'
 
-      const result = (await createSchool({
+      const result = R.unwrap(await createSchool({
         name: xssPayload,
         code: 'XSS002',
         email: 'xss2@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(result.name).toBe(xssPayload)
 
@@ -598,13 +599,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should sanitize data attributes', async () => {
       const xssPayload = 'School" data-x="y'
 
-      const result = (await createSchool({
+      const result = R.unwrap(await createSchool({
         name: xssPayload,
         code: 'XSS003',
         email: 'xss3@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(result.name).toBe(xssPayload)
 
@@ -615,13 +616,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should handle encoded XSS attempts', async () => {
       const encodedXss = '&lt;script&gt;alert(1)&lt;/script&gt;'
 
-      const result = (await createSchool({
+      const result = R.unwrap(await createSchool({
         name: encodedXss,
         code: 'XSS004',
         email: 'xss4@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(result.name).toBe(encodedXss)
 
@@ -634,13 +635,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should validate CSRF tokens on state-changing operations', async () => {
       // CSRF token validation would happen at API layer
       // Verify database operations are idempotent
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'CSRF Test',
         code: 'CSRF001',
         email: 'csrf@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(school).toBeDefined()
 
@@ -651,7 +652,7 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should enforce same-site cookie policy', async () => {
       // Cookie policy is set at API layer
       // Verify database operations work correctly
-      const result = (await getSchools({ limit: 100 }))._unsafeUnwrap()
+      const result = R.unwrap(await getSchools({ limit: 100 }))
 
       expect(result).toBeDefined()
     })
@@ -671,13 +672,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should validate file type on upload', async () => {
       // File upload validation would happen at API layer
       // Verify database can store file metadata safely
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'File Upload Test',
         code: 'FILE001',
         email: 'file@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(school).toBeDefined()
 
@@ -690,13 +691,13 @@ describe('6.2 Input Validation & Sanitization', () => {
       // Verify database handles large data safely
       const largeData = 'x'.repeat(10000)
 
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: largeData,
         code: 'LARGE001',
         email: 'large@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(school).toBeDefined()
 
@@ -707,13 +708,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should reject malicious file types', async () => {
       // File type validation at API layer
       // Verify database doesn't execute uploaded content
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'Malicious File Test',
         code: 'MAL001',
         email: 'malicious@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(school).toBeDefined()
 
@@ -724,13 +725,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     test('should scan files for viruses', async () => {
       // Virus scanning would be done at API layer
       // Verify database stores file metadata safely
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'Virus Scan Test',
         code: 'VIRUS001',
         email: 'virus@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(school).toBeDefined()
 
@@ -741,13 +742,13 @@ describe('6.2 Input Validation & Sanitization', () => {
 
   describe('data Type Validation', () => {
     test('should validate string fields', async () => {
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'String Test',
         code: 'STR001',
         email: 'string@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(typeof school.name).toBe('string')
       expect(typeof school.code).toBe('string')
@@ -779,13 +780,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     })
 
     test('should validate date fields', async () => {
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'Date Test',
         code: 'DATE001',
         email: 'date@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(school.createdAt).toBeInstanceOf(Date)
       expect(school.updatedAt).toBeInstanceOf(Date)
@@ -795,13 +796,13 @@ describe('6.2 Input Validation & Sanitization', () => {
     })
 
     test('should validate enum fields', async () => {
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'Enum Test',
         code: 'ENUM001',
         email: 'enum@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(['active', 'inactive']).toContain(school.status)
 
@@ -812,13 +813,13 @@ describe('6.2 Input Validation & Sanitization', () => {
 
   describe('constraint Validation', () => {
     test('should enforce unique constraints', async () => {
-      const school1 = (await createSchool({
+      const school1 = R.unwrap(await createSchool({
         name: 'Unique Test 1',
         code: 'UNIQUE001',
         email: 'unique1@test.com',
         phone: '+1111111111',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       try {
         // Attempt to create school with same code
@@ -875,13 +876,13 @@ describe('6.2 Input Validation & Sanitization', () => {
 
     test('should enforce check constraints', async () => {
       // Check constraints would be defined in schema
-      const school = (await createSchool({
+      const school = R.unwrap(await createSchool({
         name: 'Check Test',
         code: 'CHECK001',
         email: 'check@test.com',
         phone: '+1234567890',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       expect(['active', 'inactive']).toContain(school.status)
 

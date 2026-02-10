@@ -98,10 +98,12 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
 
   const mutation = useMutation({
     mutationKey: isEditing ? schoolMutationKeys.classes.update : schoolMutationKeys.classes.create,
-    mutationFn: (data: ClassFormData) =>
-      isEditing
-        ? updateClass({ data: { id: classData!.class.id, updates: data } })
-        : createClass({ data }),
+    mutationFn: async (data: ClassFormData) => {
+      if (isEditing) {
+        return updateClass({ data: { id: classData!.class.id, updates: data } })
+      }
+      return createClass({ data })
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classes'] })
       toast.success(isEditing ? t.classes.updateSuccess() : t.classes.createSuccess())

@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   getCurrentTermForSchoolYear,
   submitStudentGrades,
@@ -28,7 +29,7 @@ export const submitGrades = createServerFn({ method: 'POST' })
     // Get current term for the school year
     const currentTermResult = await getCurrentTermForSchoolYear(data.schoolYearId)
 
-    if (currentTermResult.isErr() || !currentTermResult.value) {
+    if (R.isFailure(currentTermResult) || !currentTermResult.value) {
       return { success: false, error: 'No term found for current school year' }
     }
 
@@ -45,7 +46,7 @@ export const submitGrades = createServerFn({ method: 'POST' })
       gradeType: data.gradeType,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         success: false,
         error: result.error.message,

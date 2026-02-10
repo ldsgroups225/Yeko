@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getTeacherNotificationsQuery } from '@repo/data-ops/queries/teacher-app'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
@@ -18,7 +19,7 @@ export const getTeacherNotifications = createServerFn()
       limit: data.limit,
     })
 
-    if (notificationsResult.isErr()) {
+    if (R.isFailure(notificationsResult)) {
       return {
         notifications: [],
         unreadCount: 0,

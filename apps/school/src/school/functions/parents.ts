@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import * as parentQueries from '@repo/data-ops/queries/parents'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
@@ -62,10 +63,9 @@ export const getParents = authServerFn
     await requirePermission('students', 'view')
 
     const result = await parentQueries.getParents(school.schoolId, data)
-    return result.match(
-      value => ({ success: true as const, data: value }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 export const getParentById = authServerFn
@@ -77,10 +77,9 @@ export const getParentById = authServerFn
     await requirePermission('students', 'view')
 
     const result = await parentQueries.getParentById(id)
-    return result.match(
-      value => ({ success: true as const, data: value }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 export const createParent = authServerFn
@@ -93,20 +92,18 @@ export const createParent = authServerFn
     await requirePermission('students', 'create')
 
     const result = await parentQueries.createParent(data)
-    return result.match(
-      async (parent) => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'create',
-          tableName: 'parents',
-          recordId: parent.id,
-          newValues: data,
-        })
-        return { success: true as const, data: parent }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'create',
+      tableName: 'parents',
+      recordId: result.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: result.value }
   })
 
 export const updateParent = authServerFn
@@ -124,20 +121,18 @@ export const updateParent = authServerFn
     await requirePermission('students', 'edit')
 
     const result = await parentQueries.updateParent(data.id, data.updates)
-    return result.match(
-      async (parent) => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'update',
-          tableName: 'parents',
-          recordId: data.id,
-          newValues: data.updates,
-        })
-        return { success: true as const, data: parent }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'update',
+      tableName: 'parents',
+      recordId: data.id,
+      newValues: data.updates,
+    })
+    return { success: true as const, data: result.value }
   })
 
 export const deleteParent = authServerFn
@@ -150,19 +145,17 @@ export const deleteParent = authServerFn
     await requirePermission('students', 'delete')
 
     const result = await parentQueries.deleteParent(id)
-    return result.match(
-      async () => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'delete',
-          tableName: 'parents',
-          recordId: id,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'delete',
+      tableName: 'parents',
+      recordId: id,
+    })
+    return { success: true as const, data: { success: true } }
   })
 
 export const linkParentToStudent = authServerFn
@@ -175,23 +168,21 @@ export const linkParentToStudent = authServerFn
     await requirePermission('students', 'edit')
 
     const result = await parentQueries.linkParentToStudent(data)
-    return result.match(
-      async (link) => {
-        if (!link)
-          return { success: false as const, error: 'Lien parent-étudiant échoué' }
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
 
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'create',
-          tableName: 'student_parents',
-          recordId: link.id,
-          newValues: data,
-        })
-        return { success: true as const, data: link }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (!result.value)
+      return { success: false as const, error: 'Lien parent-étudiant échoué' }
+
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'create',
+      tableName: 'student_parents',
+      recordId: result.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: result.value }
   })
 
 export const unlinkParentFromStudent = authServerFn
@@ -209,19 +200,17 @@ export const unlinkParentFromStudent = authServerFn
     await requirePermission('students', 'edit')
 
     const result = await parentQueries.unlinkParentFromStudent(data.studentId, data.parentId)
-    return result.match(
-      async () => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'delete',
-          tableName: 'student_parents',
-          recordId: `${data.studentId}-${data.parentId}`,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'delete',
+      tableName: 'student_parents',
+      recordId: `${data.studentId}-${data.parentId}`,
+    })
+    return { success: true as const, data: { success: true } }
   })
 
 export const autoMatchParents = authServerFn.handler(async ({ context }) => {
@@ -232,10 +221,9 @@ export const autoMatchParents = authServerFn.handler(async ({ context }) => {
   await requirePermission('students', 'edit')
 
   const result = await parentQueries.autoMatchParents(school.schoolId)
-  return result.match(
-    value => ({ success: true as const, data: value }),
-    error => ({ success: false as const, error: error.message }),
-  )
+  if (R.isFailure(result))
+    return { success: false as const, error: result.error.message }
+  return { success: true as const, data: result.value }
 })
 
 export const sendParentInvitation = authServerFn
@@ -248,18 +236,16 @@ export const sendParentInvitation = authServerFn
     await requirePermission('students', 'edit')
 
     const result = await parentQueries.sendParentInvitation(parentId, school.schoolId)
-    return result.match(
-      async (value) => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'update',
-          tableName: 'parents',
-          recordId: parentId,
-          newValues: { invitationStatus: 'sent' },
-        })
-        return { success: true as const, data: value }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'update',
+      tableName: 'parents',
+      recordId: parentId,
+      newValues: { invitationStatus: 'sent' },
+    })
+    return { success: true as const, data: result.value }
   })

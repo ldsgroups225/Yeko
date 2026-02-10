@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { getFiscalYearsBySchool, updateFiscalYear } from '@repo/data-ops/queries/school-admin/fiscal-years'
 import { z } from 'zod'
@@ -9,10 +10,10 @@ export const getFiscalYears = authServerFn.handler(async ({ context }) => {
     return { success: false as const, error: 'Établissement non sélectionné' }
 
   await requirePermission('finance', 'view')
-  return (await getFiscalYearsBySchool(context.school.schoolId)).match(
-    result => ({ success: true as const, data: result }),
-    _ => ({ success: false as const, error: 'Erreur lors de la récupération des années fiscales' }),
-  )
+  const _result1 = await getFiscalYearsBySchool(context.school.schoolId)
+  if (R.isFailure(_result1))
+    return { success: false as const, error: 'Erreur lors de la récupération des années fiscales' }
+  return { success: true as const, data: _result1.value }
 })
 
 export const closeFiscalYear = authServerFn
@@ -24,22 +25,20 @@ export const closeFiscalYear = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('finance', 'edit')
 
-    return (await updateFiscalYear(data.id, schoolId, {
+    const _result2 = await updateFiscalYear(data.id, schoolId, {
       status: 'closed',
       closedAt: new Date(),
       closedBy: userId,
-    })).match(
-      async (fiscalYear) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'fiscal_years',
-          recordId: data.id,
-          newValues: { status: 'closed' },
-        })
-        return { success: true as const, data: fiscalYear }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la clôture de l\'année fiscale' }),
-    )
+    })
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la clôture de l\'année fiscale' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'fiscal_years',
+      recordId: data.id,
+      newValues: { status: 'closed' },
+    })
+    return { success: true as const, data: _result2.value }
   })

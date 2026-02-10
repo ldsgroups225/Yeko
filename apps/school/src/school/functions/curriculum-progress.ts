@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import * as progressQueries from '@repo/data-ops/queries/curriculum-progress'
 import { z } from 'zod'
 import {
@@ -24,10 +25,10 @@ export const getClassSessions = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getClassSessions(data)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des sessions' }),
-    )
+    const _result1 = await progressQueries.getClassSessions(data)
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des sessions' }
+    return { success: true as const, data: _result1.value }
   })
 
 export const getClassSession = authServerFn
@@ -36,10 +37,10 @@ export const getClassSession = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getClassSessionById(data.id)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la session' }),
-    )
+    const _result2 = await progressQueries.getClassSessionById(data.id)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération de la session' }
+    return { success: true as const, data: _result2.value }
   })
 
 export const createClassSession = authServerFn
@@ -48,13 +49,13 @@ export const createClassSession = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.createClassSession({
+    const _result3 = await progressQueries.createClassSession({
       id: crypto.randomUUID(),
       ...data,
-    })).match(
-      session => ({ success: true as const, data: session }),
-      _ => ({ success: false as const, error: 'Erreur lors de la création de la session' }),
-    )
+    })
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la création de la session' }
+    return { success: true as const, data: _result3.value }
   })
 
 export const updateClassSession = authServerFn
@@ -64,10 +65,10 @@ export const updateClassSession = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { id, ...updateData } = data
-    return (await progressQueries.updateClassSession(id, updateData)).match(
-      session => ({ success: true as const, data: session }),
-      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la session' }),
-    )
+    const _result4 = await progressQueries.updateClassSession(id, updateData)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de la mise à jour de la session' }
+    return { success: true as const, data: _result4.value }
   })
 
 export const markSessionCompleted = authServerFn
@@ -77,10 +78,10 @@ export const markSessionCompleted = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { id, ...completionData } = data
-    return (await progressQueries.markSessionCompleted(id, completionData)).match(
-      session => ({ success: true as const, data: session }),
-      _ => ({ success: false as const, error: 'Erreur lors de la validation de la session' }),
-    )
+    const _result5 = await progressQueries.markSessionCompleted(id, completionData)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la validation de la session' }
+    return { success: true as const, data: _result5.value }
   })
 
 export const deleteClassSession = authServerFn
@@ -89,10 +90,10 @@ export const deleteClassSession = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.deleteClassSession(data.id)).match(
-      _ => ({ success: true as const, data: { success: true } }),
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la session' }),
-    )
+    const _result6 = await progressQueries.deleteClassSession(data.id)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la suppression de la session' }
+    return { success: true as const, data: { success: true } }
   })
 
 // ============================================
@@ -108,10 +109,10 @@ export const getChapterCompletions = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getChapterCompletions(data)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des chapitres terminés' }),
-    )
+    const _result7 = await progressQueries.getChapterCompletions(data)
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors de la récupération des chapitres terminés' }
+    return { success: true as const, data: _result7.value }
   })
 
 export const markChapterComplete = authServerFn
@@ -121,21 +122,19 @@ export const markChapterComplete = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     // Check if already completed
-    const isCompleted = (await progressQueries.isChapterCompleted(data.classId, data.chapterId)).match(
-      val => val,
-      _ => false,
-    )
+    const _result8 = await progressQueries.isChapterCompleted(data.classId, data.chapterId)
+    const isCompleted = R.isFailure(_result8) ? false : _result8.value
     if (isCompleted) {
       return { success: false as const, error: 'Chapitre déjà marqué comme terminé' }
     }
 
-    return (await progressQueries.markChapterComplete({
+    const _result9 = await progressQueries.markChapterComplete({
       id: crypto.randomUUID(),
       ...data,
-    })).match(
-      completion => ({ success: true as const, data: completion }),
-      _ => ({ success: false as const, error: 'Erreur lors de la validation du chapitre' }),
-    )
+    })
+    if (R.isFailure(_result9))
+      return { success: false as const, error: 'Erreur lors de la validation du chapitre' }
+    return { success: true as const, data: _result9.value }
   })
 
 export const unmarkChapterComplete = authServerFn
@@ -144,10 +143,10 @@ export const unmarkChapterComplete = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.unmarkChapterComplete(data.classId, data.chapterId)).match(
-      _ => ({ success: true as const, data: { success: true } }),
-      _ => ({ success: false as const, error: 'Erreur lors de l\'annulation du chapitre' }),
-    )
+    const _result10 = await progressQueries.unmarkChapterComplete(data.classId, data.chapterId)
+    if (R.isFailure(_result10))
+      return { success: false as const, error: 'Erreur lors de l\'annulation du chapitre' }
+    return { success: true as const, data: { success: true } }
   })
 
 export const isChapterCompleted = authServerFn
@@ -156,10 +155,10 @@ export const isChapterCompleted = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.isChapterCompleted(data.classId, data.chapterId)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la vérification du chapitre' }),
-    )
+    const _result11 = await progressQueries.isChapterCompleted(data.classId, data.chapterId)
+    if (R.isFailure(_result11))
+      return { success: false as const, error: 'Erreur lors de la vérification du chapitre' }
+    return { success: true as const, data: _result11.value }
   })
 
 // ============================================
@@ -172,10 +171,10 @@ export const getCurriculumProgress = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getCurriculumProgress(data)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la progression' }),
-    )
+    const _result12 = await progressQueries.getCurriculumProgress(data)
+    if (R.isFailure(_result12))
+      return { success: false as const, error: 'Erreur lors de la récupération de la progression' }
+    return { success: true as const, data: _result12.value }
   })
 
 export const getProgressOverview = authServerFn
@@ -184,10 +183,10 @@ export const getProgressOverview = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getProgressOverview(data)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la vue d\'ensemble' }),
-    )
+    const _result13 = await progressQueries.getProgressOverview(data)
+    if (R.isFailure(_result13))
+      return { success: false as const, error: 'Erreur lors de la récupération de la vue d\'ensemble' }
+    return { success: true as const, data: _result13.value }
   })
 
 export const getClassesBehindSchedule = authServerFn
@@ -196,10 +195,10 @@ export const getClassesBehindSchedule = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getClassesBehindSchedule(data)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des classes en retard' }),
-    )
+    const _result14 = await progressQueries.getClassesBehindSchedule(data)
+    if (R.isFailure(_result14))
+      return { success: false as const, error: 'Erreur lors de la récupération des classes en retard' }
+    return { success: true as const, data: _result14.value }
   })
 
 export const recalculateProgress = authServerFn
@@ -218,13 +217,13 @@ export const recalculateProgress = authServerFn
       termEndDate: new Date(data.termEndDate),
     })
 
-    if (progressResult.isErr()) {
+    if (R.isFailure(progressResult)) {
       return { success: false as const, error: 'Erreur lors du calcul de la progression' }
     }
     const progress = progressResult.value
 
     // Upsert progress record
-    return (await progressQueries.upsertCurriculumProgress({
+    const _result15 = await progressQueries.upsertCurriculumProgress({
       id: crypto.randomUUID(),
       classId: data.classId,
       subjectId: data.subjectId,
@@ -237,10 +236,10 @@ export const recalculateProgress = authServerFn
       variance: String(progress.variance),
       status: progress.status,
       lastChapterCompletedAt: progress.completedChapters > 0 ? new Date() : null,
-    })).match(
-      record => ({ success: true as const, data: record }),
-      _ => ({ success: false as const, error: 'Erreur lors de l\'enregistrement de la progression' }),
-    )
+    })
+    if (R.isFailure(_result15))
+      return { success: false as const, error: 'Erreur lors de l\'enregistrement de la progression' }
+    return { success: true as const, data: _result15.value }
   })
 
 // ============================================
@@ -253,10 +252,10 @@ export const getProgressStatsByStatus = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getProgressStatsByStatus(data.schoolId, data.termId)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des statistiques' }),
-    )
+    const _result16 = await progressQueries.getProgressStatsByStatus(data.schoolId, data.termId)
+    if (R.isFailure(_result16))
+      return { success: false as const, error: 'Erreur lors de la récupération des statistiques' }
+    return { success: true as const, data: _result16.value }
   })
 
 export const getProgressBySubject = authServerFn
@@ -265,10 +264,10 @@ export const getProgressBySubject = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getProgressBySubject(data.schoolId, data.termId)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la progression par matière' }),
-    )
+    const _result17 = await progressQueries.getProgressBySubject(data.schoolId, data.termId)
+    if (R.isFailure(_result17))
+      return { success: false as const, error: 'Erreur lors de la récupération de la progression par matière' }
+    return { success: true as const, data: _result17.value }
   })
 
 export const getTeacherProgressSummary = authServerFn
@@ -277,8 +276,8 @@ export const getTeacherProgressSummary = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    return (await progressQueries.getTeacherProgressSummary(data.teacherId, data.termId)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération du résumé par enseignant' }),
-    )
+    const _result18 = await progressQueries.getTeacherProgressSummary(data.teacherId, data.termId)
+    if (R.isFailure(_result18))
+      return { success: false as const, error: 'Erreur lors de la récupération du résumé par enseignant' }
+    return { success: true as const, data: _result18.value }
   })

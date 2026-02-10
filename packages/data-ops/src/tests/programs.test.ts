@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { describe, expect, test, vi } from 'vitest'
 import {
   getProgramTemplateById,
@@ -30,27 +31,27 @@ vi.mock('../drizzle/db', () => ({
 
 describe('program Queries', () => {
   test('should get program templates', async () => {
-    const result = (await getProgramTemplates({}))._unsafeUnwrap()
+    const result = R.unwrap(await getProgramTemplates({}))
     expect(result).toBeDefined()
   })
 
   test('should get program template by id', async () => {
-    const result = (await getProgramTemplateById('test-id'))._unsafeUnwrap()
+    const result = R.unwrap(await getProgramTemplateById('test-id'))
     expect(result).toBeDefined()
   })
 
   test('should publish a program', async () => {
     // Mock implementation details would go here
     // For now we just check if the function exists and runs
-    expect((await publishProgram('test-id')).isErr()).toBe(true)
+    expect(R.isFailure(await publishProgram('test-id'))).toBe(true)
   })
 
   test('should get program versions', async () => {
-    const result = (await getProgramVersions('test-id'))._unsafeUnwrap()
+    const result = R.unwrap(await getProgramVersions('test-id'))
     expect(result).toBeDefined()
   })
 
   test('should restore a program version', async () => {
-    expect((await restoreProgramVersion('version-id')).isErr()).toBe(true)
+    expect(R.isFailure(await restoreProgramVersion('version-id'))).toBe(true)
   })
 })

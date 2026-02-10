@@ -213,8 +213,8 @@ function AttendancePage() {
       return
 
     const records = rosterData
-      .filter(s => !s.attendance)
-      .map(s => ({
+      .filter((s: StudentAttendance) => !s.attendance)
+      .map((s: StudentAttendance) => ({
         enrollmentId: s.enrollmentId,
         status: 'present' as const,
       }))
@@ -332,7 +332,7 @@ function AttendancePage() {
                   )
                 : (
                     <div className="space-y-2">
-                      {rosterData.map(student => (
+                      {rosterData.map((student: StudentAttendance) => (
                         <StudentRow
                           key={student.studentId}
                           student={student}

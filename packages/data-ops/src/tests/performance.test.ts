@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getDb } from '@repo/data-ops/database/setup'
 /**
  * Performance Testing: Section 5.1
@@ -76,13 +77,13 @@ describe('query performance', () => {
 
     // Create test data for performance testing
     // Create a school
-    const schoolResult = (await createSchool({
+    const schoolResult = R.unwrap(await createSchool({
       name: 'Performance Test School',
       code: 'PTS001',
       email: 'perf@test.com',
       phone: '+1234567890',
       status: 'active',
-    }))._unsafeUnwrap()
+    }))
     testSchoolId = schoolResult.id
 
     // Get or create track

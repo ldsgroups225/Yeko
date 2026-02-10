@@ -9,14 +9,15 @@
  * Following vitest-dom principles with React Testing Library
  */
 
+import type { Grade } from '@repo/data-ops/drizzle/core-schema'
+import { R } from '@praha/byethrow'
 import * as dataOps from '@repo/data-ops/queries/catalogs'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ok } from 'neverthrow'
 import * as React from 'react'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 
-const mockOk = (val: any) => ok(val)
+const mockOk = (val: any) => R.succeed(val)
 
 // Mock data-ops package
 vi.mock('@repo/data-ops/queries/catalogs', () => ({
@@ -82,7 +83,7 @@ describe('e2E: Catalog Management Workflows', () => {
             ...formData,
             trackId: 'track-1',
           } as any)
-          if (result.isOk()) {
+          if (R.isSuccess(result)) {
             setGrades([...grades, result.value])
             setShowForm(false)
             setFormData({ name: '', code: '', order: 0 })
@@ -196,7 +197,10 @@ describe('e2E: Catalog Management Workflows', () => {
           if (index === 0)
             return
           const newGrades = [...grades]
-            ;[newGrades[index - 1], newGrades[index]] = [newGrades[index], newGrades[index - 1]]
+          const gradeA = newGrades[index - 1] as Grade
+          const gradeB = newGrades[index] as Grade
+          newGrades[index - 1] = gradeB
+          newGrades[index] = gradeA
           setGrades(newGrades)
         }
 
@@ -381,7 +385,7 @@ describe('e2E: Catalog Management Workflows', () => {
             ...formData,
             trackId: 'track-1',
           } as any)
-          if (result.isOk()) {
+          if (R.isSuccess(result)) {
             setSeries([...series, result.value])
             setShowForm(false)
           }

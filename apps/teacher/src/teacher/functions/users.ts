@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getTeacherSchoolsCount } from '@repo/data-ops/queries/school-admin/teachers'
 // Placeholder for real DB queries
 // This will be replaced by actual database calls when integrating with backend
@@ -30,7 +31,7 @@ export const getTeacherStats = createServerFn()
       getTeacherSchoolsCount(context.userId),
     ])
 
-    const classes = classesResult.isOk() ? classesResult.value : []
+    const classes = R.isSuccess(classesResult) ? classesResult.value : []
 
     return {
       schoolsCount,

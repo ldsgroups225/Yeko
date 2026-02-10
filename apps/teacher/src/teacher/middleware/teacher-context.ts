@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getFiscalYears, getOpenFiscalYear } from '@repo/data-ops/queries/fiscal-years'
 import { getTeacherByAuthUserId } from '@repo/data-ops/queries/school-admin/teachers'
 import { createServerFn } from '@tanstack/react-start'
@@ -64,12 +65,12 @@ export const getTeacherContext = createServerFn().handler(async (): Promise<Teac
     // If no school year context, try to find the open fiscal year
     if (!schoolYearId) {
       const openYearResult = await getOpenFiscalYear(schoolId)
-      if (openYearResult.isOk() && openYearResult.value) {
+      if (R.isSuccess(openYearResult) && openYearResult.value) {
         schoolYearId = openYearResult.value.schoolYearId
       }
       else {
         const latestYearResult = await getFiscalYears({ schoolId })
-        if (latestYearResult.isOk() && latestYearResult.value.length > 0 && latestYearResult.value[0]) {
+        if (R.isSuccess(latestYearResult) && latestYearResult.value.length > 0 && latestYearResult.value[0]) {
           schoolYearId = latestYearResult.value[0].schoolYearId
         }
       }

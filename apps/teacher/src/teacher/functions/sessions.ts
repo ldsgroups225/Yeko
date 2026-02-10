@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   completeTeacherClassSession,
   createTeacherClassSession,
@@ -23,7 +24,7 @@ export const startSession = createServerFn()
     // Get timetable session details
     const timetableSessionResult = await getTimetableSessionById(data.timetableSessionId)
 
-    if (timetableSessionResult.isErr() || !timetableSessionResult.value) {
+    if (R.isFailure(timetableSessionResult) || !timetableSessionResult.value) {
       return { success: false, error: 'Timetable session not found' }
     }
 
@@ -48,7 +49,7 @@ export const startSession = createServerFn()
       chapterId: data.chapterId,
     })
 
-    if (sessionResult.isErr()) {
+    if (R.isFailure(sessionResult)) {
       return {
         success: false,
         error: sessionResult.error.message,
@@ -78,7 +79,7 @@ export const completeSession = createServerFn({ method: 'POST' })
     // 0. Fetch session details first (needed for schoolId and sync)
     // We need to verify the session exists and get context info
     const sessionResult = await getTeacherClassSessionById(data.sessionId)
-    if (sessionResult.isErr() || !sessionResult.value) {
+    if (R.isFailure(sessionResult) || !sessionResult.value) {
       return { success: false, error: 'Session not found' }
     }
     const session = sessionResult.value
@@ -94,7 +95,7 @@ export const completeSession = createServerFn({ method: 'POST' })
       chapterId: data.chapterId,
     })
 
-    if (updatedResult.isErr()) {
+    if (R.isFailure(updatedResult)) {
       return {
         success: false,
         error: updatedResult.error.message,
@@ -182,7 +183,7 @@ export const updateSessionAttendance = createServerFn()
       studentsAbsent: data.studentsAbsent,
     })
 
-    if (updatedResult.isErr()) {
+    if (R.isFailure(updatedResult)) {
       return {
         success: false,
         error: updatedResult.error.message,
@@ -208,7 +209,7 @@ export const getSessionStudents = createServerFn()
       schoolYearId: data.schoolYearId,
     })
 
-    if (studentsResult.isErr()) {
+    if (R.isFailure(studentsResult)) {
       return { students: [], className: null, subjectName: null }
     }
 
@@ -225,7 +226,7 @@ export const getSessionStudents = createServerFn()
         subjectId: data.subjectId,
       })
 
-      if (infoResult.isOk() && infoResult.value) {
+      if (R.isSuccess(infoResult) && infoResult.value) {
         className = infoResult.value.className ?? null
         subjectName = infoResult.value.subjectName ?? null
       }
@@ -240,7 +241,7 @@ export const getSessionDetails = createServerFn()
   .handler(async ({ data }) => {
     const sessionResult = await getTeacherClassSessionById(data.sessionId)
 
-    if (sessionResult.isErr() || !sessionResult.value) {
+    if (R.isFailure(sessionResult) || !sessionResult.value) {
       return { session: null }
     }
 
@@ -294,7 +295,7 @@ export const getSessionHistory = createServerFn()
       pageSize: data.pageSize,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return {
         sessions: [],
         total: 0,

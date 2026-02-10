@@ -1,5 +1,6 @@
 import type { FormEvent } from 'react'
 import type { CreateSubjectInput, UpdateSubjectInput } from '@/schemas/catalog'
+import { R } from '@praha/byethrow'
 import {
   IconBook,
   IconCircleX,
@@ -207,23 +208,23 @@ function SubjectsCatalog() {
 
     const result = await importSubjectsFromExcel(file)
 
-    await result.match(
-      async (importedSubjects) => {
-        logger.info(`Imported ${importedSubjects.length} subjects from Excel`)
+    if (R.isSuccess(result)) {
+      const importedSubjects = result.value
+      logger.info(`Imported ${importedSubjects.length} subjects from Excel`)
 
-        // Create subjects in batch
-        const subjectsToCreate = importedSubjects
-          .filter(s => s.name && s.category) as CreateSubjectInput[]
+      // Create subjects in batch
+      const subjectsToCreate = importedSubjects
+        .filter(s => s.name && s.category) as CreateSubjectInput[]
 
-        if (subjectsToCreate.length > 0) {
-          await bulkCreateMutation.mutateAsync({ subjects: subjectsToCreate })
-        }
-      },
-      async (error) => {
-        logger.error('Failed to import subjects', error)
-        toast.error('Erreur lors de l\'import du fichier')
-      },
-    )
+      if (subjectsToCreate.length > 0) {
+        await bulkCreateMutation.mutateAsync({ subjects: subjectsToCreate })
+      }
+    }
+    else {
+      const error = result.error
+      logger.error('Failed to import subjects', error)
+      toast.error('Erreur lors de l\'import du fichier')
+    }
 
     if (fileInputRef.current) {
       fileInputRef.current.value = ''

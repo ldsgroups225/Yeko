@@ -184,7 +184,7 @@ export function parseCoefficientsExcel(file: File): Promise<{
       })
     }
 
-    reader.readAsBinaryString(file)
+    reader.readAsArrayBuffer(file)
   })
 }
 

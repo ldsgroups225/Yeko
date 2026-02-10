@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { asc, eq, getDb } from '@repo/data-ops/database/setup'
 import { schools } from '@repo/data-ops/drizzle/core-schema'
 import { teachers } from '@repo/data-ops/drizzle/school-schema'
@@ -33,7 +34,7 @@ export const getCurrentTermFn = createServerFn()
     const { getCurrentTermForSchoolYear } = await import('@repo/data-ops/queries/teacher-app')
     const result = await getCurrentTermForSchoolYear(data.schoolYearId)
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       return null
     }
 

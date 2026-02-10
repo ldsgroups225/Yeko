@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { getSeries as getSeriesQuery } from '@repo/data-ops/queries/catalogs'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'
@@ -9,8 +10,7 @@ export const getSeries = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getSeriesQuery()
-    return result.match(
-      value => ({ success: true as const, data: value }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })

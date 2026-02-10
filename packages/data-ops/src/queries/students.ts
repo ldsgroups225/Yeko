@@ -1,8 +1,8 @@
 import type { BloodType, EnrollmentStatus, Gender, Relationship, StudentInsert, StudentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
+import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm'
-import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { grades, schools, series } from '../drizzle/core-schema'
 import {
@@ -116,7 +116,7 @@ export interface ImportStudentResult {
 
 // ==================== Queries ====================
 
-export function getStudents(filters: StudentFilters): ResultAsync<{
+export async function getStudents(filters: StudentFilters): R.ResultAsync<{
   data: StudentWithDetails[]
   total: number
   page: number
@@ -137,474 +137,511 @@ export function getStudents(filters: StudentFilters): ResultAsync<{
     sortOrder = 'asc',
   } = filters
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const conditions = [eq(students.schoolId, schoolId)]
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const conditions = [eq(students.schoolId, schoolId)]
 
-      if (status) {
-        conditions.push(eq(students.status, status))
-      }
+        if (status) {
+          conditions.push(eq(students.status, status))
+        }
 
-      if (gender) {
-        conditions.push(eq(students.gender, gender))
-      }
+        if (gender) {
+          conditions.push(eq(students.gender, gender))
+        }
 
-      if (search) {
-        conditions.push(
-          or(
-            ilike(students.firstName, `%${search}%`),
-            ilike(students.lastName, `%${search}%`),
-            ilike(students.matricule, `%${search}%`),
-          )!,
-        )
-      }
+        if (search) {
+          conditions.push(
+            or(
+              ilike(students.firstName, `%${search}%`),
+              ilike(students.lastName, `%${search}%`),
+              ilike(students.matricule, `%${search}%`),
+            )!,
+          )
+        }
 
-      // Apply class/grade/year filters
-      if (classId) {
-        conditions.push(eq(enrollments.classId, classId))
-      }
-      if (gradeId) {
-        conditions.push(eq(classes.gradeId, gradeId))
-      }
-      if (schoolYearId) {
-        conditions.push(eq(enrollments.schoolYearId, schoolYearId))
-      }
+        // Apply class/grade/year filters
+        if (classId) {
+          conditions.push(eq(enrollments.classId, classId))
+        }
+        if (gradeId) {
+          conditions.push(eq(classes.gradeId, gradeId))
+        }
+        if (schoolYearId) {
+          conditions.push(eq(enrollments.schoolYearId, schoolYearId))
+        }
 
-      const whereClause = and(...conditions)
+        const whereClause = and(...conditions)
 
-      const offset = (page - 1) * limit
+        const offset = (page - 1) * limit
 
-      // Apply sorting
-      const orderFn = sortOrder === 'desc' ? desc : asc
-      const sortColumn = {
-        name: students.lastName,
-        matricule: students.matricule,
-        dob: students.dob,
-        enrollmentDate: students.createdAt,
-        createdAt: students.createdAt,
-      }[sortBy]
+        // Apply sorting
+        const orderFn = sortOrder === 'desc' ? desc : asc
+        const sortColumn = {
+          name: students.lastName,
+          matricule: students.matricule,
+          dob: students.dob,
+          enrollmentDate: students.createdAt,
+          createdAt: students.createdAt,
+        }[sortBy]
 
-      // Use subquery for parentsCount to avoid complex GROUP BY issues
-      const parentsCountSubquery = sql<number>`(
+        // Use subquery for parentsCount to avoid complex GROUP BY issues
+        const parentsCountSubquery = sql<number>`(
         SELECT COUNT(*)::int FROM ${studentParents} 
         WHERE ${studentParents.studentId} = ${students.id}
       )`.as('parents_count')
 
-      // Use window function for total count
-      const totalCountExpr = sql<number>`COUNT(*) OVER()`.as('total_count')
+        // Use window function for total count
+        const totalCountExpr = sql<number>`COUNT(*) OVER()`.as('total_count')
 
-      const rows = await db
-        .select({
-          student: students,
-          currentClass: {
-            id: classes.id,
-            section: classes.section,
-            gradeName: grades.name,
-            seriesName: series.name,
-          },
-          parentsCount: parentsCountSubquery,
-          enrollmentStatus: enrollments.status,
-          totalCount: totalCountExpr,
-        })
-        .from(students)
-        .leftJoin(
-          enrollments,
-          and(eq(enrollments.studentId, students.id), eq(enrollments.status, 'confirmed')),
-        )
-        .leftJoin(classes, eq(enrollments.classId, classes.id))
-        .leftJoin(grades, eq(classes.gradeId, grades.id))
-        .leftJoin(series, eq(classes.seriesId, series.id))
-        .where(whereClause)
-        .orderBy(orderFn(sortColumn))
-        .limit(limit)
-        .offset(offset)
+        const rows = await db
+          .select({
+            student: students,
+            currentClass: {
+              id: classes.id,
+              section: classes.section,
+              gradeName: grades.name,
+              seriesName: series.name,
+            },
+            parentsCount: parentsCountSubquery,
+            enrollmentStatus: enrollments.status,
+            totalCount: totalCountExpr,
+          })
+          .from(students)
+          .leftJoin(
+            enrollments,
+            and(eq(enrollments.studentId, students.id), eq(enrollments.status, 'confirmed')),
+          )
+          .leftJoin(classes, eq(enrollments.classId, classes.id))
+          .leftJoin(grades, eq(classes.gradeId, grades.id))
+          .leftJoin(series, eq(classes.seriesId, series.id))
+          .where(whereClause)
+          .orderBy(orderFn(sortColumn))
+          .limit(limit)
+          .offset(offset)
 
-      const total = Number(rows[0]?.totalCount || 0)
-      const mappedData: StudentWithDetails[] = rows.map(({ totalCount: _totalCount, ...d }) => ({
-        student: d.student,
-        currentClass: d.currentClass.id
-          ? {
-              id: d.currentClass.id,
-              section: d.currentClass.section,
-              gradeName: d.currentClass.gradeName,
-              seriesName: d.currentClass.seriesName,
-            }
-          : null,
-        parentsCount: d.parentsCount ?? 0,
-        enrollmentStatus: d.enrollmentStatus,
-      }))
+        const total = Number(rows[0]?.totalCount || 0)
+        const mappedData: StudentWithDetails[] = rows.map(({ totalCount: _totalCount, ...d }) => ({
+          student: d.student,
+          currentClass: d.currentClass.id
+            ? {
+                id: d.currentClass.id,
+                section: d.currentClass.section,
+                gradeName: d.currentClass.gradeName,
+                seriesName: d.currentClass.seriesName,
+              }
+            : null,
+          parentsCount: d.parentsCount ?? 0,
+          enrollmentStatus: d.enrollmentStatus,
+        }))
 
-      return { data: mappedData, total, page, totalPages: Math.ceil(total / limit) }
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId: filters.schoolId }))
+        return { data: mappedData, total, page, totalPages: Math.ceil(total / limit) }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId: filters.schoolId })),
+  )
 }
 
-export function getStudentById(id: string): ResultAsync<StudentFullProfile, DatabaseError> {
+export async function getStudentById(id: string): R.ResultAsync<StudentFullProfile, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [student] = await db
-        .select({
-          student: students,
-          currentEnrollment: {
-            id: enrollments.id,
-            classId: enrollments.classId,
-            schoolYearId: enrollments.schoolYearId,
-            status: enrollments.status,
-            enrollmentDate: enrollments.enrollmentDate,
-            rollNumber: enrollments.rollNumber,
-          },
-          currentClass: {
-            id: classes.id,
-            section: classes.section,
-            gradeName: grades.name,
-            seriesName: series.name,
-          },
-        })
-        .from(students)
-        .leftJoin(
-          enrollments,
-          and(eq(enrollments.studentId, students.id), eq(enrollments.status, 'confirmed')),
-        )
-        .leftJoin(classes, eq(enrollments.classId, classes.id))
-        .leftJoin(grades, eq(classes.gradeId, grades.id))
-        .leftJoin(series, eq(classes.seriesId, series.id))
-        .where(eq(students.id, id))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [student] = await db
+          .select({
+            student: students,
+            currentEnrollment: {
+              id: enrollments.id,
+              classId: enrollments.classId,
+              schoolYearId: enrollments.schoolYearId,
+              status: enrollments.status,
+              enrollmentDate: enrollments.enrollmentDate,
+              rollNumber: enrollments.rollNumber,
+            },
+            currentClass: {
+              id: classes.id,
+              section: classes.section,
+              gradeName: grades.name,
+              seriesName: series.name,
+            },
+          })
+          .from(students)
+          .leftJoin(
+            enrollments,
+            and(eq(enrollments.studentId, students.id), eq(enrollments.status, 'confirmed')),
+          )
+          .leftJoin(classes, eq(enrollments.classId, classes.id))
+          .leftJoin(grades, eq(classes.gradeId, grades.id))
+          .leftJoin(series, eq(classes.seriesId, series.id))
+          .where(eq(students.id, id))
 
-      if (!student)
-        throw dbError('NOT_FOUND', getNestedErrorMessage('students', 'notFoundWithId', { id }))
+        if (!student)
+          throw dbError('NOT_FOUND', getNestedErrorMessage('students', 'notFoundWithId', { id }))
 
-      // Get parents
-      const studentParentsList = await db
-        .select({
-          parent: parents,
-          relationship: studentParents.relationship,
-          isPrimary: studentParents.isPrimary,
-          canPickup: studentParents.canPickup,
-          receiveNotifications: studentParents.receiveNotifications,
-        })
-        .from(studentParents)
-        .innerJoin(parents, eq(studentParents.parentId, parents.id))
-        .where(eq(studentParents.studentId, id))
+        // Get parents
+        const studentParentsList = await db
+          .select({
+            parent: parents,
+            relationship: studentParents.relationship,
+            isPrimary: studentParents.isPrimary,
+            canPickup: studentParents.canPickup,
+            receiveNotifications: studentParents.receiveNotifications,
+          })
+          .from(studentParents)
+          .innerJoin(parents, eq(studentParents.parentId, parents.id))
+          .where(eq(studentParents.studentId, id))
 
-      // Get enrollment history
-      const enrollmentHistory = await db
-        .select({
-          enrollment: enrollments,
-          class: {
-            id: classes.id,
-            section: classes.section,
-            gradeName: grades.name,
-            seriesName: series.name,
-          },
-        })
-        .from(enrollments)
-        .innerJoin(classes, eq(enrollments.classId, classes.id))
-        .innerJoin(grades, eq(classes.gradeId, grades.id))
-        .leftJoin(series, eq(classes.seriesId, series.id))
-        .where(eq(enrollments.studentId, id))
-        .orderBy(desc(enrollments.enrollmentDate))
+        // Get enrollment history
+        const enrollmentHistory = await db
+          .select({
+            enrollment: enrollments,
+            class: {
+              id: classes.id,
+              section: classes.section,
+              gradeName: grades.name,
+              seriesName: series.name,
+            },
+          })
+          .from(enrollments)
+          .innerJoin(classes, eq(enrollments.classId, classes.id))
+          .innerJoin(grades, eq(classes.gradeId, grades.id))
+          .leftJoin(series, eq(classes.seriesId, series.id))
+          .where(eq(enrollments.studentId, id))
+          .orderBy(desc(enrollments.enrollmentDate))
 
-      return {
-        ...student.student,
-        parents: studentParentsList,
-        enrollmentHistory,
-      }
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchByIdFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { studentId: id }))
+        return {
+          ...student.student,
+          parents: studentParentsList,
+          enrollmentHistory,
+        }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchByIdFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { studentId: id })),
+  )
 }
 
-export function generateMatricule(schoolId: string, schoolYearId: string): ResultAsync<string, DatabaseError> {
+export async function generateMatricule(schoolId: string, schoolYearId: string): R.ResultAsync<string, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      // Get or create sequence
-      const [sequence] = await db
-        .select()
-        .from(matriculeSequences)
-        .where(
-          and(eq(matriculeSequences.schoolId, schoolId), eq(matriculeSequences.schoolYearId, schoolYearId)),
-        )
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        // Get or create sequence
+        const [sequence] = await db
+          .select()
+          .from(matriculeSequences)
+          .where(
+            and(eq(matriculeSequences.schoolId, schoolId), eq(matriculeSequences.schoolYearId, schoolYearId)),
+          )
 
-      if (!sequence) {
-        // Get school code for prefix
-        const [school] = await db.select().from(schools).where(eq(schools.id, schoolId))
-        const prefix = school?.code?.substring(0, 2).toUpperCase() || 'XX'
+        if (!sequence) {
+          // Get school code for prefix
+          const [school] = await db.select().from(schools).where(eq(schools.id, schoolId))
+          const prefix = school?.code?.substring(0, 2).toUpperCase() || 'XX'
 
-        // Get year from school year
-        const [schoolYear] = await db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId))
-        const year = new Date(schoolYear?.startDate || new Date()).getFullYear().toString().slice(-2)
+          // Get year from school year
+          const [schoolYear] = await db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId))
+          const year = new Date(schoolYear?.startDate || new Date()).getFullYear().toString().slice(-2)
 
-        // Create new sequence
-        await db.insert(matriculeSequences).values({
-          id: crypto.randomUUID(),
-          schoolId,
-          schoolYearId,
-          prefix,
-          lastNumber: 1,
-          format: `${prefix}${year}{sequence:4}`,
-        })
+          // Create new sequence
+          await db.insert(matriculeSequences).values({
+            id: crypto.randomUUID(),
+            schoolId,
+            schoolYearId,
+            prefix,
+            lastNumber: 1,
+            format: `${prefix}${year}{sequence:4}`,
+          })
 
-        return `${prefix}${year}0001`
-      }
+          return `${prefix}${year}0001`
+        }
 
-      // Increment sequence
-      const newNumber = sequence.lastNumber + 1
-      await db
-        .update(matriculeSequences)
-        .set({ lastNumber: newNumber, updatedAt: new Date() })
-        .where(eq(matriculeSequences.id, sequence.id))
+        // Increment sequence
+        const newNumber = sequence.lastNumber + 1
+        await db
+          .update(matriculeSequences)
+          .set({ lastNumber: newNumber, updatedAt: new Date() })
+          .where(eq(matriculeSequences.id, sequence.id))
 
-      // Format matricule
-      const paddedNumber = newNumber.toString().padStart(4, '0')
-      const year = sequence.format.match(/\d{2}/)?.[0] || new Date().getFullYear().toString().slice(-2)
+        // Format matricule
+        const paddedNumber = newNumber.toString().padStart(4, '0')
+        const year = sequence.format.match(/\d{2}/)?.[0] || new Date().getFullYear().toString().slice(-2)
 
-      return `${sequence.prefix}${year}${paddedNumber}`
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'generateMatriculeFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, schoolYearId }))
+        return `${sequence.prefix}${year}${paddedNumber}`
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'generateMatriculeFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, schoolYearId })),
+  )
 }
 
 // ==================== CRUD Operations ====================
 
-export function createStudent(data: CreateStudentInput): ResultAsync<typeof students.$inferSelect, DatabaseError> {
+export async function createStudent(data: CreateStudentInput): R.ResultAsync<typeof students.$inferSelect, DatabaseError> {
   const db = getDb()
   const { schoolId, schoolYearId, ...studentData } = data
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      // Generate matricule if not provided
-      let matricule = data.matricule
-      if (!matricule) {
-        // Use provided school year or fall back to active school year
-        let yearId: string = schoolYearId || ''
-        if (!yearId) {
-          const [activeYear] = await db
-            .select()
-            .from(schoolYears)
-            .where(and(eq(schoolYears.schoolId, schoolId), eq(schoolYears.isActive, true)))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        // Generate matricule if not provided
+        let matricule = data.matricule
+        if (!matricule) {
+          // Use provided school year or fall back to active school year
+          let yearId: string = schoolYearId || ''
+          if (!yearId) {
+            const [activeYear] = await db
+              .select()
+              .from(schoolYears)
+              .where(and(eq(schoolYears.schoolId, schoolId), eq(schoolYears.isActive, true)))
 
-          if (!activeYear) {
-            throw dbError('VALIDATION_ERROR', getNestedErrorMessage('students', 'noActiveSchoolYear'))
+            if (!activeYear) {
+              throw dbError('VALIDATION_ERROR', getNestedErrorMessage('students', 'noActiveSchoolYear'))
+            }
+            yearId = activeYear.id
           }
-          yearId = activeYear.id
+
+          const matriculeResult = await generateMatricule(schoolId, yearId)
+          if (R.isFailure(matriculeResult)) {
+            throw matriculeResult.error
+          }
+          matricule = matriculeResult.value
         }
 
-        const matriculeResult = await generateMatricule(schoolId, yearId)
-        if (matriculeResult.isErr()) {
-          throw matriculeResult.error
+        // Validate unique matricule
+        const [existing] = await db
+          .select()
+          .from(students)
+          .where(and(eq(students.schoolId, schoolId), eq(students.matricule, matricule)))
+
+        if (existing) {
+          throw dbError('CONFLICT', getNestedErrorMessage('students', 'matriculeExistsWithId', { matricule }))
         }
-        matricule = matriculeResult.value
-      }
 
-      // Validate unique matricule
-      const [existing] = await db
-        .select()
-        .from(students)
-        .where(and(eq(students.schoolId, schoolId), eq(students.matricule, matricule)))
-
-      if (existing) {
-        throw dbError('CONFLICT', getNestedErrorMessage('students', 'matriculeExistsWithId', { matricule }))
-      }
-
-      // Validate age (optional - based on school settings)
-      if (data.dob) {
-        const age = calculateAge(new Date(data.dob))
-        if (age < 3 || age > 30) {
-          throw dbError('VALIDATION_ERROR', getNestedErrorMessage('students', 'invalidAgeRange'))
+        // Validate age (optional - based on school settings)
+        if (data.dob) {
+          const age = calculateAge(new Date(data.dob))
+          if (age < 3 || age > 30) {
+            throw dbError('VALIDATION_ERROR', getNestedErrorMessage('students', 'invalidAgeRange'))
+          }
         }
-      }
 
-      const [student] = await db
-        .insert(students)
-        .values({
-          id: crypto.randomUUID(),
-          schoolId,
-          ...studentData,
-          matricule,
-          admissionDate: data.admissionDate || new Date().toISOString().split('T')[0],
-        } as StudentInsert)
-        .returning()
+        const [student] = await db
+          .insert(students)
+          .values({
+            id: crypto.randomUUID(),
+            schoolId,
+            ...studentData,
+            matricule,
+            admissionDate: data.admissionDate || new Date().toISOString().split('T')[0],
+          } as StudentInsert)
+          .returning()
 
-      if (!student)
-        throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('students', 'createFailed'))
+        if (!student)
+          throw new DatabaseError('INTERNAL_ERROR', getNestedErrorMessage('students', 'createFailed'))
 
-      return student
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'createFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId }))
+        return student
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'createFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId: data.schoolId })),
+  )
 }
 
-export function updateStudent(id: string, data: Partial<CreateStudentInput>): ResultAsync<typeof students.$inferSelect, DatabaseError> {
+export async function updateStudent(id: string, data: Partial<CreateStudentInput>): R.ResultAsync<typeof students.$inferSelect, DatabaseError> {
   const db = getDb()
   const { status } = data
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [student] = await db
-        .update(students)
-        .set({ ...data, updatedAt: new Date() })
-        .where(eq(students.id, id))
-        .returning()
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [student] = await db
+          .update(students)
+          .set({ ...data, updatedAt: new Date() })
+          .where(eq(students.id, id))
+          .returning()
 
-      if (!student) {
-        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
-      }
+        if (!student) {
+          throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
+        }
 
-      // Cancel active enrollments if not active
-      if (status && status !== 'active') {
-        await db
-          .update(enrollments)
-          .set({
-            status: 'cancelled',
-            cancelledAt: new Date(),
-            cancellationReason: `Student ${status}`,
-            updatedAt: new Date(),
-          })
-          .where(and(eq(enrollments.studentId, id), eq(enrollments.status, 'confirmed')))
-      }
+        // Cancel active enrollments if not active
+        if (status && status !== 'active') {
+          await db
+            .update(enrollments)
+            .set({
+              status: 'cancelled',
+              cancelledAt: new Date(),
+              cancellationReason: `Student ${status}`,
+              updatedAt: new Date(),
+            })
+            .where(and(eq(enrollments.studentId, id), eq(enrollments.status, 'confirmed')))
+        }
 
-      return student
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'updateFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { studentId: id, status }))
+        return student
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'updateFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { studentId: id, status })),
+  )
 }
 
-export function updateStudentStatus(id: string, status: StudentStatus, reason?: string): ResultAsync<typeof students.$inferSelect, DatabaseError> {
+export async function updateStudentStatus(id: string, status: StudentStatus, reason?: string): R.ResultAsync<typeof students.$inferSelect, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [student] = await db
-        .update(students)
-        .set({
-          status,
-          withdrawalReason: reason,
-          withdrawalDate: status === 'withdrawn' ? new Date().toISOString().split('T')[0] : null,
-          updatedAt: new Date(),
-        })
-        .where(eq(students.id, id))
-        .returning()
-
-      if (!student) {
-        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
-      }
-
-      // Handle enrollments
-      if (status !== 'active') {
-        await db
-          .update(enrollments)
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [student] = await db
+          .update(students)
           .set({
-            status: 'cancelled',
-            cancelledAt: new Date(),
-            cancellationReason: reason || `Student ${status}`,
+            status,
+            withdrawalReason: reason,
+            withdrawalDate: status === 'withdrawn' ? new Date().toISOString().split('T')[0] : null,
             updatedAt: new Date(),
           })
-          .where(and(eq(enrollments.studentId, id), eq(enrollments.status, 'confirmed')))
-      }
+          .where(eq(students.id, id))
+          .returning()
 
-      return student
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'updateStatusFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { studentId: id, status }))
+        if (!student) {
+          throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
+        }
+
+        // Handle enrollments
+        if (status !== 'active') {
+          await db
+            .update(enrollments)
+            .set({
+              status: 'cancelled',
+              cancelledAt: new Date(),
+              cancellationReason: reason || `Student ${status}`,
+              updatedAt: new Date(),
+            })
+            .where(and(eq(enrollments.studentId, id), eq(enrollments.status, 'confirmed')))
+        }
+
+        return student
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'updateStatusFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { studentId: id, status })),
+  )
 }
 
-export function deleteStudent(id: string): ResultAsync<void, DatabaseError> {
+export async function deleteStudent(id: string): R.ResultAsync<void, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      // First check if student exists
-      const [student] = await db.select().from(students).where(eq(students.id, id))
-      if (!student) {
-        throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
-      }
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        // First check if student exists
+        const [student] = await db.select().from(students).where(eq(students.id, id))
+        if (!student) {
+          throw new DatabaseError('NOT_FOUND', getNestedErrorMessage('students', 'notFound'))
+        }
 
-      // Hard delete for now - will cascade to related tables based on schema definition
-      // If we implement soft delete later, this will change to an update
-      await db.delete(students).where(eq(students.id, id))
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'deleteFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { studentId: id }))
+        // Hard delete for now - will cascade to related tables based on schema definition
+        // If we implement soft delete later, this will change to an update
+        await db.delete(students).where(eq(students.id, id))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'deleteFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { studentId: id })),
+  )
 }
 
 // ==================== Bulk Operations ====================
 
 // Batch import students to minimize round-trips
-export function bulkImportStudents(
+export async function bulkImportStudents(
   schoolId: string,
   studentsData: Array<CreateStudentInput & { matricule?: string }>,
-): ResultAsync<ImportStudentResult, DatabaseError> {
+): R.ResultAsync<ImportStudentResult, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
 
-      const [activeYear] = await db
-        .select()
-        .from(schoolYears)
-        .where(and(eq(schoolYears.schoolId, schoolId), eq(schoolYears.isActive, true)))
+        const [activeYear] = await db
+          .select()
+          .from(schoolYears)
+          .where(and(eq(schoolYears.schoolId, schoolId), eq(schoolYears.isActive, true)))
 
-      if (!activeYear) {
-        throw new Error(getNestedErrorMessage('students', 'noActiveSchoolYear'))
-      }
-
-      // Prepare students for bulk insertion
-      const studentsToInsert = []
-      for (let i = 0; i < studentsData.length; i++) {
-        const studentData = studentsData[i]
-        if (!studentData)
-          continue
-
-        let matricule = studentData.matricule
-        if (!matricule) {
-          const matriculeResult = await generateMatricule(schoolId, activeYear.id)
-          if (matriculeResult.isErr()) {
-            results.errors.push({ row: i + 1, error: matriculeResult.error.message })
-            continue
-          }
-          matricule = matriculeResult.value
+        if (!activeYear) {
+          throw new Error(getNestedErrorMessage('students', 'noActiveSchoolYear'))
         }
 
-        studentsToInsert.push({
-          id: crypto.randomUUID(),
-          ...studentData,
-          matricule,
-          admissionDate: studentData.admissionDate || new Date().toISOString().split('T')[0],
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-      }
+        // Prepare students for bulk insertion
+        const studentsToInsert = []
+        for (let i = 0; i < studentsData.length; i++) {
+          const studentData = studentsData[i]
+          if (!studentData)
+            continue
 
-      if (studentsToInsert.length > 0) {
-        const inserted = await db
-          .insert(students)
-          .values(studentsToInsert)
-          .onConflictDoNothing({ target: [students.schoolId, students.matricule] })
-          .returning()
-
-        results.success = inserted?.length || 0
-
-        // Report errors for those that weren't inserted (duplicates)
-        const insertedMatricules = new Set(inserted?.map(s => s.matricule))
-        studentsToInsert.forEach((s, idx) => {
-          if (!insertedMatricules.has(s.matricule)) {
-            results.errors.push({
-              row: idx + 1,
-              error: getNestedErrorMessage('students', 'matriculeExistsWithId', { matricule: s.matricule }),
-            })
+          let matricule = studentData.matricule
+          if (!matricule) {
+            const matriculeResult = await generateMatricule(schoolId, activeYear.id)
+            if (R.isFailure(matriculeResult)) {
+              results.errors.push({ row: i + 1, error: matriculeResult.error.message })
+              continue
+            }
+            matricule = matriculeResult.value
           }
-        })
-      }
 
-      return results
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'bulkImportFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId }))
+          studentsToInsert.push({
+            id: crypto.randomUUID(),
+            ...studentData,
+            matricule,
+            admissionDate: studentData.admissionDate || new Date().toISOString().split('T')[0],
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+        }
+
+        if (studentsToInsert.length > 0) {
+          const inserted = await db
+            .insert(students)
+            .values(studentsToInsert)
+            .onConflictDoNothing({ target: [students.schoolId, students.matricule] })
+            .returning()
+
+          results.success = inserted?.length || 0
+
+          // Report errors for those that weren't inserted (duplicates)
+          const insertedMatricules = new Set(inserted?.map(s => s.matricule))
+          studentsToInsert.forEach((s, idx) => {
+            if (!insertedMatricules.has(s.matricule)) {
+              results.errors.push({
+                row: idx + 1,
+                error: getNestedErrorMessage('students', 'matriculeExistsWithId', { matricule: s.matricule }),
+              })
+            }
+          })
+        }
+
+        return results
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'bulkImportFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId })),
+  )
 }
 
-export function exportStudents(filters: StudentFilters): ResultAsync<ExportStudentRow[], DatabaseError> {
-  return getStudents({ ...filters, limit: 10000 }).map((result) => {
-    return result.data.map(item => ({
+export async function exportStudents(filters: StudentFilters): R.ResultAsync<ExportStudentRow[], DatabaseError> {
+  const result = await getStudents({ ...filters, limit: 10000 })
+  if (R.isFailure(result)) {
+    return result
+  }
+  return {
+    type: 'Success',
+    value: result.value.data.map(item => ({
       matricule: item.student.matricule,
       lastName: item.student.lastName,
       firstName: item.student.firstName,
@@ -618,50 +655,52 @@ export function exportStudents(filters: StudentFilters): ResultAsync<ExportStude
       emergencyContact: item.student.emergencyContact,
       emergencyPhone: item.student.emergencyPhone,
       admissionDate: item.student.admissionDate,
-    }))
-  })
+    })),
+  }
 }
 
 // ==================== Statistics ====================
 
-export function getStudentStatistics(schoolId: string): ResultAsync<StudentStatistics, DatabaseError> {
+export async function getStudentStatistics(schoolId: string): R.ResultAsync<StudentStatistics, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const conditions = [eq(students.schoolId, schoolId)]
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const conditions = [eq(students.schoolId, schoolId)]
 
-      // New admissions this year
-      const currentYear = new Date().getFullYear()
-      const [
-        statusCounts,
-        genderCounts,
-        ageCounts,
-        [newAdmissionsResult],
-      ] = await Promise.all([
-        // Total students by status
-        db
-          .select({
-            status: students.status,
-            count: sql<number>`COUNT(*)`.as('count'),
-          })
-          .from(students)
-          .where(and(...conditions))
-          .groupBy(students.status),
+        // New admissions this year
+        const currentYear = new Date().getFullYear()
+        const [
+          statusCounts,
+          genderCounts,
+          ageCounts,
+          [newAdmissionsResult],
+        ] = await Promise.all([
+          // Total students by status
+          db
+            .select({
+              status: students.status,
+              count: sql<number>`COUNT(*)`.as('count'),
+            })
+            .from(students)
+            .where(and(...conditions))
+            .groupBy(students.status),
 
-        // Gender distribution
-        db
-          .select({
-            gender: students.gender,
-            count: sql<number>`COUNT(*)`.as('count'),
-          })
-          .from(students)
-          .where(and(...conditions, eq(students.status, 'active')))
-          .groupBy(students.gender),
+          // Gender distribution
+          db
+            .select({
+              gender: students.gender,
+              count: sql<number>`COUNT(*)`.as('count'),
+            })
+            .from(students)
+            .where(and(...conditions, eq(students.status, 'active')))
+            .groupBy(students.gender),
 
-        // Age distribution
-        db
-          .select({
-            ageGroup: sql<string>`
+          // Age distribution
+          db
+            .select({
+              ageGroup: sql<string>`
             CASE 
               WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, ${students.dob}::date)) < 10 THEN 'Under 10'
               WHEN EXTRACT(YEAR FROM AGE(CURRENT_DATE, ${students.dob}::date)) BETWEEN 10 AND 14 THEN '10-14'
@@ -669,33 +708,35 @@ export function getStudentStatistics(schoolId: string): ResultAsync<StudentStati
               ELSE 'Over 18'
             END
           `.as('age_group'),
-            count: sql<number>`COUNT(*)`.as('count'),
-          })
-          .from(students)
-          .where(and(...conditions, eq(students.status, 'active')))
-          .groupBy(sql`age_group`),
+              count: sql<number>`COUNT(*)`.as('count'),
+            })
+            .from(students)
+            .where(and(...conditions, eq(students.status, 'active')))
+            .groupBy(sql`age_group`),
 
-        // New admissions this year
-        db
-          .select({ count: sql<number>`COUNT(*)` })
-          .from(students)
-          .where(
-            and(...conditions, sql`EXTRACT(YEAR FROM ${students.admissionDate}::date) = ${currentYear}`),
-          ),
-      ])
+          // New admissions this year
+          db
+            .select({ count: sql<number>`COUNT(*)` })
+            .from(students)
+            .where(
+              and(...conditions, sql`EXTRACT(YEAR FROM ${students.admissionDate}::date) = ${currentYear}`),
+            ),
+        ])
 
-      const newAdmissions = newAdmissionsResult?.count ?? 0
+        const newAdmissions = newAdmissionsResult?.count ?? 0
 
-      return {
-        byStatus: statusCounts.map(s => ({ status: s.status, count: Number(s.count) })),
-        byGender: genderCounts.map(g => ({ gender: g.gender, count: Number(g.count) })),
-        byAge: ageCounts.map(a => ({ ageGroup: String(a.ageGroup), count: Number(a.count) })),
-        newAdmissions: Number(newAdmissions),
-        total: statusCounts.reduce((sum: number, s) => sum + Number(s.count), 0),
-      }
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchStatsFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId }))
+        return {
+          byStatus: statusCounts.map(s => ({ status: s.status, count: Number(s.count) })),
+          byGender: genderCounts.map(g => ({ gender: g.gender, count: Number(g.count) })),
+          byAge: ageCounts.map(a => ({ ageGroup: String(a.ageGroup), count: Number(a.count) })),
+          newAdmissions: Number(newAdmissions),
+          total: statusCounts.reduce((sum: number, s) => sum + Number(s.count), 0),
+        }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchStatsFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId })),
+  )
 }
 
 // ==================== Helper Functions ====================

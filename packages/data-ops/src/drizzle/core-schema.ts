@@ -384,6 +384,7 @@ export type ProgramTemplateInsert = typeof programTemplates.$inferInsert
 export type ProgramTemplateChapterInsert = typeof programTemplateChapters.$inferInsert
 export type ProgramTemplateVersionInsert = typeof programTemplateVersions.$inferInsert
 export type CoefficientTemplateInsert = typeof coefficientTemplates.$inferInsert
+export type FeeTypeTemplateInsert = typeof feeTypeTemplates.$inferInsert
 export type ActivityLogInsert = typeof activityLogs.$inferInsert
 export type ApiMetricInsert = typeof apiMetrics.$inferInsert
 
@@ -399,6 +400,7 @@ export type ProgramTemplateData = Omit<ProgramTemplateInsert, 'id' | 'schoolYear
 export type ProgramTemplateChapterData = Omit<ProgramTemplateChapterInsert, 'id' | 'programTemplateId' | 'createdAt' | 'updatedAt'>
 export type ProgramTemplateVersionData = Omit<ProgramTemplateVersionInsert, 'id' | 'createdAt'>
 export type CoefficientTemplateData = Omit<CoefficientTemplateInsert, 'id' | 'schoolYearTemplateId' | 'subjectId' | 'gradeId' | 'seriesId' | 'createdAt' | 'updatedAt'>
+export type FeeTypeTemplateData = Omit<FeeTypeTemplateInsert, 'id' | 'createdAt' | 'updatedAt'>
 
 // Select types (for querying)
 export type School = typeof schools.$inferSelect
@@ -413,5 +415,6 @@ export type ProgramTemplate = typeof programTemplates.$inferSelect
 export type ProgramTemplateChapter = typeof programTemplateChapters.$inferSelect
 export type ProgramTemplateVersion = typeof programTemplateVersions.$inferSelect
 export type CoefficientTemplate = typeof coefficientTemplates.$inferSelect
+export type FeeTypeTemplate = typeof feeTypeTemplates.$inferSelect
 export type ActivityLog = typeof activityLogs.$inferSelect
 export type ApiMetric = typeof apiMetrics.$inferSelect

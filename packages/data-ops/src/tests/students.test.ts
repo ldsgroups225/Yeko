@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { beforeEach, describe, expect, test } from 'vitest'
 import { createSchoolYearTemplate } from '../queries/programs'
 import { createSchoolYear } from '../queries/school-admin/school-years'
@@ -19,35 +20,35 @@ describe('students Queries', () => {
 
   beforeEach(async () => {
     // Setup School
-    const school = (await createSchool({
+    const school = R.unwrap(await createSchool({
       name: `TEST__ School for Students ${Date.now()}`,
       code: `TSS-${Date.now()}`,
       email: `TEST__students-test-${Date.now()}@test.com`,
       phone: `+225${Date.now().toString().slice(-8)}`,
       status: 'active',
-    }))._unsafeUnwrap()
+    }))
     testSchoolId = school.id
     testIds.push(school.id)
 
     // Setup School Year
-    const yearTemplate = (await createSchoolYearTemplate({
+    const yearTemplate = R.unwrap(await createSchoolYearTemplate({
       name: `TEST__ Year Template ${Date.now()}`,
       isActive: true,
-    }))._unsafeUnwrap()
+    }))
 
-    const schoolYear = (await createSchoolYear({
+    const schoolYear = R.unwrap(await createSchoolYear({
       schoolId: testSchoolId,
       schoolYearTemplateId: yearTemplate.id,
       startDate: new Date(),
       endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       isActive: true,
-    }))._unsafeUnwrap()
+    }))
     testSchoolYearId = schoolYear.id
   })
 
   test('should create student with valid data', async () => {
     const matricule = `ST-${Date.now()}`
-    const student = (await createStudent({
+    const student = R.unwrap(await createStudent({
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       firstName: 'TEST__ Jean',
@@ -58,7 +59,7 @@ describe('students Queries', () => {
       admissionDate: '2023-09-01',
       address: 'Abidjan Cocody',
       nationality: 'Ivorian',
-    }))._unsafeUnwrap()
+    }))
 
     expect(student).toBeDefined()
     expect(student.id).toBeDefined()
@@ -91,7 +92,7 @@ describe('students Queries', () => {
       matricule,
     })
 
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       expect(result.error.type).toBe('CONFLICT')
     }
     else {
@@ -100,13 +101,13 @@ describe('students Queries', () => {
   })
 
   test('should auto-generate matricule if not provided', async () => {
-    const student = (await createStudent({
+    const student = R.unwrap(await createStudent({
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       firstName: 'TEST__ Auto',
       lastName: 'TEST__ Matricule',
       dob: '2015-01-01',
-    }))._unsafeUnwrap()
+    }))
 
     expect(student.matricule).toBeDefined()
     expect(student.matricule.length).toBeGreaterThan(0)
@@ -133,34 +134,34 @@ describe('students Queries', () => {
     })
 
     // Filter by gender F
-    const resultF = (await getStudents({
+    const resultF = R.unwrap(await getStudents({
       schoolId: testSchoolId,
       gender: 'F',
-    }))._unsafeUnwrap()
+    }))
 
     expect(resultF.data).toHaveLength(1)
     expect(resultF.data[0]?.student.firstName).toBe('TEST__ Alice')
 
     // Filter by search
-    const resultSearch = (await getStudents({
+    const resultSearch = R.unwrap(await getStudents({
       schoolId: testSchoolId,
       search: 'Bob',
-    }))._unsafeUnwrap()
+    }))
 
     expect(resultSearch.data).toHaveLength(1)
     expect(resultSearch.data[0]?.student.firstName).toBe('TEST__ Bob')
   })
 
   test('should get student by ID with details', async () => {
-    const created = (await createStudent({
+    const created = R.unwrap(await createStudent({
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       firstName: 'TEST__ Detailed',
       lastName: 'TEST__ Student',
       dob: '2015-01-01',
-    }))._unsafeUnwrap()
+    }))
 
-    const found = (await getStudentById(created.id))._unsafeUnwrap()
+    const found = R.unwrap(await getStudentById(created.id))
 
     expect(found).toBeDefined()
     expect(found.id).toBe(created.id)
@@ -169,18 +170,18 @@ describe('students Queries', () => {
   })
 
   test('should update student details', async () => {
-    const created = (await createStudent({
+    const created = R.unwrap(await createStudent({
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       firstName: 'TEST__ ToUpdate',
       lastName: 'TEST__ Student',
       dob: '2015-01-01',
-    }))._unsafeUnwrap()
+    }))
 
-    const updated = (await updateStudent(created.id, {
+    const updated = R.unwrap(await updateStudent(created.id, {
       firstName: 'TEST__ Updated',
       address: 'New Address',
-    }))._unsafeUnwrap()
+    }))
 
     expect(updated.firstName).toBe('TEST__ Updated')
     expect(updated.address).toBe('New Address')
@@ -188,15 +189,15 @@ describe('students Queries', () => {
   })
 
   test('should update student status', async () => {
-    const created = (await createStudent({
+    const created = R.unwrap(await createStudent({
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       firstName: 'TEST__ Status',
       lastName: 'TEST__ Changer',
       dob: '2015-01-01',
-    }))._unsafeUnwrap()
+    }))
 
-    const updated = (await updateStudentStatus(created.id, 'withdrawn', 'Moving away'))._unsafeUnwrap()
+    const updated = R.unwrap(await updateStudentStatus(created.id, 'withdrawn', 'Moving away'))
 
     expect(updated.status).toBe('withdrawn')
     expect(updated.withdrawalReason).toBe('Moving away')
@@ -204,18 +205,18 @@ describe('students Queries', () => {
   })
 
   test('should delete student', async () => {
-    const created = (await createStudent({
+    const created = R.unwrap(await createStudent({
       schoolId: testSchoolId,
       schoolYearId: testSchoolYearId,
       firstName: 'TEST__ ToDelete',
       lastName: 'TEST__ Student',
       dob: '2015-01-01',
-    }))._unsafeUnwrap()
+    }))
 
     await deleteStudent(created.id)
 
     const result = await getStudentById(created.id)
-    if (result.isErr()) {
+    if (R.isFailure(result)) {
       expect(result.error.type).toBe('NOT_FOUND')
     }
     else {

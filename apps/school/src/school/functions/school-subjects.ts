@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import * as schoolSubjectQueries from '@repo/data-ops/queries/school-subjects'
 import { z } from 'zod'
@@ -27,13 +28,13 @@ export const getSchoolSubjects = authServerFn
     const { schoolId } = context.school
     await requirePermission('school_subjects', 'view')
 
-    return (await schoolSubjectQueries.getSchoolSubjects({
+    const _result1 = await schoolSubjectQueries.getSchoolSubjects({
       schoolId,
       ...data,
-    })).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des matières' }),
-    )
+    })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des matières' }
+    return { success: true as const, data: _result1.value }
   })
 
 /**
@@ -54,13 +55,13 @@ export const getAvailableCoreSubjects = authServerFn
     const { schoolId } = context.school
     await requirePermission('school_subjects', 'view')
 
-    return (await schoolSubjectQueries.getAvailableCoreSubjects({
+    const _result2 = await schoolSubjectQueries.getAvailableCoreSubjects({
       schoolId,
       ...data,
-    })).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des matières disponibles' }),
-    )
+    })
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération des matières disponibles' }
+    return { success: true as const, data: _result2.value }
   })
 
 /**
@@ -80,27 +81,25 @@ export const addSubjectsToSchool = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('school_subjects', 'create')
 
-    return (await schoolSubjectQueries.addSubjectsToSchool({
+    const _result3 = await schoolSubjectQueries.addSubjectsToSchool({
       schoolId,
       subjectIds: data.subjectIds,
       schoolYearId: data.schoolYearId,
-    })).match(
-      async (result) => {
-        // Audit log
-        if (result.length > 0) {
-          await createAuditLog({
-            schoolId,
-            userId,
-            action: 'create',
-            tableName: 'school_subjects',
-            recordId: 'bulk',
-            newValues: { count: result.length },
-          })
-        }
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'ajout des matières' }),
-    )
+    })
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de l\'ajout des matières' }
+    // Audit log
+    if (_result3.value.length > 0) {
+      await createAuditLog({
+        schoolId,
+        userId,
+        action: 'create',
+        tableName: 'school_subjects',
+        recordId: 'bulk',
+        newValues: { count: _result3.value.length },
+      })
+    }
+    return { success: true as const, data: _result3.value }
   })
 
 /**
@@ -124,7 +123,7 @@ export const toggleSchoolSubjectStatus = authServerFn
     if (data.status === 'inactive') {
       const existingResult = await schoolSubjectQueries.getSchoolSubjectById(schoolId, data.id)
 
-      if (existingResult.isOk() && existingResult.value) {
+      if (R.isSuccess(existingResult) && existingResult.value) {
         const existing = existingResult.value
         const usageResult = await schoolSubjectQueries.checkSubjectInUse({
           schoolId,
@@ -132,30 +131,28 @@ export const toggleSchoolSubjectStatus = authServerFn
           schoolYearId: existing.schoolYearId,
         })
 
-        if (usageResult.isOk() && usageResult.value.inUse) {
+        if (R.isSuccess(usageResult) && usageResult.value.inUse) {
           return { success: false as const, error: `Impossible de désactiver : la matière est utilisée par ${usageResult.value.classCount} classe(s)` }
         }
       }
     }
 
     const status: 'active' | 'inactive' = data.status === 'active' ? 'active' : 'inactive'
-    return (await schoolSubjectQueries.toggleSchoolSubjectStatus(data.id, status, schoolId)).match(
-      async (result) => {
-        // Audit log
-        if (result) {
-          await createAuditLog({
-            schoolId,
-            userId,
-            action: 'update',
-            tableName: 'school_subjects',
-            recordId: data.id,
-            newValues: { status: data.status },
-          })
-        }
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors du changement de statut de la matière' }),
-    )
+    const _result4 = await schoolSubjectQueries.toggleSchoolSubjectStatus(data.id, status, schoolId)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors du changement de statut de la matière' }
+    // Audit log
+    if (_result4.value) {
+      await createAuditLog({
+        schoolId,
+        userId,
+        action: 'update',
+        tableName: 'school_subjects',
+        recordId: data.id,
+        newValues: { status: data.status },
+      })
+    }
+    return { success: true as const, data: _result4.value }
   })
 
 /**
@@ -173,32 +170,30 @@ export const deleteSchoolSubject = authServerFn
     // Check if subject is in use
     // Check if subject is in use
     const existingResult = await schoolSubjectQueries.getSchoolSubjectById(schoolId, id)
-    if (existingResult.isOk() && existingResult.value) {
+    if (R.isSuccess(existingResult) && existingResult.value) {
       const existing = existingResult.value
       const usageResult = await schoolSubjectQueries.checkSubjectInUse({
         schoolId,
         subjectId: existing.subjectId,
         schoolYearId: existing.schoolYearId,
       })
-      if (usageResult.isOk() && usageResult.value.inUse) {
+      if (R.isSuccess(usageResult) && usageResult.value.inUse) {
         return { success: false as const, error: `Impossible de supprimer : la matière est utilisée par ${usageResult.value.classCount} classe(s)` }
       }
     }
 
-    return (await schoolSubjectQueries.deleteSchoolSubject(schoolId, id)).match(
-      async () => {
-        // Audit log
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'school_subjects',
-          recordId: id,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la matière' }),
-    )
+    const _result5 = await schoolSubjectQueries.deleteSchoolSubject(schoolId, id)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la suppression de la matière' }
+    // Audit log
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'school_subjects',
+      recordId: id,
+    })
+    return { success: true as const, data: { success: true } }
   })
 
 /**
@@ -218,13 +213,13 @@ export const getSubjectUsageStats = authServerFn
     const { schoolId } = context.school
     await requirePermission('school_subjects', 'view')
 
-    return (await schoolSubjectQueries.getSubjectUsageStats({
+    const _result6 = await schoolSubjectQueries.getSubjectUsageStats({
       schoolId,
       ...data,
-    })).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des statistiques' }),
-    )
+    })
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la récupération des statistiques' }
+    return { success: true as const, data: _result6.value }
   })
 
 /**
@@ -239,10 +234,10 @@ export const getSchoolSubjectById = authServerFn
     await requirePermission('school_subjects', 'view')
 
     const { schoolId } = context.school
-    return (await schoolSubjectQueries.getSchoolSubjectById(schoolId, id)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la matière' }),
-    )
+    const _result7 = await schoolSubjectQueries.getSchoolSubjectById(schoolId, id)
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors de la récupération de la matière' }
+    return { success: true as const, data: _result7.value }
   })
 
 /**
@@ -262,11 +257,11 @@ export const checkSubjectInUseForUI = authServerFn
     const { schoolId } = context.school
     await requirePermission('school_subjects', 'view')
 
-    return (await schoolSubjectQueries.checkSubjectInUse({
+    const _result8 = await schoolSubjectQueries.checkSubjectInUse({
       schoolId,
       ...data,
-    })).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la vérification de l\'utilisation' }),
-    )
+    })
+    if (R.isFailure(_result8))
+      return { success: false as const, error: 'Erreur lors de la vérification de l\'utilisation' }
+    return { success: true as const, data: _result8.value }
   })

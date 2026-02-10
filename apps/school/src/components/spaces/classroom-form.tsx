@@ -47,10 +47,12 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
 
   const mutation = useMutation({
     mutationKey: isEditing ? schoolMutationKeys.classrooms.update : schoolMutationKeys.classrooms.create,
-    mutationFn: (data: ClassroomFormData) =>
-      isEditing
-        ? updateClassroom({ data: { id: classroom.id, updates: data } })
-        : createClassroom({ data }),
+    mutationFn: async (data: ClassroomFormData) => {
+      if (isEditing) {
+        return updateClassroom({ data: { id: classroom.id, updates: data } })
+      }
+      return createClassroom({ data })
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['classrooms'] })
       toast.success(isEditing ? t.spaces.classrooms.updateSuccess() : t.spaces.classrooms.createSuccess())

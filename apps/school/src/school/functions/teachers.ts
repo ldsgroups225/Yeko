@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import {
   assignSubjectsToTeacher,
@@ -349,8 +350,7 @@ export const getTeacherSchedulesList = authServerFn
     await requirePermission('teachers', 'view')
 
     const result = await getTimetableByTeacher({ teacherId, schoolYearId })
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })

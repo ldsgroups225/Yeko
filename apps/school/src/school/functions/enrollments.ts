@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import * as enrollmentQueries from '@repo/data-ops/queries/enrollments'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
@@ -48,14 +49,14 @@ export const getEnrollments = authServerFn
     const { schoolId } = context.school
     await requirePermission('enrollments', 'view')
 
-    return (await enrollmentQueries.getEnrollments({
+    const _result1 = await enrollmentQueries.getEnrollments({
       ...data,
       schoolId,
       status: data.status,
-    })).match(
-      paginatedData => ({ success: true as const, data: paginatedData }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des inscriptions' }),
-    )
+    })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des inscriptions' }
+    return { success: true as const, data: _result1.value }
   })
 
 export const getEnrollmentById = authServerFn
@@ -66,10 +67,10 @@ export const getEnrollmentById = authServerFn
 
     await requirePermission('enrollments', 'view')
 
-    return (await enrollmentQueries.getEnrollmentById(id)).match(
-      enrollment => ({ success: true as const, data: enrollment }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de l\'inscription' }),
-    )
+    const _result2 = await enrollmentQueries.getEnrollmentById(id)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération de l\'inscription' }
+    return { success: true as const, data: _result2.value }
   })
 
 export const createEnrollment = authServerFn
@@ -81,20 +82,18 @@ export const createEnrollment = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('enrollments', 'create')
 
-    return (await enrollmentQueries.createEnrollment(data)).match(
-      async (enrollment) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'enrollments',
-          recordId: enrollment.id,
-          newValues: data,
-        })
-        return { success: true as const, data: enrollment }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la création de l\'inscription' }),
-    )
+    const _result3 = await enrollmentQueries.createEnrollment(data)
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la création de l\'inscription' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'enrollments',
+      recordId: _result3.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result3.value }
   })
 
 export const confirmEnrollment = authServerFn
@@ -106,20 +105,18 @@ export const confirmEnrollment = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('enrollments', 'edit')
 
-    return (await enrollmentQueries.confirmEnrollment(id, userId)).match(
-      async (enrollment) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'enrollments',
-          recordId: id,
-          newValues: { status: 'confirmed' },
-        })
-        return { success: true as const, data: enrollment }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la confirmation de l\'inscription' }),
-    )
+    const _result4 = await enrollmentQueries.confirmEnrollment(id, userId)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de la confirmation de l\'inscription' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'enrollments',
+      recordId: id,
+      newValues: { status: 'confirmed' },
+    })
+    return { success: true as const, data: _result4.value }
   })
 
 export const cancelEnrollment = authServerFn
@@ -136,20 +133,18 @@ export const cancelEnrollment = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('enrollments', 'edit')
 
-    return (await enrollmentQueries.cancelEnrollment(data.id, userId, data.reason)).match(
-      async (enrollment) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'enrollments',
-          recordId: data.id,
-          newValues: { status: 'cancelled', reason: data.reason },
-        })
-        return { success: true as const, data: enrollment }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de l\'annulation de l\'inscription' }),
-    )
+    const _result5 = await enrollmentQueries.cancelEnrollment(data.id, userId, data.reason)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de l\'annulation de l\'inscription' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'enrollments',
+      recordId: data.id,
+      newValues: { status: 'cancelled', reason: data.reason },
+    })
+    return { success: true as const, data: _result5.value }
   })
 
 export const deleteEnrollment = authServerFn
@@ -161,19 +156,17 @@ export const deleteEnrollment = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('enrollments', 'delete')
 
-    return (await enrollmentQueries.deleteEnrollment(id)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'enrollments',
-          recordId: id,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de l\'inscription' }),
-    )
+    const _result6 = await enrollmentQueries.deleteEnrollment(id)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la suppression de l\'inscription' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'enrollments',
+      recordId: id,
+    })
+    return { success: true as const, data: { success: true } }
   })
 
 export const transferStudent = authServerFn
@@ -185,20 +178,18 @@ export const transferStudent = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('enrollments', 'edit')
 
-    return (await enrollmentQueries.transferStudent(data, userId)).match(
-      async (enrollment) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'enrollments',
-          recordId: data.enrollmentId,
-          newValues: { transferred: true, newClassId: data.newClassId, reason: data.reason },
-        })
-        return { success: true as const, data: enrollment }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors du transfert de l\'étudiant' }),
-    )
+    const _result7 = await enrollmentQueries.transferStudent(data, userId)
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors du transfert de l\'étudiant' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'enrollments',
+      recordId: data.enrollmentId,
+      newValues: { transferred: true, newClassId: data.newClassId, reason: data.reason },
+    })
+    return { success: true as const, data: _result7.value }
   })
 
 export const bulkReEnroll = authServerFn
@@ -210,28 +201,26 @@ export const bulkReEnroll = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('enrollments', 'create')
 
-    return (await enrollmentQueries.bulkReEnroll(schoolId, data.fromYearId, data.toYearId, {
+    const _result8 = await enrollmentQueries.bulkReEnroll(schoolId, data.fromYearId, data.toYearId, {
       gradeMapping: data.gradeMapping,
       autoConfirm: data.autoConfirm,
-    })).match(
-      async (results) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'enrollments',
-          recordId: 'bulk-reenroll',
-          newValues: {
-            fromYearId: data.fromYearId,
-            toYearId: data.toYearId,
-            success: results.success,
-            errors: results.errors.length,
-          },
-        })
-        return { success: true as const, data: results }
+    })
+    if (R.isFailure(_result8))
+      return { success: false as const, error: 'Erreur lors de la réinscription en masse' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'enrollments',
+      recordId: 'bulk-reenroll',
+      newValues: {
+        fromYearId: data.fromYearId,
+        toYearId: data.toYearId,
+        success: _result8.value.success,
+        errors: _result8.value.errors.length,
       },
-      _ => ({ success: false as const, error: 'Erreur lors de la réinscription en masse' }),
-    )
+    })
+    return { success: true as const, data: _result8.value }
   })
 
 export const getEnrollmentStatistics = authServerFn
@@ -243,8 +232,8 @@ export const getEnrollmentStatistics = authServerFn
     const { schoolId } = context.school
     await requirePermission('enrollments', 'view')
 
-    return (await enrollmentQueries.getEnrollmentStatistics(schoolId, schoolYearId)).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des statistiques d\'inscription' }),
-    )
+    const _result9 = await enrollmentQueries.getEnrollmentStatistics(schoolId, schoolYearId)
+    if (R.isFailure(_result9))
+      return { success: false as const, error: 'Erreur lors de la récupération des statistiques d\'inscription' }
+    return { success: true as const, data: _result9.value }
   })

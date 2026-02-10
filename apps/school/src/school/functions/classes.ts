@@ -1,4 +1,5 @@
 import type { ClassFilters } from '@repo/data-ops/queries/classes'
+import { Result as R } from '@praha/byethrow'
 import * as classQueries from '@repo/data-ops/queries/classes'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
@@ -41,10 +42,10 @@ export const getClasses = authServerFn
       status: data.status,
     }
 
-    return (await classQueries.getClasses(filters)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des classes' }),
-    )
+    const _result1 = await classQueries.getClasses(filters)
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des classes' }
+    return { success: true as const, data: _result1.value }
   })
 
 export const getClassById = authServerFn
@@ -56,10 +57,10 @@ export const getClassById = authServerFn
     const { schoolId } = context.school
     await requirePermission('classes', 'view')
 
-    return (await classQueries.getClassById(schoolId, id)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la classe' }),
-    )
+    const _result2 = await classQueries.getClassById(schoolId, id)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération de la classe' }
+    return { success: true as const, data: _result2.value }
   })
 
 export const createClass = authServerFn
@@ -71,27 +72,24 @@ export const createClass = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'create')
 
-    return (await classQueries.createClass(schoolId, {
+    const _result3 = await classQueries.createClass(schoolId, {
       ...data,
       schoolId,
       id: crypto.randomUUID(),
-    })).match(
-      async (newClass) => {
-        if (!newClass)
-          return { success: false as const, error: 'La création de la classe a échoué' }
-
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'classes',
-          recordId: newClass.id,
-          newValues: data,
-        })
-        return { success: true as const, data: newClass }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la création de la classe' }),
-    )
+    })
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la création de la classe' }
+    if (!_result3.value)
+      return { success: false as const, error: 'La création de la classe a échoué' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'classes',
+      recordId: _result3.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result3.value }
   })
 
 export const updateClass = authServerFn
@@ -109,23 +107,21 @@ export const updateClass = authServerFn
     await requirePermission('classes', 'edit')
 
     const oldClassResult = await classQueries.getClassById(schoolId, data.id)
-    const oldClass = oldClassResult.isOk() ? oldClassResult.value.class : undefined
+    const oldClass = R.isSuccess(oldClassResult) ? oldClassResult.value.class : undefined
 
-    return (await classQueries.updateClass(schoolId, data.id, data.updates)).match(
-      async (updatedClass) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'classes',
-          recordId: data.id,
-          oldValues: oldClass,
-          newValues: data.updates,
-        })
-        return { success: true as const, data: updatedClass }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la classe' }),
-    )
+    const _result4 = await classQueries.updateClass(schoolId, data.id, data.updates)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de la mise à jour de la classe' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'classes',
+      recordId: data.id,
+      oldValues: oldClass,
+      newValues: data.updates,
+    })
+    return { success: true as const, data: _result4.value }
   })
 
 export const deleteClass = authServerFn
@@ -138,20 +134,18 @@ export const deleteClass = authServerFn
     await requirePermission('classes', 'delete')
 
     const oldClassResult = await classQueries.getClassById(schoolId, id)
-    const oldClass = oldClassResult.isOk() ? oldClassResult.value.class : undefined
+    const oldClass = R.isSuccess(oldClassResult) ? oldClassResult.value.class : undefined
 
-    return (await classQueries.deleteClass(schoolId, id)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'classes',
-          recordId: id,
-          oldValues: oldClass,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la classe' }),
-    )
+    const _result5 = await classQueries.deleteClass(schoolId, id)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la suppression de la classe' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'classes',
+      recordId: id,
+      oldValues: oldClass,
+    })
+    return { success: true as const, data: { success: true } }
   })

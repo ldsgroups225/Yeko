@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
@@ -46,13 +47,13 @@ describe('7.1 Constraint Validation', () => {
     const db = getDb()
 
     // Create test school
-    testSchool = (await createSchool({
+    testSchool = R.unwrap(await createSchool({
       name: 'Test Integrity School',
       code: `ITS-${nanoid()}`,
       email: `integrity-${nanoid()}@test.com`,
       phone: '+1234567890',
       status: 'active',
-    }))._unsafeUnwrap()
+    }))
     const [eduLevel] = await db.select().from(educationLevels).limit(1)
     if (!eduLevel)
       throw new Error('No education level found')
@@ -99,12 +100,12 @@ describe('7.1 Constraint Validation', () => {
     testSubject = newSubject
 
     // Create test grade
-    testGrade = (await createGrade({
+    testGrade = R.unwrap(await createGrade({
       name: 'Test Integrity Grade',
       code: `IG-${nanoid()}`,
       order: 1,
       trackId: testTrack.id,
-    }))._unsafeUnwrap()
+    }))
   })
 
   afterAll(async () => {
@@ -133,13 +134,13 @@ describe('7.1 Constraint Validation', () => {
   describe('unique Constraints', () => {
     test('should reject duplicate school codes', async () => {
       const uniqueCode = `DUP${Date.now()}`
-      const school1 = (await createSchool({
+      const school1 = R.unwrap(await createSchool({
         name: 'School 1',
         code: uniqueCode,
         email: 'dup1@test.com',
         phone: '+1111111111',
         status: 'active',
-      }))._unsafeUnwrap()
+      }))
 
       try {
         await createSchool({
@@ -231,11 +232,11 @@ describe('7.1 Constraint Validation', () => {
     })
 
     test('should reject duplicate series codes', async () => {
-      const series1 = (await createSerie({
+      const series1 = R.unwrap(await createSerie({
         name: 'Test Integrity Series 1',
         code: `DUPSERIES-${nanoid()}`,
         trackId: testTrack.id,
-      }))._unsafeUnwrap()
+      }))
 
       try {
         await createSerie({
@@ -479,22 +480,22 @@ describe('7.1 Constraint Validation', () => {
         .returning()
       if (!newTrack)
         throw new Error('Failed to create newTrack')
-      const grade = (await createGrade({
+      const grade = R.unwrap(await createGrade({
         name: 'Cascade Grade',
         code: 'CG001',
         order: 1,
         trackId: newTrack.id,
-      }))._unsafeUnwrap()
+      }))
 
       // Verify grade exists
-      const gradesBeforeDelete = (await getGrades({ trackId: newTrack.id }))._unsafeUnwrap()
+      const gradesBeforeDelete = R.unwrap(await getGrades({ trackId: newTrack.id }))
       expect(gradesBeforeDelete).toContainEqual(expect.objectContaining({ id: grade.id }))
 
       // Delete track
       await db.delete(tracks).where(eq(tracks.id, newTrack.id))
 
       // Verify grades are deleted
-      const gradesAfterDelete = (await getGrades({ trackId: newTrack.id }))._unsafeUnwrap()
+      const gradesAfterDelete = R.unwrap(await getGrades({ trackId: newTrack.id }))
       expect(gradesAfterDelete).not.toContainEqual(expect.objectContaining({ id: grade.id }))
     })
 
@@ -519,21 +520,21 @@ describe('7.1 Constraint Validation', () => {
         .returning()
       if (!newTrack)
         throw new Error('Failed to create newTrack')
-      const serie = (await createSerie({
+      const serie = R.unwrap(await createSerie({
         name: 'Cascade Series',
         code: 'CS001',
         trackId: newTrack.id,
-      }))._unsafeUnwrap()
+      }))
 
       // Verify series exists
-      const seriesBeforeDelete = (await getSeries({ trackId: newTrack.id }))._unsafeUnwrap()
+      const seriesBeforeDelete = R.unwrap(await getSeries({ trackId: newTrack.id }))
       expect(seriesBeforeDelete).toContainEqual(expect.objectContaining({ id: serie.id }))
 
       // Delete track
       await db.delete(tracks).where(eq(tracks.id, newTrack.id))
 
       // Verify series are deleted
-      const seriesAfterDelete = (await getSeries({ trackId: newTrack.id }))._unsafeUnwrap()
+      const seriesAfterDelete = R.unwrap(await getSeries({ trackId: newTrack.id }))
       expect(seriesAfterDelete).not.toContainEqual(expect.objectContaining({ id: serie.id }))
     })
 
@@ -547,10 +548,10 @@ describe('7.1 Constraint Validation', () => {
         subjectId: testSubject.id,
         gradeId: testGrade.id,
       })
-      if (programResult.isErr()) {
+      if (R.isFailure(programResult)) {
         console.error('Failed to create program:', programResult.error)
       }
-      const program = programResult._unsafeUnwrap()
+      const program = R.unwrap(programResult)
 
       // Add chapters
       await db
@@ -609,15 +610,15 @@ describe('7.1 Constraint Validation', () => {
         gradeId: testGrade.id,
         weight: 2,
       })
-      if (coeffResult.isErr()) {
+      if (R.isFailure(coeffResult)) {
         console.error('Failed to create coefficient:', coeffResult.error)
       }
-      const coeff = coeffResult._unsafeUnwrap()
+      const coeff = R.unwrap(coeffResult)
 
       // Verify coefficient exists
-      const coeffsBeforeDeleteResult = (await getCoefficientTemplates({
+      const coeffsBeforeDeleteResult = R.unwrap(await getCoefficientTemplates({
         subjectId: newSubject.id,
-      }))._unsafeUnwrap()
+      }))
       const coeffsBeforeDelete = coeffsBeforeDeleteResult.coefficients
       expect(coeffsBeforeDelete).toContainEqual(expect.objectContaining({ id: coeff.id }))
 
@@ -625,9 +626,9 @@ describe('7.1 Constraint Validation', () => {
       await db.delete(subjects).where(eq(subjects.id, newSubject.id))
 
       // Verify coefficients are deleted
-      const coeffsAfterDeleteResult = (await getCoefficientTemplates({
+      const coeffsAfterDeleteResult = R.unwrap(await getCoefficientTemplates({
         subjectId: newSubject.id,
-      }))._unsafeUnwrap()
+      }))
       const coeffsAfterDelete = coeffsAfterDeleteResult.coefficients
       expect(coeffsAfterDelete).not.toContainEqual(expect.objectContaining({ id: coeff.id }))
     })

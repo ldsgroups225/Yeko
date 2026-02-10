@@ -1,11 +1,10 @@
 import type { AlertSeverity, AlertStatus, AlertType, AttendanceAlertInsert } from '../drizzle/school-schema'
+import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 
 import { and, count, desc, eq, gte, lte } from 'drizzle-orm'
-import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import {
-
   attendanceAlerts,
   students,
   teachers,
@@ -15,7 +14,7 @@ import { DatabaseError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
 
 // Get active alerts for a school
-export function getActiveAlerts(schoolId: string, alertType?: string): ResultAsync<Array<{
+export async function getActiveAlerts(schoolId: string, alertType?: string): R.ResultAsync<Array<{
   alert: typeof attendanceAlerts.$inferSelect
   teacherName: string | null
   studentName: string | null
@@ -30,25 +29,31 @@ export function getActiveAlerts(schoolId: string, alertType?: string): ResultAsy
     conditions.push(eq(attendanceAlerts.alertType, alertType as AlertType))
   }
 
-  return ResultAsync.fromPromise(
-    db
-      .select({
-        alert: attendanceAlerts,
-        teacherName: users.name,
-        studentName: students.firstName,
-      })
-      .from(attendanceAlerts)
-      .leftJoin(teachers, eq(attendanceAlerts.teacherId, teachers.id))
-      .leftJoin(users, eq(teachers.userId, users.id))
-      .leftJoin(students, eq(attendanceAlerts.studentId, students.id))
-      .where(and(...conditions))
-      .orderBy(desc(attendanceAlerts.createdAt)),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchActiveFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, alertType }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        return await db
+          .select({
+            alert: attendanceAlerts,
+            teacherName: users.name,
+            studentName: students.firstName,
+          })
+          .from(attendanceAlerts)
+          .leftJoin(teachers, eq(attendanceAlerts.teacherId, teachers.id))
+          .leftJoin(users, eq(teachers.userId, users.id))
+          .leftJoin(students, eq(attendanceAlerts.studentId, students.id))
+          .where(and(...conditions))
+          .orderBy(desc(attendanceAlerts.createdAt))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchActiveFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, alertType })),
+  )
 }
 
 // Get alerts with filters
-export function getAlerts(params: {
+export async function getAlerts(params: {
   schoolId: string
   status?: AlertStatus
   alertType?: AlertType
@@ -59,7 +64,7 @@ export function getAlerts(params: {
   endDate?: string
   page?: number
   pageSize?: number
-}): ResultAsync<{
+}): R.ResultAsync<{
   data: typeof attendanceAlerts.$inferSelect[]
   total: number
   page: number
@@ -86,54 +91,68 @@ export function getAlerts(params: {
   if (params.endDate)
     conditions.push(lte(attendanceAlerts.createdAt, new Date(params.endDate)))
 
-  return ResultAsync.fromPromise(
-    Promise.all([
-      db
-        .select()
-        .from(attendanceAlerts)
-        .where(and(...conditions))
-        .orderBy(desc(attendanceAlerts.createdAt))
-        .limit(pageSize)
-        .offset(offset),
-      db
-        .select({ count: count() })
-        .from(attendanceAlerts)
-        .where(and(...conditions)),
-    ]).then(([alerts, countResult]) => ({
-      data: alerts,
-      total: countResult[0]?.count ?? 0,
-      page,
-      pageSize,
-    })),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchFailed')),
-  ).mapErr(tapLogErr(databaseLogger, params))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [alerts, countResult] = await Promise.all([
+          db
+            .select()
+            .from(attendanceAlerts)
+            .where(and(...conditions))
+            .orderBy(desc(attendanceAlerts.createdAt))
+            .limit(pageSize)
+            .offset(offset),
+          db
+            .select({ count: count() })
+            .from(attendanceAlerts)
+            .where(and(...conditions)),
+        ])
+
+        return {
+          data: alerts,
+          total: countResult[0]?.count ?? 0,
+          page,
+          pageSize,
+        }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }
 
 // Create alert
-export function createAlert(data: Omit<AttendanceAlertInsert, 'id' | 'createdAt'>): ResultAsync<typeof attendanceAlerts.$inferSelect, DatabaseError> {
+export async function createAlert(data: Omit<AttendanceAlertInsert, 'id' | 'createdAt'>): R.ResultAsync<typeof attendanceAlerts.$inferSelect, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .insert(attendanceAlerts)
-      .values({
-        id: crypto.randomUUID(),
-        ...data,
-      })
-      .returning()
-      .then(rows => rows[0]!),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'createFailed')),
-  ).mapErr(tapLogErr(databaseLogger, data))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .insert(attendanceAlerts)
+          .values({
+            id: crypto.randomUUID(),
+            ...data,
+          })
+          .returning()
+        return rows[0]!
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'createFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, data)),
+  )
 }
 
 // Check if similar alert exists (to avoid duplicates)
-export function checkExistingAlert(params: {
+export async function checkExistingAlert(params: {
   schoolId: string
   alertType: AlertType
   teacherId?: string
   studentId?: string
   month?: number
   year?: number
-}): ResultAsync<typeof attendanceAlerts.$inferSelect | null, DatabaseError> {
+}): R.ResultAsync<typeof attendanceAlerts.$inferSelect | null, DatabaseError> {
   const db = getDb()
   const conditions = [
     eq(attendanceAlerts.schoolId, params.schoolId),
@@ -154,129 +173,163 @@ export function checkExistingAlert(params: {
     conditions.push(lte(attendanceAlerts.createdAt, endOfMonth))
   }
 
-  return ResultAsync.fromPromise(
-    db
-      .select()
-      .from(attendanceAlerts)
-      .where(and(...conditions))
-      .limit(1)
-      .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'checkExistingFailed')),
-  ).mapErr(tapLogErr(databaseLogger, params))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select()
+          .from(attendanceAlerts)
+          .where(and(...conditions))
+          .limit(1)
+        return rows[0] ?? null
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'checkExistingFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
 }
 
 // Acknowledge alert
-export function acknowledgeAlert(id: string, userId: string, schoolId: string): ResultAsync<typeof attendanceAlerts.$inferSelect, DatabaseError> {
+export async function acknowledgeAlert(id: string, userId: string, schoolId: string): R.ResultAsync<typeof attendanceAlerts.$inferSelect, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .update(attendanceAlerts)
-      .set({
-        status: 'acknowledged',
-        acknowledgedBy: userId,
-        acknowledgedAt: new Date(),
-      })
-      .where(and(
-        eq(attendanceAlerts.id, id),
-        eq(attendanceAlerts.schoolId, schoolId),
-      ))
-      .returning()
-      .then((rows) => {
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .update(attendanceAlerts)
+          .set({
+            status: 'acknowledged',
+            acknowledgedBy: userId,
+            acknowledgedAt: new Date(),
+          })
+          .where(and(
+            eq(attendanceAlerts.id, id),
+            eq(attendanceAlerts.schoolId, schoolId),
+          ))
+          .returning()
+
         if (rows.length === 0) {
           throw new Error(getNestedErrorMessage('attendanceAlerts', 'notFound'))
         }
         return rows[0]!
-      }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'acknowledgeFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { id, userId, schoolId }))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'acknowledgeFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { id, userId, schoolId })),
+  )
 }
 
 // Resolve alert
-export function resolveAlert(id: string, schoolId: string): ResultAsync<typeof attendanceAlerts.$inferSelect, DatabaseError> {
+export async function resolveAlert(id: string, schoolId: string): R.ResultAsync<typeof attendanceAlerts.$inferSelect, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .update(attendanceAlerts)
-      .set({
-        status: 'resolved',
-        resolvedAt: new Date(),
-      })
-      .where(and(
-        eq(attendanceAlerts.id, id),
-        eq(attendanceAlerts.schoolId, schoolId),
-      ))
-      .returning()
-      .then((rows) => {
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .update(attendanceAlerts)
+          .set({
+            status: 'resolved',
+            resolvedAt: new Date(),
+          })
+          .where(and(
+            eq(attendanceAlerts.id, id),
+            eq(attendanceAlerts.schoolId, schoolId),
+          ))
+          .returning()
+
         if (rows.length === 0) {
           throw new Error(getNestedErrorMessage('attendanceAlerts', 'notFound'))
         }
         return rows[0]!
-      }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'resolveFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { id, schoolId }))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'resolveFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { id, schoolId })),
+  )
 }
 
 // Dismiss alert
-export function dismissAlert(id: string, userId: string, schoolId: string): ResultAsync<typeof attendanceAlerts.$inferSelect, DatabaseError> {
+export async function dismissAlert(id: string, userId: string, schoolId: string): R.ResultAsync<typeof attendanceAlerts.$inferSelect, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .update(attendanceAlerts)
-      .set({
-        status: 'dismissed',
-        acknowledgedBy: userId,
-        acknowledgedAt: new Date(),
-      })
-      .where(and(
-        eq(attendanceAlerts.id, id),
-        eq(attendanceAlerts.schoolId, schoolId),
-      ))
-      .returning()
-      .then((rows) => {
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .update(attendanceAlerts)
+          .set({
+            status: 'dismissed',
+            acknowledgedBy: userId,
+            acknowledgedAt: new Date(),
+          })
+          .where(and(
+            eq(attendanceAlerts.id, id),
+            eq(attendanceAlerts.schoolId, schoolId),
+          ))
+          .returning()
+
         if (rows.length === 0) {
           throw new Error(getNestedErrorMessage('attendanceAlerts', 'notFound'))
         }
         return rows[0]!
-      }),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'dismissFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { id, userId, schoolId }))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'dismissFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { id, userId, schoolId })),
+  )
 }
 
 // Delete alert
-export function deleteAlert(id: string, schoolId: string): ResultAsync<void, DatabaseError> {
+export async function deleteAlert(id: string, schoolId: string): R.ResultAsync<void, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db.delete(attendanceAlerts).where(and(
-      eq(attendanceAlerts.id, id),
-      eq(attendanceAlerts.schoolId, schoolId),
-    )).then(() => {}),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'deleteFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { id, schoolId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        await db.delete(attendanceAlerts).where(and(
+          eq(attendanceAlerts.id, id),
+          eq(attendanceAlerts.schoolId, schoolId),
+        ))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'deleteFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { id, schoolId })),
+  )
 }
 
 // Get alert counts by status
-export function getAlertCounts(schoolId: string): ResultAsync<{
+export async function getAlertCounts(schoolId: string): R.ResultAsync<{
   active: number
   acknowledged: number
   resolved: number
   dismissed: number
 }, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .select({
-        status: attendanceAlerts.status,
-        count: count(),
-      })
-      .from(attendanceAlerts)
-      .where(eq(attendanceAlerts.schoolId, schoolId))
-      .groupBy(attendanceAlerts.status)
-      .then(results => ({
-        active: results.find(r => r.status === 'active')?.count ?? 0,
-        acknowledged: results.find(r => r.status === 'acknowledged')?.count ?? 0,
-        resolved: results.find(r => r.status === 'resolved')?.count ?? 0,
-        dismissed: results.find(r => r.status === 'dismissed')?.count ?? 0,
-      })),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchCountsFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const results = await db
+          .select({
+            status: attendanceAlerts.status,
+            count: count(),
+          })
+          .from(attendanceAlerts)
+          .where(eq(attendanceAlerts.schoolId, schoolId))
+          .groupBy(attendanceAlerts.status)
+
+        return {
+          active: results.find(r => r.status === 'active')?.count ?? 0,
+          acknowledged: results.find(r => r.status === 'acknowledged')?.count ?? 0,
+          resolved: results.find(r => r.status === 'resolved')?.count ?? 0,
+          dismissed: results.find(r => r.status === 'dismissed')?.count ?? 0,
+        }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('attendanceAlerts', 'fetchCountsFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId })),
+  )
 }

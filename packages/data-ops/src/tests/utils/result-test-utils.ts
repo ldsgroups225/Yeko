@@ -1,27 +1,21 @@
 import type { YekoLogger } from '@repo/logger'
-import type { Result } from 'neverthrow'
 import type { Mock } from 'vitest'
-import { ResultAsync } from 'neverthrow'
+import { Result as R } from '@praha/byethrow'
 import { vi } from 'vitest'
 import { DatabaseError } from '../../errors'
 
 /**
  * Creates a mocked ResultAsync that resolves to a success value
  */
-export function mockResultAsync<T>(value: T): ResultAsync<T, never> {
-  return ResultAsync.fromPromise(Promise.resolve(value), () => {
-    throw new Error('Should not error')
-  }) as unknown as ResultAsync<T, never>
+export function mockResultAsync<T>(value: T): R.ResultAsync<T, never> {
+  return R.succeed(Promise.resolve(value))
 }
 
 /**
  * Creates a mocked ResultAsync that resolves to an error
  */
-export function mockResultAsyncError<E>(error: E): ResultAsync<never, E> {
-  return ResultAsync.fromPromise(
-    Promise.reject(error),
-    e => e as E,
-  ) as unknown as ResultAsync<never, E>
+export function mockResultAsyncError<E>(error: E): R.ResultAsync<never, E> {
+  return R.fail(Promise.resolve(error))
 }
 
 /**
@@ -38,55 +32,41 @@ export function mockDatabaseError(
 /**
  * Asserts that a Result is successful and returns the value
  */
-export function expectResultSuccess<T, E>(
-  result: Result<T, E> | ResultAsync<T, E>,
-): Promise<T> | T {
-  if (result instanceof ResultAsync) {
-    return result.then((r) => {
-      if (r.isErr()) {
-        throw new Error(`Expected success but got error: ${JSON.stringify(r.error)}`)
-      }
-      return r.value
-    }) as Promise<T>
-  }
+export async function expectResultSuccess<T, E>(
+  result: R.Result<T, E> | R.ResultAsync<T, E>,
+): Promise<T> {
+  const r = await result
 
-  if (result.isErr()) {
-    throw new Error(`Expected success but got error: ${JSON.stringify(result.error)}`)
+  if (R.isFailure(r)) {
+    throw new Error(`Expected success but got error: ${JSON.stringify(r.error)}`)
   }
-  return result.value
+  return r.value
 }
 
 /**
  * Asserts that a Result is an error and returns the error
  */
-export function expectResultError<T, E>(
-  result: Result<T, E> | ResultAsync<T, E>,
-): Promise<E> | E {
-  if (result instanceof ResultAsync) {
-    return result.then((r) => {
-      if (r.isOk()) {
-        throw new Error(`Expected error but got success: ${JSON.stringify(r.value)}`)
-      }
-      return r.error
-    }) as Promise<E>
-  }
+export async function expectResultError<T, E>(
+  result: R.Result<T, E> | R.ResultAsync<T, E>,
+): Promise<E> {
+  const r = await result
 
-  if (result.isOk()) {
-    throw new Error(`Expected error but got success: ${JSON.stringify(result.value)}`)
+  if (R.isSuccess(r)) {
+    throw new Error(`Expected error but got success: ${JSON.stringify(r.value)}`)
   }
-  return result.error
+  return r.error
 }
 
 /**
  * Asserts that a ResultAsync error is a DatabaseError with specific type
  */
 export async function expectDatabaseErrorType<T>(
-  resultAsync: ResultAsync<T, DatabaseError>,
+  resultAsync: R.ResultAsync<T, DatabaseError>,
   expectedType: DatabaseError['type'],
 ): Promise<void> {
   const result = await resultAsync
 
-  if (result.isOk()) {
+  if (R.isSuccess(result)) {
     throw new Error(`Expected DatabaseError of type ${expectedType} but got success`)
   }
 
@@ -251,7 +231,7 @@ export function simulateDbError(operation: () => Promise<unknown>, error: Error)
  * Helper to test both success and error paths
  */
 export async function testResultAsyncPaths<T, E>(
-  resultAsync: ResultAsync<T, E>,
+  resultAsync: R.ResultAsync<T, E>,
   options: {
     onSuccess?: (value: T) => void | Promise<void>
     onError?: (error: E) => void | Promise<void>
@@ -259,10 +239,10 @@ export async function testResultAsyncPaths<T, E>(
 ): Promise<void> {
   const result = await resultAsync
 
-  if (result.isOk() && options.onSuccess) {
+  if (R.isSuccess(result) && options.onSuccess) {
     await options.onSuccess(result.value)
   }
-  else if (result.isErr() && options.onError) {
+  else if (R.isFailure(result) && options.onError) {
     await options.onError(result.error)
   }
 }

@@ -1,9 +1,23 @@
+import { R } from '@praha/byethrow'
+import {
+  bulkCreateCoefficients,
+  bulkUpdateCoefficients,
+  copyCoefficientTemplates,
+  createCoefficientTemplate,
+  deleteCoefficientTemplate,
+  getCoefficientStats,
+  getCoefficientTemplateById,
+  getCoefficientTemplates,
+  updateCoefficientTemplate,
+} from '@repo/data-ops'
+import { getDb } from '@repo/data-ops/database/setup'
+import { grades, schoolYearTemplates, series, subjects } from '@repo/data-ops/drizzle/core-schema'
 import { inArray } from '@repo/data-ops/drizzle/operators'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { COEFFICIENT_LIMITS } from '@/constants/coefficients'
-import { databaseMiddleware } from '@/core/middleware/database'
 
+import { databaseMiddleware } from '@/core/middleware/database'
 import {
   BulkCreateCoefficientsSchema,
   BulkUpdateCoefficientsSchema,
@@ -20,9 +34,8 @@ export const coefficientTemplatesQuery = createServerFn()
   .middleware([databaseMiddleware])
   .inputValidator(data => GetCoefficientTemplatesSchema.parse(data))
   .handler(async (ctx) => {
-    const { getCoefficientTemplates } = await import('@repo/data-ops/queries/coefficients')
     const result = await getCoefficientTemplates(ctx.data)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return result.value
   })
@@ -31,9 +44,8 @@ export const coefficientTemplateByIdQuery = createServerFn()
   .middleware([databaseMiddleware])
   .inputValidator(data => CoefficientTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
-    const { getCoefficientTemplateById } = await import('@repo/data-ops/queries/coefficients')
     const result = await getCoefficientTemplateById(ctx.data.id)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return result.value
   })
@@ -42,9 +54,8 @@ export const createCoefficientTemplateMutation = createServerFn()
   .middleware([databaseMiddleware])
   .inputValidator(data => CreateCoefficientTemplateSchema.parse(data))
   .handler(async (ctx) => {
-    const { createCoefficientTemplate } = await import('@repo/data-ops/queries/coefficients')
     const result = await createCoefficientTemplate(ctx.data)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return result.value
   })
@@ -53,10 +64,9 @@ export const updateCoefficientTemplateMutation = createServerFn()
   .middleware([databaseMiddleware])
   .inputValidator(data => UpdateCoefficientTemplateSchema.parse(data))
   .handler(async (ctx) => {
-    const { updateCoefficientTemplate } = await import('@repo/data-ops/queries/coefficients')
     const { id, ...updateData } = ctx.data
     const result = await updateCoefficientTemplate(id, updateData)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return result.value
   })
@@ -65,9 +75,8 @@ export const deleteCoefficientTemplateMutation = createServerFn()
   .middleware([databaseMiddleware])
   .inputValidator(data => CoefficientTemplateIdSchema.parse(data))
   .handler(async (ctx) => {
-    const { deleteCoefficientTemplate } = await import('@repo/data-ops/queries/coefficients')
     const result = await deleteCoefficientTemplate(ctx.data.id)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return { success: true, id: ctx.data.id }
   })
@@ -76,9 +85,8 @@ export const bulkCreateCoefficientsMutation = createServerFn()
   .middleware([databaseMiddleware])
   .inputValidator(data => BulkCreateCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
-    const { bulkCreateCoefficients } = await import('@repo/data-ops/queries/coefficients')
     const result = await bulkCreateCoefficients(ctx.data.coefficients)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return result.value
   })
@@ -87,9 +95,8 @@ export const bulkUpdateCoefficientsMutation = createServerFn()
   .middleware([databaseMiddleware])
   .inputValidator(data => BulkUpdateCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
-    const { bulkUpdateCoefficients } = await import('@repo/data-ops/queries/coefficients')
     const result = await bulkUpdateCoefficients(ctx.data)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return { success: true }
   })
@@ -98,9 +105,8 @@ export const copyCoefficientsMutation = createServerFn()
   .middleware([databaseMiddleware])
   .inputValidator(data => CopyCoefficientsSchema.parse(data))
   .handler(async (ctx) => {
-    const { copyCoefficientTemplates } = await import('@repo/data-ops/queries/coefficients')
     const result = await copyCoefficientTemplates(ctx.data.sourceYearId, ctx.data.targetYearId)
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return result.value
   })
@@ -108,9 +114,8 @@ export const copyCoefficientsMutation = createServerFn()
 export const coefficientStatsQuery = createServerFn()
   .middleware([databaseMiddleware])
   .handler(async () => {
-    const { getCoefficientStats } = await import('@repo/data-ops/queries/coefficients')
     const result = await getCoefficientStats()
-    if (result.isErr())
+    if (R.isFailure(result))
       throw result.error
     return result.value
   })
@@ -143,8 +148,6 @@ export const validateCoefficientImportMutation = createServerFn()
       return { valid: false, errors: [{ row: 0, field: 'data', message: 'Aucune donnée à valider' }] }
     }
 
-    const { getDb } = await import('@repo/data-ops/database/setup')
-    const { schoolYearTemplates, subjects, grades, series } = await import('@repo/data-ops/drizzle/core-schema')
     const db = getDb()
 
     // Extract unique IDs for batch validation

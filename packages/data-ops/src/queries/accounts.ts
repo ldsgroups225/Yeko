@@ -1,7 +1,7 @@
 import type { Account, AccountInsert, AccountType } from '../drizzle/school-schema'
+import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, asc, eq, isNull, sql } from 'drizzle-orm'
-import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { accounts } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
@@ -17,130 +17,154 @@ export interface GetAccountsParams {
   search?: string
 }
 
-export function getAccounts(params: GetAccountsParams): ResultAsync<Account[], DatabaseError> {
+export function getAccounts(params: GetAccountsParams): R.ResultAsync<Account[], DatabaseError> {
   const db = getDb()
   const { schoolId, type, parentId, includeInactive = false, search } = params
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const conditions = [eq(accounts.schoolId, schoolId)]
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const conditions = [eq(accounts.schoolId, schoolId)]
 
-      if (type) {
-        conditions.push(eq(accounts.type, type))
-      }
-
-      if (parentId !== undefined) {
-        if (parentId === null) {
-          conditions.push(isNull(accounts.parentId))
+        if (type) {
+          conditions.push(eq(accounts.type, type))
         }
-        else {
-          conditions.push(eq(accounts.parentId, parentId))
+
+        if (parentId !== undefined) {
+          if (parentId === null) {
+            conditions.push(isNull(accounts.parentId))
+          }
+          else {
+            conditions.push(eq(accounts.parentId, parentId))
+          }
         }
-      }
 
-      if (!includeInactive) {
-        conditions.push(eq(accounts.status, 'active'))
-      }
+        if (!includeInactive) {
+          conditions.push(eq(accounts.status, 'active'))
+        }
 
-      if (search) {
-        conditions.push(
-          sql`(${accounts.code} ILIKE ${`%${search}%`} OR ${accounts.name} ILIKE ${`%${search}%`})`,
-        )
-      }
+        if (search) {
+          conditions.push(
+            sql`(${accounts.code} ILIKE ${`%${search}%`} OR ${accounts.name} ILIKE ${`%${search}%`})`,
+          )
+        }
 
-      return db
-        .select()
-        .from(accounts)
-        .where(and(...conditions))
-        .orderBy(asc(accounts.code))
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, type }))
+        return await db
+          .select()
+          .from(accounts)
+          .where(and(...conditions))
+          .orderBy(asc(accounts.code))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, type })),
+  )
 }
 
 export interface AccountTreeNode extends Account {
   children: AccountTreeNode[]
 }
 
-export function getAccountsTree(schoolId: string, includeInactive = false): ResultAsync<AccountTreeNode[], DatabaseError> {
-  return getAccounts({ schoolId, includeInactive }).map((allAccounts) => {
-    const accountMap = new Map<string, AccountTreeNode>()
-    const rootAccounts: AccountTreeNode[] = []
+export async function getAccountsTree(schoolId: string, includeInactive = false): R.ResultAsync<AccountTreeNode[], DatabaseError> {
+  const result = await getAccounts({ schoolId, includeInactive })
+  return R.pipe(
+    result,
+    R.map((allAccounts) => {
+      const accountMap = new Map<string, AccountTreeNode>()
+      const rootAccounts: AccountTreeNode[] = []
 
-    for (const account of allAccounts) {
-      accountMap.set(account.id, { ...account, children: [] })
-    }
-
-    for (const account of allAccounts) {
-      const node = accountMap.get(account.id)!
-      if (account.parentId && accountMap.has(account.parentId)) {
-        accountMap.get(account.parentId)!.children.push(node)
+      for (const account of allAccounts) {
+        accountMap.set(account.id, { ...account, children: [] })
       }
-      else {
-        rootAccounts.push(node)
-      }
-    }
 
-    return rootAccounts
-  })
+      for (const account of allAccounts) {
+        const node = accountMap.get(account.id)!
+        if (account.parentId && accountMap.has(account.parentId)) {
+          accountMap.get(account.parentId)!.children.push(node)
+        }
+        else {
+          rootAccounts.push(node)
+        }
+      }
+
+      return rootAccounts
+    }),
+  )
 }
 
-export function getAccountById(accountId: string): ResultAsync<Account | null, DatabaseError> {
+export function getAccountById(accountId: string): R.ResultAsync<Account | null, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .select()
-      .from(accounts)
-      .where(eq(accounts.id, accountId))
-      .limit(1)
-      .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchByIdFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { accountId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select()
+          .from(accounts)
+          .where(eq(accounts.id, accountId))
+          .limit(1)
+        return rows[0] ?? null
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchByIdFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { accountId })),
+  )
 }
 
-export function getAccountByCode(schoolId: string, code: string): ResultAsync<Account | null, DatabaseError> {
+export function getAccountByCode(schoolId: string, code: string): R.ResultAsync<Account | null, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .select()
-      .from(accounts)
-      .where(and(eq(accounts.schoolId, schoolId), eq(accounts.code, code)))
-      .limit(1)
-      .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchByCodeFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, code }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select()
+          .from(accounts)
+          .where(and(eq(accounts.schoolId, schoolId), eq(accounts.code, code)))
+          .limit(1)
+        return rows[0] ?? null
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchByCodeFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, code })),
+  )
 }
 
 export type CreateAccountData = Omit<AccountInsert, 'id' | 'createdAt' | 'updatedAt' | 'level'>
 
-export function createAccount(data: CreateAccountData): ResultAsync<Account, DatabaseError> {
+export function createAccount(data: CreateAccountData): R.ResultAsync<Account, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      let level = 1
-      if (data.parentId) {
-        const parentResult = await getAccountById(data.parentId)
-        if (parentResult.isErr())
-          throw parentResult.error
-        const parent = parentResult.value
-        if (parent) {
-          level = parent.level + 1
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        let level = 1
+        if (data.parentId) {
+          const parentResult = await getAccountById(data.parentId)
+          if (R.isFailure(parentResult))
+            throw parentResult.error
+          const parent = parentResult.value
+          if (parent) {
+            level = parent.level + 1
+          }
         }
-      }
 
-      const [account] = await db
-        .insert(accounts)
-        .values({ id: crypto.randomUUID(), ...data, level })
-        .returning()
+        const [account] = await db
+          .insert(accounts)
+          .values({ id: crypto.randomUUID(), ...data, level })
+          .returning()
 
-      if (!account) {
-        throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.createFailed'))
-      }
+        if (!account) {
+          throw dbError('INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.createFailed'))
+        }
 
-      return account
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.createFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId: data.schoolId, code: data.code }))
+        return account
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.createFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId: data.schoolId, code: data.code })),
+  )
 }
 
 export type UpdateAccountData = Partial<Omit<AccountInsert, 'id' | 'schoolId' | 'createdAt' | 'updatedAt'>>
@@ -148,69 +172,81 @@ export type UpdateAccountData = Partial<Omit<AccountInsert, 'id' | 'schoolId' | 
 export function updateAccount(
   accountId: string,
   data: UpdateAccountData,
-): ResultAsync<Account | undefined, DatabaseError> {
+): R.ResultAsync<Account | undefined, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      let level: number | undefined
-      if (data.parentId !== undefined) {
-        if (data.parentId === null) {
-          level = 1
-        }
-        else {
-          const parentResult = await getAccountById(data.parentId)
-          if (parentResult.isErr())
-            throw parentResult.error
-          const parent = parentResult.value
-          if (parent) {
-            level = parent.level + 1
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        let level: number | undefined
+        if (data.parentId !== undefined) {
+          if (data.parentId === null) {
+            level = 1
+          }
+          else {
+            const parentResult = await getAccountById(data.parentId)
+            if (R.isFailure(parentResult))
+              throw parentResult.error
+            const parent = parentResult.value
+            if (parent) {
+              level = parent.level + 1
+            }
           }
         }
-      }
 
-      const [account] = await db
-        .update(accounts)
-        .set({ ...data, ...(level !== undefined ? { level } : {}), updatedAt: new Date() })
-        .where(eq(accounts.id, accountId))
-        .returning()
+        const [account] = await db
+          .update(accounts)
+          .set({ ...data, ...(level !== undefined ? { level } : {}), updatedAt: new Date() })
+          .where(eq(accounts.id, accountId))
+          .returning()
 
-      return account
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.updateFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { accountId }))
+        return account
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.updateFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { accountId })),
+  )
 }
 
 export function updateAccountBalance(
   accountId: string,
   amount: string,
-): ResultAsync<Account | undefined, DatabaseError> {
+): R.ResultAsync<Account | undefined, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [account] = await db
-        .update(accounts)
-        .set({ balance: amount, updatedAt: new Date() })
-        .where(eq(accounts.id, accountId))
-        .returning()
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [account] = await db
+          .update(accounts)
+          .set({ balance: amount, updatedAt: new Date() })
+          .where(eq(accounts.id, accountId))
+          .returning()
 
-      return account
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.updateBalanceFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { accountId, amount }))
+        return account
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.updateBalanceFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { accountId, amount })),
+  )
 }
 
-export function deleteAccount(accountId: string): ResultAsync<void, DatabaseError> {
+export function deleteAccount(accountId: string): R.ResultAsync<void, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    (async () => {
-      await db.delete(accounts).where(eq(accounts.id, accountId))
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.deleteFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { accountId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        await db.delete(accounts).where(eq(accounts.id, accountId))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.deleteFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { accountId })),
+  )
 }
 
-export function deactivateAccount(accountId: string): ResultAsync<Account | undefined, DatabaseError> {
-  return updateAccount(accountId, { status: 'inactive' })
+export async function deactivateAccount(accountId: string): R.ResultAsync<Account | undefined, DatabaseError> {
+  return await updateAccount(accountId, { status: 'inactive' })
 }
 
 export interface AccountBalanceSummary {
@@ -225,33 +261,44 @@ export interface AccountBalanceSummary {
 export function getAccountBalancesByType(
   schoolId: string,
   type: AccountType,
-): ResultAsync<AccountBalanceSummary[], DatabaseError> {
+): R.ResultAsync<AccountBalanceSummary[], DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .select({
-        accountId: accounts.id,
-        code: accounts.code,
-        name: accounts.name,
-        type: accounts.type,
-        balance: accounts.balance,
-        normalBalance: accounts.normalBalance,
-      })
-      .from(accounts)
-      .where(and(eq(accounts.schoolId, schoolId), eq(accounts.type, type), eq(accounts.status, 'active')))
-      .orderBy(asc(accounts.code)) as Promise<AccountBalanceSummary[]>,
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchBalancesFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, type }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: () =>
+        db
+          .select({
+            accountId: accounts.id,
+            code: accounts.code,
+            name: accounts.name,
+            type: accounts.type,
+            balance: sql<string>`COALESCE(${accounts.balance}, '0')`,
+            normalBalance: accounts.normalBalance,
+          })
+          .from(accounts)
+          .where(and(eq(accounts.schoolId, schoolId), eq(accounts.type, type), eq(accounts.status, 'active')))
+          .orderBy(asc(accounts.code)),
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchBalancesFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, type })),
+  )
 }
 
-export function getTotalBalanceByType(schoolId: string, type: AccountType): ResultAsync<number, DatabaseError> {
+export function getTotalBalanceByType(schoolId: string, type: AccountType): R.ResultAsync<number, DatabaseError> {
   const db = getDb()
-  return ResultAsync.fromPromise(
-    db
-      .select({ total: sql<string>`COALESCE(SUM(${accounts.balance}), 0)` })
-      .from(accounts)
-      .where(and(eq(accounts.schoolId, schoolId), eq(accounts.type, type), eq(accounts.status, 'active')))
-      .then(rows => Number.parseFloat(rows[0]?.total ?? '0')),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchTotalBalanceFailed')),
-  ).mapErr(tapLogErr(databaseLogger, { schoolId, type }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select({ total: sql<string>`COALESCE(SUM(${accounts.balance}), 0)` })
+          .from(accounts)
+          .where(and(eq(accounts.schoolId, schoolId), eq(accounts.type, type), eq(accounts.status, 'active')))
+        return Number.parseFloat(rows[0]?.total ?? '0')
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'account.fetchTotalBalanceFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, type })),
+  )
 }

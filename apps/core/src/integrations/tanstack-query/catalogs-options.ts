@@ -1,3 +1,4 @@
+import type { EducationLevel, Grade, Serie, Subject, Track } from '@repo/data-ops/drizzle/core-schema'
 import type {
   CreateGradeInput,
   CreateSerieInput,
@@ -62,7 +63,7 @@ export const catalogsMutationKeys = {
 // ===== EDUCATION LEVELS =====
 
 export function educationLevelsQueryOptions() {
-  return queryOptions({
+  return queryOptions<EducationLevel[]>({
     queryKey: ['education-levels'],
     queryFn: () => educationLevelsQuery(),
     staleTime: 1000 * 60 * 60, // 1 hour (rarely changes)
@@ -73,7 +74,7 @@ export function educationLevelsQueryOptions() {
 // ===== TRACKS =====
 
 export function tracksQueryOptions() {
-  return queryOptions({
+  return queryOptions<Track[]>({
     queryKey: ['tracks'],
     queryFn: () => tracksQuery(),
     staleTime: 1000 * 60 * 10, // 10 minutes
@@ -82,7 +83,7 @@ export function tracksQueryOptions() {
 }
 
 export function trackByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<Track | null>({
     queryKey: ['track', id],
     queryFn: () => trackByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -109,7 +110,7 @@ export const deleteTrackMutationOptions = {
 // ===== GRADES =====
 
 export function gradesQueryOptions(trackId?: string) {
-  return queryOptions({
+  return queryOptions<Grade[]>({
     queryKey: ['grades', { trackId }],
     queryFn: () => gradesQuery({ data: { trackId } }),
     staleTime: 1000 * 60 * 10,
@@ -118,7 +119,7 @@ export function gradesQueryOptions(trackId?: string) {
 }
 
 export function gradeByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<Grade | null>({
     queryKey: ['grade', id],
     queryFn: () => gradeByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -150,7 +151,7 @@ export const bulkUpdateGradesOrderMutationOptions = {
 // ===== SERIES =====
 
 export function seriesQueryOptions(trackId?: string) {
-  return queryOptions({
+  return queryOptions<Serie[]>({
     queryKey: ['series', { trackId }],
     queryFn: () => seriesQuery({ data: { trackId } }),
     staleTime: 1000 * 60 * 10,
@@ -159,7 +160,7 @@ export function seriesQueryOptions(trackId?: string) {
 }
 
 export function serieByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<Serie | null>({
     queryKey: ['serie', id],
     queryFn: () => serieByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -196,7 +197,15 @@ export function subjectsQueryOptions(params: {
   page?: number
   limit?: number
 }) {
-  return queryOptions({
+  return queryOptions<{
+    subjects: Subject[]
+    pagination: {
+      total: number
+      page: number
+      limit: number
+      totalPages: number
+    }
+  }>({
     queryKey: ['subjects', params],
     queryFn: () => subjectsQuery({ data: params }),
     staleTime: 1000 * 60 * 5,
@@ -206,7 +215,7 @@ export function subjectsQueryOptions(params: {
 }
 
 export function subjectByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<Subject | null>({
     queryKey: ['subject', id],
     queryFn: () => subjectByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -238,7 +247,13 @@ export const bulkCreateSubjectsMutationOptions = {
 // ===== CATALOG STATS =====
 
 export function catalogStatsQueryOptions() {
-  return queryOptions({
+  return queryOptions<{
+    educationLevels: number
+    tracks: number
+    grades: number
+    series: number
+    subjects: number
+  }>({
     queryKey: ['catalog-stats'],
     queryFn: () => catalogStatsQuery(),
     staleTime: 1000 * 60 * 5,

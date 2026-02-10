@@ -1,4 +1,5 @@
 import type { ExportStudentRow, ImportStudentResult, StudentFullProfile, StudentStatistics, StudentWithDetails } from '@repo/data-ops/queries/students'
+import { Result as R } from '@praha/byethrow'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { getActiveSchoolYear } from '@repo/data-ops/queries/school-admin/school-years'
 import * as studentQueries from '@repo/data-ops/queries/students'
@@ -48,10 +49,10 @@ export const getStudents = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    return (await studentQueries.getStudents({ ...data, schoolId: context.school.schoolId })).match(
-      paginatedData => ({ success: true as const, data: paginatedData }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    const _result1 = await studentQueries.getStudents({ ...data, schoolId: context.school.schoolId })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: _result1.error.message }
+    return { success: true as const, data: _result1.value }
   })
 
 export const getStudentById = authServerFn
@@ -61,10 +62,10 @@ export const getStudentById = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    return (await studentQueries.getStudentById(id)).match(
-      student => ({ success: true as const, data: student }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    const _result2 = await studentQueries.getStudentById(id)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: _result2.error.message }
+    return { success: true as const, data: _result2.value }
   })
 
 export const createStudent = authServerFn
@@ -77,24 +78,22 @@ export const createStudent = authServerFn
     await requirePermission('students', 'create')
     const schoolYearId = schoolYear?.schoolYearId
 
-    return (await studentQueries.createStudent({
+    const _result3 = await studentQueries.createStudent({
       ...data,
       schoolId: school.schoolId,
       schoolYearId,
-    })).match(
-      async (student) => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'create',
-          tableName: 'students',
-          recordId: student.id,
-          newValues: { firstName: student.firstName, lastName: student.lastName, matricule: student.matricule },
-        })
-        return { success: true as const, data: student }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    })
+    if (R.isFailure(_result3))
+      return { success: false as const, error: _result3.error.message }
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'create',
+      tableName: 'students',
+      recordId: _result3.value.id,
+      newValues: { firstName: _result3.value.firstName, lastName: _result3.value.lastName, matricule: _result3.value.matricule },
+    })
+    return { success: true as const, data: _result3.value }
   })
 
 export const updateStudent = authServerFn
@@ -111,20 +110,18 @@ export const updateStudent = authServerFn
     const { school } = context
     await requirePermission('students', 'edit')
 
-    return (await studentQueries.updateStudent(data.id, data.data)).match(
-      async (student) => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'update',
-          tableName: 'students',
-          recordId: data.id,
-          newValues: data.data,
-        })
-        return { success: true as const, data: student }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    const _result4 = await studentQueries.updateStudent(data.id, data.data)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: _result4.error.message }
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'update',
+      tableName: 'students',
+      recordId: data.id,
+      newValues: data.data,
+    })
+    return { success: true as const, data: _result4.value }
   })
 
 export const deleteStudent = authServerFn
@@ -136,19 +133,17 @@ export const deleteStudent = authServerFn
     const { school } = context
     await requirePermission('students', 'delete')
 
-    return (await studentQueries.deleteStudent(id)).match(
-      async () => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'delete',
-          tableName: 'students',
-          recordId: id,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    const _result5 = await studentQueries.deleteStudent(id)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: _result5.error.message }
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'delete',
+      tableName: 'students',
+      recordId: id,
+    })
+    return { success: true as const, data: { success: true } }
   })
 
 export const updateStudentStatus = authServerFn
@@ -166,20 +161,18 @@ export const updateStudentStatus = authServerFn
     const { school } = context
     await requirePermission('students', 'edit')
 
-    return (await studentQueries.updateStudentStatus(data.id, data.status, data.reason)).match(
-      async (student) => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'update',
-          tableName: 'students',
-          recordId: data.id,
-          newValues: { status: data.status, reason: data.reason },
-        })
-        return { success: true as const, data: student }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    const _result6 = await studentQueries.updateStudentStatus(data.id, data.status, data.reason)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: _result6.error.message }
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'update',
+      tableName: 'students',
+      recordId: data.id,
+      newValues: { status: data.status, reason: data.reason },
+    })
+    return { success: true as const, data: _result6.value }
   })
 
 export const bulkImportStudents = authServerFn
@@ -191,23 +184,21 @@ export const bulkImportStudents = authServerFn
     const { school } = context
     await requirePermission('students', 'create')
 
-    return (await studentQueries.bulkImportStudents(school.schoolId, data.map(student => ({
+    const _result7 = await studentQueries.bulkImportStudents(school.schoolId, data.map(student => ({
       ...student,
       schoolId: school.schoolId,
-    })))).match(
-      async (results) => {
-        await createAuditLog({
-          schoolId: school.schoolId,
-          userId: school.userId,
-          action: 'create',
-          tableName: 'students',
-          recordId: 'bulk',
-          newValues: { count: results.success, errors: results.errors.length },
-        })
-        return { success: true as const, data: results }
-      },
-      error => ({ success: false as const, error: error.message }),
-    )
+    })))
+    if (R.isFailure(_result7))
+      return { success: false as const, error: _result7.error.message }
+    await createAuditLog({
+      schoolId: school.schoolId,
+      userId: school.userId,
+      action: 'create',
+      tableName: 'students',
+      recordId: 'bulk',
+      newValues: { count: _result7.value.success, errors: _result7.value.errors.length },
+    })
+    return { success: true as const, data: _result7.value }
   })
 
 export const exportStudents = authServerFn
@@ -217,10 +208,10 @@ export const exportStudents = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    return (await studentQueries.exportStudents({ ...data, schoolId: context.school.schoolId })).match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    const _result8 = await studentQueries.exportStudents({ ...data, schoolId: context.school.schoolId })
+    if (R.isFailure(_result8))
+      return { success: false as const, error: _result8.error.message }
+    return { success: true as const, data: _result8.value }
   })
 
 export const getStudentStatistics = authServerFn
@@ -229,10 +220,10 @@ export const getStudentStatistics = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    return (await studentQueries.getStudentStatistics(context.school.schoolId)).match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    const _result9 = await studentQueries.getStudentStatistics(context.school.schoolId)
+    if (R.isFailure(_result9))
+      return { success: false as const, error: _result9.error.message }
+    return { success: true as const, data: _result9.value }
   })
 
 export const generateMatricule = authServerFn
@@ -246,10 +237,7 @@ export const generateMatricule = authServerFn
 
     if (!schoolYearId) {
       const activeYearResult = await getActiveSchoolYear(school.schoolId)
-      const activeYear = activeYearResult.match(
-        ay => ay,
-        () => null,
-      )
+      const activeYear = R.isFailure(activeYearResult) ? null : activeYearResult.value
 
       if (!activeYear) {
         return { success: false as const, error: 'Aucune année scolaire sélectionnée. Veuillez sélectionner une année scolaire.' }
@@ -257,8 +245,8 @@ export const generateMatricule = authServerFn
       schoolYearId = activeYear.id
     }
 
-    return (await studentQueries.generateMatricule(school.schoolId, schoolYearId!)).match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    const _result10 = await studentQueries.generateMatricule(school.schoolId, schoolYearId!)
+    if (R.isFailure(_result10))
+      return { success: false as const, error: _result10.error.message }
+    return { success: true as const, data: _result10.value }
   })

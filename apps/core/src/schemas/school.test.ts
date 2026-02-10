@@ -502,7 +502,7 @@ describe('school Schema Validation', () => {
     test('should reject invalid metric', () => {
       const statsData = {
         schoolId: 'school-123',
-        metric: 'invalid-metric' as any,
+        metric: 'invalid-metric',
       }
 
       const result = SchoolStatsSchema.safeParse(statsData)

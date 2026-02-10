@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   deleteAttendanceSettings,
   getAttendanceSettings,
@@ -29,10 +30,10 @@ export const getSettings = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('settings', 'view')
-    return (await getAttendanceSettings(context.school.schoolId)).match(
-      result => ({ success: true as const, data: result }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des paramètres de présence' }),
-    )
+    const _result1 = await getAttendanceSettings(context.school.schoolId)
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des paramètres de présence' }
+    return { success: true as const, data: _result1.value }
   })
 
 /**
@@ -47,23 +48,21 @@ export const updateSettings = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('settings', 'edit')
 
-    return (await upsertAttendanceSettings({
+    const _result2 = await upsertAttendanceSettings({
       schoolId,
       ...data,
-    })).match(
-      async (result) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'attendance_settings',
-          recordId: schoolId,
-          newValues: data,
-        })
-        return { success: true as const, data: result }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour des paramètres de présence' }),
-    )
+    })
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la mise à jour des paramètres de présence' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'attendance_settings',
+      recordId: schoolId,
+      newValues: data,
+    })
+    return { success: true as const, data: _result2.value }
   })
 
 /**
@@ -77,17 +76,15 @@ export const resetSettings = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('settings', 'edit')
 
-    return (await deleteAttendanceSettings(schoolId)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'attendance_settings',
-          recordId: schoolId,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la réinitialisation des paramètres' }),
-    )
+    const _result3 = await deleteAttendanceSettings(schoolId)
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la réinitialisation des paramètres' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'attendance_settings',
+      recordId: schoolId,
+    })
+    return { success: true as const, data: { success: true } }
   })

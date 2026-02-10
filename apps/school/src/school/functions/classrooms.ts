@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import * as classroomQueries from '@repo/data-ops/queries/classrooms'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
@@ -38,10 +39,10 @@ export const getClassrooms = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classrooms', 'view')
-    return (await classroomQueries.getClassrooms({ ...data, schoolId: context.school.schoolId })).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des salles' }),
-    )
+    const _result1 = await classroomQueries.getClassrooms({ ...data, schoolId: context.school.schoolId })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des salles' }
+    return { success: true as const, data: _result1.value }
   })
 
 export const getClassroomById = authServerFn
@@ -51,10 +52,10 @@ export const getClassroomById = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classrooms', 'view')
-    return (await classroomQueries.getClassroomById(id)).match(
-      data => ({ success: true as const, data }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la salle' }),
-    )
+    const _result2 = await classroomQueries.getClassroomById(id)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération de la salle' }
+    return { success: true as const, data: _result2.value }
   })
 
 export const createClassroom = authServerFn
@@ -66,24 +67,22 @@ export const createClassroom = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('classrooms', 'create')
 
-    return (await classroomQueries.createClassroom({
+    const _result3 = await classroomQueries.createClassroom({
       ...data,
       schoolId,
       id: crypto.randomUUID(),
-    })).match(
-      async (classroom) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'classrooms',
-          recordId: classroom.id,
-          newValues: data,
-        })
-        return { success: true as const, data: classroom }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la création de la salle' }),
-    )
+    })
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la création de la salle' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'classrooms',
+      recordId: _result3.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result3.value }
   })
 
 export const updateClassroom = authServerFn
@@ -101,25 +100,23 @@ export const updateClassroom = authServerFn
     await requirePermission('classrooms', 'edit')
 
     const oldResult = await classroomQueries.getClassroomById(data.id)
-    if (oldResult.isErr())
+    if (R.isFailure(oldResult))
       return { success: false as const, error: 'Salle non trouvée' }
     const oldClassroom = oldResult.value
 
-    return (await classroomQueries.updateClassroom(data.id, data.updates)).match(
-      async (updated) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'classrooms',
-          recordId: data.id,
-          oldValues: oldClassroom?.classroom,
-          newValues: data.updates,
-        })
-        return { success: true as const, data: updated }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la salle' }),
-    )
+    const _result4 = await classroomQueries.updateClassroom(data.id, data.updates)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de la mise à jour de la salle' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'classrooms',
+      recordId: data.id,
+      oldValues: oldClassroom?.classroom,
+      newValues: data.updates,
+    })
+    return { success: true as const, data: _result4.value }
   })
 
 export const deleteClassroom = authServerFn
@@ -132,22 +129,20 @@ export const deleteClassroom = authServerFn
     await requirePermission('classrooms', 'delete')
 
     const oldResult = await classroomQueries.getClassroomById(id)
-    if (oldResult.isErr())
+    if (R.isFailure(oldResult))
       return { success: false as const, error: 'Salle non trouvée' }
     const oldClassroom = oldResult.value
 
-    return (await classroomQueries.deleteClassroom(id)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'classrooms',
-          recordId: id,
-          oldValues: oldClassroom?.classroom,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la salle' }),
-    )
+    const _result5 = await classroomQueries.deleteClassroom(id)
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la suppression de la salle' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'classrooms',
+      recordId: id,
+      oldValues: oldClassroom?.classroom,
+    })
+    return { success: true as const, data: { success: true } }
   })

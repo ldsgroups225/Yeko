@@ -6,9 +6,9 @@
  */
 
 import type { FeeTypeCategory } from '../drizzle/core-schema'
+import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, asc, eq, sql } from 'drizzle-orm'
-import { ResultAsync } from 'neverthrow'
 import { getDb } from '../database/setup'
 import { feeTypeTemplates } from '../drizzle/core-schema'
 import { DatabaseError, dbError } from '../errors'
@@ -25,68 +25,84 @@ export interface GetFeeTypeTemplatesParams {
 /**
  * Get all active fee type templates
  */
-export function getFeeTypeTemplates(
+export async function getFeeTypeTemplates(
   params: GetFeeTypeTemplatesParams = {},
-): ResultAsync<FeeTypeTemplate[], DatabaseError> {
+): R.ResultAsync<FeeTypeTemplate[], DatabaseError> {
   const db = getDb()
   const { category, includeInactive = false } = params
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const conditions = []
-      if (category) {
-        conditions.push(eq(feeTypeTemplates.category, category))
-      }
-      if (!includeInactive) {
-        conditions.push(eq(feeTypeTemplates.isActive, true))
-      }
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const conditions = []
+        if (category) {
+          conditions.push(eq(feeTypeTemplates.category, category))
+        }
+        if (!includeInactive) {
+          conditions.push(eq(feeTypeTemplates.isActive, true))
+        }
 
-      return db
-        .select()
-        .from(feeTypeTemplates)
-        .where(conditions.length > 0 ? and(...conditions) : undefined)
-        .orderBy(asc(feeTypeTemplates.displayOrder), asc(feeTypeTemplates.name))
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee type templates'),
-  ).mapErr(tapLogErr(databaseLogger, { category, includeInactive }))
+        return await db
+          .select()
+          .from(feeTypeTemplates)
+          .where(conditions.length > 0 ? and(...conditions) : undefined)
+          .orderBy(asc(feeTypeTemplates.displayOrder), asc(feeTypeTemplates.name))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee type templates'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { category, includeInactive })),
+  )
 }
 
 /**
  * Get a single fee type template by ID
  */
-export function getFeeTypeTemplateById(
+export async function getFeeTypeTemplateById(
   templateId: string,
-): ResultAsync<FeeTypeTemplate | null, DatabaseError> {
+): R.ResultAsync<FeeTypeTemplate | null, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    db
-      .select()
-      .from(feeTypeTemplates)
-      .where(eq(feeTypeTemplates.id, templateId))
-      .limit(1)
-      .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee type template by ID'),
-  ).mapErr(tapLogErr(databaseLogger, { templateId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select()
+          .from(feeTypeTemplates)
+          .where(eq(feeTypeTemplates.id, templateId))
+          .limit(1)
+        return rows[0] ?? null
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee type template by ID'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { templateId })),
+  )
 }
 
 /**
  * Get a fee type template by code
  */
-export function getFeeTypeTemplateByCode(
+export async function getFeeTypeTemplateByCode(
   code: string,
-): ResultAsync<FeeTypeTemplate | null, DatabaseError> {
+): R.ResultAsync<FeeTypeTemplate | null, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    db
-      .select()
-      .from(feeTypeTemplates)
-      .where(eq(feeTypeTemplates.code, code))
-      .limit(1)
-      .then(rows => rows[0] ?? null),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee type template by code'),
-  ).mapErr(tapLogErr(databaseLogger, { code }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const rows = await db
+          .select()
+          .from(feeTypeTemplates)
+          .where(eq(feeTypeTemplates.code, code))
+          .limit(1)
+        return rows[0] ?? null
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch fee type template by code'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { code })),
+  )
 }
 
 /**
@@ -94,26 +110,30 @@ export function getFeeTypeTemplateByCode(
  */
 export type CreateFeeTypeTemplateData = Omit<FeeTypeTemplateInsert, 'id' | 'createdAt' | 'updatedAt'>
 
-export function createFeeTypeTemplate(
+export async function createFeeTypeTemplate(
   data: CreateFeeTypeTemplateData,
-): ResultAsync<FeeTypeTemplate, DatabaseError> {
+): R.ResultAsync<FeeTypeTemplate, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [template] = await db
-        .insert(feeTypeTemplates)
-        .values({ id: `ftpl-${data.code.toLowerCase()}-${Date.now()}`, ...data })
-        .returning()
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [template] = await db
+          .insert(feeTypeTemplates)
+          .values({ id: `ftpl-${data.code.toLowerCase()}-${Date.now()}`, ...data })
+          .returning()
 
-      if (!template) {
-        throw dbError('INTERNAL_ERROR', 'Failed to create fee type template')
-      }
+        if (!template) {
+          throw dbError('INTERNAL_ERROR', 'Failed to create fee type template')
+        }
 
-      return template
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create fee type template'),
-  ).mapErr(tapLogErr(databaseLogger, { code: data.code, category: data.category }))
+        return template
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to create fee type template'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { code: data.code, category: data.category })),
+  )
 }
 
 /**
@@ -123,24 +143,28 @@ export type UpdateFeeTypeTemplateData = Partial<
   Omit<FeeTypeTemplateInsert, 'id' | 'createdAt' | 'updatedAt'>
 >
 
-export function updateFeeTypeTemplate(
+export async function updateFeeTypeTemplate(
   templateId: string,
   data: UpdateFeeTypeTemplateData,
-): ResultAsync<FeeTypeTemplate | undefined, DatabaseError> {
+): R.ResultAsync<FeeTypeTemplate | undefined, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      const [template] = await db
-        .update(feeTypeTemplates)
-        .set({ ...data, updatedAt: new Date() })
-        .where(eq(feeTypeTemplates.id, templateId))
-        .returning()
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        const [template] = await db
+          .update(feeTypeTemplates)
+          .set({ ...data, updatedAt: new Date() })
+          .where(eq(feeTypeTemplates.id, templateId))
+          .returning()
 
-      return template
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update fee type template'),
-  ).mapErr(tapLogErr(databaseLogger, { templateId }))
+        return template
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to update fee type template'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { templateId })),
+  )
 }
 
 /**
@@ -148,44 +172,52 @@ export function updateFeeTypeTemplate(
  */
 export function deactivateFeeTypeTemplate(
   templateId: string,
-): ResultAsync<FeeTypeTemplate | undefined, DatabaseError> {
+): R.ResultAsync<FeeTypeTemplate | undefined, DatabaseError> {
   return updateFeeTypeTemplate(templateId, { isActive: false })
 }
 
 /**
  * Delete a fee type template (hard delete - use with caution)
  */
-export function deleteFeeTypeTemplate(templateId: string): ResultAsync<void, DatabaseError> {
+export async function deleteFeeTypeTemplate(templateId: string): R.ResultAsync<void, DatabaseError> {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      await db.delete(feeTypeTemplates).where(eq(feeTypeTemplates.id, templateId))
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete fee type template'),
-  ).mapErr(tapLogErr(databaseLogger, { templateId }))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        await db.delete(feeTypeTemplates).where(eq(feeTypeTemplates.id, templateId))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to delete fee type template'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { templateId })),
+  )
 }
 
 /**
  * Get all template categories with counts
  */
-export function getTemplateCategoriesWithCounts(): ResultAsync<
+export async function getTemplateCategoriesWithCounts(): R.ResultAsync<
   { category: FeeTypeCategory, count: number }[],
   DatabaseError
 > {
   const db = getDb()
 
-  return ResultAsync.fromPromise(
-    (async () => {
-      return db
-        .select({
-          category: feeTypeTemplates.category,
-          count: sql<number>`count(*)`,
-        })
-        .from(feeTypeTemplates)
-        .where(eq(feeTypeTemplates.isActive, true))
-        .groupBy(feeTypeTemplates.category)
-    })(),
-    err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to get template category counts'),
-  ).mapErr(tapLogErr(databaseLogger, {}))
+  return R.pipe(
+    R.try({
+      immediate: true,
+      try: async () => {
+        return await db
+          .select({
+            category: feeTypeTemplates.category,
+            count: sql<number>`count(*)`,
+          })
+          .from(feeTypeTemplates)
+          .where(eq(feeTypeTemplates.isActive, true))
+          .groupBy(feeTypeTemplates.category)
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to get template category counts'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, {})),
+  )
 }

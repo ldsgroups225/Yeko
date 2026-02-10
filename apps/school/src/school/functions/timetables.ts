@@ -1,4 +1,5 @@
 import type { TimetableConflict } from '@repo/data-ops/queries/timetables'
+import { Result as R } from '@praha/byethrow'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import * as timetableQueries from '@repo/data-ops/queries/timetables'
 import { z } from 'zod'
@@ -25,10 +26,10 @@ export const getTimetableByClass = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classes', 'view')
-    return (await timetableQueries.getTimetableByClass(data)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de l\'emploi du temps de la classe' }),
-    )
+    const _result1 = await timetableQueries.getTimetableByClass(data)
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération de l\'emploi du temps de la classe' }
+    return { success: true as const, data: _result1.value }
   })
 
 export const getTimetableByTeacher = authServerFn
@@ -38,10 +39,10 @@ export const getTimetableByTeacher = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('teachers', 'view')
-    return (await timetableQueries.getTimetableByTeacher(data)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de l\'emploi du temps de l\'enseignant' }),
-    )
+    const _result2 = await timetableQueries.getTimetableByTeacher(data)
+    if (R.isFailure(_result2))
+      return { success: false as const, error: 'Erreur lors de la récupération de l\'emploi du temps de l\'enseignant' }
+    return { success: true as const, data: _result2.value }
   })
 
 export const getTimetableByClassroom = authServerFn
@@ -51,10 +52,10 @@ export const getTimetableByClassroom = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classrooms', 'view')
-    return (await timetableQueries.getTimetableByClassroom(data)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de l\'emploi du temps de la salle' }),
-    )
+    const _result3 = await timetableQueries.getTimetableByClassroom(data)
+    if (R.isFailure(_result3))
+      return { success: false as const, error: 'Erreur lors de la récupération de l\'emploi du temps de la salle' }
+    return { success: true as const, data: _result3.value }
   })
 
 export const getTimetableSession = authServerFn
@@ -64,10 +65,10 @@ export const getTimetableSession = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classes', 'view')
-    return (await timetableQueries.getTimetableSessionById(data.id)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la séance' }),
-    )
+    const _result4 = await timetableQueries.getTimetableSessionById(data.id)
+    if (R.isFailure(_result4))
+      return { success: false as const, error: 'Erreur lors de la récupération de la séance' }
+    return { success: true as const, data: _result4.value }
   })
 
 // ============================================
@@ -95,7 +96,7 @@ export const createTimetableSession = authServerFn
       classId: data.classId,
     })
 
-    if (conflictsResult.isErr()) {
+    if (R.isFailure(conflictsResult)) {
       return { success: false as const, error: 'Échec de la vérification des conflits' }
     }
 
@@ -109,23 +110,21 @@ export const createTimetableSession = authServerFn
       }
     }
 
-    return (await timetableQueries.createTimetableSession({
+    const _result5 = await timetableQueries.createTimetableSession({
       id: crypto.randomUUID(),
       ...data,
-    })).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'create',
-          tableName: 'timetable_sessions',
-          recordId: value.id,
-          newValues: data,
-        })
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la création de la séance' }),
-    )
+    })
+    if (R.isFailure(_result5))
+      return { success: false as const, error: 'Erreur lors de la création de la séance' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'timetable_sessions',
+      recordId: _result5.value.id,
+      newValues: data,
+    })
+    return { success: true as const, data: _result5.value }
   })
 
 export const updateTimetableSession = authServerFn
@@ -141,7 +140,7 @@ export const updateTimetableSession = authServerFn
 
     // Get existing session to check conflicts
     const existingResult = await timetableQueries.getTimetableSessionById(id)
-    if (existingResult.isErr()) {
+    if (R.isFailure(existingResult)) {
       return { success: false as const, error: 'Erreur lors de la récupération de la séance' }
     }
     const existing = existingResult.value
@@ -170,7 +169,7 @@ export const updateTimetableSession = authServerFn
         excludeSessionId: id,
       })
 
-      if (conflictsResult.isErr()) {
+      if (R.isFailure(conflictsResult)) {
         return { success: false as const, error: 'Échec de la vérification des conflits' }
       }
 
@@ -185,20 +184,18 @@ export const updateTimetableSession = authServerFn
       }
     }
 
-    return (await timetableQueries.updateTimetableSession(id, updateData)).match(
-      async (value) => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'update',
-          tableName: 'timetable_sessions',
-          recordId: id,
-          newValues: updateData,
-        })
-        return { success: true as const, data: value }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la mise à jour de la séance' }),
-    )
+    const _result6 = await timetableQueries.updateTimetableSession(id, updateData)
+    if (R.isFailure(_result6))
+      return { success: false as const, error: 'Erreur lors de la mise à jour de la séance' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'update',
+      tableName: 'timetable_sessions',
+      recordId: id,
+      newValues: updateData,
+    })
+    return { success: true as const, data: _result6.value }
   })
 
 export const deleteTimetableSession = authServerFn
@@ -210,19 +207,17 @@ export const deleteTimetableSession = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
 
-    return (await timetableQueries.deleteTimetableSession(data.id)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'timetable_sessions',
-          recordId: data.id,
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de la séance' }),
-    )
+    const _result7 = await timetableQueries.deleteTimetableSession(data.id)
+    if (R.isFailure(_result7))
+      return { success: false as const, error: 'Erreur lors de la suppression de la séance' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'timetable_sessions',
+      recordId: data.id,
+    })
+    return { success: true as const, data: { success: true } }
   })
 
 // ============================================
@@ -271,7 +266,7 @@ export const importTimetable = authServerFn
         classId: session.classId,
       })
 
-      if (conflictsResult.isErr()) {
+      if (R.isFailure(conflictsResult)) {
         results.failed++
         continue
       }
@@ -291,7 +286,7 @@ export const importTimetable = authServerFn
         ...session,
       })
 
-      if (createResult.isOk()) {
+      if (R.isSuccess(createResult)) {
         results.success++
       }
       else {
@@ -320,20 +315,18 @@ export const deleteClassTimetable = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('classes', 'edit')
 
-    return (await timetableQueries.deleteClassTimetable(data.classId, data.schoolYearId)).match(
-      async () => {
-        await createAuditLog({
-          schoolId,
-          userId,
-          action: 'delete',
-          tableName: 'timetable_sessions',
-          recordId: `class-${data.classId}`,
-          newValues: { classId: data.classId, schoolYearId: data.schoolYearId },
-        })
-        return { success: true as const, data: { success: true } }
-      },
-      _ => ({ success: false as const, error: 'Erreur lors de la suppression de l\'emploi du temps' }),
-    )
+    const _result8 = await timetableQueries.deleteClassTimetable(data.classId, data.schoolYearId)
+    if (R.isFailure(_result8))
+      return { success: false as const, error: 'Erreur lors de la suppression de l\'emploi du temps' }
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'delete',
+      tableName: 'timetable_sessions',
+      recordId: `class-${data.classId}`,
+      newValues: { classId: data.classId, schoolYearId: data.schoolYearId },
+    })
+    return { success: true as const, data: { success: true } }
   })
 
 // ============================================
@@ -347,10 +340,10 @@ export const detectConflicts = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classes', 'view')
-    return (await timetableQueries.detectConflicts(data)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Échec de la vérification des conflits' }),
-    )
+    const _result9 = await timetableQueries.detectConflicts(data)
+    if (R.isFailure(_result9))
+      return { success: false as const, error: 'Échec de la vérification des conflits' }
+    return { success: true as const, data: _result9.value }
   })
 
 export const getAllConflicts = authServerFn
@@ -360,10 +353,10 @@ export const getAllConflicts = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classes', 'view')
-    return (await timetableQueries.getAllConflictsForSchool(data.schoolId, data.schoolYearId)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des conflits' }),
-    )
+    const _result10 = await timetableQueries.getAllConflictsForSchool(data.schoolId, data.schoolYearId)
+    if (R.isFailure(_result10))
+      return { success: false as const, error: 'Erreur lors de la récupération des conflits' }
+    return { success: true as const, data: _result10.value }
   })
 
 // ============================================
@@ -377,10 +370,10 @@ export const getTeacherWeeklyHours = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('teachers', 'view')
-    return (await timetableQueries.getTeacherWeeklyHours(data.teacherId, data.schoolYearId)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération des heures hebdomadaires' }),
-    )
+    const _result11 = await timetableQueries.getTeacherWeeklyHours(data.teacherId, data.schoolYearId)
+    if (R.isFailure(_result11))
+      return { success: false as const, error: 'Erreur lors de la récupération des heures hebdomadaires' }
+    return { success: true as const, data: _result11.value }
   })
 
 export const getTeacherAvailability = authServerFn
@@ -394,10 +387,10 @@ export const getTeacherAvailability = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('teachers', 'view')
-    return (await timetableQueries.getTeacherAvailability(data)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la disponibilité de l\'enseignant' }),
-    )
+    const _result12 = await timetableQueries.getTeacherAvailability(data)
+    if (R.isFailure(_result12))
+      return { success: false as const, error: 'Erreur lors de la récupération de la disponibilité de l\'enseignant' }
+    return { success: true as const, data: _result12.value }
   })
 
 export const getClassroomAvailability = authServerFn
@@ -411,8 +404,8 @@ export const getClassroomAvailability = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('classrooms', 'view')
-    return (await timetableQueries.getClassroomAvailability(data)).match(
-      value => ({ success: true as const, data: value }),
-      _ => ({ success: false as const, error: 'Erreur lors de la récupération de la disponibilité de la salle' }),
-    )
+    const _result13 = await timetableQueries.getClassroomAvailability(data)
+    if (R.isFailure(_result13))
+      return { success: false as const, error: 'Erreur lors de la récupération de la disponibilité de la salle' }
+    return { success: true as const, data: _result13.value }
   })

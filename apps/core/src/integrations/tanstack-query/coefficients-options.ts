@@ -1,4 +1,11 @@
 import type {
+  CoefficientTemplate,
+  Grade,
+  SchoolYearTemplate,
+  Serie,
+  Subject,
+} from '@repo/data-ops/drizzle/core-schema'
+import type {
   BulkCreateCoefficientsInput,
   BulkUpdateCoefficientsInput,
   CoefficientTemplateIdInput,
@@ -31,6 +38,14 @@ interface ValidateCoefficientImportInput {
   }>
 }
 
+// Define the complex type locally
+type CoefficientWithDetails = CoefficientTemplate & {
+  schoolYearTemplate: Pick<SchoolYearTemplate, 'id' | 'name' | 'isActive'> | { id: string, name: string, isActive: boolean | null } | null
+  subject: Pick<Subject, 'id' | 'name' | 'shortName' | 'category'> | { id: string, name: string, shortName: string | null, category: string | null } | null
+  grade: Pick<Grade, 'id' | 'name' | 'code' | 'order'> | null
+  series: Pick<Serie, 'id' | 'name' | 'code'> | { id: string, name: string, code: string | null } | null
+}
+
 // ===== COEFFICIENT TEMPLATES =====
 
 export function coefficientTemplatesQueryOptions(params: {
@@ -41,7 +56,15 @@ export function coefficientTemplatesQueryOptions(params: {
   page?: number
   limit?: number
 }) {
-  return queryOptions({
+  return queryOptions<{
+    coefficients: CoefficientWithDetails[]
+    pagination: {
+      page: number
+      limit: number
+      total: number
+      totalPages: number
+    }
+  }>({
     queryKey: ['coefficient-templates', params],
     queryFn: () => coefficientTemplatesQuery({ data: params }),
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -50,7 +73,7 @@ export function coefficientTemplatesQueryOptions(params: {
 }
 
 export function coefficientTemplateByIdQueryOptions(id: string) {
-  return queryOptions({
+  return queryOptions<CoefficientWithDetails | null>({
     queryKey: ['coefficient-template', id],
     queryFn: () => coefficientTemplateByIdQuery({ data: { id } }),
     staleTime: 1000 * 60 * 5,
@@ -105,7 +128,7 @@ export const validateCoefficientImportMutationOptions = {
 }
 
 export function coefficientStatsQueryOptions() {
-  return queryOptions({
+  return queryOptions<{ total: number }>({
     queryKey: ['coefficient-stats'],
     queryFn: () => coefficientStatsQuery(),
     staleTime: 1000 * 60 * 5,

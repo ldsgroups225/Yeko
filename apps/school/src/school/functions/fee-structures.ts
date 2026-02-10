@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import {
   createFeeStructure,
   createFeeStructuresBulk,
@@ -41,10 +42,9 @@ export const getFeeStructuresList = authServerFn
       ...filters,
     })
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -67,10 +67,9 @@ export const getFeeStructuresWithDetails = authServerFn
       gradeId: filters?.gradeId,
     })
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -83,10 +82,9 @@ export const getFeeStructure = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getFeeStructureById(feeStructureId)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -103,10 +101,9 @@ export const createNewFeeStructure = authServerFn
       ...data,
     })
 
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -127,10 +124,9 @@ export const bulkCreateFeeStructures = authServerFn
     }))
 
     const result = await createFeeStructuresBulk(structures)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -144,10 +140,9 @@ export const updateExistingFeeStructure = authServerFn
 
     const { id, ...updateData } = data
     const result = await updateFeeStructure(id, updateData)
-    return result.match(
-      data => ({ success: true as const, data }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 /**
@@ -160,8 +155,7 @@ export const deleteExistingFeeStructure = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await deleteFeeStructure(feeStructureId)
-    return result.match(
-      () => ({ success: true as const, data: { success: true } }),
-      error => ({ success: false as const, error: error.message }),
-    )
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: { success: true } }
   })

@@ -84,7 +84,14 @@
     "pcss",
     "postcss"
   ],
-  "cSpell.words": ["coef", "ilike", "serie", "Serie", "yeko"],
+  "cSpell.words": [
+    "coef",
+    "ilike",
+    "praha",
+    "serie",
+    "Serie",
+    "yeko"
+  ],
   "cSpell.ignorePaths": [
     "package-lock.json",
     "node_modules",

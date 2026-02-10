@@ -66,6 +66,7 @@ catalog:
   embla-carousel-react: ^8.6.0
   eslint: ^9.39.2
   eslint-plugin-format: ^1.3.1
+  eslint-plugin-react-refresh: ^0.5.0
   highlight.js: ^11.11.1
   hono: ^4.11.7
   i18next: ^25.8.0
@@ -75,7 +76,7 @@ catalog:
   lucide-react: ^0.563.0
   motion: ^12.30.0
   mysql2: ^3.16.2
-  neverthrow: ^8.2.0
+  neverthrow: ^0.0.0
   next-themes: ^0.4.6
   pg: ^8.18.0
   playwright: ^1.58.1
@@ -125,3 +126,6 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
   - workerd
+
+patchedDependencies:
+

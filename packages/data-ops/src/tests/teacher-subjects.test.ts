@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import { nanoid } from 'nanoid'
 import { beforeEach, describe, expect, test } from 'vitest'
 import { createSchool } from '../queries/schools'
@@ -15,11 +16,11 @@ describe('teacher subjects queries', () => {
 
   beforeEach(async () => {
     // Create test school
-    const school = (await createSchool({
+    const school = R.unwrap(await createSchool({
       name: `Test Teacher Subjects ${nanoid()}`,
       code: `TTS-${Date.now()}`,
       status: 'active',
-    }))._unsafeUnwrap()
+    }))
     testSchoolId = school.id
   })
 

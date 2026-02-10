@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "@logtape/logtape": "catalog:",
-    "neverthrow": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
