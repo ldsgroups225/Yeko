@@ -29,6 +29,7 @@ export default {
       },
       secret: env.BETTER_AUTH_SECRET,
       baseURL: env.BETTER_AUTH_BASE_URL,
+      cookiePrefix: 'school',
       trustedOrigins: [env.BETTER_AUTH_BASE_URL, 'http://localhost:3001'],
       socialProviders: {
         google: {

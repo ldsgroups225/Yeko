@@ -5,6 +5,15 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@repo/data-ops/*": [
+        "../../packages/data-ops/src/*"
+      ],
+      "@repo/data-ops": [
+        "../../packages/data-ops/src/index.ts"
+      ],
+      "@repo/*": [
+        "../../packages/*"
       ]
     },
     "types": [

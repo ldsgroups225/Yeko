@@ -8,12 +8,16 @@ export function createBetterAuth(config: {
   trustedOrigins?: BetterAuthOptions['trustedOrigins']
   socialProviders?: BetterAuthOptions['socialProviders']
   emailAndPassword?: BetterAuthOptions['emailAndPassword']
+  cookiePrefix?: 'core' | 'school' | 'teacher'
 }): ReturnType<typeof betterAuth> {
   return betterAuth({
     database: config.database,
     secret: config.secret,
     baseURL: config.baseURL,
     trustedOrigins: config.trustedOrigins,
+    advanced: {
+      cookiePrefix: `yeko-${config.cookiePrefix}`,
+    },
     emailAndPassword: config.emailAndPassword
       ? {
           ...config.emailAndPassword,

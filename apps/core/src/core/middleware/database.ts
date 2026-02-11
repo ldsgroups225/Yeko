@@ -16,6 +16,7 @@ export const databaseMiddleware = createMiddleware().server(async ({ next }) => 
   setAuth({
     secret: env.BETTER_AUTH_SECRET,
     baseURL: env.BETTER_AUTH_BASE_URL,
+    cookiePrefix: 'core',
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
