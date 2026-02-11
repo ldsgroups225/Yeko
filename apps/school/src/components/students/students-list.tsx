@@ -1,6 +1,7 @@
 import type { StudentStatus } from '@repo/data-ops/drizzle/school-schema'
 import type { StudentWithDetails } from '@repo/data-ops/queries/students'
 import type { StudentFilters } from '@/lib/queries/students'
+import { formatDate } from '@repo/data-ops'
 import {
   IconAdjustmentsHorizontal,
   IconChevronLeft,
@@ -24,18 +25,18 @@ import {
   AvatarFallback,
   AvatarImage,
 } from '@workspace/ui/components/avatar'
-import { Badge } from '@workspace/ui/components/badge'
 
+import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { Checkbox } from '@workspace/ui/components/checkbox'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@workspace/ui/components/dropdown-menu'
-
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import {
@@ -66,11 +67,10 @@ import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { downloadExcelFile, exportStudentsToExcel } from '@/lib/excel-export'
 import { studentsKeys, studentsMutations, studentsOptions } from '@/lib/queries/students'
+
 import {
   exportStudents,
 } from '@/school/functions/students'
-
-import { formatDate } from '@/utils/formatDate'
 import { generateUUID } from '@/utils/generateUUID'
 import { AutoMatchDialog } from './auto-match-dialog'
 import { BulkReEnrollDialog } from './bulk-reenroll-dialog'

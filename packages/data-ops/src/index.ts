@@ -7,6 +7,7 @@ export * from './drizzle/core-schema'
 export * from './drizzle/school-schema'
 export * from './drizzle/support-schema'
 export * from './errors'
+export type { Locales as DateLocale, Locales, Locales as NumberLocale } from './i18n/i18n-types'
 export * from './queries/accounts'
 export * from './queries/activity-tracking'
 export * from './queries/analytics'
@@ -35,7 +36,7 @@ export * from './queries/parents'
 export * from './queries/payment-plan-templates'
 export * from './queries/payment-plans'
 export * from './queries/payments'
-export * from './queries/polar'
+// export * from './queries/polar'
 export * from './queries/programs'
 export * from './queries/receipts'
 export * from './queries/refunds'
@@ -47,6 +48,7 @@ export * from './queries/school-subjects'
 export * from './queries/schools'
 export * from './queries/student-attendance'
 export * from './queries/student-fees'
+
 export * from './queries/students'
 
 // Explicitly handle teacher-app exports to avoid conflicts
@@ -93,8 +95,8 @@ export {
 } from './queries/teacher-classes'
 
 export * from './queries/teacher-notes'
-
 export * from './queries/teacher-schedule'
+
 export {
   bulkSaveAttendance,
   getClassRosterForAttendance,
@@ -107,11 +109,11 @@ export {
 } from './queries/teacher-student-attendance'
 
 export * from './queries/teacher-subjects'
-
 export * from './queries/timetables'
 export * from './queries/transactions'
 export * from './schemas/dashboard'
 export * from './storage'
+export * from './utils/formatters'
 export {
   and,
   asc,

@@ -1,3 +1,4 @@
+import { formatDate } from '@repo/data-ops'
 import { IconEdit, IconTrash, IconUser } from '@tabler/icons-react'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -18,7 +19,6 @@ import {
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getStaffMember } from '@/school/functions/staff'
-import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/users/staff/$staffId/')({
   component: StaffDetailPage,

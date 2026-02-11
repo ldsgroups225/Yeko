@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { formatDate } from '@repo/data-ops'
 import {
   IconBook,
   IconCalendar,
@@ -46,7 +47,6 @@ import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { getTeachers } from '@/school/functions/teachers'
-import { formatDate } from '@/utils/formatDate'
 
 interface TeachersTableProps {
   filters: {

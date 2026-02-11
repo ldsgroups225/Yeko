@@ -1,3 +1,4 @@
+import { formatDate } from '@repo/data-ops'
 import {
   IconBook,
   IconCalendar,
@@ -37,7 +38,6 @@ import { schoolMutationKeys } from '@/lib/queries/keys'
 import { teacherOptions } from '@/lib/queries/teachers'
 import { cn } from '@/lib/utils'
 import { deleteExistingTeacher } from '@/school/functions/teachers'
-import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
   component: TeacherDetailsPage,

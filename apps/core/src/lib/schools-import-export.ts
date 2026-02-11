@@ -1,6 +1,6 @@
 import type { School, SchoolStatus } from '@repo/data-ops'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-import { formatDate } from '@/utils/formatDate'
+import { formatDate } from '@repo/data-ops'
 
 // Export schools to Excel
 export function exportSchoolsToExcel(schools: School[]) {

@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { formatDate } from '@repo/data-ops'
 import {
   IconBriefcase,
   IconCalendar,
@@ -45,7 +46,6 @@ import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { getStaffList } from '@/school/functions/staff'
-import { formatDate } from '@/utils/formatDate'
 
 type StaffListResponse = Awaited<ReturnType<typeof getStaffList>>
 type StaffMember = Extract<StaffListResponse, { success: true }>['data']['staff'][number]

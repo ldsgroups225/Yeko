@@ -1,4 +1,5 @@
 import type { TranslationFunctions } from '@/i18n'
+import { formatDate } from '@repo/data-ops'
 import { IconCalendar, IconHash, IconInfoCircle, IconSchool, IconStar, IconTrendingDown, IconTrendingUp, IconUser } from '@tabler/icons-react'
 import { Badge } from '@workspace/ui/components/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
@@ -6,7 +7,6 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useMemo } from 'react'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
-import { formatDate } from '@/utils/formatDate'
 import { GradeStatusBadge } from './grade-status-badge'
 
 interface Grade {

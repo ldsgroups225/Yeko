@@ -1,4 +1,5 @@
 import type { ColumnDef } from '@tanstack/react-table'
+import { formatDate, formatPhone } from '@repo/data-ops'
 import {
   IconCalendar,
   IconDots,
@@ -59,8 +60,6 @@ import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingUser, getUsers } from '@/school/functions/users'
-import { formatDate } from '@/utils/formatDate'
-import { formatPhone } from '@/utils/formatPhone'
 
 interface IconUser {
   id: string

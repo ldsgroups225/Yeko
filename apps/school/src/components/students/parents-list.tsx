@@ -1,4 +1,5 @@
 import type { getParents } from '@/school/functions/parents'
+import { formatPhone } from '@repo/data-ops'
 import {
   IconDots,
   IconMail,
@@ -13,8 +14,8 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Avatar, AvatarFallback } from '@workspace/ui/components/avatar'
 import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
 
+import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
@@ -63,7 +64,6 @@ import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { parentsKeys, parentsOptions } from '@/lib/queries/parents'
 import { deleteParent, sendParentInvitation } from '@/school/functions/parents'
-import { formatPhone } from '@/utils/formatPhone'
 
 import { generateUUID } from '@/utils/generateUUID'
 import { AutoMatchDialog } from './auto-match-dialog'

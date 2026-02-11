@@ -1,3 +1,4 @@
+import { formatDate } from '@repo/data-ops'
 import {
   IconArrowRight,
   IconCalendar,
@@ -6,11 +7,10 @@ import {
   IconClock,
   IconSchool,
 } from '@tabler/icons-react'
-import { Badge } from '@workspace/ui/components/badge'
 
+import { Badge } from '@workspace/ui/components/badge'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
-import { formatDate } from '@/utils/formatDate'
 
 interface EnrollmentItem {
   enrollment: {

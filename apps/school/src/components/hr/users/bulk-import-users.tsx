@@ -1,3 +1,4 @@
+import { formatPhone } from '@repo/data-ops'
 import { IconAlertCircle, IconCircleCheck, IconDatabase, IconDownload, IconFileText, IconInfoCircle, IconLoader2, IconMail, IconPhone, IconSettings, IconShield, IconUpload } from '@tabler/icons-react'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
@@ -15,7 +16,6 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
-import { formatPhone } from '@/utils/formatPhone'
 import { generateUUID } from '@/utils/generateUUID'
 
 interface ImportRow {

@@ -1,6 +1,6 @@
-import type { DateFormatStyle, DateLocale } from '@/utils/formatDate'
+import type { DateFormatStyle, Locales as DateLocale } from '@repo/data-ops'
+import { formatDate } from '@repo/data-ops'
 import { useEffect, useState } from 'react'
-import { formatDate } from '@/utils/formatDate'
 
 /**
  * Hook to format dates with client-side hydration safety.

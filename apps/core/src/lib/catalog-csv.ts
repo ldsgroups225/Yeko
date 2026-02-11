@@ -2,7 +2,7 @@ import type { Grade, Serie, Subject, SubjectCategory } from '@repo/data-ops'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { R } from '@praha/byethrow'
 
-import { formatDate } from '@/utils/formatDate'
+import { formatDate } from '@repo/data-ops'
 
 // ===== SUBJECTS EXPORT/IMPORT =====
 

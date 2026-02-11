@@ -76,7 +76,7 @@ catalog:
   lucide-react: ^0.563.0
   motion: ^12.30.0
   mysql2: ^3.16.2
-  neverthrow: ^0.0.0
+
   next-themes: ^0.4.6
   pg: ^8.18.0
   playwright: ^1.58.1

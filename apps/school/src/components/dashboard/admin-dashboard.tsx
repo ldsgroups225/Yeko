@@ -1,3 +1,4 @@
+import { formatCompact, formatCurrency, formatNumber } from '@repo/data-ops'
 import { IconAlertCircle, IconBook, IconChartBar, IconChartPie, IconCurrencyDollar, IconSchool, IconTrendingUp, IconUsers } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@workspace/ui/components/skeleton'
@@ -18,7 +19,6 @@ import {
 } from 'recharts'
 import { useTranslations } from '@/i18n'
 import { dashboardOptions } from '@/lib/queries/dashboard'
-import { formatCompact, formatCurrency, formatNumber } from '@/utils/formatNumber'
 
 const container = {
   hidden: { opacity: 0 },

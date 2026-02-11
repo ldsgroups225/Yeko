@@ -1,3 +1,4 @@
+import { formatDate, formatPhone } from '@repo/data-ops'
 import {
   IconCalendar,
   IconEdit,
@@ -12,13 +13,13 @@ import {
 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from '@workspace/ui/components/avatar'
 import { Badge } from '@workspace/ui/components/badge'
-
 import { Button } from '@workspace/ui/components/button'
 import {
   Card,
@@ -41,8 +42,6 @@ import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys, studentsOptions } from '@/lib/queries/students'
 import { updateStudent } from '@/school/functions/students'
-import { formatDate } from '@/utils/formatDate'
-import { formatPhone } from '@/utils/formatPhone'
 import { generateUUID } from '@/utils/generateUUID'
 import { EnrollmentDialog } from './enrollment-dialog'
 import { EnrollmentTimeline } from './enrollment-timeline'
