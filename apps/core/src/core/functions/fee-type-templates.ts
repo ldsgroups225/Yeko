@@ -6,7 +6,7 @@ import {
   getFeeTypeTemplates,
   getTemplateCategoriesWithCounts,
   updateFeeTypeTemplate,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/fee-type-templates'
 import { createServerFn } from '@tanstack/react-start'
 import { databaseMiddleware } from '@/core/middleware/database'
 import {

@@ -1,4 +1,7 @@
 import { R } from '@praha/byethrow'
+import { getDb } from '@repo/data-ops/database/setup'
+import { grades, schoolYearTemplates, series, subjects } from '@repo/data-ops/drizzle/core-schema'
+import { inArray } from '@repo/data-ops/drizzle/operators'
 import {
   bulkCreateCoefficients,
   bulkUpdateCoefficients,
@@ -9,10 +12,7 @@ import {
   getCoefficientTemplateById,
   getCoefficientTemplates,
   updateCoefficientTemplate,
-} from '@repo/data-ops'
-import { getDb } from '@repo/data-ops/database/setup'
-import { grades, schoolYearTemplates, series, subjects } from '@repo/data-ops/drizzle/core-schema'
-import { inArray } from '@repo/data-ops/drizzle/operators'
+} from '@repo/data-ops/queries/coefficients'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { COEFFICIENT_LIMITS } from '@/constants/coefficients'

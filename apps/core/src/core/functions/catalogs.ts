@@ -25,7 +25,7 @@ import {
   updateSerie,
   updateSubject,
   updateTrack,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/catalogs'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 import { databaseMiddleware } from '@/core/middleware/database'

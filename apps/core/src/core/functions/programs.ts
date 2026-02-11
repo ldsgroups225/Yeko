@@ -29,7 +29,7 @@ import {
   updateProgramTemplateChapter,
   updateSchoolYearTemplate,
   updateTermTemplate,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/programs'
 import { createServerFn } from '@tanstack/react-start'
 import { databaseMiddleware } from '@/core/middleware/database'
 import {

@@ -6,7 +6,7 @@ import {
   getSchoolById as getSchoolByIdQuery,
   getSchools as getSchoolsQuery,
   updateSchool as updateSchoolQuery,
-} from '@repo/data-ops'
+} from '@repo/data-ops/queries/schools'
 import { createServerFn } from '@tanstack/react-start'
 import { databaseMiddleware } from '@/core/middleware/database'
 import {
