@@ -187,21 +187,23 @@ function GradeEntryPage() {
                       <Select value={selectedClassId} onValueChange={val => handleClassChange(val ?? '')}>
                         <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectClass()}>
-                            {selectedClassId && (() => {
-                              const selectedItem = classesData.find(item => item.class.id === selectedClassId)
-                              return selectedItem
-                                ? (
-                                    <div className="flex items-center gap-2">
-                                      <IconLayoutGrid className="size-3.5 text-primary/60" />
-                                      <span className="font-semibold">
-                                        {selectedItem.grade.name}
-                                        {' '}
-                                        {selectedItem.class.section}
-                                      </span>
-                                    </div>
-                                  )
-                                : null
-                            })()}
+                            {selectedClassId
+                              ? (() => {
+                                  const selectedItem = classesData.find(item => item.class.id === selectedClassId)
+                                  return selectedItem
+                                    ? (
+                                        <div className="flex items-center gap-2">
+                                          <IconLayoutGrid className="size-3.5 text-primary/60" />
+                                          <span className="font-semibold">
+                                            {selectedItem.grade.name}
+                                            {' '}
+                                            {selectedItem.class.section}
+                                          </span>
+                                        </div>
+                                      )
+                                    : null
+                                })()
+                              : null}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
@@ -238,12 +240,14 @@ function GradeEntryPage() {
                       >
                         <SelectTrigger id="subject-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectSubject()}>
-                            {selectedSubjectId && (() => {
-                              const selectedItem = classSubjectsData.find(cs => cs.subject.id === selectedSubjectId)
-                              return selectedItem
-                                ? <span className="font-semibold">{selectedItem.subject.name}</span>
-                                : null
-                            })()}
+                            {selectedSubjectId
+                              ? (() => {
+                                  const selectedItem = classSubjectsData.find(cs => cs.subject.id === selectedSubjectId)
+                                  return selectedItem
+                                    ? <span className="font-semibold">{selectedItem.subject.name}</span>
+                                    : null
+                                })()
+                              : null}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
@@ -273,17 +277,19 @@ function GradeEntryPage() {
                       >
                         <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                           <SelectValue placeholder={t.academic.grades.entry.selectTerm()}>
-                            {selectedTermId && (() => {
-                              const selectedItem = termsData.find(term => term.id === selectedTermId)
-                              return selectedItem
-                                ? (
-                                    <div className="flex items-center gap-2">
-                                      <IconCalendar className="size-3.5 text-primary/60" />
-                                      <span className="font-semibold">{selectedItem.template.name}</span>
-                                    </div>
-                                  )
-                                : null
-                            })()}
+                            {selectedTermId
+                              ? (() => {
+                                  const selectedItem = termsData.find(term => term.id === selectedTermId)
+                                  return selectedItem
+                                    ? (
+                                        <div className="flex items-center gap-2">
+                                          <IconCalendar className="size-3.5 text-primary/60" />
+                                          <span className="font-semibold">{selectedItem.template.name}</span>
+                                        </div>
+                                      )
+                                    : null
+                                })()
+                              : null}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">

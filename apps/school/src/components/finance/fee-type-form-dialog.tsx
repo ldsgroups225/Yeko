@@ -333,7 +333,7 @@ export function FeeTypeFormDialog({
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
                           <SelectValue placeholder={t.finance.feeTypes.category()}>
-                            {field.value && feeCategoryLabels[field.value as keyof typeof feeCategoryLabels]}
+                            {field.value ? feeCategoryLabels[field.value as keyof typeof feeCategoryLabels] : null}
                           </SelectValue>
                         </SelectTrigger>
                       </FormControl>

@@ -325,24 +325,28 @@ export function StudentsList() {
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={t.students.status()}>
-                      {gender && (() => {
-                        const genderConfig = {
-                          M: { color: 'bg-blue-500', label: t.students.male(), icon: '👦' },
-                          F: { color: 'bg-pink-500', label: t.students.female(), icon: '👧' },
-                          other: { color: 'bg-gray-500', label: t.students.other(), icon: '👤' },
-                        }
-                        const config = genderConfig[gender as keyof typeof genderConfig] || genderConfig.other
-                        return (
-                          <div className="flex items-center gap-2">
-                            <div className={`h-2 w-2 rounded-full ${config.color}`} />
-                            <span>
-                              {config.icon}
-                              {' '}
-                              {config.label}
-                            </span>
-                          </div>
-                        )
-                      })()}
+                      {status
+                        ? (() => {
+                            const statusConfig = {
+                              all: { color: 'bg-gray-400', label: t.common.all(), icon: '⚫' },
+                              active: { color: 'bg-emerald-500', label: t.students.statusActive(), icon: '🟢' },
+                              graduated: { color: 'bg-blue-500', label: t.students.statusGraduated(), icon: '🎓' },
+                              transferred: { color: 'bg-orange-500', label: t.students.statusTransferred(), icon: '↔️' },
+                              withdrawn: { color: 'bg-red-500', label: t.students.statusWithdrawn(), icon: '🚫' },
+                            }
+                            const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.all
+                            return (
+                              <div className="flex items-center gap-2">
+                                <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                                <span>
+                                  {config.icon}
+                                  {' '}
+                                  {config.label}
+                                </span>
+                              </div>
+                            )
+                          })()
+                        : null}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>

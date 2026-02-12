@@ -393,24 +393,26 @@ export function ClassesTable({
                 >
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder={t.classes.status()}>
-                      {status && (() => {
-                        const statusConfig = {
-                          all: { color: 'bg-gray-400', label: t.common.all(), icon: '⚫' },
-                          active: { color: 'bg-emerald-500', label: t.common.active(), icon: '🟢' },
-                          archived: { color: 'bg-slate-400', label: t.common.archived(), icon: '⚫' },
-                        }
-                        const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.all
-                        return (
-                          <div className="flex items-center gap-2">
-                            <div className={`h-2 w-2 rounded-full ${config.color}`} />
-                            <span>
-                              {config.icon}
-                              {' '}
-                              {config.label}
-                            </span>
-                          </div>
-                        )
-                      })()}
+                      {status
+                        ? (() => {
+                            const statusConfig = {
+                              all: { color: 'bg-gray-400', label: t.common.all(), icon: '⚫' },
+                              active: { color: 'bg-emerald-500', label: t.common.active(), icon: '🟢' },
+                              archived: { color: 'bg-slate-400', label: t.common.archived(), icon: '⚫' },
+                            }
+                            const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.all
+                            return (
+                              <div className="flex items-center gap-2">
+                                <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                                <span>
+                                  {config.icon}
+                                  {' '}
+                                  {config.label}
+                                </span>
+                              </div>
+                            )
+                          })()
+                        : null}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>

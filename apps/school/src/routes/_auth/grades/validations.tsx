@@ -8,7 +8,6 @@ import {
   IconFileText,
   IconFilter,
   IconNotebook,
-  IconSchool,
   IconSearch,
   IconUser,
   IconX,
@@ -844,8 +843,8 @@ function GradeValidationsPage() {
                     {isLoadingGrades
                       ? (
                           <div className="p-4 space-y-2">
-                            {Array.from({ length: 5 }).map((_, i) => (
-                              <Skeleton key={i} className="h-10 w-full" />
+                            {[1, 2, 3, 4, 5].map(item => (
+                              <Skeleton key={item} className="h-10 w-full" />
                             ))}
                           </div>
                         )

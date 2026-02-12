@@ -259,7 +259,7 @@ export function PaymentFormDialog({
                       <FormControl>
                         <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
                           <SelectValue placeholder={t.finance.method()}>
-                            {field.value && paymentMethodLabels[field.value as keyof typeof paymentMethodLabels]}
+                            {field.value ? paymentMethodLabels[field.value as keyof typeof paymentMethodLabels] : null}
                           </SelectValue>
                         </SelectTrigger>
                       </FormControl>
