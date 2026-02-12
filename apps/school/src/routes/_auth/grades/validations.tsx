@@ -1,3 +1,4 @@
+import type { PendingValidation } from '@repo/data-ops/index'
 import {
   IconCalendar,
   IconCircleCheck,
@@ -51,6 +52,7 @@ import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 import { gradesKeys, gradesOptions } from '@/lib/queries/grades'
 import { schoolMutationKeys } from '@/lib/queries/keys'
+import { cn } from '@/lib/utils'
 import {
   getSubmittedGradeIds,
   rejectGrades,
@@ -59,18 +61,34 @@ import {
 import { getUserIdFromAuthUserId } from '@/school/functions/users'
 import { generateUUID } from '@/utils/generateUUID'
 
-interface PendingValidation {
-  classId: string
-  className: string
-  gradeName: string
-  subjectId: string
-  subjectName: string
-  termId: string
-  teacherId: string
-  teacherName: string
-  pendingCount: number
-  submittedAt: Date
+// Student grade type from the database
+interface StudentGrade {
+  id: string
+  studentId: string
+  value: string
+  type: string
+  gradeDate: Date
+  status: string
+  student: {
+    id: string
+    firstName: string
+    lastName: string
+    matricule: string | null
+  }
 }
+
+// Grade type for UI display
+type GradeType = 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project'
+
+// Grade type mapping with proper typing
+const GRADE_TYPE_LABELS: Record<GradeType, string> = {
+  quiz: 'Interrogation',
+  test: 'Devoir',
+  exam: 'Examen',
+  participation: 'Participation',
+  homework: 'Devoir Maison',
+  project: 'Projet',
+} as const
 
 export const Route = createFileRoute('/_auth/grades/validations')({
   component: GradeValidationsPage,
@@ -157,6 +175,15 @@ function GradeValidationsPage() {
     setDetailValidation(validation)
     setIsSheetOpen(true)
   }
+
+  const { data: studentGradesData, isPending: isLoadingGrades } = useQuery({
+    ...gradesOptions.byClass({
+      classId: detailValidation?.classId ?? '',
+      subjectId: detailValidation?.subjectId ?? '',
+      termId: detailValidation?.termId ?? '',
+    }),
+    enabled: !!detailValidation && isSheetOpen,
+  })
 
   const handleBulkValidate = async () => {
     if (selectedRows.length === 0 || !userId)
@@ -441,16 +468,16 @@ function GradeValidationsPage() {
                 {t.academic.grades.entry.title()}
               </TableHead>
               <TableHead className="text-xs font-black uppercase tracking-widest text-muted-foreground py-5">
-                {t.academic.grades.entry.class()}
-              </TableHead>
-              <TableHead className="text-xs font-black uppercase tracking-widest text-muted-foreground py-5">
                 {t.academic.grades.entry.subject()}
               </TableHead>
               <TableHead className="text-xs font-black uppercase tracking-widest text-muted-foreground py-5">
                 {t.academic.grades.validations.submittedBy()}
               </TableHead>
-              <TableHead className="text-xs font-black uppercase tracking-widest text-muted-foreground py-5 text-center">
-                {t.academic.grades.entry.studentGrades()}
+              <TableHead className="text-xs font-black uppercase tracking-widest text-muted-foreground py-5">
+                Moyenne
+              </TableHead>
+              <TableHead className="text-xs font-black uppercase tracking-widest text-muted-foreground py-5 text-center truncate">
+                NB. ÉLÈVES
               </TableHead>
               <TableHead className="w-[100px] pr-6" />
             </TableRow>
@@ -467,13 +494,16 @@ function GradeValidationsPage() {
                         <Skeleton className="h-6 w-32 rounded-lg" />
                       </TableCell>
                       <TableCell>
-                        <Skeleton className="h-6 w-24 rounded-lg" />
-                      </TableCell>
-                      <TableCell>
                         <Skeleton className="h-6 w-40 rounded-lg" />
                       </TableCell>
                       <TableCell>
                         <Skeleton className="h-6 w-32 rounded-lg" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-6 w-24 rounded-lg" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className="h-6 w-16 rounded-lg" />
                       </TableCell>
                       <TableCell>
                         <Skeleton className="h-8 w-12 mx-auto rounded-full" />
@@ -510,30 +540,46 @@ function GradeValidationsPage() {
                                 <div className="p-2 rounded-lg bg-primary/10 text-primary">
                                   <IconFileText className="size-4" />
                                 </div>
-                                <span className="font-bold tracking-tight">
-                                  {validation.gradeName}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold tracking-tight">
+                                    {validation.gradeName}
+                                  </span>
+                                  <Badge
+                                    variant="outline"
+                                    className="rounded-full bg-background/50 border-border/40 font-bold uppercase tracking-wider text-[10px] w-6 h-6 flex items-center justify-center p-0"
+                                  >
+                                    {validation.className}
+                                  </Badge>
+                                </div>
                               </div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge
-                                variant="outline"
-                                className="rounded-lg bg-background/50 border-border/40 font-bold uppercase tracking-wider text-[10px]"
-                              >
-                                {validation.className}
-                              </Badge>
                             </TableCell>
                             <TableCell className="font-semibold text-muted-foreground italic">
                               {validation.subjectName}
                             </TableCell>
                             <TableCell>
                               <div className="flex items-center gap-2">
-                                <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center">
-                                  <IconUser className="size-3 text-primary" />
+                                <div className="h-7 w-7 rounded-full bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center shrink-0">
+                                  <IconUser className="h-3 w-3 text-primary" />
                                 </div>
                                 <span className="text-sm font-medium">
                                   {validation.teacherName}
                                 </span>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex flex-col items-start gap-1">
+                                <span className="font-bold text-sm">
+                                  {validation.average}
+                                  <span className="text-muted-foreground text-xs font-normal ml-0.5">
+                                    /
+                                    {validation.maxGrade}
+                                  </span>
+                                </span>
+                                <Badge variant="secondary" className="w-fit text-[10px] px-1.5 h-5 font-medium">
+                                  Coef.
+                                  {' '}
+                                  {validation.coefficient}
+                                </Badge>
                               </div>
                             </TableCell>
                             <TableCell className="text-center">
@@ -627,122 +673,231 @@ function GradeValidationsPage() {
 
       {/* Details Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent side="left" className="flex flex-col gap-0 p-0 sm:max-w-md">
-          <SheetHeader className="border-b bg-muted/10 px-6 py-4">
-            <SheetTitle className="flex items-center gap-2">
-              <IconFileText className="h-5 w-5 text-primary" />
-              {t.academic.grades.validations.viewDetails()}
-            </SheetTitle>
-            <SheetDescription>
-              {detailValidation?.gradeName}
-              {' '}
-              -
-              {detailValidation?.className}
-            </SheetDescription>
+        <SheetContent side="left" className="flex flex-col gap-0 p-0 sm:max-w-3xl! w-full">
+          <SheetHeader className="flex flex-row items-center justify-between border-b bg-muted/10 px-6 py-4 pr-12">
+            <div className="space-y-1">
+              <SheetTitle className="flex items-center gap-2">
+                <IconFileText className="h-5 w-5 text-primary" />
+                {t.academic.grades.validations.viewDetails()}
+              </SheetTitle>
+              <SheetDescription>
+                {detailValidation?.gradeName}
+                {' '}
+                -
+                {detailValidation?.className}
+              </SheetDescription>
+            </div>
+
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                NB. ÉLÈVES
+              </span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-2xl font-black text-primary">{detailValidation?.pendingCount}</span>
+                <span className="text-xs font-medium text-muted-foreground">{t.common.total().toLowerCase()}</span>
+              </div>
+            </div>
           </SheetHeader>
 
           <div className="flex flex-1 flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto px-6 py-6">
               <div className="space-y-8">
-                {/* Information Section */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1 w-8 rounded-full bg-primary/20" />
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                      {t.academic.grades.validations.details.evaluation()}
-                    </h3>
-                  </div>
-                  <div className="grid gap-4 rounded-xl border bg-card p-4 shadow-sm">
-                    <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                        {t.academic.grades.entry.title()}
-                      </Label>
-                      <p className="text-sm font-bold">{detailValidation?.gradeName}</p>
+                {/* Unified Details Grid */}
+                {/* Unified Details Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                  {/* Column 1: Evaluation Info */}
+                  <div className="flex flex-col gap-3 h-full">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="h-1 w-8 rounded-full bg-primary/20 shrink-0" />
+                      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground truncate">
+                        {t.academic.grades.validations.details.evaluation()}
+                      </h3>
                     </div>
-
-                    <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                        {t.academic.grades.entry.class()}
-                      </Label>
-                      <div className="flex items-center gap-2">
-                        <IconSchool className="h-4 w-4 text-muted-foreground" />
-                        <p className="text-sm font-semibold">{detailValidation?.className}</p>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                        {t.academic.grades.entry.subject()}
-                      </Label>
-                      <div className="flex items-center gap-2">
-                        <IconNotebook className="h-4 w-4 text-muted-foreground" />
-                        <p className="text-sm font-semibold italic">{detailValidation?.subjectName}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Submission Section */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1 w-8 rounded-full bg-primary/20" />
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                      {t.academic.grades.validations.details.submission()}
-                    </h3>
-                  </div>
-                  <div className="grid gap-4 rounded-xl border bg-card p-4 shadow-sm">
-                    <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                        {t.academic.grades.validations.submittedBy()}
-                      </Label>
-                      <div className="flex items-center gap-2">
-                        <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
-                          <IconUser className="h-3 w-3 text-primary" />
-                        </div>
-                        <p className="text-sm font-bold">{detailValidation?.teacherName}</p>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                        {t.academic.grades.validations.submittedAt()}
-                      </Label>
-                      <div className="flex items-center gap-2">
-                        <IconCalendar className="h-4 w-4 text-muted-foreground" />
-                        <p className="text-sm font-medium">
-                          {detailValidation?.submittedAt
-                            ? new Date(detailValidation.submittedAt).toLocaleDateString('fr-FR', {
-                                day: 'numeric',
-                                month: 'long',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })
-                            : '-'}
+                    <div className="flex-1 rounded-xl border bg-card p-4 shadow-sm space-y-3">
+                      <div className="grid gap-1">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                          {t.academic.grades.entry.class()}
+                        </Label>
+                        <p className="text-sm font-bold truncate">
+                          {detailValidation?.gradeName}
+                          {' '}
+                          {detailValidation?.className}
                         </p>
                       </div>
+
+                      <div className="grid gap-1">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                          {t.academic.grades.entry.subject()}
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <IconNotebook className="h-3 w-3 text-muted-foreground" />
+                          <p className="text-sm font-semibold italic">{detailValidation?.subjectName}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-1">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                          Type d'évaluation
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <IconFileText className="h-3 w-3 text-muted-foreground" />
+                          <p className="text-sm font-semibold">
+                            {studentGradesData?.[0]?.type
+                              ? (GRADE_TYPE_LABELS[studentGradesData[0].type as GradeType] || studentGradesData[0].type)
+                              : '-'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Column 2: Submission Info */}
+                  <div className="flex flex-col gap-3 h-full">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="h-1 w-8 rounded-full bg-primary/20 shrink-0" />
+                      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground truncate">
+                        {t.academic.grades.validations.details.submission()}
+                      </h3>
+                    </div>
+                    <div className="flex-1 rounded-xl border bg-card p-4 shadow-sm space-y-3">
+                      <div className="grid gap-1">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                          {t.academic.grades.validations.submittedBy()}
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <IconUser className="h-3 w-3 text-primary" />
+                          </div>
+                          <p className="text-sm font-bold truncate">{detailValidation?.teacherName}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-1">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                          {t.academic.grades.validations.submittedAt()}
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <IconCalendar className="h-3 w-3 text-muted-foreground" />
+                          <p className="text-sm font-medium">
+                            {detailValidation?.submittedAt
+                              ? new Date(detailValidation.submittedAt).toLocaleDateString('fr-FR', {
+                                  day: 'numeric',
+                                  month: 'long',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })
+                              : '-'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Column 3: Stats */}
+                  <div className="flex flex-col gap-3 h-full">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="h-1 w-8 rounded-full bg-primary/20 shrink-0" />
+                      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground truncate">
+                        {t.academic.grades.validations.details.stats()}
+                      </h3>
+                    </div>
+                    <div className="flex-1 rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-between gap-4">
+                      <div className="flex flex-1 items-center justify-center text-center">
+                        <div>
+                          <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 block mb-2">
+                            Moyenne
+                          </Label>
+                          <div className="flex items-baseline justify-center gap-1">
+                            <span className="text-5xl font-black text-primary tracking-tight">{detailValidation?.average}</span>
+                            <span className="text-sm font-bold text-muted-foreground">
+                              /
+                              {detailValidation?.maxGrade}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50 bg-muted/20 -mx-4 -mb-4 px-4 py-3 mt-auto">
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] font-bold uppercase text-muted-foreground">Coefficient</span>
+                          <span className="text-sm font-black">{detailValidation?.coefficient}</span>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[10px] font-bold uppercase text-muted-foreground">Note sur</span>
+                          <span className="text-sm font-black">{detailValidation?.maxGrade}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Stats Section */}
+                {/* Student Grades Section */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
                     <div className="h-1 w-8 rounded-full bg-primary/20" />
                     <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                      {t.academic.grades.validations.details.stats()}
+                      Notes des élèves
                     </h3>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="rounded-xl border bg-card p-4 shadow-sm">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                        {t.academic.grades.entry.studentGrades()}
-                      </Label>
-                      <div className="mt-2 flex items-baseline gap-1">
-                        <span className="text-2xl font-black text-primary">{detailValidation?.pendingCount}</span>
-                        <span className="text-xs font-medium text-muted-foreground">{t.common.total().toLowerCase()}</span>
-                      </div>
-                    </div>
+                  <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+                    {isLoadingGrades
+                      ? (
+                          <div className="p-4 space-y-2">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Skeleton key={i} className="h-10 w-full" />
+                            ))}
+                          </div>
+                        )
+                      : studentGradesData && studentGradesData.length > 0
+                        ? (
+                            <Table>
+                              <TableHeader className="bg-muted/20">
+                                <TableRow>
+                                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground pl-6">
+                                    Élève
+                                  </TableHead>
+                                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center w-32 pr-6">
+                                    Note
+                                  </TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {studentGradesData.map((grade: StudentGrade) => (
+                                  <TableRow key={grade.id} className="border-border/10">
+                                    <TableCell className="pl-6">
+                                      <div className="flex items-center gap-3">
+                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                          <IconUser className="h-4 w-4 text-primary" />
+                                        </div>
+                                        <span className="text-sm font-bold">
+                                          {grade.student?.firstName}
+                                          {' '}
+                                          {grade.student?.lastName}
+                                        </span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="text-center pr-6">
+                                      <Badge
+                                        variant="secondary"
+                                        className={cn(
+                                          'font-black text-sm px-3 py-1',
+                                          Number(grade.value) < 10 ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary',
+                                        )}
+                                      >
+                                        {Number(grade.value).toFixed(2)}
+                                      </Badge>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          )
+                        : (
+                            <div className="p-8 text-center text-muted-foreground text-sm">
+                              Aucune note trouvée pour cette validation.
+                            </div>
+                          )}
                   </div>
                 </div>
               </div>

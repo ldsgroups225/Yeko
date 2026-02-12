@@ -56,6 +56,14 @@ export async function getGradesByClass(params: {
             eq(studentGrades.termId, params.termId),
             params.teacherId ? eq(studentGrades.teacherId, params.teacherId) : undefined,
           ),
+          columns: {
+            id: true,
+            value: true,
+            type: true,
+            gradeDate: true,
+            studentId: true,
+            status: true,
+          },
           with: {
             student: {
               columns: { id: true, firstName: true, lastName: true, matricule: true },
@@ -70,12 +78,28 @@ export async function getGradesByClass(params: {
   )
 }
 
+export interface PendingValidation {
+  classId: string
+  className: string
+  gradeName: string
+  subjectId: string
+  subjectName: string
+  termId: string
+  teacherId: string | null
+  teacherName: string
+  pendingCount: number
+  submittedAt: Date | null
+  average: number
+  maxGrade: number
+  coefficient: number
+}
+
 export async function getPendingValidations(params: {
   schoolId: string
   termId?: string
   classId?: string
   subjectId?: string
-}): R.ResultAsync<any[], DatabaseError> {
+}): R.ResultAsync<PendingValidation[], DatabaseError> {
   const db = getDb()
 
   const conditions = [
@@ -105,6 +129,9 @@ export async function getPendingValidations(params: {
           teacherName: users.name,
           pendingCount: sql<number>`count(*)`,
           submittedAt: sql<Date>`min(${studentGrades.submittedAt})`,
+          average: sql<number>`round(avg(${studentGrades.value}), 2)`,
+          maxGrade: sql<number>`20`,
+          coefficient: sql<number>`1`,
         })
           .from(studentGrades)
           .innerJoin(classes, eq(studentGrades.classId, classes.id))
