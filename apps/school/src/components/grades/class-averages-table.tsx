@@ -22,11 +22,19 @@ interface StudentAverage {
   weightedAverage: number
   rank: number
   gradeCount: number
+  grades?: {
+    value: number
+    max: number
+    coefficient: number
+    type?: string
+    gradeName?: string
+  }[]
 }
 
 interface ClassAveragesTableProps {
   averages: StudentAverage[]
   className?: string
+  onStudentClick?: (studentId: string) => void
 }
 
 function getAverageColor(average: number): string {
@@ -49,7 +57,7 @@ function getRankStyles(rank: number): string {
   return 'bg-muted/50 text-muted-foreground border-border/40'
 }
 
-export function ClassAveragesTable({ averages, className }: ClassAveragesTableProps) {
+export function ClassAveragesTable({ averages, className, onStudentClick }: ClassAveragesTableProps) {
   const t = useTranslations()
   const sortedAverages = useMemo(() => [...averages].sort((a, b) => a.rank - b.rank), [averages])
 
@@ -109,31 +117,28 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
             <TableHeader>
               <TableRow className="bg-muted/10 border-b-border/20 hover:bg-muted/10">
                 <TableHead className="w-20 text-center">
-                  <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.rank()}</span>
+                  <span className="font-bold uppercase tracking-tight text-[10px]">RANG</span>
                 </TableHead>
                 <TableHead>
                   <div className="flex items-center gap-2">
                     <IconUser className="size-3.5 text-muted-foreground" />
-                    <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.student()}</span>
+                    <span className="font-bold uppercase tracking-tight text-[10px]">ELEVE</span>
                   </div>
                 </TableHead>
                 <TableHead className="w-32">
                   <div className="flex items-center gap-2">
                     <IconHash className="size-3.5 text-muted-foreground" />
-                    <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.matricule()}</span>
-                  </div>
-                </TableHead>
-                <TableHead className="w-24 text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <IconFileText className="size-3.5 text-muted-foreground" />
-                    <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.gradeCount()}</span>
+                    <span className="font-bold uppercase tracking-tight text-[10px]">MATRICULE</span>
                   </div>
                 </TableHead>
                 <TableHead className="w-28 text-center px-6">
-                  <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.average()}</span>
+                  <span className="font-bold uppercase tracking-tight text-[10px]">MOYENNE</span>
+                </TableHead>
+                <TableHead className="min-w-[200px]">
+                  <span className="font-bold uppercase tracking-tight text-[10px]">LISTE DES NOTES</span>
                 </TableHead>
                 <TableHead className="w-32 text-center px-6">
-                  <span className="font-bold uppercase tracking-tight text-[10px]">{t.academic.grades.averages.weightedAverage()}</span>
+                  <span className="font-bold uppercase tracking-tight text-[10px]">MOY. COEF.</span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -145,7 +150,11 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.03 }}
-                    className="group border-b border-border/10 last:border-0 hover:bg-primary/5 transition-colors"
+                    onClick={() => onStudentClick?.(student.studentId)}
+                    className={cn(
+                      'group border-b border-border/10 last:border-0 hover:bg-primary/5 transition-colors',
+                      onStudentClick && 'cursor-pointer hover:bg-primary/10',
+                    )}
                   >
                     <TableCell className="text-center py-4">
                       <div
@@ -165,11 +174,21 @@ export function ClassAveragesTable({ averages, className }: ClassAveragesTablePr
                         {student.matricule}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-center font-bold text-muted-foreground tabular-nums">
-                      {student.gradeCount}
-                    </TableCell>
                     <TableCell className={cn('text-center font-bold tabular-nums px-6', getAverageColor(student.average))}>
                       {student.average.toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1.5 min-w-[200px]">
+                        {student.grades?.map(grade => (
+                          <div key={`${student.studentId}-${grade.gradeName}-${grade.value}`} title={`Coef: ${grade.coefficient}, Max: ${grade.max}`} className="flex flex-col items-center justify-center bg-muted/40 border border-border/30 rounded px-1.5 py-0.5 min-w-10">
+                            <span className={cn('text-xs font-bold leading-none', getAverageColor((grade.value / grade.max) * 20))}>{grade.value}</span>
+                            <span className="text-[9px] text-muted-foreground leading-none mt-0.5">
+                              /
+                              {grade.max}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </TableCell>
                     <TableCell className={cn('text-center px-6', getAverageColor(student.weightedAverage))}>
                       <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-background/40 border border-border/10 shadow-inner font-bold tabular-nums">

@@ -1653,6 +1653,13 @@ const fr = {
         gradeCount: 'Notes',
         average: 'Moyenne',
         weightedAverage: 'Moy. Coef.',
+        notes: 'Notes',
+        recalculateSuccess: 'Moyennes recalculées avec succès',
+        recalculateError: 'Erreur lors du recalcul',
+        recalculateTechnicalError: 'Erreur technique lors du recalcul',
+        viewCards: 'Cartes',
+        viewAverages: 'Moyennes',
+        recalculate: 'Recalculer',
       },
       filters: {
         title: 'Filtres',

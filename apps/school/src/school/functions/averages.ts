@@ -1,3 +1,4 @@
+import { Result as R } from '@praha/byethrow'
 import * as averageQueries from '@repo/data-ops/queries/averages'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'
@@ -14,7 +15,9 @@ export const calculateSubjectAverage = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await averageQueries.calculateSubjectAverage(data)
-    return { success: true as const, data: result }
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 // Calculate term average for a student
@@ -29,7 +32,9 @@ export const calculateTermAverage = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await averageQueries.calculateTermAverage(data)
-    return { success: true as const, data: result }
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })
 
 // Calculate class rankings
@@ -42,7 +47,9 @@ export const calculateClassRankings = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await averageQueries.calculateClassRankings(data)
+    const result = await averageQueries.calculateClassRankings(data)
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
     return { success: true as const, data: { success: true } }
   })
 
@@ -56,6 +63,26 @@ export const recalculateAverages = authServerFn
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
-    await averageQueries.calculateClassRankings(data)
+    const result = await averageQueries.calculateAndStoreClassAverages({
+      ...data,
+      schoolId: context.school.schoolId,
+    })
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
     return { success: true as const, data: { success: true } }
+  })
+
+export const getClassAverages = authServerFn
+  .inputValidator(z.object({
+    classId: z.string().min(1),
+    termId: z.string().min(1),
+  }))
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const result = await averageQueries.getClassAveragesList(data.classId, data.termId)
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
   })

@@ -1618,6 +1618,13 @@ const en: Translation = {
         gradeCount: 'Grades',
         average: 'Average',
         weightedAverage: 'Weighted Avg.',
+        notes: 'Grades',
+        recalculateSuccess: 'Averages recalculated successfully',
+        recalculateError: 'Error during recalculation',
+        recalculateTechnicalError: 'Technical error during recalculation',
+        viewCards: 'Cards',
+        viewAverages: 'Averages',
+        recalculate: 'Recalculate',
       },
       filters: {
         title: 'Filters',

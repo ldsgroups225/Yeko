@@ -1,6 +1,6 @@
-import { IconCalendar, IconChecks, IconFileText, IconFilter, IconLayoutGrid, IconSchool, IconSearch } from '@tabler/icons-react'
+import { IconCalendar, IconChartBar, IconChecks, IconFileText, IconFilter, IconLayoutGrid, IconList, IconSchool, IconSearch } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent } from '@workspace/ui/components/card'
 import { Input } from '@workspace/ui/components/input'
@@ -11,11 +11,13 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+
 } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { ClassAveragesTable } from '@/components/grades'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { BulkGenerationDialog, ReportCardList } from '@/components/report-cards'
 import { useSchoolContext } from '@/hooks/use-school-context'
@@ -23,6 +25,8 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 import { schoolMutationKeys } from '@/lib/queries/keys'
+import { cn } from '@/lib/utils'
+import { getClassAverages, recalculateAverages } from '@/school/functions/averages'
 import { getClasses } from '@/school/functions/classes'
 import { getEnrollments } from '@/school/functions/enrollments'
 import {
@@ -50,6 +54,8 @@ function ReportCardsPage() {
   const [localYearId, setLocalYearId] = useState<string>('')
   const [search, setSearch] = useState('')
   const [isGenerationDialogOpen, setIsGenerationDialogOpen] = useState(false)
+  const [viewMode, setViewMode] = useState<'cards' | 'averages'>('cards')
+  const navigate = useNavigate()
 
   // Fetch school years
   const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
@@ -136,6 +142,37 @@ function ReportCardsPage() {
     },
   })
 
+  // Fetch Class Averages
+  const { data: averagesResult, isPending: averagesPending } = useQuery({
+    queryKey: ['class-averages', selectedClassId, selectedTermId],
+    queryFn: () => getClassAverages({ data: { classId: selectedClassId, termId: selectedTermId } }),
+    enabled: !!selectedClassId && !!selectedTermId && viewMode === 'averages',
+    staleTime: 5 * 60 * 1000,
+  })
+  const classAverages = averagesResult?.success ? averagesResult.data : []
+
+  // Recalculate Mutation
+  const recalculateMutation = useMutation({
+    mutationFn: async () => {
+      return await recalculateAverages({
+        data: {
+          classId: selectedClassId,
+          termId: selectedTermId,
+        },
+      })
+    },
+    onSuccess: (res) => {
+      if (res.success) {
+        toast.success(t.academic.grades.averages.recalculateSuccess())
+        queryClient.invalidateQueries({ queryKey: ['class-averages'] })
+      }
+      else {
+        toast.error(typeof res.error === 'string' ? res.error : t.academic.grades.averages.recalculateError())
+      }
+    },
+    onError: () => toast.error(t.academic.grades.averages.recalculateTechnicalError()),
+  })
+
   const canShowReportCards = effectiveYearId && selectedTermId && selectedClassId
 
   const mappedReportCards = (reportCards || [])
@@ -170,6 +207,24 @@ function ReportCardsPage() {
 
   const currentClass = classes?.find(c => c.class.id === selectedClassId)
   const currentTerm = terms?.find(t => t.id === selectedTermId)
+
+  const handleDownload = (id: string) => {
+    const rc = reportCards?.find(r => r.id === id)
+    if (rc?.pdfUrl)
+      window.open(rc.pdfUrl, '_blank')
+    else
+      toast.error(t.common.error())
+  }
+
+  const handlePreview = (id: string) => {
+    const rc = reportCards?.find(r => r.id === id)
+    if (rc) {
+      if (rc.pdfUrl)
+        window.open(rc.pdfUrl, '_blank')
+      else
+        navigate({ to: '/students/$studentId', params: { studentId: rc.studentId } })
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -313,6 +368,27 @@ function ReportCardsPage() {
               />
             </div>
             <div className="flex gap-2">
+              <div className="flex bg-muted/20 p-1 rounded-xl border border-border/20 mr-2">
+                <Button
+                  variant={viewMode === 'cards' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('cards')}
+                  className={cn('h-9 px-3', viewMode === 'cards' && 'shadow-sm')}
+                >
+                  <IconList className="mr-2 h-4 w-4" />
+                  {t.academic.grades.averages.viewCards()}
+                </Button>
+                <Button
+                  variant={viewMode === 'averages' ? 'secondary' : 'ghost'}
+                  size="sm"
+                  onClick={() => setViewMode('averages')}
+                  className={cn('h-9 px-3', viewMode === 'averages' && 'shadow-sm')}
+                >
+                  <IconChartBar className="mr-2 h-4 w-4" />
+                  {t.academic.grades.averages.viewAverages()}
+                </Button>
+              </div>
+
               <Button
                 variant="outline"
                 className="h-11 px-6 border-border/40 bg-background/40 hover:bg-background rounded-xl font-bold uppercase tracking-widest text-[10px]"
@@ -321,12 +397,20 @@ function ReportCardsPage() {
                 {t.common.filters()}
               </Button>
               <Button
-                variant="default"
-                className="h-11 px-6 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl font-bold uppercase tracking-widest text-[10px]"
-                onClick={() => setIsGenerationDialogOpen(true)}
+                variant={viewMode === 'averages' ? 'secondary' : 'default'}
+                className={cn('h-11 px-6 rounded-xl font-bold uppercase tracking-widest text-[10px]', viewMode === 'averages' ? 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20' : 'bg-primary hover:bg-primary/90 text-primary-foreground')}
+                onClick={() => {
+                  if (viewMode === 'averages')
+                    recalculateMutation.mutate()
+                  else
+                    setIsGenerationDialogOpen(true)
+                }}
+                disabled={recalculateMutation.isPending}
               >
-                <IconFileText className="mr-2 h-4 w-4" />
-                {t.reportCards.generate()}
+                {recalculateMutation.isPending
+                  ? <IconSchool className="mr-2 h-4 w-4 animate-spin" />
+                  : <IconFileText className="mr-2 h-4 w-4" />}
+                {viewMode === 'averages' ? t.academic.grades.averages.recalculate() : t.reportCards.generate()}
               </Button>
             </div>
           </div>
@@ -341,10 +425,38 @@ function ReportCardsPage() {
       >
         {canShowReportCards
           ? (
-              <ReportCardList
-                reportCards={mappedReportCards}
-                isPending={reportCardsPending}
-              />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={viewMode}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {viewMode === 'cards'
+                    ? (
+                        <ReportCardList
+                          reportCards={mappedReportCards}
+                          isPending={reportCardsPending}
+                          onDownload={handleDownload}
+                          onPreview={handlePreview}
+                        />
+                      )
+                    : (
+                        <div className="relative">
+                          {averagesPending && (
+                            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-sm rounded-2xl">
+                              <Skeleton className="h-full w-full opacity-20" />
+                            </div>
+                          )}
+                          <ClassAveragesTable
+                            averages={classAverages}
+                            onStudentClick={studentId => navigate({ to: '/students/$studentId', params: { studentId } })}
+                          />
+                        </div>
+                      )}
+                </motion.div>
+              </AnimatePresence>
             )
           : (
               <Card className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm">

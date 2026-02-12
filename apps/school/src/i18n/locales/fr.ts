@@ -87,6 +87,7 @@ export const fr: TypedLocale = {
     selectAll: 'Tout sélectionner',
     deselectAll: 'Tout désélectionner',
     selectRow: 'Sélectionner la ligne',
+    schoolNotSelected: 'Établissement non sélectionné',
   },
   nav: {
     dashboard: 'Tableau de bord',
@@ -1373,6 +1374,13 @@ export const fr: TypedLocale = {
         gradeCount: 'Notes',
         average: 'Moyenne',
         weightedAverage: 'Moy. Coef.',
+        notes: 'Notes',
+        recalculateSuccess: 'Moyennes recalculées avec succès',
+        recalculateError: 'Erreur lors du recalcul',
+        recalculateTechnicalError: 'Erreur technique lors du recalcul',
+        viewCards: 'Cartes',
+        viewAverages: 'Moyennes',
+        recalculate: 'Recalculer',
       },
       filters: {
         title: 'Filtres',

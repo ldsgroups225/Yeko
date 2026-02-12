@@ -84,6 +84,7 @@ export const en = {
     selectAll: 'Select All',
     deselectAll: 'Deselect All',
     selectRow: 'Select Row',
+    schoolNotSelected: 'School not selected',
   },
   nav: {
     dashboard: 'Dashboard',
@@ -1344,6 +1345,13 @@ export const en = {
         gradeCount: 'Grades',
         average: 'Average',
         weightedAverage: 'Weighted Avg.',
+        notes: 'Grades',
+        recalculateSuccess: 'Averages recalculated successfully',
+        recalculateError: 'Error during recalculation',
+        recalculateTechnicalError: 'Technical error during recalculation',
+        viewCards: 'Cards',
+        viewAverages: 'Averages',
+        recalculate: 'Recalculate',
       },
       filters: {
         title: 'Filters',

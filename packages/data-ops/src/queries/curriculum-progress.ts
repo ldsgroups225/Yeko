@@ -1,18 +1,20 @@
-import type { programTemplates, series } from '../drizzle/core-schema'
+import type { ProgramTemplate, Serie } from '../drizzle/core-schema'
 import type {
   ChapterCompletionInsert,
   ClassSessionInsert,
   ClassSessionStatus,
   CurriculumProgressInsert,
   ProgressStatus,
-
-  timetableSessions,
-  users,
+  TimetableSession,
+  User,
 } from '../drizzle/school-schema'
 import { Result as R } from '@praha/byethrow'
+
 import { databaseLogger, tapLogErr } from '@repo/logger'
+
 import { and, asc, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
+
 import { grades, programTemplateChapters, subjects } from '../drizzle/core-schema'
 import {
   chapterCompletions,
@@ -30,7 +32,7 @@ import { getNestedErrorMessage } from '../i18n'
 type ClassSessionWithDetails = typeof classSessions.$inferSelect & {
   subject: Pick<typeof subjects.$inferSelect, 'id' | 'name' | 'shortName'> | null
   teacher: {
-    user: Pick<typeof users.$inferSelect, 'name'> | null
+    user: Pick<User, 'name'> | null
   } | null
   chapter: Pick<typeof programTemplateChapters.$inferSelect, 'id' | 'title' | 'order'> | null
 }
@@ -38,27 +40,27 @@ type ClassSessionWithDetails = typeof classSessions.$inferSelect & {
 type ClassSessionFull = typeof classSessions.$inferSelect & {
   class: (typeof classes.$inferSelect & {
     grade: typeof grades.$inferSelect | null
-    series: typeof series.$inferSelect | null
+    series: Serie | null
   }) | null
   subject: typeof subjects.$inferSelect | null
   teacher: {
-    user: Pick<typeof users.$inferSelect, 'name'> | null
+    user: Pick<User, 'name'> | null
   } | null
   chapter: typeof programTemplateChapters.$inferSelect | null
-  timetableSession: typeof timetableSessions.$inferSelect | null
+  timetableSession: TimetableSession | null
 }
 
 type ChapterCompletionWithDetails = typeof chapterCompletions.$inferSelect & {
   chapter: Pick<typeof programTemplateChapters.$inferSelect, 'id' | 'title' | 'order' | 'durationHours'> | null
   teacher: {
-    user: Pick<typeof users.$inferSelect, 'name'> | null
+    user: Pick<User, 'name'> | null
   } | null
   classSession: Pick<typeof classSessions.$inferSelect, 'id' | 'date' | 'topic'> | null
 }
 
 type CurriculumProgressWithDetails = typeof curriculumProgress.$inferSelect & {
   subject: Pick<typeof subjects.$inferSelect, 'id' | 'name' | 'shortName' | 'category'> | null
-  programTemplate: (Pick<typeof programTemplates.$inferSelect, 'id' | 'name'> & {
+  programTemplate: (Pick<ProgramTemplate, 'id' | 'name'> & {
     chapters: Pick<typeof programTemplateChapters.$inferSelect, 'id' | 'title' | 'order'>[]
   }) | null
 }
@@ -152,7 +154,7 @@ export async function getClassSessions(params: {
             chapter: { columns: { id: true, title: true, order: true } },
           },
           orderBy: [desc(classSessions.date), asc(classSessions.startTime)],
-        }) as ClassSessionWithDetails[]
+        })
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchSessionsFailed')),
     }),
@@ -179,7 +181,7 @@ export async function getClassSessionById(id: string): R.ResultAsync<ClassSessio
             chapter: true,
             timetableSession: true,
           },
-        }) as ClassSessionFull | undefined
+        })
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchSessionByIdFailed')),
     }),
@@ -312,7 +314,7 @@ export async function getChapterCompletions(params: {
             },
           },
           orderBy: [desc(chapterCompletions.completedAt)],
-        }) as ChapterCompletionWithDetails[]
+        })
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchChapterCompletionsFailed')),
     }),
@@ -417,7 +419,7 @@ export async function getCurriculumProgress(params: {
             },
           },
           orderBy: [asc(subjects.name)],
-        }) as CurriculumProgressWithDetails[]
+        })
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchProgressFailed')),
     }),
@@ -768,7 +770,7 @@ export async function getTeacherProgressSummary(teacherId: string, termId: strin
           }
         }
 
-        return progressRecords as TeacherProgressSummaryItem[]
+        return progressRecords
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchTeacherSummaryFailed')),
     }),

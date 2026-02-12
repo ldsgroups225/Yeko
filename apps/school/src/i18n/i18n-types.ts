@@ -5855,6 +5855,34 @@ type RootTranslation = {
 				 * M​o​y​.​ ​C​o​e​f​.
 				 */
 				weightedAverage: string
+				/**
+				 * N​o​t​e​s
+				 */
+				notes: string
+				/**
+				 * M​o​y​e​n​n​e​s​ ​r​e​c​a​l​c​u​l​é​e​s​ ​a​v​e​c​ ​s​u​c​c​è​s
+				 */
+				recalculateSuccess: string
+				/**
+				 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​u​ ​r​e​c​a​l​c​u​l
+				 */
+				recalculateError: string
+				/**
+				 * E​r​r​e​u​r​ ​t​e​c​h​n​i​q​u​e​ ​l​o​r​s​ ​d​u​ ​r​e​c​a​l​c​u​l
+				 */
+				recalculateTechnicalError: string
+				/**
+				 * C​a​r​t​e​s
+				 */
+				viewCards: string
+				/**
+				 * M​o​y​e​n​n​e​s
+				 */
+				viewAverages: string
+				/**
+				 * R​e​c​a​l​c​u​l​e​r
+				 */
+				recalculate: string
 			}
 			filters: {
 				/**
@@ -14159,6 +14187,34 @@ export type TranslationFunctions = {
 				 * Moy. Coef.
 				 */
 				weightedAverage: () => LocalizedString
+				/**
+				 * Notes
+				 */
+				notes: () => LocalizedString
+				/**
+				 * Moyennes recalculées avec succès
+				 */
+				recalculateSuccess: () => LocalizedString
+				/**
+				 * Erreur lors du recalcul
+				 */
+				recalculateError: () => LocalizedString
+				/**
+				 * Erreur technique lors du recalcul
+				 */
+				recalculateTechnicalError: () => LocalizedString
+				/**
+				 * Cartes
+				 */
+				viewCards: () => LocalizedString
+				/**
+				 * Moyennes
+				 */
+				viewAverages: () => LocalizedString
+				/**
+				 * Recalculer
+				 */
+				recalculate: () => LocalizedString
 			}
 			filters: {
 				/**
