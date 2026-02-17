@@ -1,18 +1,6 @@
 import type { FormEvent } from 'react'
 import type { CreateProgramTemplateInput } from '@/schemas/programs'
-import {
-  IconBook,
-  IconCalendar,
-  IconChevronRight,
-  IconCopy,
-  IconDatabase,
-  IconDeviceFloppy,
-  IconFileText,
-  IconPlus,
-  IconSearch,
-  IconTrash,
-  IconX,
-} from '@tabler/icons-react'
+import { IconBook, IconCalendar, IconChevronRight, IconCopy, IconDatabase, IconDeviceFloppy, IconFileText, IconPlus, IconSearch, IconTrash, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, Outlet, useMatch, useNavigate } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
@@ -23,7 +11,7 @@ import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, domMax, LazyMotion, m } from 'motion/react'
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
@@ -503,77 +491,79 @@ function ProgramsCatalog() {
                   )
                 : (
                     <div className="space-y-4">
-                      <AnimatePresence mode="popLayout">
-                        {programsData.programs.map(program => (
-                          <motion.div
-                            key={program.id}
-                            layout
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ duration: 0.2 }}
-                            className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
-                            onClick={() => navigate({ to: `/app/catalogs/programs/${program.id}` })}
-                          >
-                            <div className="flex items-center gap-4 flex-1">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                <IconBook className="h-5 w-5 text-primary" />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-2">
-                                  <h3 className="font-semibold">{program.name}</h3>
-                                  {program.status === 'published' && (
-                                    <Badge variant="default" className="text-xs">Publié</Badge>
-                                  )}
-                                  {program.status === 'draft' && (
-                                    <Badge variant="secondary" className="text-xs">Brouillon</Badge>
-                                  )}
-                                  {program.status === 'archived' && (
-                                    <Badge variant="outline" className="text-xs">Archivé</Badge>
-                                  )}
-                                  {program.schoolYearTemplate?.isActive && (
-                                    <Badge variant="default" className="text-xs">Active</Badge>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
-                                  <span>{program.subject?.name}</span>
-                                  <span>•</span>
-                                  <span>{program.grade?.name}</span>
-                                  <span>•</span>
-                                  <span>{program.schoolYearTemplate?.name}</span>
-                                </div>
-                              </div>
-                              <IconChevronRight className="h-5 w-5 text-muted-foreground" />
-                            </div>
-                            <div
-                              className="flex gap-2"
-                              onClick={e => e.stopPropagation()}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                  e.stopPropagation()
-                                  e.preventDefault()
-                                }
-                              }}
-                              role="toolbar"
+                      <LazyMotion features={domMax}>
+                        <AnimatePresence mode="popLayout">
+                          {programsData.programs.map(program => (
+                            <m.div
+                              key={program.id}
+                              layout
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              transition={{ duration: 0.2 }}
+                              className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                              onClick={() => navigate({ to: `/app/catalogs/programs/${program.id}` })}
                             >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setCloningProgram({ id: program.id, name: program.name })}
+                              <div className="flex items-center gap-4 flex-1">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                  <IconBook className="h-5 w-5 text-primary" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <h3 className="font-semibold">{program.name}</h3>
+                                    {program.status === 'published' && (
+                                      <Badge variant="default" className="text-xs">Publié</Badge>
+                                    )}
+                                    {program.status === 'draft' && (
+                                      <Badge variant="secondary" className="text-xs">Brouillon</Badge>
+                                    )}
+                                    {program.status === 'archived' && (
+                                      <Badge variant="outline" className="text-xs">Archivé</Badge>
+                                    )}
+                                    {program.schoolYearTemplate?.isActive && (
+                                      <Badge variant="default" className="text-xs">Active</Badge>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                                    <span>{program.subject?.name}</span>
+                                    <span>•</span>
+                                    <span>{program.grade?.name}</span>
+                                    <span>•</span>
+                                    <span>{program.schoolYearTemplate?.name}</span>
+                                  </div>
+                                </div>
+                                <IconChevronRight className="h-5 w-5 text-muted-foreground" />
+                              </div>
+                              <div
+                                className="flex gap-2"
+                                onClick={e => e.stopPropagation()}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.stopPropagation()
+                                    e.preventDefault()
+                                  }
+                                }}
+                                role="toolbar"
                               >
-                                <IconCopy className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setDeletingProgram({ id: program.id, name: program.name })}
-                              >
-                                <IconTrash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setCloningProgram({ id: program.id, name: program.name })}
+                                >
+                                  <IconCopy className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setDeletingProgram({ id: program.id, name: program.name })}
+                                >
+                                  <IconTrash className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </m.div>
+                          ))}
+                        </AnimatePresence>
+                      </LazyMotion>
                     </div>
                   )}
         </CardContent>

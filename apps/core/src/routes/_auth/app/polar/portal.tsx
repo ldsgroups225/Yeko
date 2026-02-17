@@ -1,17 +1,13 @@
-import { Polar } from '@polar-sh/sdk'
 import { createFileRoute } from '@tanstack/react-router'
-import { env } from 'cloudflare:workers'
 import { protectedRequestMiddleware } from '@/core/middleware/auth'
+import { getPolar } from '@/lib/polar'
 
 export const Route = createFileRoute('/_auth/app/polar/portal')({
   server: {
     middleware: [protectedRequestMiddleware],
     handlers: {
       GET: async (ctx) => {
-        const polar = new Polar({
-          accessToken: env.POLAR_SECRET,
-          server: 'sandbox',
-        })
+        const polar = await getPolar()
         const customerSession = await polar.customerSessions.create({
           externalCustomerId: ctx.context.userId,
         })

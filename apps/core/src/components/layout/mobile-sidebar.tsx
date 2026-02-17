@@ -1,11 +1,5 @@
 import type { ComponentType } from 'react'
-import {
-  IconBook,
-  IconChartBar,
-  IconHelpCircle,
-  IconHome,
-  IconSchool,
-} from '@tabler/icons-react'
+import { IconBook, IconChartBar, IconHelpCircle, IconHome, IconSchool } from '@tabler/icons-react'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   Sidebar,

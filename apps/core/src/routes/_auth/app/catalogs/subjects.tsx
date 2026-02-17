@@ -1,18 +1,7 @@
 import type { FormEvent } from 'react'
 import type { CreateSubjectInput, UpdateSubjectInput } from '@/schemas/catalog'
 import { R } from '@praha/byethrow'
-import {
-  IconBook,
-  IconCircleX,
-  IconDeviceFloppy,
-  IconDownload,
-  IconEdit,
-  IconPlus,
-  IconSearch,
-  IconTrash,
-  IconUpload,
-  IconX,
-} from '@tabler/icons-react'
+import { IconBook, IconCircleX, IconDeviceFloppy, IconDownload, IconEdit, IconPlus, IconSearch, IconTrash, IconUpload, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
@@ -23,7 +12,7 @@ import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, domMax, LazyMotion, m } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
@@ -194,9 +183,9 @@ function SubjectsCatalog() {
     }
   }
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (allSubjects.length > 0) {
-      exportSubjectsToExcel(allSubjects)
+      await exportSubjectsToExcel(allSubjects)
       logger.info('Subjects exported to Excel')
     }
   }
@@ -277,7 +266,7 @@ function SubjectsCatalog() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={downloadSubjectsTemplate}>
+          <Button variant="outline" size="sm" onClick={() => downloadSubjectsTemplate().catch(() => toast.error('Erreur lors du téléchargement du template'))}>
             <IconDownload className="h-4 w-4 mr-2" />
             Template
           </Button>
@@ -474,132 +463,134 @@ function SubjectsCatalog() {
               : (
                   <>
                     <div className="space-y-4">
-                      <AnimatePresence mode="popLayout">
-                        {allSubjects.map(subject => (
-                          <motion.div
-                            key={subject.id}
-                            layout
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            {editingSubject === subject.id
-                              ? (
-                                  <form
-                                    onSubmit={e => handleUpdate(e, subject.id)}
-                                    className="border rounded-lg p-4 space-y-4"
-                                  >
-                                    <div className="grid gap-4 md:grid-cols-3">
-                                      <div className="space-y-2">
-                                        <Label htmlFor={`edit-name-${subject.id}`}>Nom *</Label>
-                                        <Input
-                                          id={`edit-name-${subject.id}`}
-                                          name="name"
-                                          defaultValue={subject.name}
-                                          required
-                                        />
+                      <LazyMotion features={domMax}>
+                        <AnimatePresence mode="popLayout">
+                          {allSubjects.map(subject => (
+                            <m.div
+                              key={subject.id}
+                              layout
+                              initial={{ opacity: 0, y: 20 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95 }}
+                              transition={{ duration: 0.2 }}
+                            >
+                              {editingSubject === subject.id
+                                ? (
+                                    <form
+                                      onSubmit={e => handleUpdate(e, subject.id)}
+                                      className="border rounded-lg p-4 space-y-4"
+                                    >
+                                      <div className="grid gap-4 md:grid-cols-3">
+                                        <div className="space-y-2">
+                                          <Label htmlFor={`edit-name-${subject.id}`}>Nom *</Label>
+                                          <Input
+                                            id={`edit-name-${subject.id}`}
+                                            name="name"
+                                            defaultValue={subject.name}
+                                            required
+                                          />
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label htmlFor={`edit-shortName-${subject.id}`}>Nom Court</Label>
+                                          <Input
+                                            id={`edit-shortName-${subject.id}`}
+                                            name="shortName"
+                                            defaultValue={subject.shortName || ''}
+                                            maxLength={10}
+                                          />
+                                        </div>
+                                        <div className="space-y-2">
+                                          <Label htmlFor={`edit-category-${subject.id}`}>Catégorie *</Label>
+                                          <Select
+                                            name="category"
+                                            defaultValue={subject.category}
+                                            required
+                                            value={editSubjectCategory}
+                                            onValueChange={val => val && setEditSubjectCategory(val)}
+                                          >
+                                            <SelectTrigger>
+                                              <SelectValue placeholder={t.catalogs.subjects.selectCategory()}>
+                                                {editSubjectCategory || undefined}
+                                              </SelectValue>
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              <SelectItem value="Scientifique">Scientifique</SelectItem>
+                                              <SelectItem value="Littéraire">Littéraire</SelectItem>
+                                              <SelectItem value="Sportif">Sportif</SelectItem>
+                                              <SelectItem value="Autre">Autre</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
                                       </div>
-                                      <div className="space-y-2">
-                                        <Label htmlFor={`edit-shortName-${subject.id}`}>Nom Court</Label>
-                                        <Input
-                                          id={`edit-shortName-${subject.id}`}
-                                          name="shortName"
-                                          defaultValue={subject.shortName || ''}
-                                          maxLength={10}
-                                        />
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label htmlFor={`edit-category-${subject.id}`}>Catégorie *</Label>
-                                        <Select
-                                          name="category"
-                                          defaultValue={subject.category}
-                                          required
-                                          value={editSubjectCategory}
-                                          onValueChange={val => val && setEditSubjectCategory(val)}
+                                      <div className="flex justify-end gap-2">
+                                        <Button
+                                          type="button"
+                                          variant="outline"
+                                          onClick={() => setEditingSubject(null)}
                                         >
-                                          <SelectTrigger>
-                                            <SelectValue placeholder={t.catalogs.subjects.selectCategory()}>
-                                              {editSubjectCategory || undefined}
-                                            </SelectValue>
-                                          </SelectTrigger>
-                                          <SelectContent>
-                                            <SelectItem value="Scientifique">Scientifique</SelectItem>
-                                            <SelectItem value="Littéraire">Littéraire</SelectItem>
-                                            <SelectItem value="Sportif">Sportif</SelectItem>
-                                            <SelectItem value="Autre">Autre</SelectItem>
-                                          </SelectContent>
-                                        </Select>
+                                          <IconX className="h-4 w-4 mr-2" />
+                                          {t.common.cancel()}
+                                        </Button>
+                                        <Button type="submit" disabled={updateMutation.isPending}>
+                                          <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                          {updateMutation.isPending ? t.common.loading() : t.common.save()}
+                                        </Button>
                                       </div>
-                                    </div>
-                                    <div className="flex justify-end gap-2">
-                                      <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => setEditingSubject(null)}
-                                      >
-                                        <IconX className="h-4 w-4 mr-2" />
-                                        {t.common.cancel()}
-                                      </Button>
-                                      <Button type="submit" disabled={updateMutation.isPending}>
-                                        <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                                        {updateMutation.isPending ? t.common.loading() : t.common.save()}
-                                      </Button>
-                                    </div>
-                                  </form>
-                                )
-                              : (
-                                  <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                                    <div className="flex items-center gap-4">
-                                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                        <IconBook className="h-5 w-5 text-primary" />
-                                      </div>
-                                      <div>
-                                        <div className="flex items-center gap-2">
-                                          <h3 className="font-semibold">{subject.name}</h3>
-                                          {subject.shortName && (
-                                            <Badge variant="outline" className="text-xs">
-                                              {subject.shortName}
+                                    </form>
+                                  )
+                                : (
+                                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                                      <div className="flex items-center gap-4">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                          <IconBook className="h-5 w-5 text-primary" />
+                                        </div>
+                                        <div>
+                                          <div className="flex items-center gap-2">
+                                            <h3 className="font-semibold">{subject.name}</h3>
+                                            {subject.shortName && (
+                                              <Badge variant="outline" className="text-xs">
+                                                {subject.shortName}
+                                              </Badge>
+                                            )}
+                                            <Badge variant={getCategoryVariant(subject.category)}>
+                                              {subject.category}
                                             </Badge>
-                                          )}
-                                          <Badge variant={getCategoryVariant(subject.category)}>
-                                            {subject.category}
-                                          </Badge>
-                                        </div>
-                                        <div className="flex items-center gap-2 mt-1">
-                                          <span className="text-xs text-muted-foreground">
-                                            Créé le
-                                            {' '}
-                                            {formatDate(subject.createdAt, 'MEDIUM')}
-                                          </span>
+                                          </div>
+                                          <div className="flex items-center gap-2 mt-1">
+                                            <span className="text-xs text-muted-foreground">
+                                              Créé le
+                                              {' '}
+                                              {formatDate(subject.createdAt, 'MEDIUM')}
+                                            </span>
+                                          </div>
                                         </div>
                                       </div>
+                                      <div className="flex gap-2">
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => {
+                                            setEditingSubject(subject.id)
+                                            setEditSubjectCategory(subject.category || 'Autre')
+                                          }}
+                                        >
+                                          <IconEdit className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => setDeletingSubject({ id: subject.id, name: subject.name })}
+                                          disabled={deleteMutation.isPending}
+                                        >
+                                          <IconTrash className="h-4 w-4" />
+                                        </Button>
+                                      </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => {
-                                          setEditingSubject(subject.id)
-                                          setEditSubjectCategory(subject.category || 'Autre')
-                                        }}
-                                      >
-                                        <IconEdit className="h-4 w-4" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => setDeletingSubject({ id: subject.id, name: subject.name })}
-                                        disabled={deleteMutation.isPending}
-                                      >
-                                        <IconTrash className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                )}
-                          </motion.div>
-                        ))}
-                      </AnimatePresence>
+                                  )}
+                            </m.div>
+                          ))}
+                        </AnimatePresence>
+                      </LazyMotion>
                     </div>
 
                     {/* Infinite Scroll Trigger */}

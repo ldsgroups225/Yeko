@@ -1,12 +1,4 @@
-import {
-  IconActivity,
-  IconCalendar,
-  IconChartBar,
-  IconDownload,
-  IconSchool,
-  IconTrendingUp,
-  IconUsers,
-} from '@tabler/icons-react'
+import { IconActivity, IconCalendar, IconChartBar, IconDownload, IconSchool, IconTrendingUp, IconUsers } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'

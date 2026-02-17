@@ -1,21 +1,4 @@
-import {
-  IconArrowLeft,
-  IconBuilding,
-  IconCalendar,
-  IconCircleCheck,
-  IconCircleX,
-  IconClock,
-  IconCreditCard,
-  IconDotsVertical,
-  IconEdit,
-  IconMail,
-  IconMapPin,
-  IconMessage,
-  IconPhone,
-  IconSchool,
-  IconShield,
-  IconUsers,
-} from '@tabler/icons-react'
+import { IconArrowLeft, IconBuilding, IconCalendar, IconCircleCheck, IconCircleX, IconClock, IconCreditCard, IconDotsVertical, IconEdit, IconMail, IconMapPin, IconMessage, IconPhone, IconSchool, IconShield, IconUsers } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'

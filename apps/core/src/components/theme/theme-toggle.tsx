@@ -1,9 +1,4 @@
-import {
-  IconCheck,
-  IconDeviceDesktop,
-  IconMoon,
-  IconSun,
-} from '@tabler/icons-react'
+import { IconCheck, IconDeviceDesktop, IconMoon, IconSun } from '@tabler/icons-react'
 
 import { Button, buttonVariants } from '@workspace/ui/components/button'
 import {

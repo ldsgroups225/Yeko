@@ -1,12 +1,4 @@
-import {
-  IconChartBar,
-  IconChartPie,
-  IconDownload,
-  IconFileText,
-  IconMapPin,
-  IconTrendingUp,
-  IconUsers,
-} from '@tabler/icons-react'
+import { IconChartBar, IconChartPie, IconDownload, IconFileText, IconMapPin, IconTrendingUp, IconUsers } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
@@ -75,7 +67,7 @@ function AnalyticsPage() {
           return
         }
         toast.info(LL.analytics.export.generating())
-        exportAnalyticsToExcel(overview, schoolsPerf, platformUsage, timeRange)
+        await exportAnalyticsToExcel(overview, schoolsPerf, platformUsage, timeRange)
         toast.success(LL.analytics.export.excelSuccess())
         logger.info('Report exported', { format, timeRange })
       }

@@ -1,13 +1,5 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
-import {
-  IconAlertTriangle,
-  IconArrowLeft,
-  IconBug,
-  IconChevronDown,
-  IconHome,
-  IconMail,
-  IconRefresh,
-} from '@tabler/icons-react'
+import { IconAlertTriangle, IconArrowLeft, IconBug, IconChevronDown, IconHome, IconMail, IconRefresh } from '@tabler/icons-react'
 import { Link, rootRouteId, useMatch, useRouter } from '@tanstack/react-router'
 import { Alert, AlertDescription } from '@workspace/ui/components/alert'
 import { Button, buttonVariants } from '@workspace/ui/components/button'

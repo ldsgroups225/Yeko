@@ -1,19 +1,6 @@
 import type { FormEvent } from 'react'
 import type { CreateProgramTemplateChapterInput, UpdateProgramTemplateChapterInput } from '@/schemas/programs'
-import {
-  IconArrowLeft,
-  IconBook,
-  IconCalendar,
-  IconClock,
-  IconDeviceFloppy,
-  IconEdit,
-  IconFileText,
-  IconHistory,
-  IconPlus,
-  IconTrash,
-  IconUpload,
-  IconX,
-} from '@tabler/icons-react'
+import { IconArrowLeft, IconBook, IconCalendar, IconClock, IconDeviceFloppy, IconEdit, IconFileText, IconHistory, IconPlus, IconTrash, IconUpload, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
@@ -25,7 +12,7 @@ import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { Textarea } from '@workspace/ui/components/textarea'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, domAnimation, LazyMotion, m } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import {
@@ -451,124 +438,126 @@ function ProgramDetails() {
               )
             : (
                 <div className="space-y-4">
-                  <AnimatePresence mode="popLayout">
-                    {chapters.map(chapter => (
-                      <motion.div
-                        key={chapter.id}
-                        layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {editingChapter === chapter.id
-                          ? (
-                              <form
-                                onSubmit={e => handleUpdateChapter(e, chapter.id)}
-                                className="border rounded-lg p-4 space-y-4"
-                              >
-                                <div className="space-y-2">
-                                  <Label htmlFor={`edit-title-${chapter.id}`}>Titre *</Label>
-                                  <Input
-                                    id={`edit-title-${chapter.id}`}
-                                    name="title"
-                                    defaultValue={chapter.title}
-                                    required
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor={`edit-objectives-${chapter.id}`}>Objectifs</Label>
-                                  <Textarea
-                                    id={`edit-objectives-${chapter.id}`}
-                                    name="objectives"
-                                    defaultValue={chapter.objectives || ''}
-                                    rows={4}
-                                  />
-                                </div>
-                                <div className="grid gap-4 md:grid-cols-2">
+                  <LazyMotion features={domAnimation}>
+                    <AnimatePresence mode="popLayout">
+                      {chapters.map(chapter => (
+                        <m.div
+                          key={chapter.id}
+                          layout
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {editingChapter === chapter.id
+                            ? (
+                                <form
+                                  onSubmit={e => handleUpdateChapter(e, chapter.id)}
+                                  className="border rounded-lg p-4 space-y-4"
+                                >
                                   <div className="space-y-2">
-                                    <Label htmlFor={`edit-order-${chapter.id}`}>Ordre *</Label>
+                                    <Label htmlFor={`edit-title-${chapter.id}`}>Titre *</Label>
                                     <Input
-                                      id={`edit-order-${chapter.id}`}
-                                      name="order"
-                                      type="number"
-                                      min="1"
-                                      defaultValue={chapter.order}
+                                      id={`edit-title-${chapter.id}`}
+                                      name="title"
+                                      defaultValue={chapter.title}
                                       required
                                     />
                                   </div>
                                   <div className="space-y-2">
-                                    <Label htmlFor={`edit-duration-${chapter.id}`}>Durée (heures)</Label>
-                                    <Input
-                                      id={`edit-duration-${chapter.id}`}
-                                      name="durationHours"
-                                      type="number"
-                                      min="0"
-                                      defaultValue={chapter.durationHours || ''}
+                                    <Label htmlFor={`edit-objectives-${chapter.id}`}>Objectifs</Label>
+                                    <Textarea
+                                      id={`edit-objectives-${chapter.id}`}
+                                      name="objectives"
+                                      defaultValue={chapter.objectives || ''}
+                                      rows={4}
                                     />
                                   </div>
-                                </div>
-                                <div className="flex justify-end gap-2">
-                                  <Button
-                                    type="button"
-                                    variant="outline"
-                                    onClick={() => setEditingChapter(null)}
-                                  >
-                                    <IconX className="h-4 w-4 mr-2" />
-                                    Annuler
-                                  </Button>
-                                  <Button type="submit" disabled={updateChapterMutation.isPending}>
-                                    <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                                    {updateChapterMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
-                                  </Button>
-                                </div>
-                              </form>
-                            )
-                          : (
-                              <div className="flex items-start justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                                <div className="flex items-start gap-4 flex-1">
-                                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 shrink-0">
-                                    <span className="text-sm font-semibold text-primary">{chapter.order}</span>
-                                  </div>
-                                  <div className="flex-1">
-                                    <h3 className="font-semibold">{chapter.title}</h3>
-                                    {chapter.objectives && (
-                                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                        {chapter.objectives}
-                                      </p>
-                                    )}
-                                    <div className="flex items-center gap-2 mt-2">
-                                      {chapter.durationHours && (
-                                        <Badge variant="outline" className="text-xs">
-                                          <IconClock className="h-3 w-3 mr-1" />
-                                          {chapter.durationHours}
-                                          h
-                                        </Badge>
-                                      )}
+                                  <div className="grid gap-4 md:grid-cols-2">
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`edit-order-${chapter.id}`}>Ordre *</Label>
+                                      <Input
+                                        id={`edit-order-${chapter.id}`}
+                                        name="order"
+                                        type="number"
+                                        min="1"
+                                        defaultValue={chapter.order}
+                                        required
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`edit-duration-${chapter.id}`}>Durée (heures)</Label>
+                                      <Input
+                                        id={`edit-duration-${chapter.id}`}
+                                        name="durationHours"
+                                        type="number"
+                                        min="0"
+                                        defaultValue={chapter.durationHours || ''}
+                                      />
                                     </div>
                                   </div>
+                                  <div className="flex justify-end gap-2">
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      onClick={() => setEditingChapter(null)}
+                                    >
+                                      <IconX className="h-4 w-4 mr-2" />
+                                      Annuler
+                                    </Button>
+                                    <Button type="submit" disabled={updateChapterMutation.isPending}>
+                                      <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                      {updateChapterMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
+                                    </Button>
+                                  </div>
+                                </form>
+                              )
+                            : (
+                                <div className="flex items-start justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                                  <div className="flex items-start gap-4 flex-1">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 shrink-0">
+                                      <span className="text-sm font-semibold text-primary">{chapter.order}</span>
+                                    </div>
+                                    <div className="flex-1">
+                                      <h3 className="font-semibold">{chapter.title}</h3>
+                                      {chapter.objectives && (
+                                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                          {chapter.objectives}
+                                        </p>
+                                      )}
+                                      <div className="flex items-center gap-2 mt-2">
+                                        {chapter.durationHours && (
+                                          <Badge variant="outline" className="text-xs">
+                                            <IconClock className="h-3 w-3 mr-1" />
+                                            {chapter.durationHours}
+                                            h
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => setEditingChapter(chapter.id)}
+                                    >
+                                      <IconEdit className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => setDeletingChapter({ id: chapter.id, title: chapter.title })}
+                                    >
+                                      <IconTrash className="h-4 w-4" />
+                                    </Button>
+                                  </div>
                                 </div>
-                                <div className="flex gap-2">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setEditingChapter(chapter.id)}
-                                  >
-                                    <IconEdit className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => setDeletingChapter({ id: chapter.id, title: chapter.title })}
-                                  >
-                                    <IconTrash className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            )}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                              )}
+                        </m.div>
+                      ))}
+                    </AnimatePresence>
+                  </LazyMotion>
                 </div>
               )}
         </CardContent>

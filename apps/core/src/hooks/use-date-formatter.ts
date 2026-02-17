@@ -1,5 +1,5 @@
 import type { DateFormatStyle, Locales as DateLocale } from '@repo/data-ops'
-import { formatDate } from '@repo/data-ops'
+import { formatDate } from '@repo/data-ops/utils/formatters'
 import { useEffect, useState } from 'react'
 
 /**

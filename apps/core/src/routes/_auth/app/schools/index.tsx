@@ -1,20 +1,5 @@
 import type { School } from '@repo/data-ops'
-import {
-  IconCalendar,
-  IconCircleCheck,
-  IconCircleX,
-  IconClock,
-  IconDots,
-  IconDownload,
-  IconLoader2,
-  IconMail,
-  IconMapPin,
-  IconPhone,
-  IconPlus,
-  IconSchool,
-  IconSearch,
-  IconUpload,
-} from '@tabler/icons-react'
+import { IconCalendar, IconCircleCheck, IconCircleX, IconClock, IconDots, IconDownload, IconLoader2, IconMail, IconMapPin, IconPhone, IconPlus, IconSchool, IconSearch, IconUpload } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
@@ -207,7 +192,7 @@ function Schools() {
               className="gap-2"
               onClick={async () => {
                 const result = await refetchAllSchools()
-                exportSchoolsToExcel(result.data?.data ?? [])
+                await exportSchoolsToExcel(result.data?.data ?? [])
               }}
               disabled={isExportingSchools || (pagination?.total ?? 0) === 0}
             >

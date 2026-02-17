@@ -1,5 +1,3 @@
-import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-
 /**
  * Excel Export for Analytics Reports
  * Generates comprehensive analytics reports in Excel format
@@ -81,13 +79,17 @@ function formatTimeRange(range: string): string {
 /**
  * Export analytics data to Excel
  */
-export function exportAnalyticsToExcel(
+export async function exportAnalyticsToExcel(
   overview: AnalyticsOverview,
   schoolsPerf: SchoolsPerformance,
   platformUsage: PlatformUsage,
   timeRange: string,
   filename?: string,
 ) {
+  const [{ ExcelBuilder, ExcelSchemaBuilder }] = await Promise.all([
+    import('@chronicstone/typed-xlsx'),
+  ])
+
   const timestamp = new Date().toISOString().split('T')[0]
   const finalFilename = filename || `yeko-analytics-${timeRange}-${timestamp}.xlsx`
 

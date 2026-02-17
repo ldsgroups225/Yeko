@@ -22,15 +22,11 @@ vi.mock('@/utils/generateUUID', () => ({
   generateUUID: () => `test-uuid-${++uuidCounter}`,
 }))
 
-// Mock lucide-react icons - use IconHome to match component usage
-vi.mock('@tabler/icons-react', async () => {
-  const icons = await import('lucide-react')
-  return {
-    ...icons,
-    IconHome: () => React.createElement('span', { 'data-testid': 'home-icon' }, '🏠'),
-    IconChevronRight: () => React.createElement('span', { 'data-testid': 'chevron-right' }, '›'),
-  }
-})
+// Mock @tabler/icons-react icons
+vi.mock('@tabler/icons-react', () => ({
+  IconHome: () => React.createElement('span', { 'data-testid': 'home-icon' }, '🏠'),
+  IconChevronRight: () => React.createElement('span', { 'data-testid': 'chevron-right' }, '›'),
+}))
 
 // Mock cn utility
 vi.mock('@/lib/utils', () => ({

@@ -1,17 +1,6 @@
 import type { FormEvent } from 'react'
 import type { CreateCoefficientTemplateInput } from '@/schemas/coefficients'
-import {
-  IconAlertTriangle,
-  IconCalculator,
-  IconCopy,
-  IconDeviceFloppy,
-  IconDownload,
-  IconFileDownload,
-  IconFileUpload,
-  IconPlus,
-  IconTrash,
-  IconX,
-} from '@tabler/icons-react'
+import { IconAlertTriangle, IconCalculator, IconCopy, IconDeviceFloppy, IconDownload, IconFileDownload, IconFileUpload, IconPlus, IconTrash, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
@@ -23,7 +12,7 @@ import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, domMax, LazyMotion, m } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
@@ -874,47 +863,49 @@ function CoefficientsCatalog() {
                     )
                   : (
                       <div className="space-y-4">
-                        <AnimatePresence mode="popLayout">
-                          {coefficientsData.coefficients.map(coef => (
-                            <motion.div
-                              key={coef.id}
-                              layout
-                              initial={{ opacity: 0, y: 20 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, scale: 0.95 }}
-                              transition={{ duration: 0.2 }}
-                              className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                            >
-                              <div className="flex items-center gap-4 flex-1">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                  <span className="text-lg font-bold text-primary">{coef.weight}</span>
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <h3 className="font-semibold">{coef.subject?.name}</h3>
-                                    <Badge variant="outline">{coef.grade?.name}</Badge>
-                                    {coef.series && (
-                                      <Badge variant="secondary">{coef.series.name}</Badge>
-                                    )}
-                                  </div>
-                                  <div className="text-sm text-muted-foreground mt-1">
-                                    {coef.schoolYearTemplate?.name}
-                                  </div>
-                                </div>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setDeletingCoefficient({
-                                  id: coef.id,
-                                  name: `${coef.subject?.name} - ${coef.grade?.name}`,
-                                })}
+                        <LazyMotion features={domMax}>
+                          <AnimatePresence mode="popLayout">
+                            {coefficientsData.coefficients.map(coef => (
+                              <m.div
+                                key={coef.id}
+                                layout
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.2 }}
+                                className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
                               >
-                                <IconTrash className="h-4 w-4" />
-                              </Button>
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
+                                <div className="flex items-center gap-4 flex-1">
+                                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                    <span className="text-lg font-bold text-primary">{coef.weight}</span>
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2">
+                                      <h3 className="font-semibold">{coef.subject?.name}</h3>
+                                      <Badge variant="outline">{coef.grade?.name}</Badge>
+                                      {coef.series && (
+                                        <Badge variant="secondary">{coef.series.name}</Badge>
+                                      )}
+                                    </div>
+                                    <div className="text-sm text-muted-foreground mt-1">
+                                      {coef.schoolYearTemplate?.name}
+                                    </div>
+                                  </div>
+                                </div>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setDeletingCoefficient({
+                                    id: coef.id,
+                                    name: `${coef.subject?.name} - ${coef.grade?.name}`,
+                                  })}
+                                >
+                                  <IconTrash className="h-4 w-4" />
+                                </Button>
+                              </m.div>
+                            ))}
+                          </AnimatePresence>
+                        </LazyMotion>
                       </div>
                     )}
           </CardContent>

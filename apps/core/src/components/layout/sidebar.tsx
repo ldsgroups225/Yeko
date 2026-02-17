@@ -2,23 +2,7 @@ import type { SystemAction } from '@repo/data-ops'
 import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
 import { Button } from '@repo/ui/src/components/button'
-import {
-  IconAward,
-  IconBook,
-  IconBookmark,
-  IconCalculator,
-  IconCalendar,
-  IconChartBar,
-  IconChevronDown,
-  IconHelpCircle,
-  IconHome,
-  IconReceipt,
-  IconRoute,
-  IconSchool,
-  IconSettings,
-  IconShield,
-  IconUser,
-} from '@tabler/icons-react'
+import { IconAward, IconBook, IconBookmark, IconCalculator, IconCalendar, IconChartBar, IconChevronDown, IconHelpCircle, IconHome, IconReceipt, IconRoute, IconSchool, IconSettings, IconShield, IconUser } from '@tabler/icons-react'
 import { Link, useNavigate, useRouterState } from '@tanstack/react-router'
 import {
   SidebarContent,
@@ -34,7 +18,7 @@ import {
   Sidebar as SidebarRoot,
   useSidebar,
 } from '@workspace/ui/components/sidebar'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence, domAnimation, LazyMotion, m } from 'motion/react'
 import { useMemo, useState } from 'react'
 import { useAuthorization } from '@/hooks/use-authorization'
 import { cn } from '@/lib/utils'
@@ -204,12 +188,12 @@ export function Sidebar({ className }: SidebarProps) {
             tooltip={isCollapsed ? item.name : undefined}
             className="h-12 flex-1"
           >
-            <motion.div
+            <m.div
               whileHover={{ scale: 1.1, rotate: 5 }}
               transition={{ type: 'spring', stiffness: 400, damping: 10 }}
             >
               <item.icon className="h-5 w-5" />
-            </motion.div>
+            </m.div>
             <div className="flex flex-col items-start flex-1">
               <span className="text-sm font-medium">{item.name}</span>
               {!isCollapsed && (
@@ -219,14 +203,14 @@ export function Sidebar({ className }: SidebarProps) {
               )}
             </div>
             {item.badge && !isCollapsed && (
-              <motion.span
+              <m.span
                 className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 15 }}
               >
                 {item.badge}
-              </motion.span>
+              </m.span>
             )}
           </SidebarMenuButton>
           {hasChildren && !isCollapsed && (
@@ -239,18 +223,18 @@ export function Sidebar({ className }: SidebarProps) {
               className="p-2 hover:bg-accent rounded-md transition-colors"
               aria-label={isExpanded ? 'Collapse' : 'Expand'}
             >
-              <motion.div
+              <m.div
                 animate={{ rotate: isExpanded ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
               >
                 <IconChevronDown className="h-4 w-4" />
-              </motion.div>
+              </m.div>
             </Button>
           )}
         </div>
         <AnimatePresence>
           {hasChildren && isExpanded && !isCollapsed && (
-            <motion.div
+            <m.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
@@ -286,7 +270,7 @@ export function Sidebar({ className }: SidebarProps) {
                   )
                 })}
               </SidebarMenuSub>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       </SidebarMenuItem>
@@ -297,44 +281,45 @@ export function Sidebar({ className }: SidebarProps) {
 
   return (
     <SidebarRoot collapsible="icon" className={cn('hidden lg:flex', className)}>
-      <SidebarHeader className="border-b">
-        <div className="flex items-center gap-2 px-2">
-          <motion.img
-            src="/icon.png"
-            alt="Yeko Logo"
-            className="h-8 w-8 object-contain"
-            whileHover={{ scale: 1.1, rotate: 10 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 10 }}
-          />
-          {!isCollapsed && (
-            <motion.div
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: 'auto' }}
-              exit={{ opacity: 0, width: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <h1 className="text-xl font-semibold tracking-tight text-foreground">
-                Yeko Core
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                {roleName}
-              </p>
-            </motion.div>
-          )}
-        </div>
-      </SidebarHeader>
+      <LazyMotion features={domAnimation}>
+        <SidebarHeader className="border-b">
+          <div className="flex items-center gap-2 px-2">
+            <m.img
+              src="/icon.png"
+              alt="Yeko Logo"
+              className="h-8 w-8 object-contain"
+              whileHover={{ scale: 1.1, rotate: 10 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+            />
+            {!isCollapsed && (
+              <m.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h1 className="text-xl font-semibold tracking-tight text-foreground">
+                  Yeko Core
+                </h1>
+                <p className="text-xs text-muted-foreground">
+                  {roleName}
+                </p>
+              </m.div>
+            )}
+          </div>
+        </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {filteredItems.map((item: NavigationItem) => renderNavigationItem(item))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      <SidebarFooter>{/* Add footer content if needed */}</SidebarFooter>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {filteredItems.map((item: NavigationItem) => renderNavigationItem(item))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>{/* Add footer content if needed */}</SidebarFooter>
+      </LazyMotion>
     </SidebarRoot>
   )
 }

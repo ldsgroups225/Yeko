@@ -1,15 +1,5 @@
 import type { FeeTypeCategory } from '@repo/data-ops'
-import {
-  IconCheck,
-  IconCircleX,
-  IconDotsVertical,
-  IconEdit,
-  IconPlus,
-  IconReceipt,
-  IconSearch,
-  IconTrash,
-  IconX,
-} from '@tabler/icons-react'
+import { IconCheck, IconCircleX, IconDotsVertical, IconEdit, IconPlus, IconReceipt, IconSearch, IconTrash, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'

@@ -1,14 +1,6 @@
 import type { Role, User } from '@repo/data-ops'
 import { hasPermission } from '@repo/data-ops/auth/permissions'
-import {
-  IconClock,
-  IconLoader2,
-  IconMail,
-  IconSearch,
-  IconShield,
-  IconShieldCheck,
-  IconUser,
-} from '@tabler/icons-react'
+import { IconClock, IconLoader2, IconMail, IconSearch, IconShield, IconShieldCheck, IconUser } from '@tabler/icons-react'
 import { useForm } from '@tanstack/react-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect } from '@tanstack/react-router'

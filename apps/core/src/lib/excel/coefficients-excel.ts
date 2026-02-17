@@ -1,13 +1,11 @@
-import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-import { formatDate } from '@repo/data-ops'
-import * as XLSX from 'xlsx'
+import { formatDate } from '@repo/data-ops/utils/formatters'
 
 /**
  * Excel Import/Export for Coefficients
  * Handles bulk import and export of coefficient templates
  */
 
-export interface CoefficientExportRow {
+interface CoefficientExportRow {
   'Année Scolaire': string
   'Matière': string
   'Classe': string
@@ -16,7 +14,7 @@ export interface CoefficientExportRow {
   'Date de Création': string
 }
 
-export interface CoefficientImportRow {
+interface CoefficientImportRow {
   'Année Scolaire': string
   'Matière': string
   'Classe': string
@@ -27,7 +25,7 @@ export interface CoefficientImportRow {
 /**
  * Export coefficients to Excel
  */
-export function exportCoefficientsToExcel(
+export async function exportCoefficientsToExcel(
   coefficients: Array<{
     schoolYearTemplate?: { name: string } | null
     subject?: { name: string } | null
@@ -38,6 +36,11 @@ export function exportCoefficientsToExcel(
   }>,
   filename = 'coefficients.xlsx',
 ) {
+  // Dynamic import for Excel libraries
+  const [{ ExcelBuilder, ExcelSchemaBuilder }] = await Promise.all([
+    import('@chronicstone/typed-xlsx'),
+  ])
+
   // Transform data to export format
   const data: CoefficientExportRow[] = coefficients.map(coef => ({
     'Année Scolaire': coef.schoolYearTemplate?.name || 'N/A',
@@ -85,14 +88,17 @@ export function exportCoefficientsToExcel(
 /**
  * Parse Excel file for coefficient import
  */
-export function parseCoefficientsExcel(file: File): Promise<{
+export async function parseCoefficientsExcel(file: File): Promise<{
   data: CoefficientImportRow[]
   errors: string[]
 }> {
+  // Dynamic import for xlsx - moved outside FileReader to fail fast
+  const XLSX = await import('xlsx')
+
   return new Promise((resolve) => {
     const reader = new FileReader()
 
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const data = e.target?.result
         const workbook = XLSX.read(data, { type: 'binary' })
@@ -191,7 +197,11 @@ export function parseCoefficientsExcel(file: File): Promise<{
 /**
  * Generate Excel template for coefficient import
  */
-export function generateCoefficientTemplate(filename = 'coefficient-template.xlsx') {
+export async function generateCoefficientTemplate(filename = 'coefficient-template.xlsx') {
+  const [{ ExcelBuilder, ExcelSchemaBuilder }] = await Promise.all([
+    import('@chronicstone/typed-xlsx'),
+  ])
+
   const sampleData: CoefficientImportRow[] = [
     {
       'Année Scolaire': '2025-2026',
@@ -220,7 +230,7 @@ export function generateCoefficientTemplate(filename = 'coefficient-template.xls
     .column('year', { key: 'Année Scolaire' })
     .column('subject', { key: 'Matière' })
     .column('grade', { key: 'Classe' })
-    .column('series', { key: 'Série', transform: val => val || '' })
+    .column('series', { key: 'Série', transform: (val: string | undefined) => val || '' })
     .column('coef', { key: 'Coefficient' })
     .build()
 

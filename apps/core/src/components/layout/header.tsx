@@ -1,9 +1,4 @@
-import {
-  IconBell,
-  IconMenu,
-  IconSearch,
-  IconSettings,
-} from '@tabler/icons-react'
+import { IconBell, IconMenu, IconSearch, IconSettings } from '@tabler/icons-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Button } from '@workspace/ui/components/button'
 import { Input } from '@workspace/ui/components/input'

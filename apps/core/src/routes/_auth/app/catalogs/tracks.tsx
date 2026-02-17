@@ -1,14 +1,6 @@
 import type { FormEvent } from 'react'
 import type { CreateTrackInput, UpdateTrackInput } from '@/schemas/catalog'
-import {
-  IconAward,
-  IconDeviceFloppy,
-  IconEdit,
-  IconPlus,
-  IconSchool,
-  IconTrash,
-  IconX,
-} from '@tabler/icons-react'
+import { IconAward, IconDeviceFloppy, IconEdit, IconPlus, IconSchool, IconTrash, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'

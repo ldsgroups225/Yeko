@@ -1,14 +1,4 @@
-import {
-  IconArrowRight,
-  IconAward,
-  IconBook,
-  IconDatabase,
-  IconPlus,
-  IconReceipt,
-  IconSchool,
-  IconSearch,
-  IconTrendingUp,
-} from '@tabler/icons-react'
+import { IconArrowRight, IconAward, IconBook, IconDatabase, IconPlus, IconReceipt, IconSchool, IconSearch, IconTrendingUp } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'

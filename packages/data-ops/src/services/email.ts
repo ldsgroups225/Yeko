@@ -1,17 +1,17 @@
-import { Resend } from 'resend'
 import { getErrorMessage } from '../i18n'
 
 // Initialize Resend client
-function getResendClient() {
+async function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) {
     console.warn('RESEND_API_KEY not configured - emails will not be sent')
     return null
   }
+  const { Resend } = await import('resend')
   return new Resend(apiKey)
 }
 
-export interface WelcomeEmailData {
+interface WelcomeEmailData {
   to: string
   name: string
   email: string
@@ -20,7 +20,7 @@ export interface WelcomeEmailData {
   loginUrl: string
 }
 
-export interface EmailResult {
+interface EmailResult {
   success: boolean
   messageId?: string
   error?: string
@@ -41,7 +41,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<EmailRes
     return { success: true, messageId: 'dev-mode-log' }
   }
 
-  const resend = getResendClient()
+  const resend = await getResendClient()
 
   if (!resend) {
     return { success: false, error: getErrorMessage('serverError') }
@@ -185,7 +185,7 @@ L'équipe Yeko
 
 // ==================== Parent Invitation Email ====================
 
-export interface ParentInvitationEmailData {
+interface ParentInvitationEmailData {
   to: string
   parentName: string
   studentNames: string[]
@@ -210,7 +210,7 @@ export async function sendParentInvitationEmail(data: ParentInvitationEmailData)
     return { success: true, messageId: 'dev-mode-log' }
   }
 
-  const resend = getResendClient()
+  const resend = await getResendClient()
 
   if (!resend) {
     return { success: false, error: getErrorMessage('serverError') }

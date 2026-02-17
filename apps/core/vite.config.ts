@@ -4,6 +4,7 @@ import { cloudflare } from '@cloudflare/vite-plugin'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 
@@ -86,6 +87,12 @@ export default defineConfig({
         name: 'ssr',
       },
     }),
+    visualizer({
+      emitFile: true,
+      filename: 'stats.html',
+      gzipSize: true,
+      brotliSize: true,
+    }),
   ],
   ssr: {
     noExternal: [
@@ -94,9 +101,6 @@ export default defineConfig({
       '@tanstack/react-start',
       'better-auth',
       '@base-ui/react',
-      'xlsx',
-      'xlsx-js-style',
-      '@chronicstone/typed-xlsx',
       '@tabler/icons-react',
     ],
   },
@@ -107,14 +111,11 @@ export default defineConfig({
       '@tanstack/react-router',
       '@tanstack/react-query',
       'better-auth/react',
-      'recharts',
       'motion/react',
       'zod',
       'sonner',
       'clsx',
       'tailwind-merge',
-      'xlsx',
-      'xlsx-js-style',
     ],
     exclude: [],
   },

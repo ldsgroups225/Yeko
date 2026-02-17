@@ -1,12 +1,14 @@
 import type { Grade, Serie, Subject, SubjectCategory } from '@repo/data-ops'
-import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { R } from '@praha/byethrow'
 
-import { formatDate } from '@repo/data-ops'
+import { formatDate } from '@repo/data-ops/utils/formatters'
 
 // ===== SUBJECTS EXPORT/IMPORT =====
 
-export function exportSubjectsToExcel(subjects: Subject[]) {
+export async function exportSubjectsToExcel(subjects: Subject[]) {
+  const [{ ExcelBuilder, ExcelSchemaBuilder }] = await Promise.all([
+    import('@chronicstone/typed-xlsx'),
+  ])
   const schema = ExcelSchemaBuilder.create<Subject>()
     .column('ID', { key: 'id' })
     .column('Nom', { key: 'name' })
@@ -94,7 +96,10 @@ export async function importSubjectsFromExcel(file: File): Promise<R.Result<Part
 
 // ===== GRADES EXPORT/IMPORT =====
 
-export function exportGradesToExcel(grades: Grade[]) {
+export async function exportGradesToExcel(grades: Grade[]) {
+  const [{ ExcelBuilder, ExcelSchemaBuilder }] = await Promise.all([
+    import('@chronicstone/typed-xlsx'),
+  ])
   const schema = ExcelSchemaBuilder.create<Grade>()
     .column('ID', { key: 'id' })
     .column('Nom', { key: 'name' })
@@ -131,7 +136,10 @@ export function exportGradesToExcel(grades: Grade[]) {
 
 // ===== SERIES EXPORT/IMPORT =====
 
-export function exportSeriesToExcel(series: Serie[]) {
+export async function exportSeriesToExcel(series: Serie[]) {
+  const [{ ExcelBuilder, ExcelSchemaBuilder }] = await Promise.all([
+    import('@chronicstone/typed-xlsx'),
+  ])
   const schema = ExcelSchemaBuilder.create<Serie>()
     .column('ID', { key: 'id' })
     .column('Nom', { key: 'name' })
@@ -214,7 +222,10 @@ export async function importSeriesFromExcel(file: File): Promise<Partial<Serie>[
 
 // ===== TEMPLATE GENERATION =====
 
-export function downloadSubjectsTemplate(): void {
+export async function downloadSubjectsTemplate(): Promise<void> {
+  const [{ ExcelBuilder, ExcelSchemaBuilder }] = await Promise.all([
+    import('@chronicstone/typed-xlsx'),
+  ])
   const template = [
     { 'Nom': 'Mathématiques', 'Nom Court': 'Maths', 'Catégorie': 'Scientifique' },
     { 'Nom': 'Français', 'Nom Court': 'Fr', 'Catégorie': 'Littéraire' },

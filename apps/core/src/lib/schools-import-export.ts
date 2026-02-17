@@ -1,9 +1,12 @@
 import type { School, SchoolStatus } from '@repo/data-ops'
-import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-import { formatDate } from '@repo/data-ops'
+import { formatDate } from '@repo/data-ops/utils/formatters'
 
 // Export schools to Excel
-export function exportSchoolsToExcel(schools: School[]) {
+export async function exportSchoolsToExcel(schools: School[]) {
+  const [{ ExcelBuilder, ExcelSchemaBuilder }] = await Promise.all([
+    import('@chronicstone/typed-xlsx'),
+  ])
+
   // Create schema for schools
   const schema = ExcelSchemaBuilder.create<School>()
     .column('ID', { key: 'id' })
