@@ -93,6 +93,7 @@ const config = defineConfig({
   ],
   assetsInclude: ['**/*.wasm', '**/*.data', '**/*.tar.gz'],
   optimizeDeps: {
+    include: ['string_decoder'],
     exclude: ['@electric-sql/pglite', 'drizzle-orm'],
   },
   server: {
