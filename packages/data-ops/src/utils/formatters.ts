@@ -1,4 +1,6 @@
 import type { Locales } from '../i18n/i18n-types'
+import { clientAppLogger, isServer, serverAppLogger } from '@repo/logger'
+import { parsePhoneNumberWithError } from 'libphonenumber-js'
 
 /**
  * Shared formatting utilities to be used across the project.
@@ -116,9 +118,8 @@ export function formatCompact(
 // --- Phone Formatter ---
 
 /**
- * Basic phone formatting.
- * Note: For full international support with metadata,
- * use react-phone-number-input in UI components.
+ * Improved phone formatting using libphonenumber-js.
+ * Defaults to Ivory Coast (CI) for national numbers.
  */
 export function formatPhone(
   phone: string | null | undefined,
@@ -126,14 +127,28 @@ export function formatPhone(
   if (!phone)
     return ''
 
-  // Clean the number
+  try {
+    // Attempt to parse with CI as default country
+    const phoneNumber = parsePhoneNumberWithError(phone, 'CI')
+
+    if (phoneNumber && phoneNumber.isValid()) {
+      // If it's a valid number for the default country or international, format it
+      return phoneNumber.formatInternational()
+    }
+  }
+  catch (error) {
+    // Log at debug level for traceability
+    const logger = isServer() ? serverAppLogger : clientAppLogger
+    logger.debug('[formatPhone] Parse failed for input', { phone, error })
+  }
+
+  // Fallback: Clean the number but keep it as is if it doesn't match standard patterns
   const cleaned = phone.replace(/\D/g, '')
 
-  // Basic format for Ivory Coast (10 digits) if it matches the pattern
+  // Legacy fallback for 10-digit CI numbers if parsing somehow failed
   if (cleaned.length === 10) {
     return cleaned.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5')
   }
 
-  // Fallback to original or basic spacing
   return phone
 }

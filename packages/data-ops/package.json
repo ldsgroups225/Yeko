@@ -86,6 +86,7 @@
     "better-auth": "catalog:",
     "better-sqlite3": "catalog:",
     "drizzle-orm": "catalog:",
+    "libphonenumber-js": "catalog:",
     "pg": "catalog:",
     "resend": "catalog:",
     "zod": "catalog:"
