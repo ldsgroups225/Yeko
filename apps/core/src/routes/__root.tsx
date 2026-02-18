@@ -17,8 +17,15 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
   auth?: Awaited<ReturnType<typeof getAuthStatus>>
 }>()({
-  beforeLoad: async () => {
-    const auth = await getAuthStatus()
+  beforeLoad: async ({ context }) => {
+    // Cache auth status with queryClient.fetchQuery so it doesn't
+    // re-fetch on every navigation. Within staleTime, it returns
+    // instantly from cache — no server round-trip.
+    const auth = await context.queryClient.fetchQuery({
+      queryKey: ['auth', 'status'],
+      queryFn: () => getAuthStatus(),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    })
     return { auth }
   },
 

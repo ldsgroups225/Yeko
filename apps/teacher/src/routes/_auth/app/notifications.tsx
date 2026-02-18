@@ -6,6 +6,7 @@ import { Card, CardContent } from '@workspace/ui/components/card'
 import { toast } from 'sonner'
 
 import { MobileHeader } from '@/components/layout/mobile-header'
+import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { notificationsMutations } from '@/lib/queries/notifications'
 
@@ -15,7 +16,7 @@ export const Route = createFileRoute('/_auth/app/notifications')({
 
 function NotificationsPage() {
   const { LL } = useI18nContext()
-  const { teacherContext } = Route.useRouteContext()
+  const { context: teacherContext } = useRequiredTeacherContext()
 
   const markAllReadMutation = useMutation({
     ...notificationsMutations.markAllRead,
