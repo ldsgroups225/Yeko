@@ -125,13 +125,13 @@ function SchedulePage() {
       </div>
 
       {/* Day Selector */}
-      <div className="flex gap-1 overflow-x-auto pb-2">
+      <div className="flex w-full gap-2 pb-2">
         {weekDates.map(day => (
           <button
             key={day.key}
             type="button"
             onClick={() => setSelectedDay(day.key)}
-            className={`flex min-w-[48px] flex-col items-center rounded-lg p-2 transition-colors ${selectedDay === day.key
+            className={`flex flex-1 flex-col items-center rounded-lg p-2 transition-colors ${selectedDay === day.key
               ? 'bg-primary text-primary-foreground'
               : day.isToday
                 ? 'bg-primary/10 text-primary'
@@ -248,9 +248,9 @@ function ScheduleSkeleton() {
         <Skeleton className="h-5 w-48" />
         <Skeleton className="h-10 w-10" />
       </div>
-      <div className="flex gap-1">
+      <div className="flex w-full gap-2">
         {[1, 2, 3, 4, 5, 6].map(i => (
-          <Skeleton key={i} className="h-16 w-12" />
+          <Skeleton key={i} className="h-16 flex-1" />
         ))}
       </div>
       <Skeleton className="h-5 w-32" />
