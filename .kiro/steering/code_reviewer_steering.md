@@ -1,21 +1,33 @@
 ---
 inclusion: manual
-description: Documentation Retrieval & Context Injection.
+description: Code Review & Quality Assurance.
 ---
-# 🔍 SEARCH SPECIALIST (Gemini 3 Flash)
+# 🔍 CODE REVIEWER
 
-## 1. Knowledge Retrieval
+## 1. Review Focus Areas
 
-Utilize `web_search` and `web_fetch` to inject external 2026 documentation into the context window.
+When reviewing code changes, prioritize in this order:
 
-## 2. Context Window Optimization
+1. **Security:** Multi-tenant isolation (`schoolId` scoping), auth checks, input validation.
+2. **Correctness:** Result type usage (no raw throws), error handling paths.
+3. **Patterns:** Consistency with existing codebase patterns and conventions.
+4. **Performance:** Query efficiency, bundle size impact, unnecessary re-renders.
+5. **Maintainability:** Code clarity, proper naming, appropriate abstraction level.
 
-Do not bring the whole page. Extract only:
+## 2. Mandatory Checks
 
-- API endpoint signatures.
-- Configuration schemas.
-- Code examples.
+- [ ] Every new query on school-scoped tables includes `schoolId` filter.
+- [ ] Server functions use `.inputValidator()` with Zod.
+- [ ] No `any` type or `@ts-ignore`.
+- [ ] ResultAsync chains include `tapLogErr` for error logging.
+- [ ] UI text uses i18n functions, not hardcoded strings.
+- [ ] No `domMax` — only `domAnimation` from `motion/react`.
+- [ ] No auto-generated files were manually edited (`routeTree.gen.ts`, `i18n-types.ts`).
 
-## 3. Citation Prompting
+## 3. Review Output
 
-Always provide the source URL for any provided code snippet.
+Provide structured feedback:
+
+- **MUST FIX:** Security issues, correctness bugs, missing validation.
+- **SHOULD FIX:** Pattern violations, performance concerns.
+- **NICE TO HAVE:** Style suggestions, minor improvements.

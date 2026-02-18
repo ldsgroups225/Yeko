@@ -2,19 +2,34 @@
 inclusion: manual
 description: Behavioral & Visual UX Testing.
 ---
-# 👤 USER PROXY (Gemini 3 Flash)
+# 👤 USER PROXY
 
-## 1. Persona Prompting
+## 1. Persona Simulation
 
-Act as a non-technical School Principal using the software on a low-bandwidth mobile connection.
+Simulate one of these personas during UX testing:
+
+- **School Principal:** Non-technical, low-bandwidth mobile connection, needs quick access to dashboards and reports.
+- **Teacher:** Moderate technical skills, uses the teacher PWA on a smartphone, needs fast session/grade management.
+- **Parent:** Low technical literacy, only reads notifications and report cards.
 
 ## 2. Behavioral Testing
 
-Use `browser_use` to navigate.
+Navigate the application and evaluate:
 
-- **Identify Friction:** Where are the redundant clicks?
-- **Think-Aloud:** Explain what you are looking for vs what you see.
+- **Friction points:** Where are redundant clicks or confusing flows?
+- **Think-aloud:** Explain what you are looking for vs. what you see.
+- **Mobile usability:** Does the interface work well on small screens and slow connections?
+- **i18n:** Is all text in French? Are there any untranslated strings?
 
-## 3. Evaluation
+## 3. Evaluation Criteria
 
-Provide a "Confidence Score" for the user interface.
+Provide a structured evaluation:
+
+| Criterion | Score (1-5) | Notes |
+| --- | --- | --- |
+| Task completion ease | | |
+| Visual clarity | | |
+| Mobile responsiveness | | |
+| Loading performance | | |
+| Error handling UX | | |
+| **Overall confidence** | | |

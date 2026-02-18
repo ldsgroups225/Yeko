@@ -1,20 +1,60 @@
 ---
 inclusion: fileMatch
 fileMatchPattern: "**/*.test.{ts,tsx}"
-description: Verification & PBT Testing.
+description: Verification & Testing Standards.
 ---
-# 🧪 QA VALIDATOR (Gemini 3 Pro)
+# 🧪 QA ENGINE
 
-## 1. Step-by-Step Reasoning
+## 1. Pre-Test Reasoning
 
-Explain the test logic before writing the test suite.
+Before writing any test suite:
+
+1. Explain the function's expected behavior and edge cases.
+2. Identify the Result type contract (what does success vs failure look like?).
+3. List the "What if?" scenarios (DB offline, empty data, invalid input).
 
 ## 2. Testing Techniques
 
-- **Property-Based Testing (PBT):** Stress-test functions with random inputs.
-- **Counterfactual Prompting:** Ask "What if the database is offline?" and write tests for error handling.
-- **Result Validation:** Verify functions return `ResultAsync` and do NOT throw exceptions. Check `.isOk()` or `.isErr()` states explicitly.
+### Property-Based Testing (PBT)
 
-## 3. Coverage Requirement
+Stress-test critical business logic with random inputs:
 
-Target 90% coverage for server functions and 100% for Zod schemas.
+- Grade calculations (averages, coefficients, rounding).
+- Payment amount validation.
+- Date range calculations (fiscal years, terms).
+
+### Counterfactual Testing
+
+Always ask "What if...?" and write tests for:
+
+- Database is offline → returns `DatabaseError`, not a thrown exception.
+- Input is empty/null/undefined → Zod rejects it before reaching the handler.
+- User has no schoolId → returns unauthorized, not a data leak.
+
+### Result Validation
+
+Verify functions return `ResultAsync` and do NOT throw exceptions:
+
+```typescript
+const result = await getStudents(schoolId)
+expect(R.isSuccess(result)).toBe(true)
+// NOT: expect(getStudents(schoolId)).resolves.toBeDefined()
+```
+
+Check both `.isSuccess()` and `.isFailure()` states explicitly.
+
+## 3. Coverage Requirements
+
+| Layer | Target |
+| --- | --- |
+| Server functions (`teacher/functions/`, etc.) | 90%+ |
+| Data-ops queries (`packages/data-ops/src/queries/`) | 90%+ |
+| Zod schemas | 100% |
+| UI components | Best effort (focus on interaction logic) |
+
+## 4. Tools
+
+- **Unit tests:** Vitest with JSDOM for UI, node for server.
+- **E2E tests:** Playwright.
+- **Coverage:** `@vitest/coverage-v8`.
+- **Run:** `pnpm test` (per-package) or `pnpm test` (root, all packages).

@@ -2,20 +2,32 @@
 inclusion: manual
 description: Documentation Retrieval & Context Injection.
 ---
-# 🔍 SEARCH SPECIALIST (Gemini 3 Flash)
+# 🔎 SEARCH SPECIALIST
 
 ## 1. Knowledge Retrieval
 
-Utilize `web_search` and `web_fetch` to inject external 2026 documentation into the context window.
+When external documentation is needed:
+
+- Search for the latest docs for TanStack Start, Better Auth, Drizzle ORM, and Cloudflare Workers.
+- Verify version compatibility against `pnpm-workspace.yaml` catalog versions.
 
 ## 2. Context Window Optimization
 
-Do not bring the whole page. Extract only:
+Do not bring entire pages. Extract only:
 
-- API endpoint signatures.
-- Configuration schemas.
-- Code examples.
+- API endpoint signatures and parameters.
+- Configuration schemas and required fields.
+- Minimal, relevant code examples.
+- Breaking changes relevant to our versions.
 
-## 3. Citation Prompting
+## 3. Citation
 
-Always provide the source URL for any provided code snippet.
+Always provide the source URL for any external code snippet or documentation reference.
+
+## 4. Internal Search Priority
+
+Before web search, always:
+
+1. Search existing codebase for similar patterns.
+2. Check `docs/` folder for existing documentation.
+3. Check `.kiro/specs/` for feature specifications.
