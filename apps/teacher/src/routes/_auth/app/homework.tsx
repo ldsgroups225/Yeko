@@ -3,7 +3,7 @@ import type { Locale } from 'date-fns'
 import type { TranslationFunctions } from '@/i18n/i18n-types'
 import { IconBook, IconCalendar, IconCircleCheck, IconCircleX, IconClock, IconFileText, IconPlus } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 
@@ -19,8 +19,19 @@ import { useI18nContext } from '@/i18n/i18n-react'
 import { homeworkListQueryOptions } from '@/lib/queries/homework'
 
 export const Route = createFileRoute('/_auth/app/homework')({
-  component: HomeworkPage,
+  component: HomeworkLayout,
 })
+
+function HomeworkLayout() {
+  const { location } = useRouterState()
+  const isExactHomework = location.pathname === '/app/homework' || location.pathname === '/app/homework/'
+
+  if (!isExactHomework) {
+    return <Outlet />
+  }
+
+  return <HomeworkPage />
+}
 
 function HomeworkPage() {
   const { LL, locale: currentLocale } = useI18nContext()

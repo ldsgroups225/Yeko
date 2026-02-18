@@ -9,7 +9,7 @@ import {
   IconStar,
 } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent } from '@workspace/ui/components/card'
@@ -24,8 +24,19 @@ import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherMessagesQueryOptions } from '@/lib/queries/messages'
 
 export const Route = createFileRoute('/_auth/app/chat')({
-  component: MessagesPage,
+  component: ChatLayout,
 })
+
+function ChatLayout() {
+  const { location } = useRouterState()
+  const isExactChat = location.pathname === '/app/chat' || location.pathname === '/app/chat/'
+
+  if (!isExactChat) {
+    return <Outlet />
+  }
+
+  return <MessagesPage />
+}
 
 function MessagesPage() {
   const { LL, locale: currentLocale } = useI18nContext()

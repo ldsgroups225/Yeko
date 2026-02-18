@@ -1,6 +1,6 @@
 import { IconChevronRight, IconSchool } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, useRouterState } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Card, CardContent } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
@@ -10,8 +10,19 @@ import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
 
 export const Route = createFileRoute('/_auth/app/grades')({
-  component: GradesPage,
+  component: GradesLayout,
 })
+
+function GradesLayout() {
+  const { location } = useRouterState()
+  const isExactGrades = location.pathname === '/app/grades' || location.pathname === '/app/grades/'
+
+  if (!isExactGrades) {
+    return <Outlet />
+  }
+
+  return <GradesPage />
+}
 
 function GradesPage() {
   const { LL } = useI18nContext()
