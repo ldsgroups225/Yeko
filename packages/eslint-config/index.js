@@ -26,11 +26,30 @@ export default antfu({
     '**/.nuxt/**',
     '**/.output/**',
     '**/.turbo/**',
+    '**/.wrangler/**',
   ],
 }, {
+  // Global rules applied to all packages
+  rules: {
+    // Centralized: every consumer was overriding this individually
+    'node/prefer-global/process': 'off',
+    // Prefer structured logging via @repo/logger over raw console calls
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
+  },
+}, {
+  // React hooks best practices for all React files
+  files: ['**/*.tsx', '**/*.jsx'],
+  rules: {
+    'react-hooks-extra/no-direct-set-state-in-use-effect': 'error',
+  },
+}, {
   // Better Tailwind CSS plugin configuration
-  // Only apply to projects that have Tailwind CSS installed
-  files: ['apps/core/**/*.{ts,tsx,js,jsx}'],
+  // Applied to all frontend apps that use Tailwind CSS
+  files: [
+    'apps/core/**/*.{ts,tsx,js,jsx}',
+    'apps/teacher/**/*.{ts,tsx,js,jsx}',
+    'apps/school/**/*.{ts,tsx,js,jsx}',
+  ],
   plugins: {
     'better-tailwindcss': betterTailwindcss,
   },
@@ -148,10 +167,35 @@ export default antfu({
     'test/valid-expect': 'error',
   },
 }, {
+  // File length limit — enforce smaller, focused files
+  rules: {
+    'max-lines': ['error', {
+      max: 300,
+      skipBlankLines: true,
+      skipComments: true,
+    }],
+  },
+}, {
+  // Relax max-lines for test files — tests are naturally verbose
+  files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
+  rules: {
+    'max-lines': ['warn', {
+      max: 500,
+      skipBlankLines: true,
+      skipComments: true,
+    }],
+  },
+}, {
   // TanStack Router route files specific configuration
   // These files export a 'Route' constant which triggers react-refresh/only-export-components
+  // Also relax max-lines since route files contain loaders, components, and error boundaries
   files: ['**/src/routes/**/*.tsx'],
   rules: {
     'react-refresh/only-export-components': 'off',
+    'max-lines': ['warn', {
+      max: 400,
+      skipBlankLines: true,
+      skipComments: true,
+    }],
   },
 })
