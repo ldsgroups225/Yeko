@@ -49,8 +49,8 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
       params={{ schoolId: school.id }}
       className="block group w-full"
     >
-      <Card className="pt-0 flex flex-col sm:flex-row min-h-[160px] overflow-hidden border-border/40 bg-card/30 backdrop-blur-xl transition-all hover:border-primary/40 hover:bg-card/50 hover:shadow-2xl active:scale-[0.99] border relative max-w-full">
-        <div className="relative w-full sm:w-56 h-40 sm:h-auto shrink-0 overflow-hidden bg-muted/20">
+      <Card className="pt-0 flex flex-col md:flex-row min-h-[160px] overflow-hidden border-border/40 bg-card/30 backdrop-blur-xl transition-all hover:border-primary/40 hover:bg-card/50 hover:shadow-2xl active:scale-[0.99] border relative w-full">
+        <div className="relative w-full md:w-64 h-48 md:h-auto shrink-0 overflow-hidden bg-muted/20">
           <Avatar className="h-full w-full rounded-none">
             <AvatarImage
               src={school.logoUrl ?? undefined}
@@ -62,13 +62,13 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
             </AvatarFallback>
           </Avatar>
 
-          <div className="absolute inset-0 bg-linear-to-t from-card/90 via-transparent to-transparent sm:bg-linear-to-r sm:from-transparent sm:to-card/90" />
+          <div className="absolute inset-0 bg-linear-to-t from-card/90 via-transparent to-transparent md:bg-linear-to-r md:from-transparent md:to-card/90" />
         </div>
 
-        <CardContent className="flex-1 p-4 sm:p-8 flex flex-col justify-center min-w-0 overflow-hidden relative z-10">
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <h2 className="text-xl sm:text-3xl font-black leading-tight tracking-tight text-foreground group-hover:text-primary transition-colors truncate">
+        <CardContent className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col justify-center min-w-0 overflow-hidden relative z-10">
+          <div className="space-y-4 md:space-y-5">
+            <div className="space-y-1.5 md:space-y-2">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black leading-tight tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
                 {school.name}
               </h2>
               <div className="flex items-center gap-2.5 flex-wrap">
@@ -83,28 +83,28 @@ const SchoolCard = memo(({ school }: SchoolCardProps) => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-start sm:items-center">
+            <div className="flex flex-col sm:flex-row md:flex-col lg:flex-row gap-3 sm:gap-6 md:gap-3 lg:gap-8 items-start sm:items-center md:items-start lg:items-center">
               {cityFromAddress && (
-                <div className="flex items-center gap-3 text-xs text-muted-foreground/90 font-bold tracking-wide">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-muted/40 text-primary/60 border border-border/20">
+                <div className="flex items-center gap-3 text-xs text-muted-foreground/90 font-bold tracking-wide min-w-0 overflow-hidden shrink-0">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-muted/40 text-primary/60 border border-border/20 shrink-0">
                     <IconMapPin className="h-4 w-4" />
                   </div>
-                  <span className="truncate">{cityFromAddress}</span>
+                  <span className="truncate flex-1">{cityFromAddress}</span>
                 </div>
               )}
               {school.phone && (
-                <div className="flex items-center gap-3 text-xs text-muted-foreground/90 font-bold tracking-wide">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-muted/40 text-primary/60 border border-border/20">
+                <div className="flex items-center gap-3 text-xs text-muted-foreground/90 font-bold tracking-wide min-w-0 overflow-hidden shrink-0">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-muted/40 text-primary/60 border border-border/20 shrink-0">
                     <IconPhone className="h-4 w-4" />
                   </div>
-                  <span className="truncate">{formatPhone(school.phone)}</span>
+                  <span className="truncate flex-1">{formatPhone(school.phone)}</span>
                 </div>
               )}
             </div>
           </div>
         </CardContent>
 
-        <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden sm:flex">
+        <div className="absolute right-8 top-1/2 -translate-y-1/2 hidden md:flex">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/5 border border-primary/10 transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 shadow-2xl">
             <IconChevronRight className="h-7 w-7 transition-transform group-hover:translate-x-1" />
           </div>
@@ -219,8 +219,8 @@ function SchoolsPageSkeleton() {
         </div>
         <div className="space-y-6">
           {[1, 2].map(i => (
-            <Card key={i} className="overflow-hidden border-border/40 bg-card/30 flex flex-col sm:flex-row h-auto sm:h-[160px]">
-              <Skeleton className="h-40 sm:h-full w-full sm:w-56 shrink-0 rounded-none" />
+            <Card key={i} className="overflow-hidden border-border/40 bg-card/30 flex flex-col md:flex-row h-auto md:h-[160px]">
+              <Skeleton className="h-48 md:h-full w-full md:w-64 shrink-0 rounded-none" />
               <div className="flex-1 p-8 space-y-6">
                 <div className="space-y-3">
                   <Skeleton className="h-8 w-3/4 rounded-lg" />
