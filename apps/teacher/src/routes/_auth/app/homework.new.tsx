@@ -2,7 +2,7 @@ import { IconArrowLeft, IconCalendar, IconDeviceFloppy, IconSend } from '@tabler
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
-import { DatePicker } from '@workspace/ui/components/date-picker'
+
 import { Input } from '@workspace/ui/components/input'
 
 import { Label } from '@workspace/ui/components/label'
@@ -16,12 +16,14 @@ import {
 } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { Textarea } from '@workspace/ui/components/textarea'
-import { useState } from 'react'
+import { lazy, Suspense, useState } from 'react'
 import { toast } from 'sonner'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherClassesQueryOptions } from '@/lib/queries/dashboard'
 import { homeworkMutations } from '@/lib/queries/homework'
+
+const DatePicker = lazy(() => import('@workspace/ui/components/date-picker').then(m => ({ default: m.DatePicker })))
 
 export const Route = createFileRoute('/_auth/app/homework/new')({
   component: NewHomeworkPage,
@@ -171,11 +173,13 @@ function NewHomeworkPage() {
                   <Label>{LL.homework.dueDate()}</Label>
                   <div className="relative">
                     <IconCalendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <DatePicker
-                      date={dueDate ? new Date(dueDate) : undefined}
-                      onSelect={(date: Date | undefined) => setDueDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
-                      className="pl-9 justify-start font-normal"
-                    />
+                    <Suspense fallback={<Skeleton className="h-10 w-full" />}>
+                      <DatePicker
+                        date={dueDate ? new Date(dueDate) : undefined}
+                        onSelect={(date: Date | undefined) => setDueDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
+                        className="pl-9 justify-start font-normal"
+                      />
+                    </Suspense>
                   </div>
                 </div>
                 <div className="space-y-2">

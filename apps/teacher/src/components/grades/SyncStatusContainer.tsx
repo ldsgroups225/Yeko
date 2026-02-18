@@ -1,7 +1,7 @@
 'use client'
 
 import { useSync } from '@/hooks'
-import { SyncStatusCard } from './PublishButton'
+import { SyncStatusCard } from './SyncStatusCard'
 
 /**
  * Container component that connects the SyncStatusCard to the useSync hook

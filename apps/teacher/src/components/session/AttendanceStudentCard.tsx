@@ -3,7 +3,7 @@ import { IconCheck, IconClock, IconX } from '@tabler/icons-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/avatar'
 import { Button } from '@workspace/ui/components/button'
 import { cn } from '@workspace/ui/lib/utils'
-import { motion } from 'motion/react'
+import { m as motion } from 'motion/react'
 import { useI18nContext } from '@/i18n/i18n-react'
 
 interface AttendanceStudentCardProps {

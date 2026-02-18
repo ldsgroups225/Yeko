@@ -17,6 +17,8 @@ const fr: BaseTranslation = {
     sessions: 'Sessions',
     messages: 'Messages',
     menu: 'Menu',
+    back: 'Retour',
+    backToClasses: 'Retour aux classes',
   },
   dashboard: {
     title: 'Tableau de bord',
@@ -360,6 +362,9 @@ const fr: BaseTranslation = {
     notAvailable: 'Non disponible',
     actions: 'Actions',
     close: 'Fermer',
+    student_plural: 'Élèves',
+    active: 'Actif',
+    classAverage: 'Moyenne de classe',
   },
   sync: {
     title: 'Synchronisation',
@@ -402,6 +407,13 @@ const fr: BaseTranslation = {
     invalidCredentials: 'Email ou mot de passe incorrect',
     emailPlaceholder: 'enseignant@ecole.com',
     or: 'ou',
+  },
+  class_details: {
+    noStudents: 'Aucun élève',
+    noStudentsDescription: 'Aucun élève n\'est inscrit dans cette classe pour le moment.',
+    notFound: 'Classe introuvable',
+    notFoundDescription: 'La classe demandée n\'a pas été trouvée. Elle a peut-être été supprimée ou vous n\'y avez pas accès.',
+    totalStudentsHelp: 'Nombre total d\'élèves inscrits dans cette classe',
   },
   attendance: {
     title: 'Présence',

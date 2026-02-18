@@ -1,7 +1,7 @@
 import { IconCheck, IconClock, IconPercentage, IconUsers, IconX } from '@tabler/icons-react'
 import { Button } from '@workspace/ui/components/button'
 import { cn } from '@workspace/ui/lib/utils'
-import { motion } from 'motion/react'
+import { m as motion } from 'motion/react'
 import { useI18nContext } from '@/i18n/i18n-react'
 
 type SessionMode = 'attendance_initial' | 'attendance_late' | 'participation'

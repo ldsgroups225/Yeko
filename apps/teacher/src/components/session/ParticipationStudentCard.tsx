@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@workspace/ui/components/av
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { cn } from '@workspace/ui/lib/utils'
-import { motion } from 'motion/react'
+import { m as motion } from 'motion/react'
 
 interface ParticipationStudentCardProps {
   student: {

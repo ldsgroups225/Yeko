@@ -1,5 +1,3 @@
-import { Result as R } from '@praha/byethrow'
-import { getStudentParents } from '@repo/data-ops/queries/parents'
 import { IconMail, IconMessage, IconPhone, IconUser } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -7,6 +5,7 @@ import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { getStudentParentsFn } from '@/teacher/functions/parents'
 
 export const Route = createFileRoute('/_auth/app/students/$studentId/parents')({
   component: StudentParentsPage,
@@ -18,12 +17,7 @@ function StudentParentsPage() {
 
   const { data, isPending } = useQuery({
     queryKey: ['student-parents', studentId],
-    queryFn: async () => {
-      const result = await getStudentParents(studentId)
-      if (R.isFailure(result))
-        throw result.error
-      return result.value
-    },
+    queryFn: async () => getStudentParentsFn({ data: { studentId } }),
     enabled: !!studentId,
   })
 

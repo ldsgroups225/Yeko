@@ -70,6 +70,14 @@ type RootTranslation = {
 		 * M​e​n​u
 		 */
 		menu: string
+		/**
+		 * R​e​t​o​u​r
+		 */
+		back: string
+		/**
+		 * R​e​t​o​u​r​ ​a​u​x​ ​c​l​a​s​s​e​s
+		 */
+		backToClasses: string
 	}
 	dashboard: {
 		/**
@@ -1344,6 +1352,18 @@ type RootTranslation = {
 		 * F​e​r​m​e​r
 		 */
 		close: string
+		/**
+		 * É​l​è​v​e​s
+		 */
+		student_plural: string
+		/**
+		 * A​c​t​i​f
+		 */
+		active: string
+		/**
+		 * M​o​y​e​n​n​e​ ​d​e​ ​c​l​a​s​s​e
+		 */
+		classAverage: string
 	}
 	sync: {
 		/**
@@ -1502,6 +1522,28 @@ type RootTranslation = {
 		 * o​u
 		 */
 		or: string
+	}
+	class_details: {
+		/**
+		 * A​u​c​u​n​ ​é​l​è​v​e
+		 */
+		noStudents: string
+		/**
+		 * A​u​c​u​n​ ​é​l​è​v​e​ ​n​'​e​s​t​ ​i​n​s​c​r​i​t​ ​d​a​n​s​ ​c​e​t​t​e​ ​c​l​a​s​s​e​ ​p​o​u​r​ ​l​e​ ​m​o​m​e​n​t​.
+		 */
+		noStudentsDescription: string
+		/**
+		 * C​l​a​s​s​e​ ​i​n​t​r​o​u​v​a​b​l​e
+		 */
+		notFound: string
+		/**
+		 * L​a​ ​c​l​a​s​s​e​ ​d​e​m​a​n​d​é​e​ ​n​'​a​ ​p​a​s​ ​é​t​é​ ​t​r​o​u​v​é​e​.​ ​E​l​l​e​ ​a​ ​p​e​u​t​-​ê​t​r​e​ ​é​t​é​ ​s​u​p​p​r​i​m​é​e​ ​o​u​ ​v​o​u​s​ ​n​'​y​ ​a​v​e​z​ ​p​a​s​ ​a​c​c​è​s​.
+		 */
+		notFoundDescription: string
+		/**
+		 * N​o​m​b​r​e​ ​t​o​t​a​l​ ​d​'​é​l​è​v​e​s​ ​i​n​s​c​r​i​t​s​ ​d​a​n​s​ ​c​e​t​t​e​ ​c​l​a​s​s​e
+		 */
+		totalStudentsHelp: string
 	}
 	attendance: {
 		/**
@@ -2031,6 +2073,14 @@ export type TranslationFunctions = {
 		 * Menu
 		 */
 		menu: () => LocalizedString
+		/**
+		 * Retour
+		 */
+		back: () => LocalizedString
+		/**
+		 * Retour aux classes
+		 */
+		backToClasses: () => LocalizedString
 	}
 	dashboard: {
 		/**
@@ -3297,6 +3347,18 @@ export type TranslationFunctions = {
 		 * Fermer
 		 */
 		close: () => LocalizedString
+		/**
+		 * Élèves
+		 */
+		student_plural: () => LocalizedString
+		/**
+		 * Actif
+		 */
+		active: () => LocalizedString
+		/**
+		 * Moyenne de classe
+		 */
+		classAverage: () => LocalizedString
 	}
 	sync: {
 		/**
@@ -3447,6 +3509,28 @@ export type TranslationFunctions = {
 		 * ou
 		 */
 		or: () => LocalizedString
+	}
+	class_details: {
+		/**
+		 * Aucun élève
+		 */
+		noStudents: () => LocalizedString
+		/**
+		 * Aucun élève n'est inscrit dans cette classe pour le moment.
+		 */
+		noStudentsDescription: () => LocalizedString
+		/**
+		 * Classe introuvable
+		 */
+		notFound: () => LocalizedString
+		/**
+		 * La classe demandée n'a pas été trouvée. Elle a peut-être été supprimée ou vous n'y avez pas accès.
+		 */
+		notFoundDescription: () => LocalizedString
+		/**
+		 * Nombre total d'élèves inscrits dans cette classe
+		 */
+		totalStudentsHelp: () => LocalizedString
 	}
 	attendance: {
 		/**

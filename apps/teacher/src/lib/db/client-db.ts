@@ -1,7 +1,7 @@
-import { PGlite } from '@electric-sql/pglite'
-import { drizzle } from 'drizzle-orm/pglite'
+import type { PGlite } from '@electric-sql/pglite'
+import type { drizzle } from 'drizzle-orm/pglite'
+import { clearIndexedDB, DB_NAME, getStorageEstimate, hasInitFlag, isBrowser, LOCAL_DB_NAME, setInitFlag } from './client-db-utils'
 import { initializeDatabaseWithMigrations } from './migration-runner'
-import * as schema from './schema'
 
 // ============================================================================
 // Types
@@ -22,86 +22,6 @@ export interface DatabaseStats extends DatabaseStatus {
 }
 
 type StatusChangeCallback = (status: DatabaseStatus) => void
-
-// ============================================================================
-// Constants
-// ============================================================================
-
-const DB_NAME = 'idb://yeko-teacher-local-db'
-const LOCAL_DB_NAME = 'yeko-teacher-local-db'
-const INIT_FLAG_KEY = 'yeko-teacher-db-initialized'
-
-// ============================================================================
-// Utility Functions
-// ============================================================================
-
-function isBrowser(): boolean {
-  return typeof window !== 'undefined' && typeof indexedDB !== 'undefined'
-}
-
-async function getStorageEstimate(): Promise<StorageEstimate | undefined> {
-  if (!isBrowser() || !('storage' in navigator)) {
-    return undefined
-  }
-
-  try {
-    return await navigator.storage.estimate()
-  }
-  catch (error) {
-    console.warn('Failed to get storage estimate:', error)
-    return undefined
-  }
-}
-
-function hasInitFlag(): boolean {
-  if (!isBrowser())
-    return false
-  try {
-    return localStorage.getItem(INIT_FLAG_KEY) === 'true'
-  }
-  catch {
-    return false
-  }
-}
-
-function setInitFlag(value: boolean): void {
-  if (!isBrowser())
-    return
-  try {
-    if (value) {
-      localStorage.setItem(INIT_FLAG_KEY, 'true')
-    }
-    else {
-      localStorage.removeItem(INIT_FLAG_KEY)
-    }
-  }
-  catch (error) {
-    console.warn('Failed to set init flag:', error)
-  }
-}
-
-async function clearIndexedDB(dbName: string): Promise<void> {
-  if (!isBrowser())
-    return
-
-  return new Promise((resolve) => {
-    const deleteRequest = indexedDB.deleteDatabase(dbName)
-
-    deleteRequest.onsuccess = () => {
-      resolve()
-    }
-
-    deleteRequest.onerror = () => {
-      console.warn('Failed to clear IndexedDB:', deleteRequest.error)
-      resolve()
-    }
-
-    deleteRequest.onblocked = () => {
-      console.warn('IndexedDB deletion blocked')
-      setTimeout(() => resolve(), 100)
-    }
-  })
-}
 
 // ============================================================================
 // Database Manager
@@ -212,6 +132,10 @@ export class ClientDatabaseManager {
 
   private async performInitialization(): Promise<void> {
     try {
+      const { PGlite } = await import('@electric-sql/pglite')
+      const { drizzle } = await import('drizzle-orm/pglite')
+      const schema = await import('./schema')
+
       this.pglite = new PGlite({
         dataDir: DB_NAME,
         relaxedDurability: true,
@@ -421,13 +345,3 @@ export class ClientDatabaseManager {
 // ============================================================================
 
 export const clientDatabaseManager = ClientDatabaseManager.getInstance()
-
-// ============================================================================
-// Auto-initialization (Browser Only)
-// ============================================================================
-
-if (isBrowser()) {
-  clientDatabaseManager.initialize().catch((error) => {
-    console.error('Failed to auto-initialize database:', error)
-  })
-}

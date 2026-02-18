@@ -17,6 +17,8 @@ const en: Translation = {
     sessions: 'Sessions',
     messages: 'Messages',
     menu: 'Menu',
+    back: 'Back',
+    backToClasses: 'Back to classes',
   },
   dashboard: {
     title: 'Dashboard',
@@ -360,6 +362,9 @@ const en: Translation = {
     notAvailable: 'Not Available',
     actions: 'Actions',
     close: 'Close',
+    student_plural: 'Students',
+    active: 'Active',
+    classAverage: 'Class Average',
   },
   sync: {
     title: 'Synchronization',
@@ -402,6 +407,13 @@ const en: Translation = {
     invalidCredentials: 'Invalid email or password',
     emailPlaceholder: 'teacher@school.com',
     or: 'or',
+  },
+  class_details: {
+    noStudents: 'No students',
+    noStudentsDescription: 'No students are enrolled in this class at the moment.',
+    notFound: 'Class not found',
+    notFoundDescription: 'The requested class was not found. It may have been deleted or you may not have access.',
+    totalStudentsHelp: 'Total number of students enrolled in this class',
   },
   attendance: {
     title: 'Attendance',

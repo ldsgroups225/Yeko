@@ -4,6 +4,7 @@ import { cloudflare } from '@cloudflare/vite-plugin'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig } from 'vite'
 import viteTsConfigPaths from 'vite-tsconfig-paths'
 
@@ -82,6 +83,12 @@ const config = defineConfig({
       viteEnvironment: {
         name: 'ssr',
       },
+    }),
+    visualizer({
+      emitFile: true,
+      filename: 'stats.html',
+      gzipSize: true,
+      brotliSize: true,
     }),
   ],
   assetsInclude: ['**/*.wasm', '**/*.data', '**/*.tar.gz'],

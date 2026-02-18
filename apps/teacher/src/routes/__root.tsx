@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Button } from '@workspace/ui/components/button'
+import { domAnimation, LazyMotion } from 'motion/react'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { useSyncInitializer } from '@/hooks'
@@ -56,11 +57,13 @@ function RootComponent() {
 
   return (
     <TypesafeI18n locale="fr">
-      <RootDocument>
-        <ThemeProvider>
-          <Outlet />
-        </ThemeProvider>
-      </RootDocument>
+      <LazyMotion features={domAnimation}>
+        <RootDocument>
+          <ThemeProvider>
+            <Outlet />
+          </ThemeProvider>
+        </RootDocument>
+      </LazyMotion>
     </TypesafeI18n>
   )
 }
