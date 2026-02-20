@@ -134,6 +134,7 @@ const fr: BaseTranslation = {
   session: {
     title: 'Session',
     active: 'Session en cours',
+    gpsActive: 'GPS Actif',
     start: 'Démarrer',
     startClass: 'Debut du cours',
     complete: 'Terminer la session',

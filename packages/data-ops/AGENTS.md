@@ -9,21 +9,21 @@ See @../../AGENTS.md for project-wide rules, the Result-oriented framework, and 
 
 ## Quick Reference
 
-| Action | Command |
-| --- | --- |
-| Build | `pnpm build` |
-| Typecheck | `pnpm typecheck` |
-| Lint + fix | `pnpm lint:fix` |
-| Unit tests | `pnpm test` |
-| Unit tests (watch) | `pnpm test:watch` |
-| Generate Drizzle migrations | `pnpm drizzle:generate` |
-| Run migrations | `pnpm drizzle:migrate` |
-| Pull schema from DB | `pnpm drizzle:pull` |
-| Drizzle Studio | `pnpm studio` |
-| Generate Better Auth schema | `pnpm better-auth:generate` |
-| Seed database | `pnpm seed` |
-| Seed (fresh — drops + recreates) | `pnpm seed:fresh` |
-| Reset database | `pnpm reset:db` |
+| Action                           | Command                     |
+| -------------------------------- | --------------------------- |
+| Build                            | `pnpm build`                |
+| Typecheck                        | `pnpm typecheck`            |
+| Lint + fix                       | `pnpm lint:fix`             |
+| Unit tests                       | `pnpm test`                 |
+| Unit tests (watch)               | `pnpm test:watch`           |
+| Generate Drizzle migrations      | `pnpm drizzle:generate`     |
+| Run migrations                   | `pnpm drizzle:migrate`      |
+| Pull schema from DB              | `pnpm drizzle:pull`         |
+| Drizzle Studio                   | `pnpm studio`               |
+| Generate Better Auth schema      | `pnpm better-auth:generate` |
+| Seed database                    | `pnpm seed`                 |
+| Seed (fresh — drops + recreates) | `pnpm seed:fresh`           |
+| Reset database                   | `pnpm reset:db`             |
 
 ---
 
@@ -85,18 +85,18 @@ migrations/                 # Generated migration files
 
 This package uses conditional exports for SSR/client split:
 
-| Export Path | Purpose |
-| --- | --- |
-| `@repo/data-ops` | Main: `index.ts` (server) / `index.browser.ts` (client via Vite plugin) |
-| `@repo/data-ops/auth/server` | Better Auth instance |
-| `@repo/data-ops/auth/setup` | Auth configuration |
-| `@repo/data-ops/database/*` | DB initialization |
-| `@repo/data-ops/queries/*` | Domain query modules |
-| `@repo/data-ops/drizzle/*` | Drizzle schema tables |
-| `@repo/data-ops/zod-schema/*` | Shared Zod schemas |
-| `@repo/data-ops/errors` | `DatabaseError` type |
-| `@repo/data-ops/storage` | S3-compatible file storage |
-| `@repo/data-ops/services/*` | Business logic services |
+| Export Path                   | Purpose                                                                 |
+| ----------------------------- | ----------------------------------------------------------------------- |
+| `@repo/data-ops`              | Main: `index.ts` (server) / `index.browser.ts` (client via Vite plugin) |
+| `@repo/data-ops/auth/server`  | Better Auth instance                                                    |
+| `@repo/data-ops/auth/setup`   | Auth configuration                                                      |
+| `@repo/data-ops/database/*`   | DB initialization                                                       |
+| `@repo/data-ops/queries/*`    | Domain query modules                                                    |
+| `@repo/data-ops/drizzle/*`    | Drizzle schema tables                                                   |
+| `@repo/data-ops/zod-schema/*` | Shared Zod schemas                                                      |
+| `@repo/data-ops/errors`       | `DatabaseError` type                                                    |
+| `@repo/data-ops/storage`      | S3-compatible file storage                                              |
+| `@repo/data-ops/services/*`   | Business logic services                                                 |
 
 ---
 
@@ -113,7 +113,7 @@ import { tapLogErr } from '@repo/logger'
 export function getStudentsBySchool(db: Database, schoolId: string) {
   return ResultAsync.fromPromise(
     db.select().from(students).where(eq(students.schoolId, schoolId)),
-    (error) => new DatabaseError('getStudentsBySchool', error)
+    error => new DatabaseError('getStudentsBySchool', error)
   ).mapErr(tapLogErr(databaseLogger, 'getStudentsBySchool'))
 }
 ```

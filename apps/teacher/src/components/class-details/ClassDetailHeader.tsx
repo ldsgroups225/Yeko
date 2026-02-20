@@ -15,6 +15,8 @@ interface ClassDetailHeaderProps {
   isSessionActive: boolean
   isEntryMode: boolean
   isSaving: boolean
+  isWithinTimeWindow: boolean
+  isLate: boolean
   onStartSession: () => void
   onStartEntry: () => void
   onCancelEntry: () => void
@@ -23,10 +25,12 @@ interface ClassDetailHeaderProps {
 
 export function ClassDetailHeader({
   schoolId,
-  className: classromName,
+  className: classroomName,
   isSessionActive,
   isEntryMode,
   isSaving,
+  isWithinTimeWindow,
+  isLate,
   onStartSession,
   onStartEntry,
   onCancelEntry,
@@ -35,56 +39,67 @@ export function ClassDetailHeader({
   const { LL } = useI18nContext()
 
   return (
-    <header className="flex flex-col gap-6 mb-8 pt-2">
+    <header className="flex flex-col gap-6 mb-10 pt-4 px-1">
       <div className="flex items-center justify-between">
         <Link
           to="/app/schools/$schoolId/classes"
           params={{ schoolId }}
-          className="group flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          className="group flex items-center gap-2 text-muted-foreground hover:text-foreground transition-all duration-300"
         >
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted group-hover:bg-primary/10 group-hover:text-primary transition-all">
+          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-muted/50 group-hover:bg-primary/20 group-hover:text-primary transition-all shadow-sm">
             <IconArrowLeft className="w-4 h-4" />
           </div>
-          <span className="text-sm font-bold tracking-tight uppercase">{LL.nav.back()}</span>
+          <span className="text-sm font-bold tracking-tight uppercase group-hover:translate-x-0.5 transition-transform">
+            {LL.nav.back()}
+          </span>
         </Link>
         {isSessionActive && (
-          <Badge variant="outline" className="h-7 px-3 bg-primary/10 border-primary/20 text-primary font-bold animate-pulse">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2" />
-            {LL.session.active()}
-          </Badge>
+          <div className="flex gap-2.5">
+            <Badge variant="outline" className="h-8 px-4 bg-emerald-500/10 border-emerald-500/20 text-emerald-600 font-bold animate-pulse shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2" />
+              {LL.session.gpsActive()}
+            </Badge>
+            <Badge variant="outline" className="h-8 px-4 bg-primary/10 border-primary/20 text-primary font-bold shadow-sm">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary mr-2" />
+              {LL.session.active()}
+            </Badge>
+          </div>
         )}
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div className="space-y-1">
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground lining-nums">
-            {classromName}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+        <div className="space-y-2">
+          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-foreground lining-nums text-wrap-balance">
+            {classroomName}
           </h1>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
-            <p className="text-sm font-bold uppercase tracking-wider">{LL.common.student_plural()}</p>
+          <div className="flex items-center gap-2.5 text-muted-foreground/80">
+            <div className="w-2 h-2 rounded-full bg-primary/40" />
+            <p className="text-sm font-bold uppercase tracking-widest">{LL.common.student_plural()}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
           {!isEntryMode
             ? (
                 <>
-                  {!isSessionActive && (
+                  {isWithinTimeWindow && !isSessionActive && (
                     <Button
-                      className="flex-1 min-w-[140px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
+                      variant={isLate ? 'destructive' : 'default'}
+                      className={`flex-1 sm:flex-none min-w-[160px] h-12 sm:h-14 font-black rounded-xl sm:rounded-2xl shadow-xl transition-all active:scale-95 ${
+                        !isLate ? 'shadow-primary/25' : 'shadow-destructive/25'
+                      }`}
                       onClick={onStartSession}
                     >
-                      <IconClock className="w-5 h-5 mr-2" />
-                      {LL.session.start()}
+                      <IconClock className="w-5 h-5 mr-2.5" />
+                      {LL.session.startClass()}
                     </Button>
                   )}
                   <Button
                     variant="outline"
-                    className="flex-1 min-w-[140px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-all active:scale-[0.98]"
+                    className="flex-1 sm:flex-none min-w-[160px] h-12 sm:h-14 font-black rounded-xl sm:rounded-2xl border-2 border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-all active:scale-95"
                     onClick={onStartEntry}
                   >
-                    <IconPlus className="w-5 h-5 mr-2" />
+                    <IconPlus className="w-5 h-5 mr-2.5" />
                     {LL.grades.addNote()}
                   </Button>
                 </>
@@ -93,17 +108,17 @@ export function ClassDetailHeader({
                 <>
                   <Button
                     variant="outline"
-                    className="flex-1 min-w-[120px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl"
+                    className="flex-1 sm:flex-none min-w-[130px] h-12 sm:h-14 font-black rounded-xl border-2"
                     onClick={onCancelEntry}
                   >
                     {LL.common.cancel()}
                   </Button>
                   <Button
-                    className="flex-1 min-w-[120px] h-11 sm:h-12 font-bold rounded-lg sm:rounded-xl shadow-xl"
+                    className="flex-1 sm:flex-none min-w-[130px] h-12 sm:h-14 font-black rounded-xl shadow-2xl hover:brightness-110"
                     onClick={onSaveEntry}
                     disabled={isSaving}
                   >
-                    <IconDeviceFloppy className="w-5 h-5 mr-2" />
+                    <IconDeviceFloppy className="w-5 h-5 mr-2.5" />
                     {LL.common.save()}
                   </Button>
                 </>

@@ -134,6 +134,7 @@ const en: Translation = {
   session: {
     title: 'Session',
     active: 'Active Session',
+    gpsActive: 'GPS Active',
     start: 'Start',
     startClass: 'Start Class',
     complete: 'Complete Session',

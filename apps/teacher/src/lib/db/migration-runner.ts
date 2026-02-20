@@ -79,6 +79,27 @@ CREATE INDEX IF NOT EXISTS idx_note_details_note_id ON note_details(note_id);
 CREATE INDEX IF NOT EXISTS idx_note_details_student_id ON note_details(student_id);
 CREATE INDEX IF NOT EXISTS idx_sync_queue_status ON sync_queue(status);
 CREATE INDEX IF NOT EXISTS idx_sync_queue_created_at ON sync_queue(created_at);
+
+-- Tracking events table for teacher punctuality
+CREATE TABLE IF NOT EXISTS tracking_events (
+  id TEXT PRIMARY KEY,
+  session_id TEXT NOT NULL,
+  teacher_id TEXT NOT NULL,
+  school_id TEXT NOT NULL,
+  timestamp TIMESTAMP NOT NULL,
+  latitude NUMERIC NOT NULL,
+  longitude NUMERIC NOT NULL,
+  accuracy NUMERIC,
+  type TEXT NOT NULL,
+  is_synced BOOLEAN DEFAULT FALSE,
+  metadata TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create indexes for tracking_events
+CREATE INDEX IF NOT EXISTS idx_tracking_session_id ON tracking_events(session_id);
+CREATE INDEX IF NOT EXISTS idx_tracking_school_id ON tracking_events(school_id);
+CREATE INDEX IF NOT EXISTS idx_tracking_is_synced ON tracking_events(is_synced);
 `
 
 // ============================================================================
@@ -118,18 +139,32 @@ export async function runMigrations(db: DB): Promise<void> {
  */
 export async function initializeDatabaseWithMigrations(db: DB): Promise<void> {
   try {
-    // Check if the database is already initialized by checking if a table exists
+    // Check if the database is already initialized by checking if the newest table exists
     const result = await db.execute(`
       SELECT tablename FROM pg_tables
-      WHERE schemaname = 'public' AND tablename = 'notes'
+      WHERE schemaname = 'public' AND tablename = 'tracking_events'
     `)
 
-    // If the notes table doesn't exist, run all migrations
+    // If the tracking_events table doesn't exist, run all migrations (idempotent)
     if (result.rows.length === 0) {
       await runMigrations(db)
     }
     else {
-      console.warn('📦 Database already initialized, skipping migrations')
+      // Check for school_id column in existing table
+      const colResult = await db.execute(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name = 'tracking_events' AND column_name = 'school_id'
+      `)
+
+      if (colResult.rows.length === 0) {
+        console.warn('📦 Adding school_id column to tracking_events (migration fix)')
+        await db.execute(`ALTER TABLE tracking_events ADD COLUMN IF NOT EXISTS school_id TEXT DEFAULT 'unknown' NOT NULL;`)
+        await db.execute(`CREATE INDEX IF NOT EXISTS idx_tracking_school_id ON tracking_events(school_id);`)
+      }
+      else {
+        console.warn('📦 Database already initialized (v2), skipping migrations')
+      }
     }
   }
   catch (error) {

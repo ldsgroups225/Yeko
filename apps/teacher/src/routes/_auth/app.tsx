@@ -1,8 +1,8 @@
+import { IconHome } from '@tabler/icons-react'
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
 import { MobileLayout } from '@/components/layout/mobile-layout'
 import { useI18nContext } from '@/i18n/i18n-react'
-import { Button } from '@workspace/ui/components/button'
-import { IconHome } from '@tabler/icons-react'
 
 export const Route = createFileRoute('/_auth/app')({
   component: AppLayout,

@@ -13,12 +13,16 @@ interface UseClassDetailSessionParams {
   students: SessionStudent[]
   timetableSessionId?: string
   teacherId?: string
+  schoolId: string
+  schoolLocation?: { latitude: number, longitude: number } | null
 }
 
 export function useClassDetailSession({
   students,
   timetableSessionId,
   teacherId,
+  schoolId,
+  schoolLocation,
 }: UseClassDetailSessionParams) {
   const { LL } = useI18nContext()
   const [sessionMode, setSessionMode] = useState<
@@ -63,6 +67,7 @@ export function useClassDetailSession({
     if (!teacherId || !timetableSessionId)
       return
     try {
+      // Start session on server
       const result = await startSession({
         data: {
           timetableSessionId,
@@ -72,6 +77,17 @@ export function useClassDetailSession({
       })
 
       if (result.success && result.sessionId) {
+        // Start tracking presence (GPS + Time)
+        // We do this concurrently or after server success to ensure we have a valid sessionId
+        import('@/lib/tracking/tracker').then(({ teacherPresenceTracker }) => {
+          teacherPresenceTracker.startSession(
+            result.sessionId,
+            teacherId,
+            schoolId,
+            schoolLocation ? { latitude: Number(schoolLocation.latitude), longitude: Number(schoolLocation.longitude) } : undefined,
+          )
+        })
+
         setSessionId(result.sessionId)
         setSessionMode('attendance_initial')
         toast.success(LL.session.sessionSuccess())
@@ -125,6 +141,11 @@ export function useClassDetailSession({
       })
 
       if (result.success) {
+        // Stop tracking presence
+        import('@/lib/tracking/tracker').then(({ teacherPresenceTracker }) => {
+          teacherPresenceTracker.endSession()
+        })
+
         toast.success(LL.session.sessionSuccess())
         setSessionMode('view')
         resetAttendance()

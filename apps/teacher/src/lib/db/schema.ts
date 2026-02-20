@@ -109,6 +109,32 @@ export const userCacheTable = pgTable('user_cache', {
 })
 
 // ============================================================================
+// Tracking Events Table - For teacher punctuality and presence
+// ============================================================================
+export const trackingEventsTable = pgTable(
+  'tracking_events',
+  {
+    id: text('id').primaryKey(),
+    sessionId: text('session_id').notNull(),
+    teacherId: text('teacher_id').notNull(),
+    schoolId: text('school_id').notNull(),
+    timestamp: timestamp('timestamp').notNull(),
+    latitude: numeric('latitude').notNull(),
+    longitude: numeric('longitude').notNull(),
+    accuracy: numeric('accuracy'),
+    type: text('type').notNull(), // 'start' | 'ping' | 'end'
+    isSynced: boolean('is_synced').default(false),
+    metadata: text('metadata'), // JSON for extra details
+    createdAt: timestamp('created_at').defaultNow(),
+  },
+  table => ({
+    sessionIdIdx: index('idx_tracking_session_id').on(table.sessionId),
+    schoolIdIdx: index('idx_tracking_school_id').on(table.schoolId),
+    isSyncedIdx: index('idx_tracking_is_synced').on(table.isSynced),
+  }),
+)
+
+// ============================================================================
 // Export Types
 // ============================================================================
 export type Note = typeof notesTable.$inferSelect
@@ -119,3 +145,5 @@ export type SyncQueueItem = typeof syncQueueTable.$inferSelect
 export type NewSyncQueueItem = typeof syncQueueTable.$inferInsert
 export type UserCache = typeof userCacheTable.$inferSelect
 export type NewUserCache = typeof userCacheTable.$inferInsert
+export type TrackingEvent = typeof trackingEventsTable.$inferSelect
+export type NewTrackingEvent = typeof trackingEventsTable.$inferInsert

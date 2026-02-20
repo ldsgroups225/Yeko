@@ -5,10 +5,20 @@ import { teachers } from '@repo/data-ops/drizzle/school-schema'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 
+import { getTeacherContext } from '@/teacher/middleware/teacher-context'
+
 export const getTeacherSchoolsQuery = createServerFn()
-  .inputValidator(z.object({ userId: z.string() }))
+  .inputValidator(z.object({ userId: z.string().optional() }))
   .handler(async ({ data }) => {
     const db = getDb()
+    const context = await getTeacherContext()
+
+    // Fallback to data.userId if context is not available (though context should be available for authorized routes)
+    const targetUserId = context?.userId || data.userId
+
+    if (!targetUserId) {
+      return []
+    }
 
     const result = await db
       .select({
@@ -19,10 +29,12 @@ export const getTeacherSchoolsQuery = createServerFn()
         phone: schools.phone,
         email: schools.email,
         logoUrl: schools.logoUrl,
+        latitude: schools.latitude,
+        longitude: schools.longitude,
       })
       .from(teachers)
       .innerJoin(schools, eq(teachers.schoolId, schools.id))
-      .where(eq(teachers.userId, data.userId))
+      .where(eq(teachers.userId, targetUserId))
       .orderBy(asc(schools.name))
 
     return result

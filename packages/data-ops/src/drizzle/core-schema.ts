@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { boolean, index, integer, jsonb, pgTable, smallint, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, decimal, index, integer, jsonb, pgTable, smallint, text, timestamp } from 'drizzle-orm/pg-core'
 
 // Import auth_user for foreign key reference
 import { auth_user } from './auth-schema'
@@ -17,6 +17,8 @@ export const schools = pgTable('schools', {
   phone: text('phone'),
   email: text('email'),
   logoUrl: text('logo_url'),
+  latitude: decimal('latitude', { precision: 10, scale: 7 }),
+  longitude: decimal('longitude', { precision: 10, scale: 7 }),
   status: text('status', { enum: schoolStatuses }).default('active').notNull(),
   settings: jsonb('settings').$type<Record<string, unknown>>(),
   createdAt: timestamp('created_at').defaultNow().notNull(),

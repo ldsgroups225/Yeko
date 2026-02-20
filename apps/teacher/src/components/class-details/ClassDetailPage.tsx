@@ -1,7 +1,6 @@
-import { IconSearch } from '@tabler/icons-react'
-import { Input } from '@workspace/ui/components/input'
+import { useQuery } from '@tanstack/react-query'
+import { format } from 'date-fns'
 import { useMemo, useState } from 'react'
-
 import { ClassDetailHeader } from '@/components/class-details/ClassDetailHeader'
 import {
   ClassDetailSkeleton,
@@ -16,6 +15,8 @@ import { useClassDetailGradeEntry } from '@/hooks/use-class-detail-grade-entry'
 import { useClassDetailSession } from '@/hooks/use-class-detail-session'
 import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { detailedScheduleQueryOptions } from '@/lib/queries/schedule'
+import { TimeSync } from '@/lib/tracking/time-sync'
 
 type SortKey = 'name' | 'average' | 'participation' | 'quizzes' | 'tests'
 type SortDirection = 'asc' | 'desc'
@@ -36,8 +37,37 @@ export function ClassDetailPage({
   classId,
   timetableSessionId,
 }: ClassDetailPageProps) {
-  const { LL } = useI18nContext()
+  useI18nContext()
   const { context, isLoading: contextLoading } = useRequiredTeacherContext()
+
+  const today = new Date()
+  const { data: scheduleData } = useQuery({
+    ...detailedScheduleQueryOptions({
+      teacherId: context?.teacherId ?? '',
+      schoolId: context?.schoolId ?? '',
+      schoolYearId: context?.schoolYearId ?? '',
+      startDate: format(today, 'yyyy-MM-dd'),
+      endDate: format(today, 'yyyy-MM-dd'),
+    }),
+    enabled: !!context && !!timetableSessionId,
+  })
+
+  const currentSession = scheduleData?.sessions.find(s => s.id === timetableSessionId)
+
+  const sessionTimings = useMemo(() => {
+    if (!currentSession)
+      return { isWithinTimeWindow: false, isLate: false }
+
+    const now = new Date(TimeSync.getCorrectedTime())
+    const startDateTime = new Date(`${currentSession.date}T${currentSession.startTime}:00`)
+    const endDateTime = new Date(`${currentSession.date}T${currentSession.endTime}:00`)
+    const openWindowTime = new Date(startDateTime.getTime() - 10 * 60 * 1000)
+
+    return {
+      isWithinTimeWindow: now >= openWindowTime && now <= endDateTime,
+      isLate: now > startDateTime,
+    }
+  }, [currentSession, timetableSessionId])
 
   const [searchQuery, setSearchQuery] = useState('')
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null)
@@ -63,6 +93,8 @@ export function ClassDetailPage({
     students,
     timetableSessionId,
     teacherId: context?.teacherId ?? undefined,
+    schoolId,
+    schoolLocation: null,
   })
 
   const gradeEntry = useClassDetailGradeEntry({
@@ -127,6 +159,8 @@ export function ClassDetailPage({
         isSessionActive={session.isSessionActive}
         isEntryMode={gradeEntry.isEntryMode}
         isSaving={gradeEntry.isSaving}
+        isWithinTimeWindow={sessionTimings.isWithinTimeWindow}
+        isLate={sessionTimings.isLate}
         onStartSession={session.handleStartSession}
         onStartEntry={gradeEntry.handleStartEntry}
         onCancelEntry={gradeEntry.handleCancelEntry}
@@ -156,19 +190,6 @@ export function ClassDetailPage({
         selectedSubjectId={gradeEntry.selectedSubjectId}
         setSelectedSubjectId={gradeEntry.setSelectedSubjectId}
       />
-
-      {!gradeEntry.isEntryMode && !session.isSessionActive && (
-        <div className="relative mb-6">
-          <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder={LL.search.students()}
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            className="pl-10 h-11 rounded-xl"
-          />
-        </div>
-      )}
 
       {processedStudents.length > 0
         ? (

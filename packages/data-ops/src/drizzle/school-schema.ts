@@ -2529,3 +2529,38 @@ export const schoolFilesRelations = relations(schoolFiles, ({ one }) => ({
 
 export type SchoolFile = typeof schoolFiles.$inferSelect
 export type SchoolFileInsert = typeof schoolFiles.$inferInsert
+
+// --- Teacher Tracking ---
+
+export const trackingEvents = pgTable('tracking_events', {
+  id: text('id').primaryKey(),
+  sessionId: text('session_id').notNull(),
+  teacherId: text('teacher_id').notNull().references(() => teachers.id, { onDelete: 'cascade' }),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  timestamp: timestamp('timestamp').notNull(),
+  latitude: decimal('latitude', { precision: 10, scale: 7 }).notNull(),
+  longitude: decimal('longitude', { precision: 10, scale: 7 }).notNull(),
+  accuracy: decimal('accuracy', { precision: 8, scale: 2 }),
+  type: text('type').notNull(), // 'start', 'ping', 'end'
+  metadata: jsonb('metadata'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  sessionIdx: index('idx_tracking_session').on(table.sessionId),
+  teacherIdx: index('idx_tracking_teacher').on(table.teacherId),
+  schoolIdx: index('idx_tracking_school').on(table.schoolId),
+  timestampIdx: index('idx_tracking_timestamp').on(table.timestamp),
+}))
+
+export const trackingEventsRelations = relations(trackingEvents, ({ one }) => ({
+  teacher: one(teachers, {
+    fields: [trackingEvents.teacherId],
+    references: [teachers.id],
+  }),
+  school: one(schools, {
+    fields: [trackingEvents.schoolId],
+    references: [schools.id],
+  }),
+}))
+
+export type TrackingEventInsert = typeof trackingEvents.$inferInsert
+export type TrackingEventSelect = typeof trackingEvents.$inferSelect

@@ -501,6 +501,10 @@ type RootTranslation = {
 		 */
 		active: string
 		/**
+		 * G​P​S​ ​A​c​t​i​f
+		 */
+		gpsActive: string
+		/**
 		 * D​é​m​a​r​r​e​r
 		 */
 		start: string
@@ -2499,6 +2503,10 @@ export type TranslationFunctions = {
 		 * Session en cours
 		 */
 		active: () => LocalizedString
+		/**
+		 * GPS Actif
+		 */
+		gpsActive: () => LocalizedString
 		/**
 		 * Démarrer
 		 */

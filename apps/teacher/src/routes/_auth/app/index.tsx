@@ -12,6 +12,7 @@ import { useRequiredTeacherContext } from '@/hooks/use-teacher-context'
 import { useI18nContext } from '@/i18n/i18n-react'
 import { teacherDashboardQueryOptions } from '@/lib/queries/dashboard'
 import { detailedScheduleQueryOptions } from '@/lib/queries/schedule'
+import { TimeSync } from '@/lib/tracking/time-sync'
 
 export const Route = createFileRoute('/_auth/app/')({
   component: SchedulePage,
@@ -148,12 +149,6 @@ function SchedulePage() {
 
       {/* Day Schedule */}
       <div className="space-y-2">
-        <h2 className="text-sm font-medium text-muted-foreground">
-          {format(weekDates[selectedDay - 1]?.date ?? today, 'EEEE d MMMM', {
-            locale,
-          })}
-        </h2>
-
         {daySchedule.length > 0
           ? (
               <div className="space-y-2">
@@ -202,6 +197,14 @@ function ScheduleCard({ session, schoolId }: ScheduleCardProps) {
   const { LL } = useI18nContext()
   const { Link } = createFileRoute('/_auth/app/')({})
 
+  const now = new Date(TimeSync.getCorrectedTime())
+  const startDateTime = new Date(`${session.date}T${session.startTime}:00`)
+  const endDateTime = new Date(`${session.date}T${session.endTime}:00`)
+  const openWindowTime = new Date(startDateTime.getTime() - 10 * 60 * 1000)
+
+  const isWithinTimeWindow = now >= openWindowTime && now <= endDateTime
+  const isLate = now > startDateTime
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -221,18 +224,20 @@ function ScheduleCard({ session, schoolId }: ScheduleCardProps) {
               {session.classroom && ` • ${session.classroom.name}`}
             </p>
           </div>
-          <Link
-            to="/app/schools/$schoolId/class/$classId"
-            params={{
-              schoolId,
-              classId: session.class.id,
-            }}
-            search={{ timetableSessionId: session.id }}
-          >
-            <Button size="sm">
-              {LL.session.startClass()}
-            </Button>
-          </Link>
+          {isWithinTimeWindow && (
+            <Link
+              to="/app/schools/$schoolId/class/$classId"
+              params={{
+                schoolId,
+                classId: session.class.id,
+              }}
+              search={{ timetableSessionId: session.id }}
+            >
+              <Button size="sm" variant={isLate ? 'destructive' : 'secondary'}>
+                {LL.session.startClass()}
+              </Button>
+            </Link>
+          )}
         </div>
       </CardContent>
     </Card>
