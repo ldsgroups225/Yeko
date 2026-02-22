@@ -1,4 +1,4 @@
-import { IconCalendar, IconChartBar, IconChecks, IconFileText, IconFilter, IconLayoutGrid, IconList, IconSchool, IconSearch } from '@tabler/icons-react'
+import { IconCalendar, IconChartBar, IconFileText, IconFilter, IconLayoutGrid, IconList, IconSchool, IconSearch } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -18,7 +18,6 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { ClassAveragesTable } from '@/components/grades'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { BulkGenerationDialog, ReportCardList } from '@/components/report-cards'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
@@ -228,24 +227,6 @@ function ReportCardsPage() {
 
   return (
     <div className="space-y-8">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.grades(), href: '/grades' },
-          { label: t.reportCards.title() },
-        ]}
-      />
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-            <IconChecks className="size-8" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight">{t.reportCards.title()}</h1>
-            <p className="text-muted-foreground font-medium italic">{t.reportCards.description()}</p>
-          </div>
-        </div>
-      </div>
 
       {/* Filters Card */}
       <motion.div

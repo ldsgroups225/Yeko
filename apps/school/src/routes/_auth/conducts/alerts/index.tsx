@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/componen
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { AlertsTable } from '@/components/attendance/alerts/alerts-table'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
@@ -75,24 +74,6 @@ function AlertsPage() {
 
   return (
     <div className="space-y-8 p-1">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.schoolLife(), href: '/conducts' },
-          { label: t.schoolLife.alerts() },
-        ]}
-      />
-
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="flex items-center gap-4"
-      >
-
-        <div>
-          <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.alerts()}</h1>
-          <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.alerts.description()}</p>
-        </div>
-      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

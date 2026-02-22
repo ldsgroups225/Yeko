@@ -140,19 +140,7 @@ function SchoolYearsSettingsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="flex items-center justify-between"
-      >
-        <div>
-          {/* Header is handled by SettingsLayout now, so we might not need this duplication if it's the main page.
-               However, keeping it as sub-section header or removing if redundant.
-               The layout has the main header. This part seems to be specific actions for this tab.
-           */}
-          {/* Let's keep the action button but maybe simplify the text if it's redundant with layout header */}
-        </div>
+      <div className="flex justify-end">
         <Button
           onClick={() => setIsCreateDialogOpen(true)}
           className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90"
@@ -160,7 +148,7 @@ function SchoolYearsSettingsPage() {
           <IconPlus className="mr-2 h-4 w-4" />
           {t.settings.schoolYears.create()}
         </Button>
-      </motion.div>
+      </div>
 
       {/* School Years Table */}
       <motion.div

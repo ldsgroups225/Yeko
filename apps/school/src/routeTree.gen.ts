@@ -27,6 +27,7 @@ import { Route as AuthUsersIndexRouteImport } from './routes/_auth/users/index'
 import { Route as AuthStudentsIndexRouteImport } from './routes/_auth/students/index'
 import { Route as AuthSpacesIndexRouteImport } from './routes/_auth/spaces/index'
 import { Route as AuthSettingsIndexRouteImport } from './routes/_auth/settings/index'
+import { Route as AuthProgramsIndexRouteImport } from './routes/_auth/programs/index'
 import { Route as AuthGradesIndexRouteImport } from './routes/_auth/grades/index'
 import { Route as AuthConductsIndexRouteImport } from './routes/_auth/conducts/index'
 import { Route as AuthClassesIndexRouteImport } from './routes/_auth/classes/index'
@@ -186,6 +187,11 @@ const AuthSettingsIndexRoute = AuthSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthSettingsRoute,
+} as any)
+const AuthProgramsIndexRoute = AuthProgramsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthProgramsRoute,
 } as any)
 const AuthGradesIndexRoute = AuthGradesIndexRouteImport.update({
   id: '/',
@@ -619,6 +625,7 @@ export interface FileRoutesByFullPath {
   '/classes/': typeof AuthClassesIndexRoute
   '/conducts/': typeof AuthConductsIndexRoute
   '/grades/': typeof AuthGradesIndexRoute
+  '/programs/': typeof AuthProgramsIndexRoute
   '/settings/': typeof AuthSettingsIndexRoute
   '/spaces/': typeof AuthSpacesIndexRoute
   '/students/': typeof AuthStudentsIndexRoute
@@ -662,7 +669,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthDashboardRoute
-  '/programs': typeof AuthProgramsRouteWithChildren
   '/schedules': typeof AuthSchedulesRoute
   '/accounting/accounts': typeof AuthAccountingAccountsRoute
   '/accounting/dashboard': typeof AuthAccountingDashboardRoute
@@ -700,6 +706,7 @@ export interface FileRoutesByTo {
   '/classes': typeof AuthClassesIndexRoute
   '/conducts': typeof AuthConductsIndexRoute
   '/grades': typeof AuthGradesIndexRoute
+  '/programs': typeof AuthProgramsIndexRoute
   '/settings': typeof AuthSettingsIndexRoute
   '/spaces': typeof AuthSpacesIndexRoute
   '/students': typeof AuthStudentsIndexRoute
@@ -791,6 +798,7 @@ export interface FileRoutesById {
   '/_auth/classes/': typeof AuthClassesIndexRoute
   '/_auth/conducts/': typeof AuthConductsIndexRoute
   '/_auth/grades/': typeof AuthGradesIndexRoute
+  '/_auth/programs/': typeof AuthProgramsIndexRoute
   '/_auth/settings/': typeof AuthSettingsIndexRoute
   '/_auth/spaces/': typeof AuthSpacesIndexRoute
   '/_auth/students/': typeof AuthStudentsIndexRoute
@@ -882,6 +890,7 @@ export interface FileRouteTypes {
     | '/classes/'
     | '/conducts/'
     | '/grades/'
+    | '/programs/'
     | '/settings/'
     | '/spaces/'
     | '/students/'
@@ -925,7 +934,6 @@ export interface FileRouteTypes {
     | '/'
     | '/reset-password'
     | '/dashboard'
-    | '/programs'
     | '/schedules'
     | '/accounting/accounts'
     | '/accounting/dashboard'
@@ -963,6 +971,7 @@ export interface FileRouteTypes {
     | '/classes'
     | '/conducts'
     | '/grades'
+    | '/programs'
     | '/settings'
     | '/spaces'
     | '/students'
@@ -1053,6 +1062,7 @@ export interface FileRouteTypes {
     | '/_auth/classes/'
     | '/_auth/conducts/'
     | '/_auth/grades/'
+    | '/_auth/programs/'
     | '/_auth/settings/'
     | '/_auth/spaces/'
     | '/_auth/students/'
@@ -1227,6 +1237,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof AuthSettingsIndexRouteImport
       parentRoute: typeof AuthSettingsRoute
+    }
+    '/_auth/programs/': {
+      id: '/_auth/programs/'
+      path: '/'
+      fullPath: '/programs/'
+      preLoaderRoute: typeof AuthProgramsIndexRouteImport
+      parentRoute: typeof AuthProgramsRoute
     }
     '/_auth/grades/': {
       id: '/_auth/grades/'
@@ -1839,12 +1856,14 @@ interface AuthProgramsRouteChildren {
   AuthProgramsCoefficientsRoute: typeof AuthProgramsCoefficientsRoute
   AuthProgramsCurriculumProgressRoute: typeof AuthProgramsCurriculumProgressRoute
   AuthProgramsSubjectsRoute: typeof AuthProgramsSubjectsRoute
+  AuthProgramsIndexRoute: typeof AuthProgramsIndexRoute
 }
 
 const AuthProgramsRouteChildren: AuthProgramsRouteChildren = {
   AuthProgramsCoefficientsRoute: AuthProgramsCoefficientsRoute,
   AuthProgramsCurriculumProgressRoute: AuthProgramsCurriculumProgressRoute,
   AuthProgramsSubjectsRoute: AuthProgramsSubjectsRoute,
+  AuthProgramsIndexRoute: AuthProgramsIndexRoute,
 }
 
 const AuthProgramsRouteWithChildren = AuthProgramsRoute._addFileChildren(

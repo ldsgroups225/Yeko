@@ -17,7 +17,6 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { z } from 'zod'
 import { ConductRecordTable } from '@/components/conduct/conduct-record-table'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { conductRecordsOptions } from '@/lib/queries/conduct-records'
@@ -110,44 +109,19 @@ function ConductPage() {
 
   return (
     <div className="space-y-8 p-1">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.schoolLife(), href: '/conducts' },
-          { label: t.schoolLife.conduct() },
-        ]}
-      />
-
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-4"
-        >
-
-          <div>
-            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.conduct()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.conduct.description()}</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-3"
-        >
-          <Link to="/conducts/conduct/reports">
-            <Button variant="outline" className="h-12 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-muted/50 px-6 transition-all">
-              <IconChartBar className="mr-2 h-4 w-4" />
-              {t.conduct.reports()}
-            </Button>
-          </Link>
-          <Link to="/conducts/conduct/new">
-            <Button className="h-12 rounded-2xl bg-primary shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-[10px] px-8 transition-all hover:scale-105 active:scale-95">
-              <IconPlus className="mr-2 h-4 w-4" />
-              {t.conduct.newRecord()}
-            </Button>
-          </Link>
-        </motion.div>
+      <div className="flex justify-end gap-3">
+        <Link to="/conducts/conduct/reports">
+          <Button variant="outline" className="h-12 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-muted/50 px-6 transition-all">
+            <IconChartBar className="mr-2 h-4 w-4" />
+            {t.conduct.reports()}
+          </Button>
+        </Link>
+        <Link to="/conducts/conduct/new">
+          <Button className="h-12 rounded-2xl bg-primary shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-[10px] px-8 transition-all hover:scale-105 active:scale-95">
+            <IconPlus className="mr-2 h-4 w-4" />
+            {t.conduct.newRecord()}
+          </Button>
+        </Link>
       </div>
 
       {/* Filters & Bulk Actions */}

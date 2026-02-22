@@ -3,7 +3,6 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { z } from 'zod'
 import { RolesTable } from '@/components/hr/roles/roles-table'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 
 const rolesSearchSchema = z.object({
@@ -23,20 +22,7 @@ function RolesListPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumbs
-        items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.roles.title() },
-        ]}
-      />
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {t.hr.roles.title()}
-          </h1>
-          <p className="text-muted-foreground">{t.hr.roles.description()}</p>
-        </div>
+      <div className="flex justify-end">
         <div className="flex gap-2">
           <Button
             render={(

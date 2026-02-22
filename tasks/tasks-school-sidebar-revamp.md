@@ -35,22 +35,22 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 1.2 Remove all collapsible sub-menus/accordions and flatten the navigation items.
   - [x] 1.3 Group navigation items into three explicit sections: Essentiel, Opérations, and Système.
   - [x] 1.4 Update icons and labels (in French) for the new flat structure (e.g., Comptabilité, Configurations).
-- [ ] 2.0 Implement Flat Routing Architecture and Default Redirects
-  - [ ] 2.1 Update top-level routes to map to the new Flat Sidebar items.
-  - [ ] 2.2 Configure default redirects for complex modules (e.g., clicking "Comptabilité" redirects to `/accounting/dashboard` or nearest default tab).
-  - [ ] 2.3 Ensure "Configurations" routes correctly map to the new centralized settings hub.
-- [ ] 3.0 Develop Secondary Horizontal Tab Navigation Layouts
-  - [ ] 3.1 Adopt the `Tabs` component from `packages/ui` as the standard for secondary navigation.
-  - [ ] 3.2 Create a shared layout template (`TabbedLayout` wrapper) that displays horizontal tabs and renders an `<Outlet />` below.
-- [ ] 4.0 Refactor Complex Modules to use Tabs
-  - [ ] 4.1 Update **Notes et moyennes** (Grades) to use Tabs: Bulletins, Saisie, Validations, Statistiques.
-  - [ ] 4.2 Update **Comptabilité** (Accounting) to use Tabs: Aperçu, Transactions, Frais & Échéanciers, Catalogue Tarifaire.
-  - [ ] 4.3 Update **Personnel** (Users) to implement a unified list with role filters and dynamic columns.
-  - [ ] 4.4 Update **Assiduité & Conduite** (Conducts) to use Tabs: Élèves, Professeurs.
-  - [ ] 4.5 Migrate scattered settings into the new **Configurations** centralized hub (Tabs: Profil, Années, Pédagogie, Comptabilité, etc.).
+- [x] 2.0 Implement Flat Routing Architecture and Default Redirects
+  - [x] 2.1 Update top-level routes to map to the new Flat Sidebar items.
+  - [x] 2.2 Configure default redirects for complex modules (e.g., clicking "Comptabilité" redirects to `/accounting/dashboard` or nearest default tab).
+  - [x] 2.3 Ensure "Configurations" routes correctly map to the new centralized settings hub.
+- [x] 3.0 Develop Secondary Horizontal Tab Navigation Layouts
+  - [x] 3.1 Adopt the `Tabs` component from `packages/ui` as the standard for secondary navigation.
+  - [x] 3.2 Create a shared layout template (`TabbedLayout` wrapper) that displays horizontal tabs and renders an `<Outlet />` below.
+- [x] 4.0 Refactor Complex Modules to use Tabs
+  - [x] 4.1 Update **Notes et moyennes** (Grades) to use Tabs: Bulletins, Saisie, Validations, Statistiques.
+  - [x] 4.2 Update **Comptabilité** (Accounting) to use Tabs: Aperçu, Transactions, Frais & Échéanciers, Catalogue Tarifaire.
+  - [x] 4.3 Update **Personnel** (Users) to implement a unified list with role filters and dynamic columns.
+  - [x] 4.4 Update **Assiduité & Conduite** (Conducts) to use Tabs: Élèves, Professeurs.
+  - [x] 4.5 Migrate scattered settings into the new **Configurations** centralized hub (Tabs: Profil, Années, Pédagogie, Comptabilité, etc.).
 - [ ] 5.0 Integrate Role-Based Access Control (RBAC) in Navigation
   - [ ] 5.1 Implement permission checks in `sidebar.tsx` to conditionally hide flat navigation items.
-  - [ ] 5.2 Implement permission checks in the new tab layouts to conditionally hide specific tabs based on user roles.
+  - [x] 5.2 Implement permission checks in the new tab layouts to conditionally hide specific tabs based on user roles.
 - [ ] 6.0 Test, Verify Navigation, and Review
   - [ ] 6.1 Verify that clicking through the sidebar naturally flows to the correct default tabs.
   - [ ] 6.2 Ensure all active states (highlighted items and tabs) render correctly for the current route.

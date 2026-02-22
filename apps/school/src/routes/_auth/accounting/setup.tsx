@@ -89,30 +89,16 @@ function AccountingSetupPage() {
   return (
     <div className="container max-w-5xl mx-auto py-12 px-6">
       <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-primary/10">
-              <IconSettings className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
-                {t.finance.wizard.title()}
-              </h1>
-              <p className="text-muted-foreground text-lg">
-                {t.finance.wizard.pageDescription()}
-              </p>
-            </div>
-          </div>
-
-          <Button
-            size="lg"
-            onClick={() => setWizardOpen(true)}
-            className="rounded-2xl gap-2 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
-          >
-            <IconRocket className="h-5 w-5" />
-            {t.finance.wizard.launchWizard()}
-          </Button>
-        </div>
+      <div className="flex justify-end pt-4">
+        <Button
+          size="lg"
+          onClick={() => setWizardOpen(true)}
+          className="rounded-2xl gap-2 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
+        >
+          <IconRocket className="h-5 w-5" />
+          {t.finance.wizard.launchWizard()}
+        </Button>
+      </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SetupCard
