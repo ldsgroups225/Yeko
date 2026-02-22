@@ -19,6 +19,8 @@ export const defaultRoles: RoleData[] = [
       users: ['view', 'create', 'edit', 'delete'],
       system_monitoring: ['view', 'manage'],
       global_settings: ['view', 'edit'],
+      timetables: ['view', 'create', 'edit', 'delete'],
+      curriculum_progress: ['view', 'create', 'edit', 'delete'],
     },
   },
   {
@@ -38,6 +40,8 @@ export const defaultRoles: RoleData[] = [
       users: ['view', 'create', 'edit'],
       system_monitoring: ['view'],
       global_settings: ['view'],
+      timetables: ['view', 'create', 'edit'],
+      curriculum_progress: ['view', 'create', 'edit'],
     },
   },
 
@@ -70,6 +74,8 @@ export const defaultRoles: RoleData[] = [
       school_subjects: ['view', 'create', 'edit', 'delete'],
       coefficients: ['view', 'create', 'edit', 'delete'],
       teacher_assignments: ['view', 'create', 'edit', 'delete'],
+      timetables: ['view', 'create', 'edit', 'delete'],
+      curriculum_progress: ['view', 'create', 'edit', 'delete'],
     },
   },
   {
@@ -104,6 +110,8 @@ export const defaultRoles: RoleData[] = [
       report_cards: ['view'],
       dashboard: ['view'],
       roles: ['view', 'create', 'edit'],
+      timetables: ['view', 'create', 'edit', 'delete'],
+      curriculum_progress: ['view', 'create', 'edit', 'delete'],
     },
   },
   {
@@ -126,6 +134,8 @@ export const defaultRoles: RoleData[] = [
       reports: ['view', 'export'],
       school_subjects: ['view'],
       coefficients: ['view'],
+      timetables: ['view', 'create', 'edit', 'delete'],
+      curriculum_progress: ['view', 'create', 'edit', 'delete'],
     },
   },
   {
@@ -145,6 +155,8 @@ export const defaultRoles: RoleData[] = [
       grades: ['view', 'create', 'edit'],
       school_subjects: ['view'],
       attendance: ['view', 'create'],
+      timetables: ['view'],
+      curriculum_progress: ['view', 'create', 'edit'],
     },
   },
   {
@@ -162,6 +174,8 @@ export const defaultRoles: RoleData[] = [
       students: ['view'],
       attendance: ['view', 'create', 'edit'],
       conduct: ['view', 'create'],
+      timetables: ['view'],
+      curriculum_progress: ['view'],
     },
   },
   {
@@ -181,6 +195,8 @@ export const defaultRoles: RoleData[] = [
       enrollments: ['view', 'create', 'edit'],
       reports: ['view', 'export'],
       classes: ['view'],
+      timetables: ['view'],
+      curriculum_progress: ['view'],
     },
   },
   {
@@ -198,6 +214,8 @@ export const defaultRoles: RoleData[] = [
       students: ['view'],
       finance: ['view', 'create', 'edit'],
       reports: ['view', 'export'],
+      timetables: ['view'],
+      curriculum_progress: ['view'],
     },
   },
   {
@@ -214,6 +232,7 @@ export const defaultRoles: RoleData[] = [
     permissions: {
       students: ['view'],
       finance: ['view', 'process_payment'],
+      curriculum_progress: ['view'],
     },
   },
 ]

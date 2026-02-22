@@ -61,9 +61,10 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { useDebounce } from '@/hooks/use-debounce'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { downloadExcelFile, exportStudentsToExcel } from '@/lib/excel-export'
 import { studentsKeys, studentsMutations, studentsOptions } from '@/lib/queries/students'
@@ -91,6 +92,7 @@ export function StudentsList() {
   const t = useTranslations()
   const queryClient = useQueryClient()
   const navigate = useNavigate()
+  const { schoolYearId } = useSchoolYearContext()
 
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<string>('')
@@ -111,7 +113,13 @@ export function StudentsList() {
 
   const debouncedSearch = useDebounce(search, 500)
 
+  // Reset local filters when global school year changes
+  useEffect(() => {
+    setPage(1)
+  }, [schoolYearId])
+
   const filters = {
+    schoolYearId: schoolYearId || undefined,
     search: debouncedSearch || undefined,
     status: (status as StudentFilters['status']) || undefined,
     gender: (gender as StudentFilters['gender']) || undefined,

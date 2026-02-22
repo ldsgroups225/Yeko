@@ -27,7 +27,7 @@ export const conductRecordsKeys = {
 }
 
 export function conductRecordsOptions(params: {
-  schoolYearId: string
+  schoolYearId: string | null | undefined
   studentId?: string
   classId?: string
   type?: 'incident' | 'sanction' | 'reward' | 'note'
@@ -41,15 +41,16 @@ export function conductRecordsOptions(params: {
   pageSize?: number
 }) {
   return queryOptions({
-    queryKey: conductRecordsKeys.list(params.schoolYearId, params),
+    queryKey: conductRecordsKeys.list(params.schoolYearId ?? 'all', params),
     queryFn: async () => {
-      const res = await listConductRecords({ data: params })
+      const res = await listConductRecords({ data: params as any })
       if (!res.success)
         throw new Error(res.error)
       return res.data
     },
     staleTime: 5 * 60 * 1000,
     placeholderData: keepPreviousData,
+    enabled: !!params.schoolYearId,
   })
 }
 

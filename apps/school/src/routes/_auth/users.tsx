@@ -1,4 +1,4 @@
-import { IconLock, IconSchool, IconUsers, IconUsersGroup, IconUserShield } from '@tabler/icons-react'
+import { IconLock, IconSchool, IconUsers, IconUsersGroup } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TabbedLayout } from '@/components/layout/tabbed-layout'
 import { useTranslations } from '@/i18n'
@@ -41,8 +41,8 @@ function HRLayout() {
     <TabbedLayout
       title={t.nav.hr()}
       description={t.users.title()}
-      icon={IconUserShield}
       tabs={tabs}
+      breadcrumbs={[{ label: t.nav.hr() }]}
     />
   )
 }

@@ -1,4 +1,4 @@
-import { IconBell, IconBuilding, IconCalendar, IconHierarchy, IconSettings, IconUserCheck, IconWallet } from '@tabler/icons-react'
+import { IconBell, IconBuilding, IconCalendar, IconHierarchy, IconWallet } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TabbedLayout } from '@/components/layout/tabbed-layout'
 import { useTranslations } from '@/i18n'
@@ -24,25 +24,19 @@ function SettingsLayoutRoute() {
       permission: { resource: 'settings', action: 'view' },
     },
     {
-      label: 'Pédagogie & Bulletins',
+      label: t.settings.tabs.pedagogicalAndReportCards(),
       href: '/settings/pedagogical-structure',
       icon: IconHierarchy,
       permission: { resource: 'settings', action: 'view' },
     },
     {
-      label: 'Assiduité & Conduite',
-      href: '/conducts/settings',
-      icon: IconUserCheck,
-      permission: { resource: 'settings', action: 'view' },
-    },
-    {
-      label: 'Comptabilité & Finances',
+      label: t.settings.tabs.accountingAndFinance(),
       href: '/accounting/setup',
       icon: IconWallet,
       permission: { resource: 'finance', action: 'view' },
     },
     {
-      label: 'Système & Notifications',
+      label: t.settings.tabs.systemAndNotifications(),
       href: '/settings/notifications',
       icon: IconBell,
       permission: { resource: 'settings', action: 'view' },
@@ -53,7 +47,7 @@ function SettingsLayoutRoute() {
     <TabbedLayout
       title={t.nav.settings()}
       description={t.settings.description()}
-      icon={IconSettings}
+      breadcrumbs={[{ label: t.nav.settings() }]}
       tabs={tabs}
     />
   )

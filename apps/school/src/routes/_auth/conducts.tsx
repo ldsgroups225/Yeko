@@ -1,4 +1,4 @@
-import { IconAlertCircle, IconGavel, IconSchool, IconUserCheck, IconUsers } from '@tabler/icons-react'
+import { IconAlertCircle, IconGavel, IconSchool, IconUsers } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TabbedLayout } from '@/components/layout/tabbed-layout'
 import { useTranslations } from '@/i18n'
@@ -41,7 +41,7 @@ function SchoolLifeLayout() {
     <TabbedLayout
       title={t.nav.schoolLife()}
       description={t.dashboard.description()}
-      icon={IconUserCheck}
+      breadcrumbs={[{ label: t.nav.schoolLife() }]}
       tabs={tabs}
     />
   )

@@ -178,6 +178,13 @@ const fr = {
     exams: 'Examens',
     treasury: 'Trésorerie',
     configuration: 'Configuration',
+    essential: 'Essentiel',
+    personnel: 'Personnel',
+    operations: 'Opérations',
+    attendanceAndConduct: 'Assiduité & Conduite',
+    gradesAndAverages: 'Notes et moyennes',
+    system: 'Système',
+    configurations: 'Configurations',
 
     // Keep these if used elsewhere, otherwise remove if only used in sidebar.tsx
     dailyOperations: 'Opérations Quotidiennes',
@@ -2112,6 +2119,12 @@ const fr = {
     description: 'Configurer les paramètres de l\'établissement',
     saved: 'Paramètres enregistrés',
     saveFailed: 'Échec de l\'enregistrement',
+    tabs: {
+      pedagogicalAndReportCards: 'Pédagogie & Bulletins',
+      attendanceAndConduct: 'Assiduité & Conduite',
+      accountingAndFinance: 'Comptabilité & Finances',
+      systemAndNotifications: 'Système & Notifications',
+    },
     profile: {
       title: 'Profil de l\'école',
       description:
@@ -2458,6 +2471,10 @@ const fr = {
       deleteConfirmTitle: 'Confirmer la suppression',
       deleteConfirmDescription: 'Êtes-vous sûr de vouloir supprimer "{name}" ?',
     },
+  },
+  programs: {
+    progress: 'Avancement',
+    description: 'Gestion académique et suivi pédagogique',
   },
 } satisfies BaseTranslation
 

@@ -3,13 +3,13 @@ import { getAdminDashboardStats } from '@/school/functions/dashboard'
 
 export const dashboardKeys = {
   all: ['dashboard'] as const,
-  admin: () => [...dashboardKeys.all, 'admin'] as const,
+  admin: (schoolYearId?: string) => [...dashboardKeys.all, 'admin', { schoolYearId }] as const,
 }
 
 export const dashboardOptions = {
-  admin: () =>
+  admin: (schoolYearId?: string) =>
     queryOptions({
-      queryKey: dashboardKeys.admin(),
+      queryKey: dashboardKeys.admin(schoolYearId),
       queryFn: async () => {
         const res = await getAdminDashboardStats()
         if (!res.success)

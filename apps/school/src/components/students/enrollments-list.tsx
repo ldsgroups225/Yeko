@@ -58,7 +58,7 @@ import {
 } from '@workspace/ui/components/table'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { EmptyState } from '@/components/hr/empty-state'
 import { useDebounce } from '@/hooks/use-debounce'
@@ -102,6 +102,12 @@ export function EnrollmentsList() {
   const [cancelReason, setCancelReason] = useState('')
 
   const debouncedSearch = useDebounce(search, 500)
+
+  // Reset local filters when global school year changes
+  useEffect(() => {
+    setClassId('all')
+    setPage(1)
+  }, [schoolYearId])
 
   const filters = useMemo(
     () => ({

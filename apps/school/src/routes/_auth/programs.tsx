@@ -12,7 +12,7 @@ function ProgramsLayout() {
 
   const tabs = [
     {
-      label: 'Avancement',
+      label: t.programs.progress(),
       href: '/programs/curriculum-progress',
       icon: IconClipboardList,
       permission: { resource: 'curriculum_progress', action: 'view' },
@@ -24,7 +24,7 @@ function ProgramsLayout() {
       permission: { resource: 'school_subjects', action: 'view' },
     },
     {
-      label: 'Coefficients',
+      label: t.nav.coefficients(),
       href: '/programs/coefficients',
       icon: IconBadge8k,
       permission: { resource: 'school_subjects', action: 'view' },
@@ -34,8 +34,11 @@ function ProgramsLayout() {
   return (
     <TabbedLayout
       title={t.nav.programs()}
-      description="Gestion académique et suivi pédagogique"
-      icon={IconBook}
+      description={t.programs.description()}
+      breadcrumbs={[
+        { label: t.nav.academic(), href: '/academic' },
+        { label: t.nav.programs() },
+      ]}
       tabs={tabs}
     />
   )

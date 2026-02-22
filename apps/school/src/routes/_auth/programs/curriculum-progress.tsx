@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
+import { PageHeader } from '@workspace/ui/components/page-header'
 import {
   Select,
   SelectContent,
@@ -11,7 +12,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton'
 
 import { motion } from 'motion/react'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   BehindScheduleAlert,
   ProgressCard,
@@ -22,7 +23,6 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { progressOptions } from '@/lib/queries/curriculum-progress'
 import { getClasses } from '@/school/functions/classes'
-import { getSchoolYears } from '@/school/functions/school-years'
 import { getTerms } from '@/school/functions/terms'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -33,22 +33,16 @@ export const Route = createFileRoute('/_auth/programs/curriculum-progress')({
 function CurriculumProgressPage() {
   const t = useTranslations()
   const { schoolYearId: contextSchoolYearId, isPending: contextPending } = useSchoolYearContext()
-  const [localYearId, setLocalYearId] = useState<string>('')
   const [selectedTermId, setSelectedTermId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
 
-  // Fetch school years
-  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
-    queryKey: ['school-years'],
-    queryFn: () => getSchoolYears(),
-    staleTime: 5 * 60 * 1000,
-  })
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
+  // Reset local filters when global school year changes
+  useEffect(() => {
+    setSelectedTermId('')
+    setSelectedClassId('')
+  }, [contextSchoolYearId])
 
-  // Determine effective year ID
-  // If context has an ID, use it. Otherwise fall back to local selection or active year.
-  const activeYear = schoolYears?.find(y => y.isActive)
-  const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
+  const effectiveYearId = contextSchoolYearId || ''
 
   // Fetch terms for selected year
   const { data: termsResult, isPending: termsPending } = useQuery({
@@ -111,50 +105,11 @@ function CurriculumProgressPage() {
         ]}
       />
 
-      <div className="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-4"
-        >
-          <div>
-            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.curriculum.title()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.curriculum.description()}</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto items-end"
-        >
-          {/* School Year */}
-          <div className="w-full sm:w-[240px] space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
-              {t.schoolYear.title()}
-            </span>
-            {yearsPending || contextPending
-              ? (
-                  <Skeleton className="h-11 w-full rounded-xl" />
-                )
-              : (
-                  <Select value={effectiveYearId} onValueChange={val => setLocalYearId(val ?? '')}>
-                    <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
-                      <SelectValue placeholder={t.schoolYear.select()} />
-                    </SelectTrigger>
-                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                      {schoolYears?.map(year => (
-                        <SelectItem key={year.id} value={year.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                          {year.template?.name}
-                          {' '}
-                          {year.isActive && t.schoolYear.activeSuffix()}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-          </div>
-
+      <PageHeader
+        title={t.curriculum.title()}
+        description={t.curriculum.description()}
+      >
+        <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto items-end">
           {/* Term */}
           <div className="w-full sm:w-[240px] space-y-1.5">
             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
@@ -171,7 +126,20 @@ function CurriculumProgressPage() {
                     disabled={!effectiveYearId}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
-                      <SelectValue placeholder={t.terms.select()} />
+                      <SelectValue placeholder={t.terms.select()}>
+                        {selectedTermId
+                          ? (() => {
+                              const selectedItem = terms?.find(term => term.id === selectedTermId)
+                              return selectedItem
+                                ? (
+                                    <div className="flex items-center gap-2">
+                                      <span>{selectedItem.template.name}</span>
+                                    </div>
+                                  )
+                                : null
+                            })()
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                       {terms?.map(term => (
@@ -200,7 +168,24 @@ function CurriculumProgressPage() {
                     disabled={!effectiveYearId}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
-                      <SelectValue placeholder={t.classes.select()} />
+                      <SelectValue placeholder={t.classes.select()}>
+                        {selectedClassId
+                          ? (() => {
+                              const selectedItem = classes?.find(item => item.class.id === selectedClassId)
+                              return selectedItem
+                                ? (
+                                    <div className="flex items-center gap-2">
+                                      <span>
+                                        {selectedItem.grade.name}
+                                        {' '}
+                                        {selectedItem.class.section}
+                                      </span>
+                                    </div>
+                                  )
+                                : null
+                            })()
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
                       {classes?.map(item => (
@@ -214,8 +199,8 @@ function CurriculumProgressPage() {
                   </Select>
                 )}
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </PageHeader>
 
       {/* Content */}
       <motion.div

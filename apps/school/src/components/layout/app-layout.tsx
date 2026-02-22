@@ -18,7 +18,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <SidebarInset>
         <Header />
         <main className="flex-1 overflow-auto">
-          <div className="container p-6">{children}</div>
+          <div className="w-full p-6">{children}</div>
         </main>
       </SidebarInset>
     </SidebarProvider>

@@ -19,7 +19,6 @@ import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { classAttendanceOptions } from '@/lib/queries/student-attendance'
 import { getClasses } from '@/school/functions/classes'
-import { getSchoolYears } from '@/school/functions/school-years'
 import { bulkRecordClassAttendance } from '@/school/functions/student-attendance'
 
 export const Route = createFileRoute('/_auth/conducts/student-attendance/')({
@@ -52,14 +51,7 @@ function StudentAttendancePage() {
   const [date, setDate] = useState(() => new Date())
   const [classId, setClassId] = useState<string>('')
 
-  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
-  const { data: schoolYearsResult } = useQuery({
-    queryKey: ['school-years'],
-    queryFn: () => getSchoolYears(),
-  })
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
-  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id
+  const { schoolYearId } = useSchoolYearContext()
 
   const { data: classesResult } = useQuery({
     queryKey: ['classes', { schoolYearId }],

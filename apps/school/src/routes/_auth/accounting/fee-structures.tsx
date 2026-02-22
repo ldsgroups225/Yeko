@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { FeeStructureFormDialog, FeeStructuresTable } from '@/components/finance'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { feeStructuresKeys, feeStructuresOptions } from '@/lib/queries'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingFeeStructure } from '@/school/functions/fee-structures'
@@ -21,12 +22,13 @@ export const Route = createFileRoute('/_auth/accounting/fee-structures')({
 function FeeStructuresPage() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const { schoolYearId } = useSchoolYearContext()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingStructure, setEditingStructure] = useState<FeeStructure | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const { data: feeStructures, isPending } = useQuery(
-    feeStructuresOptions.withDetails(),
+    feeStructuresOptions.withDetails({ schoolYearId: schoolYearId || undefined }),
   )
 
   const deleteMutation = useMutation({

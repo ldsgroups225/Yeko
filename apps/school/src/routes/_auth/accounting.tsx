@@ -1,4 +1,4 @@
-import { IconCalendarStats, IconLayoutDashboard, IconReceipt2, IconReportMoney, IconWallet } from '@tabler/icons-react'
+import { IconCalendarStats, IconLayoutDashboard, IconReceipt2, IconReportMoney } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TabbedLayout } from '@/components/layout/tabbed-layout'
 import { useTranslations } from '@/i18n'
@@ -41,7 +41,7 @@ function AccountingLayout() {
     <TabbedLayout
       title={t.nav.finance()}
       description={t.finance.title()}
-      icon={IconWallet}
+      breadcrumbs={[{ label: t.nav.finance() }]}
       tabs={tabs}
     />
   )

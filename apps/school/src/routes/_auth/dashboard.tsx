@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PageHeader } from '@workspace/ui/components/page-header'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AccountantDashboard } from '@/components/dashboard/accountant-dashboard'
 import { AdminDashboard } from '@/components/dashboard/admin-dashboard'
@@ -39,6 +40,11 @@ function DashboardPage() {
   return (
     <div className="space-y-6">
       <Breadcrumbs items={[{ label: t.nav.dashboard() }]} />
+
+      <PageHeader
+        title={t.nav.dashboard()}
+        description={t.dashboard.description()}
+      />
 
       {role === 'school_director' && (
         <>

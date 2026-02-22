@@ -1,7 +1,8 @@
 import { Link, Outlet, useLocation } from '@tanstack/react-router'
+import { PageHeader } from '@workspace/ui/components/page-header'
 import { motion } from 'motion/react'
-import * as React from 'react'
 
+import * as React from 'react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useAuthorization } from '@/hooks/use-authorization'
 import { cn } from '@/lib/utils'
@@ -16,7 +17,6 @@ interface Tab {
 interface TabbedLayoutProps {
   title: string
   description?: string
-  icon?: React.ComponentType<{ className?: string }>
   tabs: Tab[]
   breadcrumbs?: { label: string, href?: string }[]
   actions?: React.ReactNode
@@ -25,7 +25,6 @@ interface TabbedLayoutProps {
 export function TabbedLayout({
   title,
   description,
-  icon: Icon,
   tabs,
   breadcrumbs,
   actions,
@@ -46,24 +45,12 @@ export function TabbedLayout({
     <div className="space-y-8 animate-in fade-in duration-500">
       {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
 
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-4">
-          {Icon && (
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-              <Icon className="size-8" />
-            </div>
-          )}
-          <div>
-            <h1 className="text-3xl font-black tracking-tight uppercase italic">{title}</h1>
-            {description && (
-              <p className="text-muted-foreground/70 font-medium italic">
-                {description}
-              </p>
-            )}
-          </div>
-        </div>
+      <PageHeader
+        title={title}
+        description={description}
+      >
         {actions && <div className="flex items-center gap-3">{actions}</div>}
-      </div>
+      </PageHeader>
 
       <div className="relative border-b border-border/40 pb-px bg-muted/5 rounded-t-2xl px-2">
         <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
@@ -95,7 +82,7 @@ export function TabbedLayout({
         </div>
       </div>
 
-      <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div>
         <Outlet />
       </div>
     </div>

@@ -40,8 +40,24 @@ export function GradeTypeSelector({
       onValueChange={val => val && onValueChange(val as GradeType)}
       disabled={disabled}
     >
-      <SelectTrigger className={`rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all ${className}`}>
-        <SelectValue placeholder={t.academic.grades.entry.selectGradeType()} />
+      <SelectTrigger className={`rounded-xl h-11 w-full border-border/40 bg-background/50 focus:bg-background transition-all ${className || ''}`}>
+        <SelectValue placeholder={t.academic.grades.entry.selectGradeType()}>
+          {value
+            ? (() => {
+                const Icon = gradeTypeIcons[value]
+                return Icon
+                  ? (
+                      <div className="flex items-center gap-2">
+                        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary">
+                          <Icon className="h-3.5 w-3.5" />
+                        </div>
+                        <span className="font-medium">{gradeTypeLabels[value]}</span>
+                      </div>
+                    )
+                  : null
+              })()
+            : undefined}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
         {gradeTypes.map((type) => {

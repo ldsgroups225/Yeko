@@ -23,6 +23,14 @@ export function useSchoolYearContext() {
       queryClient.invalidateQueries({ queryKey: ['students'] })
       queryClient.invalidateQueries({ queryKey: ['classes'] })
       queryClient.invalidateQueries({ queryKey: ['enrollments'] })
+      queryClient.invalidateQueries({ queryKey: ['report-cards'] })
+      queryClient.invalidateQueries({ queryKey: ['class-averages'] })
+      queryClient.invalidateQueries({ queryKey: ['grades'] })
+      queryClient.invalidateQueries({ queryKey: ['terms'] })
+      queryClient.invalidateQueries({ queryKey: ['timetables'] })
+      queryClient.invalidateQueries({ queryKey: ['coefficients'] })
+      queryClient.invalidateQueries({ queryKey: ['subjects'] })
+      queryClient.invalidateQueries({ queryKey: ['curriculum-progress'] })
     },
   })
 

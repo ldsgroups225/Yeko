@@ -1,4 +1,4 @@
-import { IconBook, IconChartBar, IconCircleCheck, IconFileDescription, IconPencil } from '@tabler/icons-react'
+import { IconChartBar, IconCircleCheck, IconFileDescription, IconPencil } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TabbedLayout } from '@/components/layout/tabbed-layout'
 import { useTranslations } from '@/i18n'
@@ -41,7 +41,7 @@ function GradesLayout() {
     <TabbedLayout
       title={t.nav.grades()}
       description={t.academic.grades.description()}
-      icon={IconBook}
+      breadcrumbs={[{ label: t.nav.grades() }]}
       tabs={tabs}
     />
   )

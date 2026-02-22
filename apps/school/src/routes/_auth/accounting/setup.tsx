@@ -7,7 +7,6 @@ import {
   IconLayoutGrid,
   IconReceipt,
   IconRocket,
-  IconSettings,
   IconTag,
 } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -89,16 +88,16 @@ function AccountingSetupPage() {
   return (
     <div className="container max-w-5xl mx-auto py-12 px-6">
       <div className="flex flex-col gap-8">
-      <div className="flex justify-end pt-4">
-        <Button
-          size="lg"
-          onClick={() => setWizardOpen(true)}
-          className="rounded-2xl gap-2 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
-        >
-          <IconRocket className="h-5 w-5" />
-          {t.finance.wizard.launchWizard()}
-        </Button>
-      </div>
+        <div className="flex justify-end pt-4">
+          <Button
+            size="lg"
+            onClick={() => setWizardOpen(true)}
+            className="rounded-2xl gap-2 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
+          >
+            <IconRocket className="h-5 w-5" />
+            {t.finance.wizard.launchWizard()}
+          </Button>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <SetupCard

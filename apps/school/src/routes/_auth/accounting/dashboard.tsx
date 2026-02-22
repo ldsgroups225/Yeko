@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { lazy, Suspense } from 'react'
-import { useTranslations } from '@/i18n'
 import { financeStatsOptions, refundsOptions, studentFeesOptions } from '@/lib/queries'
 
 const FinancialDashboard = lazy(() => import('@/components/finance').then(m => ({ default: m.FinancialDashboard })))
@@ -12,8 +11,6 @@ export const Route = createFileRoute('/_auth/accounting/dashboard')({
 })
 
 function FinanceDashboardPage() {
-  const t = useTranslations()
-
   const { data: studentsWithBalance, isPending: isPendingStudents } = useQuery(
     studentFeesOptions.withBalance(),
   )

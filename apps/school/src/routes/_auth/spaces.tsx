@@ -12,13 +12,13 @@ function SpacesLayout() {
 
   const tabs = [
     {
-      label: 'Salles de classe',
+      label: t.spaces.title(),
       href: '/spaces/classrooms',
       icon: IconBuilding,
       permission: { resource: 'classrooms', action: 'view' },
     },
     {
-      label: 'Disponibilités',
+      label: t.spaces.availability.title(),
       href: '/spaces/availability',
       icon: IconCalendarStats,
       permission: { resource: 'classrooms', action: 'view' },
@@ -28,8 +28,8 @@ function SpacesLayout() {
   return (
     <TabbedLayout
       title={t.nav.spaces()}
-      description="Gestion des salles et infrastructures"
-      icon={IconBuilding}
+      description={t.spaces.description()}
+      breadcrumbs={[{ label: t.nav.spaces() }]}
       tabs={tabs}
     />
   )

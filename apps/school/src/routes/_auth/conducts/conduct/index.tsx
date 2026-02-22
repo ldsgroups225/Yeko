@@ -20,7 +20,6 @@ import { ConductRecordTable } from '@/components/conduct/conduct-record-table'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { conductRecordsOptions } from '@/lib/queries/conduct-records'
-import { getSchoolYears } from '@/school/functions/school-years'
 
 const searchSchema = z.object({
   type: z.enum(['incident', 'sanction', 'reward', 'note']).optional(),
@@ -42,11 +41,7 @@ function ConductPage() {
   const [searchTerm, setSearchTerm] = useState(search.search ?? '')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
 
-  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
-  const { data: schoolYearsResult } = useQuery({ queryKey: ['school-years'], queryFn: () => getSchoolYears() })
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
-  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
+  const { schoolYearId } = useSchoolYearContext()
 
   const { data: recordsData, isPending } = useQuery(
     conductRecordsOptions({
@@ -167,7 +162,15 @@ function ConductPage() {
             </label>
             <Select value={search.type ?? 'all'} onValueChange={v => handleTypeChange(v ?? 'all')}>
               <SelectTrigger className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                <SelectValue placeholder={t.conduct.filterByType()} />
+                <SelectValue placeholder={t.conduct.filterByType()}>
+                  <span className="font-bold uppercase tracking-widest text-[10px]">
+                    {search.type === 'incident' && t.conduct.type.incident()}
+                    {search.type === 'sanction' && t.conduct.type.sanction()}
+                    {search.type === 'reward' && t.conduct.type.reward()}
+                    {search.type === 'note' && t.conduct.type.note()}
+                    {!search.type && t.common.all()}
+                  </span>
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
                 <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.common.all()}</SelectItem>
@@ -186,7 +189,17 @@ function ConductPage() {
             </label>
             <Select value={search.status ?? 'all'} onValueChange={v => handleStatusChange(v ?? 'all')}>
               <SelectTrigger className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                <SelectValue placeholder={t.conduct.filterByStatus()} />
+                <SelectValue placeholder={t.conduct.filterByStatus()}>
+                  <span className="font-bold uppercase tracking-widest text-[10px]">
+                    {search.status === 'open' && t.conduct.status.open()}
+                    {search.status === 'investigating' && t.conduct.status.investigating()}
+                    {search.status === 'pending_decision' && t.conduct.status.pending_decision()}
+                    {search.status === 'resolved' && t.conduct.status.resolved()}
+                    {search.status === 'closed' && t.conduct.status.closed()}
+                    {search.status === 'appealed' && t.conduct.status.appealed()}
+                    {!search.status && t.common.all()}
+                  </span>
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
                 <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.common.all()}</SelectItem>
@@ -195,6 +208,7 @@ function ConductPage() {
                 <SelectItem value="pending_decision" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.pending_decision()}</SelectItem>
                 <SelectItem value="resolved" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.resolved()}</SelectItem>
                 <SelectItem value="closed" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.closed()}</SelectItem>
+                <SelectItem value="appealed" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.appealed()}</SelectItem>
               </SelectContent>
             </Select>
           </div>
