@@ -1,4 +1,4 @@
-import { IconBell, IconBuilding, IconCalendar, IconFileText, IconHierarchy, IconSettings, IconWallet } from '@tabler/icons-react'
+import { IconBell, IconBuilding, IconCalendar, IconHierarchy, IconSettings, IconUserCheck, IconWallet } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TabbedLayout } from '@/components/layout/tabbed-layout'
 import { useTranslations } from '@/i18n'
@@ -24,25 +24,25 @@ function SettingsLayoutRoute() {
       permission: { resource: 'settings', action: 'view' },
     },
     {
-      label: t.nav.pedagogicalStructure ? t.nav.pedagogicalStructure() : 'Pédagogie',
+      label: 'Pédagogie & Bulletins',
       href: '/settings/pedagogical-structure',
       icon: IconHierarchy,
       permission: { resource: 'settings', action: 'view' },
     },
     {
-      label: t.settings.reportCards.title(),
-      href: '/settings/report-cards',
-      icon: IconFileText,
+      label: 'Assiduité & Conduite',
+      href: '/conducts/settings',
+      icon: IconUserCheck,
       permission: { resource: 'settings', action: 'view' },
     },
     {
-      label: t.nav.finance(),
+      label: 'Comptabilité & Finances',
       href: '/accounting/setup',
       icon: IconWallet,
       permission: { resource: 'finance', action: 'view' },
     },
     {
-      label: t.settings.notifications(),
+      label: 'Système & Notifications',
       href: '/settings/notifications',
       icon: IconBell,
       permission: { resource: 'settings', action: 'view' },

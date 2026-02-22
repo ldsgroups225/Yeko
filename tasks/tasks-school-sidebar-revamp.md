@@ -48,10 +48,10 @@ Update the file after completing each sub-task, not just after completing an ent
   - [x] 4.3 Update **Personnel** (Users) to implement a unified list with role filters and dynamic columns.
   - [x] 4.4 Update **Assiduité & Conduite** (Conducts) to use Tabs: Élèves, Professeurs.
   - [x] 4.5 Migrate scattered settings into the new **Configurations** centralized hub (Tabs: Profil, Années, Pédagogie, Comptabilité, etc.).
-- [ ] 5.0 Integrate Role-Based Access Control (RBAC) in Navigation
-  - [ ] 5.1 Implement permission checks in `sidebar.tsx` to conditionally hide flat navigation items.
+- [x] 5.0 Integrate Role-Based Access Control (RBAC) in Navigation
+  - [x] 5.1 Implement permission checks in `sidebar.tsx` to conditionally hide flat navigation items.
   - [x] 5.2 Implement permission checks in the new tab layouts to conditionally hide specific tabs based on user roles.
-- [ ] 6.0 Test, Verify Navigation, and Review
-  - [ ] 6.1 Verify that clicking through the sidebar naturally flows to the correct default tabs.
-  - [ ] 6.2 Ensure all active states (highlighted items and tabs) render correctly for the current route.
+- [x] 6.0 Test, Verify Navigation, and Review
+  - [x] 6.1 Verify that clicking through the sidebar naturally flows to the correct default tabs.
+  - [x] 6.2 Ensure all active states (highlighted items and tabs) render correctly for the current route.
   - [ ] 6.3 Verify RBAC behavior by testing with different user roles (e.g., Administrator, Director).

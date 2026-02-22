@@ -102,7 +102,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: [
           {
             title: 'Programmes',
-            href: '/programs/subjects',
+            href: '/programs/curriculum-progress',
             icon: IconBook,
             permission: { resource: 'school_subjects', action: 'view' },
           },

@@ -37,7 +37,6 @@ import {
 import { getClassSubjects } from '@/school/functions/class-subjects'
 import { getClasses } from '@/school/functions/classes'
 import { getClassrooms } from '@/school/functions/classrooms'
-import { getSchoolYears } from '@/school/functions/school-years'
 import { getTeachers } from '@/school/functions/teachers'
 import {
   createTimetableSession,
@@ -51,14 +50,6 @@ const TimetableSessionDialog = lazy(() => import('@/components/timetables/timeta
 export const Route = createFileRoute('/_auth/schedules')({
   component: TimetablesPage,
 })
-
-interface SchoolYear {
-  id: string
-  isActive: boolean
-  template: {
-    name: string
-  }
-}
 
 interface ExportData {
   day: string
@@ -75,7 +66,6 @@ function TimetablesPage() {
   const { schoolId } = useSchoolContext()
   const { schoolYearId: contextSchoolYearId, isPending: contextPending } = useSchoolYearContext()
   const [viewMode, setViewMode] = useState<TimetableViewMode>('class')
-  const [localYearId, setLocalYearId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>('')
 
@@ -86,17 +76,7 @@ function TimetablesPage() {
   const [selectedSession, setSelectedSession] = useState<TimetableSessionData | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<{ dayOfWeek: number, startTime: string, endTime: string } | null>(null)
 
-  // Fetch school years
-  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
-    queryKey: ['school-years'],
-    queryFn: () => getSchoolYears(),
-    staleTime: 5 * 60 * 1000,
-  })
-
-  // Determine effective year ID
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const activeYear = schoolYears?.find((y: SchoolYear) => y.isActive)
-  const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
+  const effectiveYearId = contextSchoolYearId || ''
 
   // Fetch classes for selected year
   const { data: classesResult, isPending: classesPending } = useQuery({
@@ -392,47 +372,6 @@ function TimetablesPage() {
           <TimetableViewSwitcher value={viewMode} onChange={handleViewModeChange} />
 
           <div className="flex flex-col sm:flex-row gap-4 items-end">
-            {/* School Year */}
-            <div className="w-full sm:w-[240px] space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
-                {t.schoolYear.title()}
-              </label>
-              {yearsPending || contextPending
-                ? (
-                    <Skeleton className="h-11 w-full rounded-xl" />
-                  )
-                : (
-                    <Select value={effectiveYearId} onValueChange={val => setLocalYearId(val ?? '')}>
-                      <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                        <SelectValue placeholder={t.schoolYear.select()}>
-                          {effectiveYearId
-                            ? (() => {
-                                const year = schoolYears?.find(y => y.id === effectiveYearId)
-                                return year
-                                  ? (
-                                      <div className="flex items-center gap-2">
-                                        <IconCalendar className="size-3.5 text-primary/60" />
-                                        <span>{year.template.name}</span>
-                                      </div>
-                                    )
-                                  : undefined
-                              })()
-                            : undefined}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                        {schoolYears?.map(year => (
-                          <SelectItem key={year.id} value={year.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                            {year.template.name}
-                            {' '}
-                            {year.isActive && t.schoolYear.activeSuffix()}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-            </div>
-
             {/* Class selector (for class view) */}
             {viewMode === 'class' && (
               <motion.div
