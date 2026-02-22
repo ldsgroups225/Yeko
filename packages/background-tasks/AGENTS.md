@@ -7,10 +7,10 @@
 
 ## Quick Reference
 
-| Action | Command |
-| --- | --- |
-| Typecheck | `pnpm typecheck` |
-| Lint + fix | `pnpm lint:fix` |
+| Action     | Command          |
+| ---------- | ---------------- |
+| Typecheck  | `pnpm typecheck` |
+| Lint + fix | `pnpm lint:fix`  |
 
 ---
 
@@ -58,10 +58,10 @@ await sendToQueue({ type: 'LOG_EVENT', payload: { ... } })
 
 ## Consumers
 
-| Package | How It Uses This |
-| --- | --- |
-| `apps/school` | Sets execution context + queue binding in `server.ts` |
-| `packages/queue-worker` | Processes queued tasks (consumer side) |
+| Package                 | How It Uses This                                      |
+| ----------------------- | ----------------------------------------------------- |
+| `apps/school`           | Sets execution context + queue binding in `server.ts` |
+| `packages/queue-worker` | Processes queued tasks (consumer side)                |
 
 ---
 
