@@ -34,5 +34,12 @@
       "binding": "STORAGE_BUCKET",
       "bucket_name": "yeko-school-storage"
     }
-  ]
+  ],
+  // Show logs
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    }
+  }
 }

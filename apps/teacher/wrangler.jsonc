@@ -12,5 +12,12 @@
     "GOOGLE_CLIENT_ID": "725781093652-vel4rol0r440ilpndk09t43og37iid32.apps.googleusercontent.com",
     "DATABASE_HOST": "ep-raspy-fog-agz58rrr-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
     "DATABASE_USERNAME": "neondb_owner"
+  },
+  // Show logs
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    }
   }
 }
