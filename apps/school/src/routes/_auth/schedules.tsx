@@ -353,7 +353,7 @@ function TimetablesPage() {
             disabled={!effectiveYearId}
           >
             <IconUpload className="mr-2 h-4 w-4" />
-            Importer
+            {t.common.import()}
           </Button>
           <Button
             variant="outline"
@@ -362,7 +362,7 @@ function TimetablesPage() {
             disabled={!canShowTimetable}
           >
             <IconDownload className="mr-2 h-4 w-4" />
-            Exporter
+            {t.common.export()}
           </Button>
         </div>
       </PageHeader>

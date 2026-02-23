@@ -3992,6 +3992,10 @@ type RootTranslation = {
 			 */
 			description: string
 			/**
+			 * C​r​é​e​r​ ​u​n​ ​p​l​a​n
+			 */
+			create: string
+			/**
 			 * A​u​c​u​n​ ​p​l​a​n​ ​d​e​ ​p​a​i​e​m​e​n​t
 			 */
 			noPaymentPlans: string
@@ -12402,6 +12406,10 @@ export type TranslationFunctions = {
 			 * Gérer les échéanciers de paiement
 			 */
 			description: () => LocalizedString
+			/**
+			 * Créer un plan
+			 */
+			create: () => LocalizedString
 			/**
 			 * Aucun plan de paiement
 			 */

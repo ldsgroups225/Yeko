@@ -37,7 +37,7 @@ function PaymentPlansPage() {
           className="gap-2"
         >
           <IconPlus className="size-4" />
-          Créer un plan
+          {t.finance.paymentPlans.create()}
         </Button>
       </div>
 

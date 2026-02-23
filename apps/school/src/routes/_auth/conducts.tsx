@@ -27,13 +27,13 @@ function SchoolLifeLayout() {
       label: t.schoolLife.conduct(),
       href: '/conducts/conduct',
       icon: IconGavel,
-      permission: { resource: 'attendance', action: 'view' },
+      permission: { resource: 'conduct', action: 'view' },
     },
     {
       label: t.schoolLife.alerts(),
       href: '/conducts/alerts',
       icon: IconAlertCircle,
-      permission: { resource: 'attendance', action: 'view' },
+      permission: { resource: 'conduct', action: 'view' },
     },
   ]
 

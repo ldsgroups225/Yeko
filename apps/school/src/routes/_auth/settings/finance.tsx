@@ -19,7 +19,7 @@ import { WizardStep1 } from '@/components/finance/wizard-steps/step-1'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/_auth/accounting/setup')({
+export const Route = createFileRoute('/_auth/settings/finance')({
   component: AccountingSetupPage,
 })
 

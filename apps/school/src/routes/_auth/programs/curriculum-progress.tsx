@@ -18,7 +18,6 @@ import {
   ProgressCard,
   ProgressOverviewCards,
 } from '@/components/curriculum-progress'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { progressOptions } from '@/lib/queries/curriculum-progress'
@@ -98,12 +97,6 @@ function CurriculumProgressPage() {
 
   return (
     <div className="space-y-8 p-1">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.academic(), href: '/academic' },
-          { label: t.nav.curriculumProgress() },
-        ]}
-      />
 
       <PageHeader
         title={t.curriculum.title()}

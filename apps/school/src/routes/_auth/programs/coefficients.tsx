@@ -7,7 +7,6 @@ import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { CoefficientMatrix } from '@/components/academic/coefficients/coefficient-matrix'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { getSchoolYears } from '@/school/functions/school-years'
@@ -45,12 +44,6 @@ function CoefficientsPage() {
 
   return (
     <div className="space-y-8 p-1">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.academic(), href: '/academic' },
-          { label: t.nav.coefficients() },
-        ]}
-      />
 
       <PageHeader
         title={t.coefficients.title()}

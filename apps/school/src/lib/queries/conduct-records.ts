@@ -43,7 +43,7 @@ export function conductRecordsOptions(params: {
   return queryOptions({
     queryKey: conductRecordsKeys.list(params.schoolYearId ?? 'all', params),
     queryFn: async () => {
-      const res = await listConductRecords({ data: params as any })
+      const res = await listConductRecords({ data: { ...params, schoolYearId: params.schoolYearId! } })
       if (!res.success)
         throw new Error(res.error)
       return res.data

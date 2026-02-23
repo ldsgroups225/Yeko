@@ -1082,6 +1082,7 @@ const en: Translation = {
     paymentPlans: {
       title: 'Payment Plans',
       description: 'Manage payment schedules',
+      create: 'Create Plan',
       noPaymentPlans: 'No payment plans',
       totalAmount: 'Total Amount',
       progress: 'Progress',

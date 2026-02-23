@@ -1104,6 +1104,7 @@ const fr = {
     paymentPlans: {
       title: 'Plans de paiement',
       description: 'Gérer les échéanciers de paiement',
+      create: 'Créer un plan',
       noPaymentPlans: 'Aucun plan de paiement',
       totalAmount: 'Montant total',
       progress: 'Progression',

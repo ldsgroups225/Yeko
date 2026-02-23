@@ -31,7 +31,7 @@ function SettingsLayoutRoute() {
     },
     {
       label: t.settings.tabs.accountingAndFinance(),
-      href: '/accounting/setup',
+      href: '/settings/finance',
       icon: IconWallet,
       permission: { resource: 'finance', action: 'view' },
     },

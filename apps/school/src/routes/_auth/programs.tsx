@@ -1,4 +1,4 @@
-import { IconBadge8k, IconBook, IconClipboardList } from '@tabler/icons-react'
+import { IconBook, IconClipboardList, IconScale } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TabbedLayout } from '@/components/layout/tabbed-layout'
 import { useTranslations } from '@/i18n'
@@ -26,7 +26,7 @@ function ProgramsLayout() {
     {
       label: t.nav.coefficients(),
       href: '/programs/coefficients',
-      icon: IconBadge8k,
+      icon: IconScale,
       permission: { resource: 'school_subjects', action: 'view' },
     },
   ]
