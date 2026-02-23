@@ -692,6 +692,34 @@ type RootTranslation = {
 		 */
 		configuration: string
 		/**
+		 * E​s​s​e​n​t​i​e​l
+		 */
+		essential: string
+		/**
+		 * P​e​r​s​o​n​n​e​l
+		 */
+		personnel: string
+		/**
+		 * O​p​é​r​a​t​i​o​n​s
+		 */
+		operations: string
+		/**
+		 * A​s​s​i​d​u​i​t​é​ ​&​ ​C​o​n​d​u​i​t​e
+		 */
+		attendanceAndConduct: string
+		/**
+		 * N​o​t​e​s​ ​e​t​ ​m​o​y​e​n​n​e​s
+		 */
+		gradesAndAverages: string
+		/**
+		 * S​y​s​t​è​m​e
+		 */
+		system: string
+		/**
+		 * C​o​n​f​i​g​u​r​a​t​i​o​n​s
+		 */
+		configurations: string
+		/**
 		 * O​p​é​r​a​t​i​o​n​s​ ​Q​u​o​t​i​d​i​e​n​n​e​s
 		 */
 		dailyOperations: string
@@ -3963,6 +3991,10 @@ type RootTranslation = {
 			 * G​é​r​e​r​ ​l​e​s​ ​é​c​h​é​a​n​c​i​e​r​s​ ​d​e​ ​p​a​i​e​m​e​n​t
 			 */
 			description: string
+			/**
+			 * C​r​é​e​r​ ​u​n​ ​p​l​a​n
+			 */
+			create: string
 			/**
 			 * A​u​c​u​n​ ​p​l​a​n​ ​d​e​ ​p​a​i​e​m​e​n​t
 			 */
@@ -7341,6 +7373,24 @@ type RootTranslation = {
 		 * É​c​h​e​c​ ​d​e​ ​l​'​e​n​r​e​g​i​s​t​r​e​m​e​n​t
 		 */
 		saveFailed: string
+		tabs: {
+			/**
+			 * P​é​d​a​g​o​g​i​e​ ​&​ ​B​u​l​l​e​t​i​n​s
+			 */
+			pedagogicalAndReportCards: string
+			/**
+			 * A​s​s​i​d​u​i​t​é​ ​&​ ​C​o​n​d​u​i​t​e
+			 */
+			attendanceAndConduct: string
+			/**
+			 * C​o​m​p​t​a​b​i​l​i​t​é​ ​&​ ​F​i​n​a​n​c​e​s
+			 */
+			accountingAndFinance: string
+			/**
+			 * S​y​s​t​è​m​e​ ​&​ ​N​o​t​i​f​i​c​a​t​i​o​n​s
+			 */
+			systemAndNotifications: string
+		}
 		profile: {
 			/**
 			 * P​r​o​f​i​l​ ​d​e​ ​l​'​é​c​o​l​e
@@ -8405,6 +8455,16 @@ type RootTranslation = {
 			deleteConfirmDescription: RequiredParams<'name'>
 		}
 	}
+	programs: {
+		/**
+		 * A​v​a​n​c​e​m​e​n​t
+		 */
+		progress: string
+		/**
+		 * G​e​s​t​i​o​n​ ​a​c​a​d​é​m​i​q​u​e​ ​e​t​ ​s​u​i​v​i​ ​p​é​d​a​g​o​g​i​q​u​e
+		 */
+		description: string
+	}
 }
 
 export type TranslationFunctions = {
@@ -9079,6 +9139,34 @@ export type TranslationFunctions = {
 		 * Configuration
 		 */
 		configuration: () => LocalizedString
+		/**
+		 * Essentiel
+		 */
+		essential: () => LocalizedString
+		/**
+		 * Personnel
+		 */
+		personnel: () => LocalizedString
+		/**
+		 * Opérations
+		 */
+		operations: () => LocalizedString
+		/**
+		 * Assiduité & Conduite
+		 */
+		attendanceAndConduct: () => LocalizedString
+		/**
+		 * Notes et moyennes
+		 */
+		gradesAndAverages: () => LocalizedString
+		/**
+		 * Système
+		 */
+		system: () => LocalizedString
+		/**
+		 * Configurations
+		 */
+		configurations: () => LocalizedString
 		/**
 		 * Opérations Quotidiennes
 		 */
@@ -12318,6 +12406,10 @@ export type TranslationFunctions = {
 			 * Gérer les échéanciers de paiement
 			 */
 			description: () => LocalizedString
+			/**
+			 * Créer un plan
+			 */
+			create: () => LocalizedString
 			/**
 			 * Aucun plan de paiement
 			 */
@@ -15655,6 +15747,24 @@ export type TranslationFunctions = {
 		 * Échec de l'enregistrement
 		 */
 		saveFailed: () => LocalizedString
+		tabs: {
+			/**
+			 * Pédagogie & Bulletins
+			 */
+			pedagogicalAndReportCards: () => LocalizedString
+			/**
+			 * Assiduité & Conduite
+			 */
+			attendanceAndConduct: () => LocalizedString
+			/**
+			 * Comptabilité & Finances
+			 */
+			accountingAndFinance: () => LocalizedString
+			/**
+			 * Système & Notifications
+			 */
+			systemAndNotifications: () => LocalizedString
+		}
 		profile: {
 			/**
 			 * Profil de l'école
@@ -16711,6 +16821,16 @@ export type TranslationFunctions = {
 			 */
 			deleteConfirmDescription: (arg: { name: unknown }) => LocalizedString
 		}
+	}
+	programs: {
+		/**
+		 * Avancement
+		 */
+		progress: () => LocalizedString
+		/**
+		 * Gestion académique et suivi pédagogique
+		 */
+		description: () => LocalizedString
 	}
 }
 

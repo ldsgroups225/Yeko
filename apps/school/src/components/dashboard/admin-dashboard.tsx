@@ -17,6 +17,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { dashboardOptions } from '@/lib/queries/dashboard'
 
@@ -87,7 +88,8 @@ function formatMonthLabel(yearMonth: string): string {
 
 export function AdminDashboard() {
   const t = useTranslations()
-  const { data, isPending } = useQuery(dashboardOptions.admin())
+  const { schoolYearId } = useSchoolYearContext()
+  const { data, isPending } = useQuery(dashboardOptions.admin(schoolYearId || undefined))
 
   if (isPending) {
     return <DashboardSkeleton />
@@ -122,13 +124,6 @@ export function AdminDashboard() {
       initial="hidden"
       animate="show"
     >
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">{t.nav.dashboard()}</h1>
-        <p className="text-muted-foreground">
-          {t.dashboard.description()}
-        </p>
-      </div>
-
       <motion.div
         variants={container}
         initial="hidden"

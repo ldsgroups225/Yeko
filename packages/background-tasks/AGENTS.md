@@ -7,10 +7,10 @@
 
 ## Quick Reference
 
-| Action | Command |
-| --- | --- |
-| Typecheck | `pnpm typecheck` |
-| Lint + fix | `pnpm lint:fix` |
+| Action     | Command          |
+| ---------- | ---------------- |
+| Typecheck  | `pnpm typecheck` |
+| Lint + fix | `pnpm lint:fix`  |
 
 ---
 
@@ -45,23 +45,23 @@ setExecutionContext(ctx)
 Send messages to CF Queues for async processing:
 
 ```typescript
-import { setQueueBinding, sendToQueue } from '@repo/background-tasks'
+import { sendToQueue, setQueueBinding } from '@repo/background-tasks'
 
 // Set the queue binding (once per request)
 setQueueBinding(env.LOGS_QUEUE)
 
 // Send a task
-await sendToQueue({ type: 'LOG_EVENT', payload: { ... } })
+await sendToQueue({ type: 'LOG_EVENT', payload: { /* data */ } })
 ```
 
 ---
 
 ## Consumers
 
-| Package | How It Uses This |
-| --- | --- |
-| `apps/school` | Sets execution context + queue binding in `server.ts` |
-| `packages/queue-worker` | Processes queued tasks (consumer side) |
+| Package                 | How It Uses This                                      |
+| ----------------------- | ----------------------------------------------------- |
+| `apps/school`           | Sets execution context + queue binding in `server.ts` |
+| `packages/queue-worker` | Processes queued tasks (consumer side)                |
 
 ---
 

@@ -1,4 +1,4 @@
-import { IconFileText, IconHash, IconPercentage, IconTrendingUp, IconTrophy, IconUser } from '@tabler/icons-react'
+import { IconHash, IconPercentage, IconTrendingUp, IconTrophy, IconUser } from '@tabler/icons-react'
 import { Badge } from '@workspace/ui/components/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import {

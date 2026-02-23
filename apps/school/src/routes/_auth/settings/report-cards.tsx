@@ -108,13 +108,7 @@ function ReportCardTemplatesSettingsPage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="flex items-center justify-between"
-      >
-        <div>{/* Header handled by layout */}</div>
+      <div className="flex justify-end">
         <Button
           onClick={() => setIsCreateDialogOpen(true)}
           className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90"
@@ -122,7 +116,7 @@ function ReportCardTemplatesSettingsPage() {
           <IconPlus className="mr-2 h-4 w-4" />
           {t.common.create()}
         </Button>
-      </motion.div>
+      </div>
 
       {/* Templates Table */}
       <motion.div

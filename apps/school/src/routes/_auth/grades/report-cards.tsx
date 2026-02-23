@@ -1,4 +1,4 @@
-import { IconCalendar, IconChartBar, IconChecks, IconFileText, IconFilter, IconLayoutGrid, IconList, IconSchool, IconSearch } from '@tabler/icons-react'
+import { IconCalendar, IconChartBar, IconFileText, IconFilter, IconLayoutGrid, IconList, IconSchool, IconSearch } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -15,10 +15,9 @@ import {
 } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { ClassAveragesTable } from '@/components/grades'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { BulkGenerationDialog, ReportCardList } from '@/components/report-cards'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
@@ -34,7 +33,7 @@ import {
   getReportCards,
   getReportCardTemplates,
 } from '@/school/functions/report-cards'
-import { getSchoolYears } from '@/school/functions/school-years'
+
 import { getTerms } from '@/school/functions/terms'
 
 export const Route = createFileRoute('/_auth/grades/report-cards')({
@@ -51,23 +50,18 @@ function ReportCardsPage() {
 
   const [selectedTermId, setSelectedTermId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
-  const [localYearId, setLocalYearId] = useState<string>('')
   const [search, setSearch] = useState('')
   const [isGenerationDialogOpen, setIsGenerationDialogOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'cards' | 'averages'>('cards')
   const navigate = useNavigate()
 
-  // Fetch school years
-  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
-    queryKey: ['school-years'],
-    queryFn: () => getSchoolYears(),
-    staleTime: 5 * 60 * 1000,
-  })
+  // Reset local filters when global school year changes
+  useEffect(() => {
+    setSelectedTermId('')
+    setSelectedClassId('')
+  }, [contextSchoolYearId])
 
-  // Determine effective year ID
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const activeYear = schoolYears?.find((y: { isActive: boolean }) => y.isActive)
-  const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
+  const effectiveYearId = contextSchoolYearId || ''
 
   // Fetch terms for selected year
   const { data: termsResult, isPending: termsPending } = useQuery({
@@ -228,24 +222,6 @@ function ReportCardsPage() {
 
   return (
     <div className="space-y-8">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.grades(), href: '/grades' },
-          { label: t.reportCards.title() },
-        ]}
-      />
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-            <IconChecks className="size-8" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight">{t.reportCards.title()}</h1>
-            <p className="text-muted-foreground font-medium italic">{t.reportCards.description()}</p>
-          </div>
-        </div>
-      </div>
 
       {/* Filters Card */}
       <motion.div
@@ -253,40 +229,7 @@ function ReportCardsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="rounded-3xl border border-border/40 bg-card/30 p-6 backdrop-blur-xl shadow-xl space-y-6"
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* School Year */}
-          <div className="space-y-2.5">
-            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
-              {t.settings.schoolYears.title()}
-            </Label>
-            {yearsPending || contextPending
-              ? (
-                  <Skeleton className="h-11 w-full rounded-xl" />
-                )
-              : (
-                  <Select
-                    value={effectiveYearId}
-                    onValueChange={val => setLocalYearId(val ?? '')}
-                  >
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                      <div className="flex items-center gap-2">
-                        <IconCalendar className="size-3.5 text-muted-foreground" />
-                        <SelectValue placeholder={t.schoolYear.select()}>
-                          {schoolYears?.find(y => y.id === effectiveYearId)?.template.name}
-                        </SelectValue>
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                      {schoolYears?.map(year => (
-                        <SelectItem key={year.id} value={year.id} className="rounded-lg font-semibold">
-                          {year.template.name}
-                          {year.isActive && ` (${t.schoolYear.activeSuffix()})`}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* Term */}
           <div className="space-y-2.5">
@@ -305,7 +248,19 @@ function ReportCardsPage() {
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
                       <SelectValue placeholder={t.terms.select()}>
-                        {currentTerm?.template.name}
+                        {selectedTermId
+                          ? (() => {
+                              const selectedItem = terms?.find(term => term.id === selectedTermId)
+                              return selectedItem
+                                ? (
+                                    <div className="flex items-center gap-2">
+                                      <IconCalendar className="size-3.5 text-muted-foreground" />
+                                      <span className="font-semibold">{selectedItem.template.name}</span>
+                                    </div>
+                                  )
+                                : null
+                            })()
+                          : undefined}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
@@ -335,12 +290,25 @@ function ReportCardsPage() {
                     disabled={!effectiveYearId}
                   >
                     <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
-                      <div className="flex items-center gap-2">
-                        <IconLayoutGrid className="size-3.5 text-muted-foreground" />
-                        <SelectValue placeholder={t.classes.select()}>
-                          {currentClass ? `${currentClass.grade.name} ${currentClass.class.section}` : null}
-                        </SelectValue>
-                      </div>
+                      <SelectValue placeholder={t.classes.select()}>
+                        {selectedClassId
+                          ? (() => {
+                              const selectedItem = classes?.find(item => item.class.id === selectedClassId)
+                              return selectedItem
+                                ? (
+                                    <div className="flex items-center gap-2">
+                                      <IconLayoutGrid className="size-3.5 text-muted-foreground" />
+                                      <span className="font-semibold">
+                                        {selectedItem.grade.name}
+                                        {' '}
+                                        {selectedItem.class.section}
+                                      </span>
+                                    </div>
+                                  )
+                                : null
+                            })()
+                          : undefined}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
                       {classes?.map(item => (

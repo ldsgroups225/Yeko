@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Skeleton } from '@workspace/ui/components/skeleton'
-import { motion } from 'motion/react'
 import { lazy, Suspense } from 'react'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { useTranslations } from '@/i18n'
 import { financeStatsOptions, refundsOptions, studentFeesOptions } from '@/lib/queries'
 
 const FinancialDashboard = lazy(() => import('@/components/finance').then(m => ({ default: m.FinancialDashboard })))
@@ -14,8 +11,6 @@ export const Route = createFileRoute('/_auth/accounting/dashboard')({
 })
 
 function FinanceDashboardPage() {
-  const t = useTranslations()
-
   const { data: studentsWithBalance, isPending: isPendingStudents } = useQuery(
     studentFeesOptions.withBalance(),
   )
@@ -54,23 +49,6 @@ function FinanceDashboardPage() {
 
   return (
     <div className="space-y-8 p-1">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.finance(), href: '/accounting' },
-          { label: t.finance.dashboard.title() },
-        ]}
-      />
-
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="flex items-center gap-4"
-      >
-        <div>
-          <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.dashboard.title()}</h1>
-          <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.finance.title()}</p>
-        </div>
-      </motion.div>
 
       <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-xl" />}>
         <FinancialDashboard

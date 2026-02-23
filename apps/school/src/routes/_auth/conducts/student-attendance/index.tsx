@@ -14,13 +14,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { StudentAttendanceGrid } from '@/components/attendance/student/student-attendance-grid'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { classAttendanceOptions } from '@/lib/queries/student-attendance'
 import { getClasses } from '@/school/functions/classes'
-import { getSchoolYears } from '@/school/functions/school-years'
 import { bulkRecordClassAttendance } from '@/school/functions/student-attendance'
 
 export const Route = createFileRoute('/_auth/conducts/student-attendance/')({
@@ -53,14 +51,7 @@ function StudentAttendancePage() {
   const [date, setDate] = useState(() => new Date())
   const [classId, setClassId] = useState<string>('')
 
-  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
-  const { data: schoolYearsResult } = useQuery({
-    queryKey: ['school-years'],
-    queryFn: () => getSchoolYears(),
-  })
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
-  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id
+  const { schoolYearId } = useSchoolYearContext()
 
   const { data: classesResult } = useQuery({
     queryKey: ['classes', { schoolYearId }],
@@ -123,43 +114,19 @@ function StudentAttendancePage() {
 
   return (
     <div className="space-y-8 p-1">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.schoolLife(), href: '/conducts' },
-          { label: t.schoolLife.studentAttendance() },
-        ]}
-      />
-
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-4"
-        >
-          <div>
-            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.studentAttendance()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.attendance.studentAttendanceDescription()}</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex gap-3"
-        >
-          <Link to="/conducts/student-attendance/history">
-            <Button variant="outline" size="sm" className="rounded-xl border-border/40 hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px] h-10 px-4">
-              <IconHistory className="mr-2 h-4 w-4" />
-              {t.attendance.history()}
-            </Button>
-          </Link>
-          <Link to="/conducts/student-attendance/statistics">
-            <Button variant="outline" size="sm" className="rounded-xl border-border/40 hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px] h-10 px-4">
-              <IconChartBar className="mr-2 h-4 w-4" />
-              {t.attendance.statistics()}
-            </Button>
-          </Link>
-        </motion.div>
+      <div className="flex justify-end gap-3">
+        <Link to="/conducts/student-attendance/history">
+          <Button variant="outline" size="sm" className="rounded-xl border-border/40 hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px] h-10 px-4">
+            <IconHistory className="mr-2 h-4 w-4" />
+            {t.attendance.history()}
+          </Button>
+        </Link>
+        <Link to="/conducts/student-attendance/statistics">
+          <Button variant="outline" size="sm" className="rounded-xl border-border/40 hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px] h-10 px-4">
+            <IconChartBar className="mr-2 h-4 w-4" />
+            {t.attendance.statistics()}
+          </Button>
+        </Link>
       </div>
 
       <motion.div

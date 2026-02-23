@@ -177,6 +177,14 @@ const en: Translation = {
     treasury: 'Treasury',
     configuration: 'Configuration',
 
+    essential: 'Essential',
+    personnel: 'Personnel',
+    operations: 'Operations',
+    attendanceAndConduct: 'Attendance & Conduct',
+    gradesAndAverages: 'Grades & Averages',
+    system: 'System',
+    configurations: 'Configurations',
+
     dailyOperations: 'Daily Operations',
     academicOperations: 'Academic Operations',
     administration: 'Administration',
@@ -1074,6 +1082,7 @@ const en: Translation = {
     paymentPlans: {
       title: 'Payment Plans',
       description: 'Manage payment schedules',
+      create: 'Create Plan',
       noPaymentPlans: 'No payment plans',
       totalAmount: 'Total Amount',
       progress: 'Progress',
@@ -2067,6 +2076,12 @@ const en: Translation = {
     description: 'Configure school settings',
     saved: 'IconSettings saved',
     saveFailed: 'Failed to save settings',
+    tabs: {
+      pedagogicalAndReportCards: 'Pedagogy & Report Cards',
+      attendanceAndConduct: 'Attendance & Conduct',
+      accountingAndFinance: 'Accounting & Finance',
+      systemAndNotifications: 'System & Notifications',
+    },
     profile: {
       title: 'School Profile',
       description: 'Manage your school information and settings',
@@ -2398,6 +2413,10 @@ const en: Translation = {
       deleteConfirmTitle: 'Confirm Deletion',
       deleteConfirmDescription: 'Are you sure you want to delete "{name}"?',
     },
+  },
+  programs: {
+    progress: 'Progress',
+    description: 'Academic management and pedagogical tracking',
   },
 }
 

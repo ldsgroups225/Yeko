@@ -1,5 +1,5 @@
 import type { GradeType } from '@/schemas/grade'
-import { IconCalendar, IconClipboardCheck, IconLayoutGrid, IconListCheck, IconRotate, IconSettings, IconUserCheck } from '@tabler/icons-react'
+import { IconCalendar, IconLayoutGrid, IconListCheck, IconRotate, IconSettings, IconUserCheck } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -18,7 +18,6 @@ import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { GradeEntryTable, GradeTypeSelector } from '@/components/grades'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useCurrentTeacher } from '@/hooks/use-current-teacher'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
@@ -129,24 +128,6 @@ function GradeEntryPage() {
 
   return (
     <div className="space-y-8">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.grades(), href: '/grades' },
-          { label: t.academic.grades.entry.title() },
-        ]}
-      />
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-            <IconClipboardCheck className="size-8" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight">{t.academic.grades.entry.title()}</h1>
-            <p className="text-muted-foreground font-medium italic">{t.academic.grades.entry.subtitle()}</p>
-          </div>
-        </div>
-      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

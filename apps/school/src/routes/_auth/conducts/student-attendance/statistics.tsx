@@ -21,7 +21,6 @@ import { useTranslations } from '@/i18n'
 import { attendanceStatisticsOptions } from '@/lib/queries/student-attendance'
 import { cn } from '@/lib/utils'
 import { getClasses } from '@/school/functions/classes'
-import { getSchoolYears } from '@/school/functions/school-years'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/conducts/student-attendance/statistics')({
@@ -38,14 +37,7 @@ function StudentAttendanceStatisticsPage() {
   })
   const [endDate, setEndDate] = useState(() => new Date())
 
-  const { schoolYearId: contextSchoolYearId } = useSchoolYearContext()
-  const { data: schoolYearsResult } = useQuery({
-    queryKey: ['school-years'],
-    queryFn: () => getSchoolYears(),
-  })
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const activeSchoolYear = schoolYears.find(sy => sy.isActive)
-  const schoolYearId = contextSchoolYearId || activeSchoolYear?.id || 'current-year'
+  const { schoolYearId } = useSchoolYearContext()
 
   const { data: classesResult } = useQuery({
     queryKey: ['classes', { schoolYearId }],

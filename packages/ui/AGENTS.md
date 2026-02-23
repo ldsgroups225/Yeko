@@ -9,10 +9,10 @@ See @../../AGENTS.md for project-wide UI/UX standards.
 
 ## Quick Reference
 
-| Action | Command |
-| --- | --- |
-| Typecheck | `pnpm typecheck` |
-| Lint + fix | `pnpm lint:fix` |
+| Action     | Command          |
+| ---------- | ---------------- |
+| Typecheck  | `pnpm typecheck` |
+| Lint + fix | `pnpm lint:fix`  |
 
 ---
 
@@ -64,11 +64,11 @@ import { Button } from '@workspace/ui/components/button'
 import { Dialog } from '@workspace/ui/components/dialog'
 import { Select } from '@workspace/ui/components/select'
 
-// Utilities
-import { cn } from '@workspace/ui/lib/utils'
-
 // Hooks
 import { useMediaQuery } from '@workspace/ui/hooks/use-media-query'
+
+// Utilities
+import { cn } from '@workspace/ui/lib/utils'
 
 // Styles
 import '@workspace/ui/globals.css'
@@ -101,10 +101,12 @@ The `components.json` in this package configures shadcn generation:
 
 Always use `cn()` for conditional class merging:
 
-```typescript
+```tsx
 import { cn } from '@workspace/ui/lib/utils'
 
-<div className={cn('base-class', isActive && 'active-class')} />
+export function MyComponent({ isActive }: { isActive: boolean }) {
+  return <div className={cn('base-class', isActive && 'active-class')} />
+}
 ```
 
 ### SelectValue Labels
@@ -112,11 +114,17 @@ import { cn } from '@workspace/ui/lib/utils'
 `SelectTrigger` MUST display human-readable labels:
 
 ```tsx
-// ✅ Correct
-<SelectValue>{items.find(i => i.id === value)?.name}</SelectValue>
+export function SelectExample({ items, value }: any) {
+  return (
+    <>
+      {/* ✅ Correct */}
+      <SelectValue>{items.find((i: any) => i.id === value)?.name}</SelectValue>
 
-// ❌ Wrong — shows raw ID or nothing
-<SelectValue />
+      {/* ❌ Wrong — shows raw ID or nothing */}
+      <SelectValue />
+    </>
+  )
+}
 ```
 
 ---

@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PageHeader } from '@workspace/ui/components/page-header'
 import { z } from 'zod'
 import { ClassesTable } from '@/components/academic/classes/classes-table'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
@@ -27,12 +28,10 @@ function ClassesPage() {
         ]}
       />
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t.nav.classes()}</h1>
-          <p className="text-muted-foreground">{t.classes.description()}</p>
-        </div>
-      </div>
+      <PageHeader
+        title={t.nav.classes()}
+        description={t.classes.description()}
+      />
 
       <ClassesTable filters={search} />
     </div>

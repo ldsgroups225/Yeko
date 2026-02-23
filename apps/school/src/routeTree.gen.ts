@@ -27,6 +27,7 @@ import { Route as AuthUsersIndexRouteImport } from './routes/_auth/users/index'
 import { Route as AuthStudentsIndexRouteImport } from './routes/_auth/students/index'
 import { Route as AuthSpacesIndexRouteImport } from './routes/_auth/spaces/index'
 import { Route as AuthSettingsIndexRouteImport } from './routes/_auth/settings/index'
+import { Route as AuthProgramsIndexRouteImport } from './routes/_auth/programs/index'
 import { Route as AuthGradesIndexRouteImport } from './routes/_auth/grades/index'
 import { Route as AuthConductsIndexRouteImport } from './routes/_auth/conducts/index'
 import { Route as AuthClassesIndexRouteImport } from './routes/_auth/classes/index'
@@ -42,6 +43,7 @@ import { Route as AuthSettingsReportCardsRouteImport } from './routes/_auth/sett
 import { Route as AuthSettingsProfileRouteImport } from './routes/_auth/settings/profile'
 import { Route as AuthSettingsPedagogicalStructureRouteImport } from './routes/_auth/settings/pedagogical-structure'
 import { Route as AuthSettingsNotificationsRouteImport } from './routes/_auth/settings/notifications'
+import { Route as AuthSettingsFinanceRouteImport } from './routes/_auth/settings/finance'
 import { Route as AuthProgramsSubjectsRouteImport } from './routes/_auth/programs/subjects'
 import { Route as AuthProgramsCurriculumProgressRouteImport } from './routes/_auth/programs/curriculum-progress'
 import { Route as AuthProgramsCoefficientsRouteImport } from './routes/_auth/programs/coefficients'
@@ -52,7 +54,6 @@ import { Route as AuthGradesEntryRouteImport } from './routes/_auth/grades/entry
 import { Route as AuthConductsSettingsRouteImport } from './routes/_auth/conducts/settings'
 import { Route as AuthClassesAssignmentsRouteImport } from './routes/_auth/classes/assignments'
 import { Route as AuthAccountingStudentFeesRouteImport } from './routes/_auth/accounting/student-fees'
-import { Route as AuthAccountingSetupRouteImport } from './routes/_auth/accounting/setup'
 import { Route as AuthAccountingRefundsRouteImport } from './routes/_auth/accounting/refunds'
 import { Route as AuthAccountingPaymentsRouteImport } from './routes/_auth/accounting/payments'
 import { Route as AuthAccountingPaymentPlansRouteImport } from './routes/_auth/accounting/payment-plans'
@@ -187,6 +188,11 @@ const AuthSettingsIndexRoute = AuthSettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthSettingsRoute,
 } as any)
+const AuthProgramsIndexRoute = AuthProgramsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthProgramsRoute,
+} as any)
 const AuthGradesIndexRoute = AuthGradesIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -265,6 +271,11 @@ const AuthSettingsNotificationsRoute =
     path: '/notifications',
     getParentRoute: () => AuthSettingsRoute,
   } as any)
+const AuthSettingsFinanceRoute = AuthSettingsFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => AuthSettingsRoute,
+} as any)
 const AuthProgramsSubjectsRoute = AuthProgramsSubjectsRouteImport.update({
   id: '/subjects',
   path: '/subjects',
@@ -318,11 +329,6 @@ const AuthAccountingStudentFeesRoute =
     path: '/student-fees',
     getParentRoute: () => AuthAccountingRoute,
   } as any)
-const AuthAccountingSetupRoute = AuthAccountingSetupRouteImport.update({
-  id: '/setup',
-  path: '/setup',
-  getParentRoute: () => AuthAccountingRoute,
-} as any)
 const AuthAccountingRefundsRoute = AuthAccountingRefundsRouteImport.update({
   id: '/refunds',
   path: '/refunds',
@@ -593,7 +599,6 @@ export interface FileRoutesByFullPath {
   '/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
   '/accounting/payments': typeof AuthAccountingPaymentsRoute
   '/accounting/refunds': typeof AuthAccountingRefundsRoute
-  '/accounting/setup': typeof AuthAccountingSetupRoute
   '/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
   '/classes/assignments': typeof AuthClassesAssignmentsRoute
   '/conducts/settings': typeof AuthConductsSettingsRoute
@@ -604,6 +609,7 @@ export interface FileRoutesByFullPath {
   '/programs/coefficients': typeof AuthProgramsCoefficientsRoute
   '/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/programs/subjects': typeof AuthProgramsSubjectsRoute
+  '/settings/finance': typeof AuthSettingsFinanceRoute
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/settings/profile': typeof AuthSettingsProfileRoute
@@ -619,6 +625,7 @@ export interface FileRoutesByFullPath {
   '/classes/': typeof AuthClassesIndexRoute
   '/conducts/': typeof AuthConductsIndexRoute
   '/grades/': typeof AuthGradesIndexRoute
+  '/programs/': typeof AuthProgramsIndexRoute
   '/settings/': typeof AuthSettingsIndexRoute
   '/spaces/': typeof AuthSpacesIndexRoute
   '/students/': typeof AuthStudentsIndexRoute
@@ -662,7 +669,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
   '/dashboard': typeof AuthDashboardRoute
-  '/programs': typeof AuthProgramsRouteWithChildren
   '/schedules': typeof AuthSchedulesRoute
   '/accounting/accounts': typeof AuthAccountingAccountsRoute
   '/accounting/dashboard': typeof AuthAccountingDashboardRoute
@@ -674,7 +680,6 @@ export interface FileRoutesByTo {
   '/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
   '/accounting/payments': typeof AuthAccountingPaymentsRoute
   '/accounting/refunds': typeof AuthAccountingRefundsRoute
-  '/accounting/setup': typeof AuthAccountingSetupRoute
   '/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
   '/classes/assignments': typeof AuthClassesAssignmentsRoute
   '/conducts/settings': typeof AuthConductsSettingsRoute
@@ -685,6 +690,7 @@ export interface FileRoutesByTo {
   '/programs/coefficients': typeof AuthProgramsCoefficientsRoute
   '/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/programs/subjects': typeof AuthProgramsSubjectsRoute
+  '/settings/finance': typeof AuthSettingsFinanceRoute
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/settings/profile': typeof AuthSettingsProfileRoute
@@ -700,6 +706,7 @@ export interface FileRoutesByTo {
   '/classes': typeof AuthClassesIndexRoute
   '/conducts': typeof AuthConductsIndexRoute
   '/grades': typeof AuthGradesIndexRoute
+  '/programs': typeof AuthProgramsIndexRoute
   '/settings': typeof AuthSettingsIndexRoute
   '/spaces': typeof AuthSpacesIndexRoute
   '/students': typeof AuthStudentsIndexRoute
@@ -765,7 +772,6 @@ export interface FileRoutesById {
   '/_auth/accounting/payment-plans': typeof AuthAccountingPaymentPlansRoute
   '/_auth/accounting/payments': typeof AuthAccountingPaymentsRoute
   '/_auth/accounting/refunds': typeof AuthAccountingRefundsRoute
-  '/_auth/accounting/setup': typeof AuthAccountingSetupRoute
   '/_auth/accounting/student-fees': typeof AuthAccountingStudentFeesRoute
   '/_auth/classes/assignments': typeof AuthClassesAssignmentsRoute
   '/_auth/conducts/settings': typeof AuthConductsSettingsRoute
@@ -776,6 +782,7 @@ export interface FileRoutesById {
   '/_auth/programs/coefficients': typeof AuthProgramsCoefficientsRoute
   '/_auth/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/_auth/programs/subjects': typeof AuthProgramsSubjectsRoute
+  '/_auth/settings/finance': typeof AuthSettingsFinanceRoute
   '/_auth/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/_auth/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/_auth/settings/profile': typeof AuthSettingsProfileRoute
@@ -791,6 +798,7 @@ export interface FileRoutesById {
   '/_auth/classes/': typeof AuthClassesIndexRoute
   '/_auth/conducts/': typeof AuthConductsIndexRoute
   '/_auth/grades/': typeof AuthGradesIndexRoute
+  '/_auth/programs/': typeof AuthProgramsIndexRoute
   '/_auth/settings/': typeof AuthSettingsIndexRoute
   '/_auth/spaces/': typeof AuthSpacesIndexRoute
   '/_auth/students/': typeof AuthStudentsIndexRoute
@@ -856,7 +864,6 @@ export interface FileRouteTypes {
     | '/accounting/payment-plans'
     | '/accounting/payments'
     | '/accounting/refunds'
-    | '/accounting/setup'
     | '/accounting/student-fees'
     | '/classes/assignments'
     | '/conducts/settings'
@@ -867,6 +874,7 @@ export interface FileRouteTypes {
     | '/programs/coefficients'
     | '/programs/curriculum-progress'
     | '/programs/subjects'
+    | '/settings/finance'
     | '/settings/notifications'
     | '/settings/pedagogical-structure'
     | '/settings/profile'
@@ -882,6 +890,7 @@ export interface FileRouteTypes {
     | '/classes/'
     | '/conducts/'
     | '/grades/'
+    | '/programs/'
     | '/settings/'
     | '/spaces/'
     | '/students/'
@@ -925,7 +934,6 @@ export interface FileRouteTypes {
     | '/'
     | '/reset-password'
     | '/dashboard'
-    | '/programs'
     | '/schedules'
     | '/accounting/accounts'
     | '/accounting/dashboard'
@@ -937,7 +945,6 @@ export interface FileRouteTypes {
     | '/accounting/payment-plans'
     | '/accounting/payments'
     | '/accounting/refunds'
-    | '/accounting/setup'
     | '/accounting/student-fees'
     | '/classes/assignments'
     | '/conducts/settings'
@@ -948,6 +955,7 @@ export interface FileRouteTypes {
     | '/programs/coefficients'
     | '/programs/curriculum-progress'
     | '/programs/subjects'
+    | '/settings/finance'
     | '/settings/notifications'
     | '/settings/pedagogical-structure'
     | '/settings/profile'
@@ -963,6 +971,7 @@ export interface FileRouteTypes {
     | '/classes'
     | '/conducts'
     | '/grades'
+    | '/programs'
     | '/settings'
     | '/spaces'
     | '/students'
@@ -1027,7 +1036,6 @@ export interface FileRouteTypes {
     | '/_auth/accounting/payment-plans'
     | '/_auth/accounting/payments'
     | '/_auth/accounting/refunds'
-    | '/_auth/accounting/setup'
     | '/_auth/accounting/student-fees'
     | '/_auth/classes/assignments'
     | '/_auth/conducts/settings'
@@ -1038,6 +1046,7 @@ export interface FileRouteTypes {
     | '/_auth/programs/coefficients'
     | '/_auth/programs/curriculum-progress'
     | '/_auth/programs/subjects'
+    | '/_auth/settings/finance'
     | '/_auth/settings/notifications'
     | '/_auth/settings/pedagogical-structure'
     | '/_auth/settings/profile'
@@ -1053,6 +1062,7 @@ export interface FileRouteTypes {
     | '/_auth/classes/'
     | '/_auth/conducts/'
     | '/_auth/grades/'
+    | '/_auth/programs/'
     | '/_auth/settings/'
     | '/_auth/spaces/'
     | '/_auth/students/'
@@ -1228,6 +1238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSettingsIndexRouteImport
       parentRoute: typeof AuthSettingsRoute
     }
+    '/_auth/programs/': {
+      id: '/_auth/programs/'
+      path: '/'
+      fullPath: '/programs/'
+      preLoaderRoute: typeof AuthProgramsIndexRouteImport
+      parentRoute: typeof AuthProgramsRoute
+    }
     '/_auth/grades/': {
       id: '/_auth/grades/'
       path: '/'
@@ -1333,6 +1350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSettingsNotificationsRouteImport
       parentRoute: typeof AuthSettingsRoute
     }
+    '/_auth/settings/finance': {
+      id: '/_auth/settings/finance'
+      path: '/finance'
+      fullPath: '/settings/finance'
+      preLoaderRoute: typeof AuthSettingsFinanceRouteImport
+      parentRoute: typeof AuthSettingsRoute
+    }
     '/_auth/programs/subjects': {
       id: '/_auth/programs/subjects'
       path: '/subjects'
@@ -1401,13 +1425,6 @@ declare module '@tanstack/react-router' {
       path: '/student-fees'
       fullPath: '/accounting/student-fees'
       preLoaderRoute: typeof AuthAccountingStudentFeesRouteImport
-      parentRoute: typeof AuthAccountingRoute
-    }
-    '/_auth/accounting/setup': {
-      id: '/_auth/accounting/setup'
-      path: '/setup'
-      fullPath: '/accounting/setup'
-      preLoaderRoute: typeof AuthAccountingSetupRouteImport
       parentRoute: typeof AuthAccountingRoute
     }
     '/_auth/accounting/refunds': {
@@ -1732,7 +1749,6 @@ interface AuthAccountingRouteChildren {
   AuthAccountingPaymentPlansRoute: typeof AuthAccountingPaymentPlansRoute
   AuthAccountingPaymentsRoute: typeof AuthAccountingPaymentsRoute
   AuthAccountingRefundsRoute: typeof AuthAccountingRefundsRoute
-  AuthAccountingSetupRoute: typeof AuthAccountingSetupRoute
   AuthAccountingStudentFeesRoute: typeof AuthAccountingStudentFeesRoute
   AuthAccountingIndexRoute: typeof AuthAccountingIndexRoute
 }
@@ -1749,7 +1765,6 @@ const AuthAccountingRouteChildren: AuthAccountingRouteChildren = {
   AuthAccountingPaymentPlansRoute: AuthAccountingPaymentPlansRoute,
   AuthAccountingPaymentsRoute: AuthAccountingPaymentsRoute,
   AuthAccountingRefundsRoute: AuthAccountingRefundsRoute,
-  AuthAccountingSetupRoute: AuthAccountingSetupRoute,
   AuthAccountingStudentFeesRoute: AuthAccountingStudentFeesRoute,
   AuthAccountingIndexRoute: AuthAccountingIndexRoute,
 }
@@ -1839,12 +1854,14 @@ interface AuthProgramsRouteChildren {
   AuthProgramsCoefficientsRoute: typeof AuthProgramsCoefficientsRoute
   AuthProgramsCurriculumProgressRoute: typeof AuthProgramsCurriculumProgressRoute
   AuthProgramsSubjectsRoute: typeof AuthProgramsSubjectsRoute
+  AuthProgramsIndexRoute: typeof AuthProgramsIndexRoute
 }
 
 const AuthProgramsRouteChildren: AuthProgramsRouteChildren = {
   AuthProgramsCoefficientsRoute: AuthProgramsCoefficientsRoute,
   AuthProgramsCurriculumProgressRoute: AuthProgramsCurriculumProgressRoute,
   AuthProgramsSubjectsRoute: AuthProgramsSubjectsRoute,
+  AuthProgramsIndexRoute: AuthProgramsIndexRoute,
 }
 
 const AuthProgramsRouteWithChildren = AuthProgramsRoute._addFileChildren(
@@ -1852,6 +1869,7 @@ const AuthProgramsRouteWithChildren = AuthProgramsRoute._addFileChildren(
 )
 
 interface AuthSettingsRouteChildren {
+  AuthSettingsFinanceRoute: typeof AuthSettingsFinanceRoute
   AuthSettingsNotificationsRoute: typeof AuthSettingsNotificationsRoute
   AuthSettingsPedagogicalStructureRoute: typeof AuthSettingsPedagogicalStructureRoute
   AuthSettingsProfileRoute: typeof AuthSettingsProfileRoute
@@ -1861,6 +1879,7 @@ interface AuthSettingsRouteChildren {
 }
 
 const AuthSettingsRouteChildren: AuthSettingsRouteChildren = {
+  AuthSettingsFinanceRoute: AuthSettingsFinanceRoute,
   AuthSettingsNotificationsRoute: AuthSettingsNotificationsRoute,
   AuthSettingsPedagogicalStructureRoute: AuthSettingsPedagogicalStructureRoute,
   AuthSettingsProfileRoute: AuthSettingsProfileRoute,

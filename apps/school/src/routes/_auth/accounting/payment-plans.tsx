@@ -1,11 +1,10 @@
-import { IconCalendarTime, IconPlus } from '@tabler/icons-react'
+import { IconPlus } from '@tabler/icons-react'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { PaymentPlansTable } from '@/components/finance'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { paymentPlansOptions } from '@/lib/queries'
 
@@ -32,35 +31,15 @@ function PaymentPlansPage() {
 
   return (
     <div className="space-y-8 p-1">
-      <Breadcrumbs
-        items={[
-          { label: t.nav.finance(), href: '/accounting' },
-          { label: t.finance.paymentPlans.title() },
-        ]}
-      />
-
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="flex items-center justify-between gap-4"
-      >
-        <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconCalendarTime className="size-8 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.paymentPlans.title()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.finance.paymentPlans.description()}</p>
-          </div>
-        </div>
+      <div className="flex justify-end">
         <Button
           onClick={() => navigate({ to: '/accounting/fee-structures' })}
           className="gap-2"
         >
           <IconPlus className="size-4" />
-          Créer un plan
+          {t.finance.paymentPlans.create()}
         </Button>
-      </motion.div>
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

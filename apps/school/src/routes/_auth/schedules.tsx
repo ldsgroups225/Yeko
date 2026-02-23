@@ -3,12 +3,13 @@ import type { TimetableSessionData } from '@/components/timetables/timetable-ses
 import type { SessionFormInput } from '@/components/timetables/timetable-session-dialog'
 import type { CreateTimetableSessionInput, UpdateTimetableSessionInput } from '@/schemas/timetable'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-import { IconCalendar, IconCalendarSearch, IconDownload, IconUpload } from '@tabler/icons-react'
+import { IconCalendarSearch, IconDownload, IconUpload } from '@tabler/icons-react'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
+import { PageHeader } from '@workspace/ui/components/page-header'
 import {
   Select,
   SelectContent,
@@ -37,7 +38,6 @@ import {
 import { getClassSubjects } from '@/school/functions/class-subjects'
 import { getClasses } from '@/school/functions/classes'
 import { getClassrooms } from '@/school/functions/classrooms'
-import { getSchoolYears } from '@/school/functions/school-years'
 import { getTeachers } from '@/school/functions/teachers'
 import {
   createTimetableSession,
@@ -51,14 +51,6 @@ const TimetableSessionDialog = lazy(() => import('@/components/timetables/timeta
 export const Route = createFileRoute('/_auth/schedules')({
   component: TimetablesPage,
 })
-
-interface SchoolYear {
-  id: string
-  isActive: boolean
-  template: {
-    name: string
-  }
-}
 
 interface ExportData {
   day: string
@@ -75,9 +67,9 @@ function TimetablesPage() {
   const { schoolId } = useSchoolContext()
   const { schoolYearId: contextSchoolYearId, isPending: contextPending } = useSchoolYearContext()
   const [viewMode, setViewMode] = useState<TimetableViewMode>('class')
-  const [localYearId, setLocalYearId] = useState<string>('')
   const [selectedClassId, setSelectedClassId] = useState<string>('')
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>('')
+  const [selectedClassroomId, setSelectedClassroomId] = useState<string>('')
 
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -86,17 +78,7 @@ function TimetablesPage() {
   const [selectedSession, setSelectedSession] = useState<TimetableSessionData | null>(null)
   const [selectedSlot, setSelectedSlot] = useState<{ dayOfWeek: number, startTime: string, endTime: string } | null>(null)
 
-  // Fetch school years
-  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
-    queryKey: ['school-years'],
-    queryFn: () => getSchoolYears(),
-    staleTime: 5 * 60 * 1000,
-  })
-
-  // Determine effective year ID
-  const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
-  const activeYear = schoolYears?.find((y: SchoolYear) => y.isActive)
-  const effectiveYearId = contextSchoolYearId || localYearId || activeYear?.id || ''
+  const effectiveYearId = contextSchoolYearId || ''
 
   // Fetch classes for selected year
   const { data: classesResult, isPending: classesPending } = useQuery({
@@ -153,13 +135,21 @@ function TimetablesPage() {
     enabled: viewMode === 'teacher' && !!selectedTeacherId && !!effectiveYearId,
   })
 
-  const timetablePending = viewMode === 'class' ? classTimetablePending : teacherTimetablePending
+  // Fetch timetable for classroom view
+  const { data: classroomTimetableResult, isPending: classroomTimetablePending } = useQuery({
+    ...timetablesOptions.byClassroom({ classroomId: selectedClassroomId, schoolYearId: effectiveYearId }),
+    enabled: viewMode === 'classroom' && !!selectedClassroomId && !!effectiveYearId,
+  })
+
+  const timetablePending = viewMode === 'class' ? classTimetablePending : viewMode === 'teacher' ? teacherTimetablePending : classroomTimetablePending
 
   // Transform timetable data to match TimetableSessionData interface
   const transformedTimetable = useMemo(() => {
     const timetable = viewMode === 'class'
       ? (classTimetableResult || [])
-      : (teacherTimetableResult || [])
+      : viewMode === 'teacher'
+        ? (teacherTimetableResult || [])
+        : (classroomTimetableResult || [])
 
     const sessions = (timetable?.map((session) => {
       // Handle different data structures for class vs teacher views
@@ -174,7 +164,7 @@ function TimetablesPage() {
         teacherId: session.teacherId,
         teacherName,
         classroomId: session.classroomId,
-        classroomName: session.classroom?.name || null,
+        classroomName: 'classroom' in session && session.classroom?.name ? session.classroom.name : null,
         dayOfWeek: session.dayOfWeek,
         startTime: session.startTime,
         endTime: session.endTime,
@@ -183,7 +173,7 @@ function TimetablesPage() {
     }) || []) as TimetableSessionData[]
 
     return detectConflicts(sessions)
-  }, [viewMode, classTimetableResult, teacherTimetableResult])
+  }, [viewMode, classTimetableResult, teacherTimetableResult, classroomTimetableResult])
 
   // Mutations
   const createMutation = useMutation({
@@ -230,6 +220,7 @@ function TimetablesPage() {
     setViewMode(mode)
     setSelectedClassId('')
     setSelectedTeacherId('')
+    setSelectedClassroomId('')
   }
 
   const handleSlotClick = (dayOfWeek: number, startTime: string, endTime: string) => {
@@ -320,7 +311,8 @@ function TimetablesPage() {
   const canShowTimetable
     = effectiveYearId
       && ((viewMode === 'class' && selectedClassId)
-        || (viewMode === 'teacher' && selectedTeacherId))
+        || (viewMode === 'teacher' && selectedTeacherId)
+        || (viewMode === 'classroom' && selectedClassroomId))
 
   // Formatting for dialog
   const formattedSubjects = useMemo(() => classSubjects.map((cs) => {
@@ -349,18 +341,10 @@ function TimetablesPage() {
         ]}
       />
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-4"
-        >
-          <div>
-            <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.timetables.title()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.timetables.description()}</p>
-          </div>
-        </motion.div>
-
+      <PageHeader
+        title={t.timetables.title()}
+        description={t.timetables.description()}
+      >
         <div className="flex gap-3">
           <Button
             variant="outline"
@@ -369,7 +353,7 @@ function TimetablesPage() {
             disabled={!effectiveYearId}
           >
             <IconUpload className="mr-2 h-4 w-4" />
-            Importer
+            {t.common.import()}
           </Button>
           <Button
             variant="outline"
@@ -378,10 +362,10 @@ function TimetablesPage() {
             disabled={!canShowTimetable}
           >
             <IconDownload className="mr-2 h-4 w-4" />
-            Exporter
+            {t.common.export()}
           </Button>
         </div>
-      </div>
+      </PageHeader>
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -392,47 +376,6 @@ function TimetablesPage() {
           <TimetableViewSwitcher value={viewMode} onChange={handleViewModeChange} />
 
           <div className="flex flex-col sm:flex-row gap-4 items-end">
-            {/* School Year */}
-            <div className="w-full sm:w-[240px] space-y-1.5">
-              <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
-                {t.schoolYear.title()}
-              </label>
-              {yearsPending || contextPending
-                ? (
-                    <Skeleton className="h-11 w-full rounded-xl" />
-                  )
-                : (
-                    <Select value={effectiveYearId} onValueChange={val => setLocalYearId(val ?? '')}>
-                      <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                        <SelectValue placeholder={t.schoolYear.select()}>
-                          {effectiveYearId
-                            ? (() => {
-                                const year = schoolYears?.find(y => y.id === effectiveYearId)
-                                return year
-                                  ? (
-                                      <div className="flex items-center gap-2">
-                                        <IconCalendar className="size-3.5 text-primary/60" />
-                                        <span>{year.template.name}</span>
-                                      </div>
-                                    )
-                                  : undefined
-                              })()
-                            : undefined}
-                        </SelectValue>
-                      </SelectTrigger>
-                      <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                        {schoolYears?.map(year => (
-                          <SelectItem key={year.id} value={year.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                            {year.template.name}
-                            {' '}
-                            {year.isActive && t.schoolYear.activeSuffix()}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-            </div>
-
             {/* Class selector (for class view) */}
             {viewMode === 'class' && (
               <motion.div
@@ -533,6 +476,47 @@ function TimetablesPage() {
                         </SelectContent>
                       </Select>
                     )}
+              </motion.div>
+            )}
+            {/* Classroom selector (for classroom view) */}
+            {viewMode === 'classroom' && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="w-full sm:w-[240px] space-y-1.5"
+              >
+                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
+                  {t.spaces.title()}
+                </label>
+                <Select
+                  value={selectedClassroomId}
+                  onValueChange={val => setSelectedClassroomId(val ?? '')}
+                >
+                  <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                    <SelectValue placeholder={t.spaces.availability.title()}>
+                      {selectedClassroomId
+                        ? (() => {
+                            const classroom = classrooms?.find(c => c.id === selectedClassroomId)
+                            return classroom
+                              ? (
+                                  <div className="flex items-center gap-2">
+                                    <div className="size-2 rounded-full bg-primary" />
+                                    <span>{classroom.name}</span>
+                                  </div>
+                                )
+                              : undefined
+                          })()
+                        : undefined}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                    {classrooms?.map(classroom => (
+                      <SelectItem key={classroom.id} value={classroom.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                        {classroom.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </motion.div>
             )}
           </div>

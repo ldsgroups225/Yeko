@@ -41,6 +41,7 @@ import {
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { cn } from '@/lib/utils'
@@ -49,13 +50,8 @@ import {
   getAssignmentMatrix,
   removeTeacherFromClassSubject,
 } from '@/school/functions/class-subjects'
-import { getActiveSchoolYear } from '@/school/functions/school-years'
 import { getAllSubjects } from '@/school/functions/subjects'
 import { getTeachers } from '@/school/functions/teachers'
-
-interface AssignmentMatrixProps {
-  schoolYearId?: string
-}
 
 function MatrixSkeleton() {
   return (
@@ -134,29 +130,19 @@ function EmptyState() {
   )
 }
 
-export function AssignmentMatrix({
-  schoolYearId: propSchoolYearId,
-}: AssignmentMatrixProps) {
+export function AssignmentMatrix() {
   const t = useTranslations()
+  const { schoolYearId } = useSchoolYearContext()
   const queryClient = useQueryClient()
   const [editingCell, setEditingCell] = useState<{
     classId: string
     subjectId: string
   } | null>(null)
 
-  const { data: schoolYearResult } = useQuery({
-    queryKey: ['activeSchoolYear'],
-    queryFn: () => getActiveSchoolYear(),
-    enabled: !propSchoolYearId,
-  })
-
-  const activeSchoolYear = schoolYearResult?.success ? schoolYearResult.data : null
-  const effectiveSchoolYearId = propSchoolYearId || activeSchoolYear?.id
-
   const { data: matrixResult, isPending: isPendingMatrix } = useQuery({
-    queryKey: ['assignmentMatrix', effectiveSchoolYearId],
-    queryFn: () => getAssignmentMatrix({ data: effectiveSchoolYearId! }),
-    enabled: !!effectiveSchoolYearId,
+    queryKey: ['assignmentMatrix', schoolYearId],
+    queryFn: () => getAssignmentMatrix({ data: schoolYearId! }),
+    enabled: !!schoolYearId,
   })
   const matrixData = matrixResult?.success ? matrixResult.data : []
 

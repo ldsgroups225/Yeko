@@ -74,6 +74,7 @@ import { toast } from 'sonner'
 import { ClassForm } from '@/components/academic/class-form'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteClass, getClasses } from '@/school/functions/classes'
@@ -114,6 +115,7 @@ export function ClassesTable({
   filters: initialFilters = DEFAULT_FILTERS,
 }: ClassesTableProps) {
   const t = useTranslations()
+  const { schoolYearId } = useSchoolYearContext()
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState(initialFilters.search || '')
   const [status, setStatus] = useState<string>(initialFilters.status || '')
@@ -135,12 +137,13 @@ export function ClassesTable({
     : undefined
 
   const { data, isPending, refetch } = useQuery({
-    queryKey: ['classes', { search: debouncedSearch, status }],
+    queryKey: ['classes', { search: debouncedSearch, status, schoolYearId }],
     queryFn: async () => {
       const result = await getClasses({
         data: {
           search: debouncedSearch,
           status: statusFilter,
+          schoolYearId: schoolYearId || undefined,
         },
       })
       if (!result.success)

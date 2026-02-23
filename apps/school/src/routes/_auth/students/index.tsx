@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { PageHeader } from '@workspace/ui/components/page-header'
 import { z } from 'zod'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
@@ -31,12 +32,10 @@ function StudentsListPage() {
         ]}
       />
 
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t.students.title()}</h1>
-          <p className="text-muted-foreground">{t.students.description()}</p>
-        </div>
-      </div>
+      <PageHeader
+        title={t.students.title()}
+        description={t.students.description()}
+      />
 
       <StudentsList />
     </div>

@@ -1,5 +1,5 @@
 import type { FeeStructure } from '@/components/finance'
-import { IconPlus, IconStack2 } from '@tabler/icons-react'
+import { IconPlus } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { FeeStructureFormDialog, FeeStructuresTable } from '@/components/finance'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { feeStructuresKeys, feeStructuresOptions } from '@/lib/queries'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingFeeStructure } from '@/school/functions/fee-structures'
@@ -22,12 +22,13 @@ export const Route = createFileRoute('/_auth/accounting/fee-structures')({
 function FeeStructuresPage() {
   const { t } = useTranslation()
   const queryClient = useQueryClient()
+  const { schoolYearId } = useSchoolYearContext()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingStructure, setEditingStructure] = useState<FeeStructure | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   const { data: feeStructures, isPending } = useQuery(
-    feeStructuresOptions.withDetails(),
+    feeStructuresOptions.withDetails({ schoolYearId: schoolYearId || undefined }),
   )
 
   const deleteMutation = useMutation({
@@ -71,32 +72,7 @@ function FeeStructuresPage() {
 
   return (
     <div className="space-y-8 p-1">
-      <Breadcrumbs
-        items={[
-          { label: t('nav.finance'), href: '/accounting' },
-          { label: t('finance.feeStructures.title') },
-        ]}
-      />
-
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="flex items-center gap-4"
-        >
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconStack2 className="size-8 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-black tracking-tight uppercase italic">
-              {t('finance.feeStructures.title')}
-            </h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">
-              {t('finance.feeStructures.description')}
-            </p>
-          </div>
-        </motion.div>
-
+      <div className="flex justify-end">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}

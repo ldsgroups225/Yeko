@@ -7,7 +7,6 @@ import {
   IconLayoutGrid,
   IconReceipt,
   IconRocket,
-  IconSettings,
   IconTag,
 } from '@tabler/icons-react'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -20,7 +19,7 @@ import { WizardStep1 } from '@/components/finance/wizard-steps/step-1'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/_auth/accounting/setup')({
+export const Route = createFileRoute('/_auth/settings/finance')({
   component: AccountingSetupPage,
 })
 
@@ -89,21 +88,7 @@ function AccountingSetupPage() {
   return (
     <div className="container max-w-5xl mx-auto py-12 px-6">
       <div className="flex flex-col gap-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-primary/10">
-              <IconSettings className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-extrabold tracking-tight">
-                {t.finance.wizard.title()}
-              </h1>
-              <p className="text-muted-foreground text-lg">
-                {t.finance.wizard.pageDescription()}
-              </p>
-            </div>
-          </div>
-
+        <div className="flex justify-end pt-4">
           <Button
             size="lg"
             onClick={() => setWizardOpen(true)}

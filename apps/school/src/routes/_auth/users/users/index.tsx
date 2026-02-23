@@ -3,7 +3,6 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { z } from 'zod'
 import { UsersTable } from '@/components/hr/users/users-table'
-import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 
 const usersSearchSchema = z.object({
@@ -25,18 +24,7 @@ function UsersListPage() {
 
   return (
     <div className="space-y-6">
-      <Breadcrumbs
-        items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.users.title() },
-        ]}
-      />
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t.hr.users.title()}</h1>
-          <p className="text-muted-foreground">{t.hr.users.description()}</p>
-        </div>
+      <div className="flex justify-end">
         <div className="flex gap-2">
           <Button onClick={() => navigate({ to: '/users/users/new' })}>
             <IconPlus className="mr-2 h-4 w-4" />
