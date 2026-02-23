@@ -7,12 +7,12 @@
 
 ## Quick Reference
 
-| Action | Command |
-| --- | --- |
-| Dev server | `pnpm dev` |
-| Deploy | `pnpm deploy` |
-| Typecheck | `pnpm typecheck` |
-| Lint + fix | `pnpm lint:fix` |
+| Action      | Command           |
+| ----------- | ----------------- |
+| Dev server  | `pnpm dev`        |
+| Deploy      | `pnpm deploy`     |
+| Typecheck   | `pnpm typecheck`  |
+| Lint + fix  | `pnpm lint:fix`   |
 | CF type gen | `pnpm cf-typegen` |
 
 ---
