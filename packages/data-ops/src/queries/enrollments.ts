@@ -96,7 +96,6 @@ export async function getEnrollments(filters: EnrollmentFilters): R.ResultAsync<
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = []
         if (schoolYearId) {
@@ -172,7 +171,6 @@ export async function getEnrollmentById(id: string): R.ResultAsync<EnrollmentWit
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [enrollment] = await db
           .select({
@@ -213,7 +211,6 @@ export async function createEnrollment(data: CreateEnrollmentInput): R.ResultAsy
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Check if student already enrolled in this year
         const [existing] = await db
@@ -276,7 +273,6 @@ export async function confirmEnrollment(id: string, userId: string): R.ResultAsy
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [enrollment] = await db
           .update(enrollments)
@@ -303,7 +299,6 @@ export async function cancelEnrollment(id: string, userId: string, reason?: stri
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [enrollment] = await db
           .update(enrollments)
@@ -331,7 +326,6 @@ export async function deleteEnrollment(id: string): R.ResultAsync<void, Database
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Only allow deletion of pending enrollments
         const [enrollment] = await db.select().from(enrollments).where(eq(enrollments.id, id))
@@ -355,7 +349,6 @@ export async function transferStudent(data: TransferInput, userId: string): R.Re
   const { enrollmentId, newClassId, reason, effectiveDate } = data
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get current enrollment
         const [currentEnrollment] = await db.select().from(enrollments).where(eq(enrollments.id, enrollmentId))
@@ -436,7 +429,6 @@ export async function bulkReEnroll(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const results = { success: 0, skipped: 0, errors: [] as Array<{ studentId: string, error: string }> }
 
@@ -581,7 +573,6 @@ export async function getEnrollmentStatistics(schoolId: string, schoolYearId: st
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Execute all stats queries in parallel
         const [

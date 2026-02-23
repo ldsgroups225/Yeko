@@ -42,7 +42,6 @@ export function getSchoolYearTemplates(): R.ResultAsync<typeof schoolYearTemplat
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -58,7 +57,6 @@ export function getSchoolYearTemplateById(id: string): R.ResultAsync<typeof scho
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -77,7 +75,6 @@ export function createSchoolYearTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .insert(schoolYearTemplates)
@@ -102,7 +99,6 @@ export function updateSchoolYearTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .update(schoolYearTemplates)
@@ -128,7 +124,6 @@ export function deleteSchoolYearTemplate(id: string): R.ResultAsync<void, Databa
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => db.delete(schoolYearTemplates).where(eq(schoolYearTemplates.id, id)).then(() => {}),
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'deleteSchoolYearTemplateFailed')),
     }),
@@ -184,7 +179,6 @@ export async function getProgramTemplates(options?: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const [countResult, programs] = await Promise.all([
@@ -248,7 +242,6 @@ export function getProgramTemplateById(id: string): R.ResultAsync<ProgramWithDet
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select({
@@ -296,7 +289,6 @@ export function createProgramTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .insert(programTemplates)
@@ -321,7 +313,6 @@ export function updateProgramTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .update(programTemplates)
@@ -347,7 +338,6 @@ export async function deleteProgramTemplate(id: string): R.ResultAsync<void, Dat
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db.transaction(async (tx) => {
           // Delete chapters first (cascade)
@@ -366,7 +356,6 @@ export async function cloneProgramTemplate(id: string, newSchoolYearTemplateId: 
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db.transaction(async (tx) => {
           // Get original program
@@ -431,7 +420,6 @@ export function getProgramTemplateChapters(programTemplateId: string): R.ResultA
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -448,7 +436,6 @@ export function getProgramTemplateChapterById(id: string): R.ResultAsync<typeof 
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -467,7 +454,6 @@ export function createProgramTemplateChapter(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .insert(programTemplateChapters)
@@ -492,7 +478,6 @@ export function updateProgramTemplateChapter(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .update(programTemplateChapters)
@@ -518,7 +503,6 @@ export function deleteProgramTemplateChapter(id: string): R.ResultAsync<void, Da
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => db.delete(programTemplateChapters).where(eq(programTemplateChapters.id, id)).then(() => {}),
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'deleteProgramTemplateChapterFailed')),
     }),
@@ -529,7 +513,6 @@ export function deleteProgramTemplateChapter(id: string): R.ResultAsync<void, Da
 export async function bulkUpdateChaptersOrder(items: { id: string, order: number }[]): R.ResultAsync<void, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         if (items.length === 0)
@@ -567,7 +550,6 @@ export function bulkCreateChapters(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         if (chapters.length === 0)
           return []
@@ -599,7 +581,6 @@ export async function publishProgram(id: string): R.ResultAsync<{ success: true,
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db.transaction(async (tx) => {
           // 1. Get current program and chapters
@@ -679,7 +660,6 @@ export function getProgramVersions(programTemplateId: string): R.ResultAsync<typ
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -697,7 +677,6 @@ export async function restoreProgramVersion(versionId: string): R.ResultAsync<{ 
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db.transaction(async (tx) => {
           // 1. Get version snapshot
@@ -766,7 +745,6 @@ export async function getProgramStats(): R.ResultAsync<{
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [programsCount, chaptersCount, schoolYearsCount] = await Promise.all([
           db.select({ count: count() }).from(programTemplates),
@@ -792,7 +770,6 @@ export function getTermTemplates(schoolYearTemplateId?: string): R.ResultAsync<t
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => {
         const query = db.select().from(termTemplates).orderBy(asc(termTemplates.order))
 
@@ -812,7 +789,6 @@ export function getTermTemplateById(id: string): R.ResultAsync<typeof termTempla
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -831,7 +807,6 @@ export function createTermTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .insert(termTemplates)
@@ -856,7 +831,6 @@ export function updateTermTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .update(termTemplates)
@@ -882,7 +856,6 @@ export function deleteTermTemplate(id: string): R.ResultAsync<void, DatabaseErro
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => db.delete(termTemplates).where(eq(termTemplates.id, id)).then(() => {}),
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('programs', 'deleteTermTemplateFailed')),
     }),
@@ -896,7 +869,6 @@ export function bulkCreateTermTemplates(
 ): R.ResultAsync<typeof termTemplates.$inferSelect[], DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         if (terms.length === 0)
@@ -926,7 +898,6 @@ export async function getSchoolYearTemplatesWithTerms(): R.ResultAsync<Array<typ
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [years, terms] = await Promise.all([
           db.select().from(schoolYearTemplates).orderBy(desc(schoolYearTemplates.isActive), desc(schoolYearTemplates.name)),

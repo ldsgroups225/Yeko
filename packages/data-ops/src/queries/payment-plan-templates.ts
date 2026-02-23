@@ -18,7 +18,6 @@ export async function getPaymentPlanTemplates(params: GetPaymentPlanTemplatesPar
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(paymentPlanTemplates.schoolId, schoolId), eq(paymentPlanTemplates.schoolYearId, schoolYearId)]
         if (!includeInactive)
@@ -36,7 +35,6 @@ export async function getPaymentPlanTemplateById(templateId: string): R.ResultAs
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).limit(1)
         return rows[0] ?? null
@@ -51,7 +49,6 @@ export async function getDefaultPaymentPlanTemplate(schoolId: string, schoolYear
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -77,7 +74,6 @@ export async function createPaymentPlanTemplate(data: CreatePaymentPlanTemplateD
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [template] = await db.insert(paymentPlanTemplates).values({ id: crypto.randomUUID(), ...data }).returning()
         if (!template) {
@@ -100,7 +96,6 @@ export async function updatePaymentPlanTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [template] = await db
           .update(paymentPlanTemplates)
@@ -119,7 +114,6 @@ export async function deletePaymentPlanTemplate(templateId: string): R.ResultAsy
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId))
       },
@@ -137,7 +131,6 @@ export async function setDefaultPaymentPlanTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.transaction(async (tx) => {
           // Remove default from all templates for this school/year

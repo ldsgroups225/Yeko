@@ -19,7 +19,6 @@ export async function getStudentFees(params: GetStudentFeesParams): R.ResultAsyn
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = []
         if (studentId)
@@ -44,7 +43,6 @@ export async function getStudentFeeById(studentFeeId: string): R.ResultAsync<Stu
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -73,7 +71,6 @@ export async function getStudentFeesWithDetails(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({
@@ -111,7 +108,6 @@ export async function getStudentFeeSummary(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({
@@ -146,7 +142,6 @@ export async function createStudentFee(data: CreateStudentFeeData): R.ResultAsyn
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [studentFee] = await db
           .insert(studentFees)
@@ -168,7 +163,6 @@ export async function createStudentFeesBulk(dataList: CreateStudentFeeData[]): R
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         if (dataList.length === 0)
           return []
@@ -190,7 +184,6 @@ export async function waiveStudentFee(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [studentFee] = await db
           .update(studentFees)
@@ -221,7 +214,6 @@ export async function getStudentsWithOutstandingBalance(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({

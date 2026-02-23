@@ -21,7 +21,6 @@ export async function getPaymentPlanTemplatesBySchool(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select()
@@ -41,7 +40,6 @@ export async function createPaymentPlanTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const insertData: PaymentPlanTemplateInsert = {
           ...data,
@@ -68,7 +66,6 @@ export async function updatePaymentPlanTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(paymentPlanTemplates)
@@ -93,7 +90,6 @@ export async function deletePaymentPlanTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(paymentPlanTemplates).where(and(eq(paymentPlanTemplates.id, templateId), eq(paymentPlanTemplates.schoolId, schoolId)))
         return { success: true }

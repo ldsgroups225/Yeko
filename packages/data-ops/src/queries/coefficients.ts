@@ -35,7 +35,6 @@ export async function getCoefficientTemplates(options?: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = []
 
@@ -138,7 +137,6 @@ export async function getCoefficientTemplateById(id: string): R.ResultAsync<(typ
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [coefficient] = await db
           .select({
@@ -194,7 +192,6 @@ export async function createCoefficientTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [newCoefficient] = await db
           .insert(coefficientTemplates)
@@ -220,7 +217,6 @@ export async function updateCoefficientTemplate(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(coefficientTemplates)
@@ -247,7 +243,6 @@ export async function deleteCoefficientTemplate(id: string): R.ResultAsync<void,
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(coefficientTemplates).where(eq(coefficientTemplates.id, id))
       },
@@ -269,7 +264,6 @@ export async function bulkCreateCoefficients(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         if (coefficients.length === 0)
           return []
@@ -300,7 +294,6 @@ export async function bulkUpdateCoefficients(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         if (updates.length === 0)
           return
@@ -331,7 +324,6 @@ export async function copyCoefficientTemplates(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get all coefficients from source year
         const sourceCoefficients = await db
@@ -374,7 +366,6 @@ export async function getCoefficientStats(): R.ResultAsync<{ total: number }, Da
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [totalCount] = await db.select({ count: count() }).from(coefficientTemplates)
         return {

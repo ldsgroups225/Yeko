@@ -47,7 +47,6 @@ export async function getSchoolYearsBySchool(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select({
@@ -89,7 +88,6 @@ export async function getSchoolYearById(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -111,7 +109,6 @@ export async function getActiveSchoolYear(schoolId: string): R.ResultAsync<typeo
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -135,7 +132,6 @@ export async function createSchoolYear(data: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         if (!data.schoolId) {
           throw new Error(getNestedErrorMessage('schoolYear', 'noSchoolContext'))
@@ -241,7 +237,6 @@ export async function updateSchoolYear(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Verify school year belongs to school
         const [existing] = await db.select().from(schoolYears).where(and(eq(schoolYears.id, schoolYearId), eq(schoolYears.schoolId, schoolId))).limit(1)
@@ -284,7 +279,6 @@ export async function deleteSchoolYear(schoolYearId: string, schoolId: string): 
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [existing] = await db.select().from(schoolYears).where(and(eq(schoolYears.id, schoolYearId), eq(schoolYears.schoolId, schoolId))).limit(1)
         if (!existing) {

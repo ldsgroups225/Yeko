@@ -27,7 +27,6 @@ export async function getEducationLevels(): R.ResultAsync<EducationLevel[], Data
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.select().from(educationLevels).orderBy(asc(educationLevels.order))
       },
@@ -46,7 +45,6 @@ export async function getTracks(options?: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const query = db.select().from(tracks)
 
@@ -66,7 +64,6 @@ export async function getTrackById(id: string): R.ResultAsync<Track | null, Data
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(tracks).where(eq(tracks.id, id))
         return rows[0] ?? null
@@ -83,7 +80,6 @@ export async function createTrack(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [row] = await db
           .insert(tracks)
@@ -113,7 +109,6 @@ export async function updateTrack(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [row] = await db
           .update(tracks)
@@ -139,7 +134,6 @@ export async function deleteTrack(id: string): R.ResultAsync<void, DatabaseError
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(tracks).where(eq(tracks.id, id))
       },
@@ -158,7 +152,6 @@ export async function getGrades(options?: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const query = db.select().from(grades)
 
@@ -178,7 +171,6 @@ export async function getGradeById(id: string): R.ResultAsync<Grade | null, Data
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(grades).where(eq(grades.id, id))
         return rows[0] ?? null
@@ -195,7 +187,6 @@ export async function createGrade(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [row] = await db
           .insert(grades)
@@ -225,7 +216,6 @@ export async function updateGrade(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [row] = await db
           .update(grades)
@@ -251,7 +241,6 @@ export async function deleteGrade(id: string): R.ResultAsync<void, DatabaseError
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(grades).where(eq(grades.id, id))
       },
@@ -270,7 +259,6 @@ export async function bulkUpdateGradesOrder(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await Promise.all(
           items.map(item =>
@@ -299,7 +287,6 @@ export async function getSeries(options?: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const query = db.select().from(series)
 
@@ -319,7 +306,6 @@ export async function getSerieById(id: string): R.ResultAsync<Serie | null, Data
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(series).where(eq(series.id, id))
         return rows[0] ?? null
@@ -336,7 +322,6 @@ export async function createSerie(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [row] = await db
           .insert(series)
@@ -366,7 +351,6 @@ export async function updateSerie(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [row] = await db
           .update(series)
@@ -392,7 +376,6 @@ export async function deleteSerie(id: string): R.ResultAsync<void, DatabaseError
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(series).where(eq(series.id, id))
       },
@@ -411,7 +394,6 @@ export async function bulkCreateSeries(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const values = data.map(item => ({
           id: crypto.randomUUID(),
@@ -450,7 +432,6 @@ export async function getSubjects(options?: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Build where conditions
         const conditions = []
@@ -507,7 +488,6 @@ export async function getSubjectById(id: string): R.ResultAsync<Subject | null, 
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(subjects).where(eq(subjects.id, id))
         return rows[0] ?? null
@@ -524,7 +504,6 @@ export async function createSubject(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [row] = await db
           .insert(subjects)
@@ -554,7 +533,6 @@ export async function updateSubject(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [row] = await db
           .update(subjects)
@@ -580,7 +558,6 @@ export async function deleteSubject(id: string): R.ResultAsync<void, DatabaseErr
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(subjects).where(eq(subjects.id, id))
       },
@@ -599,7 +576,6 @@ export async function bulkCreateSubjects(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const values = data.map(item => ({
           id: crypto.randomUUID(),
@@ -629,7 +605,6 @@ export async function getCatalogStats(): R.ResultAsync<{
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [educationLevelsCount, tracksCount, gradesCount, seriesCount, subjectsCount] = await Promise.all([
           db.select({ count: count() }).from(educationLevels),
@@ -664,7 +639,6 @@ export async function getSmartCatalogData(): R.ResultAsync<{
 }, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [educationLevelsRes, tracksRes, seriesRes] = await Promise.all([
           getEducationLevels(),

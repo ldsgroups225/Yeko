@@ -39,7 +39,6 @@ export async function getSchoolSubjects(options: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // If no schoolYearId provided, get active school year
         let activeSchoolYearId = schoolYearId
@@ -146,7 +145,6 @@ export async function getAvailableCoreSubjects(options: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get active school year if not provided
         let activeSchoolYearId = schoolYearId
@@ -228,7 +226,6 @@ export async function addSubjectsToSchool(options: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get active school year if not provided
         let activeSchoolYearId = schoolYearId
@@ -284,7 +281,6 @@ export async function toggleSchoolSubjectStatus(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(schoolSubjects)
@@ -316,7 +312,6 @@ export async function deleteSchoolSubject(id: string, schoolId: string): R.Resul
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(schoolSubjects).where(and(
           eq(schoolSubjects.id, id),
@@ -350,7 +345,6 @@ export async function getSubjectUsageStats(options: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get active school year if not provided
         let activeSchoolYearId = schoolYearId
@@ -410,7 +404,6 @@ export async function getSchoolSubjectById(id: string, schoolId: string): R.Resu
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({
@@ -458,7 +451,6 @@ export async function checkSubjectInUse(options: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({

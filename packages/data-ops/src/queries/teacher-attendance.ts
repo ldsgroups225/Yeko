@@ -32,7 +32,6 @@ export async function getDailyTeacherAttendance(schoolId: string, date: string):
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const results = await db
           .select({
@@ -109,7 +108,6 @@ export async function getTeacherAttendanceRange(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -144,7 +142,6 @@ export async function upsertTeacherAttendance(data: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Calculate late minutes if status is 'late' and arrival time is provided
         let lateMinutes: number | null = null
@@ -212,7 +209,6 @@ export async function bulkUpsertTeacherAttendance(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.transaction(async (tx) => {
           const results: TeacherAttendance[] = []
@@ -271,7 +267,6 @@ export async function countTeacherLatenessInMonth(teacherId: string, year: numbe
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const startDate = `${year}-${String(month).padStart(2, '0')}-01`
         const endDate = new Date(year, month, 0).toISOString().split('T')[0]
@@ -326,7 +321,6 @@ export async function getTeacherPunctualityReport(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const stats = await db
           .select({
@@ -373,7 +367,6 @@ export async function deleteTeacherAttendance(id: string, schoolId: string): R.R
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(teacherAttendance).where(and(
           eq(teacherAttendance.id, id),

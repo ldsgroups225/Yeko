@@ -99,7 +99,6 @@ export async function getSchools(options: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const orderByClause
@@ -139,7 +138,6 @@ export async function getSchools(options: {
 export function getSchoolById(id: string): R.ResultAsync<School | null, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => prepared.getSchoolById.execute({ id }).then(res => res[0] || null),
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to fetch school with id ${id}`),
     }),
@@ -153,7 +151,6 @@ export function createSchool(
 ): R.ResultAsync<School, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => {
         const db = getDb()
         return db
@@ -184,7 +181,6 @@ export function updateSchool(
 ): R.ResultAsync<School, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => {
         const db = getDb()
         return db
@@ -211,7 +207,6 @@ export function updateSchool(
 export function deleteSchool(id: string): R.ResultAsync<void, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => prepared.deleteSchool.execute({ id }).then(() => {}),
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to delete school with id ${id}`),
     }),
@@ -226,7 +221,6 @@ export function getSchoolsByStatus(
 ): R.ResultAsync<School[], DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const query = db
@@ -254,7 +248,6 @@ export function searchSchools(
 ): R.ResultAsync<School[], DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => {
         const db = getDb()
         return db
@@ -280,7 +273,6 @@ export function searchSchools(
 export function getSchoolProfile(id: string): R.ResultAsync<School | null, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => prepared.getSchoolProfile.execute({ id }).then(res => res[0] || null),
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to fetch school profile for id ${id}`),
     }),
@@ -300,7 +292,6 @@ export function updateSchoolProfile(
 ): R.ResultAsync<School | null, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => {
         const db = getDb()
         return db
@@ -326,7 +317,6 @@ export function updateSchoolSettings(
 ): R.ResultAsync<School | null, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => {
         const db = getDb()
         return db
@@ -352,7 +342,6 @@ export function updateSchoolLogo(
 ): R.ResultAsync<School | null, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => prepared.updateSchoolLogo.execute({ id, logoUrl }).then(res => res[0] || null),
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', `Failed to update school logo for id ${id}`),
     }),
@@ -370,7 +359,6 @@ export async function bulkCreateSchools(
 }, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         if (schoolsData.length === 0) {

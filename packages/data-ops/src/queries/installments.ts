@@ -18,7 +18,6 @@ export async function getInstallments(params: GetInstallmentsParams): R.ResultAs
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = []
         if (paymentPlanId)
@@ -41,7 +40,6 @@ export async function getInstallmentById(installmentId: string): R.ResultAsync<I
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(installments).where(eq(installments.id, installmentId)).limit(1)
         return rows[0] ?? null
@@ -56,7 +54,6 @@ export async function getInstallmentsByPaymentPlan(paymentPlanId: string): R.Res
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.select().from(installments).where(eq(installments.paymentPlanId, paymentPlanId)).orderBy(installments.installmentNumber)
       },
@@ -72,7 +69,6 @@ export async function createInstallment(data: CreateInstallmentData): R.ResultAs
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [installment] = await db.insert(installments).values({ id: crypto.randomUUID(), ...data }).returning()
         if (!installment) {
@@ -90,7 +86,6 @@ export async function createInstallmentsBulk(dataList: CreateInstallmentData[]):
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         if (dataList.length === 0)
           return []
@@ -107,7 +102,6 @@ export async function waiveInstallment(installmentId: string): R.ResultAsync<Ins
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [installment] = await db
           .update(installments)
@@ -126,7 +120,6 @@ export async function getOverdueInstallments(schoolYearId: string): R.ResultAsyn
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const today = new Date().toISOString().split('T')[0]!
         const result = await db
@@ -154,7 +147,6 @@ export async function updateOverdueInstallments(schoolYearId: string): R.ResultA
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const today = new Date().toISOString().split('T')[0]!
         const overdueInstallmentIds = await db
@@ -203,7 +195,6 @@ export async function getOverdueInstallmentsWithStudents(schoolYearId: string): 
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({

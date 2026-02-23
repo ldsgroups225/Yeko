@@ -172,7 +172,6 @@ export async function createTeacherClassSession(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [session] = await db
           .insert(classSessions)
@@ -217,7 +216,6 @@ export async function completeTeacherClassSession(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(classSessions)
@@ -257,7 +255,6 @@ export async function getTeacherClassSessionById(sessionId: string): R.ResultAsy
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({
@@ -342,7 +339,6 @@ export async function getTeacherSessionHistory(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [sessions, countResult] = await Promise.all([
           db
@@ -408,7 +404,6 @@ export async function getClassStudents(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -457,7 +452,6 @@ export async function upsertParticipationGrades(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db
           .insert(participationGrades)
@@ -493,7 +487,6 @@ export async function getSessionParticipationGrades(classSessionId: string): R.R
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -533,7 +526,6 @@ export async function getTeacherAssignedClasses(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({
@@ -592,7 +584,6 @@ export async function getTeacherSchools(userId: string): R.ResultAsync<TeacherSc
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -639,7 +630,6 @@ export async function createHomeworkAssignment(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [created] = await db
           .insert(homework)
@@ -710,7 +700,6 @@ export async function getTeacherHomework(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [homeworkList, countResult] = await Promise.all([
           db
@@ -764,7 +753,6 @@ export async function getHomeworkById(homeworkId: string): R.ResultAsync<Homewor
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({
@@ -843,7 +831,6 @@ export async function updateHomeworkAssignment(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(homework)
@@ -877,7 +864,6 @@ export async function deleteHomeworkAssignment(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const existing = await db
           .select({ status: homework.status })
@@ -1010,7 +996,6 @@ export async function getTeacherMessagesQuery(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [messages, countResult] = await Promise.all([
           db
@@ -1090,7 +1075,6 @@ export async function getMessageDetailsQuery(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const message = await db
           .select({
@@ -1199,7 +1183,6 @@ export async function sendTeacherMessage(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         let threadId = null
         if (params.replyToId) {
@@ -1251,7 +1234,6 @@ export async function markMessageAsRead(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(teacherMessages)
@@ -1304,7 +1286,6 @@ export async function getMessageTemplatesQuery(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -1345,7 +1326,6 @@ export async function searchParentsForTeacher(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions: SQL[] = [
           eq(students.schoolId, params.schoolId),
@@ -1434,7 +1414,6 @@ export async function submitStudentGrades(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const results = await db
           .insert(studentGrades)
@@ -1478,7 +1457,6 @@ export function getTeacherDaySchedule(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
 
@@ -1541,7 +1519,6 @@ export function getTeacherWeeklySchedule(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const { timetableSessions, classrooms } = await import('../drizzle/school-schema')
 
@@ -1610,7 +1587,6 @@ export function getTeacherActiveSession(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({
@@ -1650,7 +1626,6 @@ export async function getTeacherPendingGradesCount(teacherId: string): R.ResultA
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({ count: sql<number>`count(*)::int` })
@@ -1677,7 +1652,6 @@ export async function getTeacherUnreadMessagesCount(teacherId: string): R.Result
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({ count: sql<number>`count(*)::int` })
@@ -1717,7 +1691,6 @@ export function getTeacherRecentMessages(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({
@@ -1769,7 +1742,6 @@ export async function getTeacherNotificationsQuery(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const { teacherNotifications } = await import('../drizzle/school-schema')
 
@@ -1821,7 +1793,6 @@ export async function getCurrentTermForSchoolYear(schoolYearId: string): R.Resul
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const { terms } = await import('../drizzle/school-schema')
         const { termTemplates } = await import('../drizzle/core-schema')
@@ -1865,7 +1836,6 @@ export async function getClassSubjectInfo(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({
@@ -1912,7 +1882,6 @@ export async function upsertStudentAttendance(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const results = await db
           .insert(studentAttendance)
@@ -1958,7 +1927,6 @@ export async function recordChapterCompletion(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db
           .insert(chapterCompletions)
@@ -1993,7 +1961,6 @@ export async function updateCurriculumProgress(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // 1. Find the active progress record
         const conditions = [

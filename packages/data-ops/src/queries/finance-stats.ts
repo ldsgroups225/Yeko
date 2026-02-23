@@ -23,7 +23,6 @@ export async function getFinanceStats(schoolId: string): R.ResultAsync<FinanceSt
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [revenueResult] = await db
           .select({
@@ -89,7 +88,6 @@ export async function getMonthlyRevenue(schoolId: string, months: number = 6): R
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({

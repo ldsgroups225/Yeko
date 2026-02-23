@@ -24,7 +24,6 @@ export async function getFeeStructures(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [
           eq(feeStructures.schoolId, schoolId),
@@ -54,7 +53,6 @@ export async function getFeeStructureById(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -79,7 +77,6 @@ export async function getFeeStructureForStudent(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [
           eq(feeStructures.schoolId, schoolId),
@@ -114,7 +111,6 @@ export async function createFeeStructure(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [feeStructure] = await db
           .insert(feeStructures)
@@ -140,7 +136,6 @@ export async function createFeeStructuresBulk(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const values = dataList.map(data => ({ id: crypto.randomUUID(), ...data }))
         return await db.insert(feeStructures).values(values).returning()
@@ -162,7 +157,6 @@ export async function updateFeeStructure(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [feeStructure] = await db
           .update(feeStructures)
@@ -183,7 +177,6 @@ export async function deleteFeeStructure(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(feeStructures).where(eq(feeStructures.id, feeStructureId))
       },
@@ -208,7 +201,6 @@ export async function getFeeStructuresWithTypes(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [
           eq(feeStructures.schoolId, schoolId),

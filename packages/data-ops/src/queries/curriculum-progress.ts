@@ -142,7 +142,6 @@ export async function getClassSessions(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.query.classSessions.findMany({
           where: and(...conditions),
@@ -166,7 +165,6 @@ export async function getClassSessionById(id: string): R.ResultAsync<ClassSessio
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.query.classSessions.findFirst({
           where: eq(classSessions.id, id),
@@ -193,7 +191,6 @@ export async function createClassSession(data: ClassSessionInsert): R.ResultAsyn
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.insert(classSessions).values(data).returning()
         if (rows.length === 0) {
@@ -214,7 +211,6 @@ export async function updateClassSession(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(classSessions)
@@ -244,7 +240,6 @@ export async function markSessionCompleted(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(classSessions)
@@ -271,7 +266,6 @@ export async function deleteClassSession(id: string): R.ResultAsync<void, Databa
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(classSessions).where(eq(classSessions.id, id))
       },
@@ -298,7 +292,6 @@ export async function getChapterCompletions(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.query.chapterCompletions.findMany({
           where: and(...conditions),
@@ -326,7 +319,6 @@ export async function markChapterComplete(data: ChapterCompletionInsert): R.Resu
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.insert(chapterCompletions).values(data).returning()
         if (rows.length === 0) {
@@ -344,7 +336,6 @@ export async function unmarkChapterComplete(classId: string, chapterId: string):
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db
           .delete(chapterCompletions)
@@ -365,7 +356,6 @@ export async function isChapterCompleted(classId: string, chapterId: string): R.
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const completion = await db.query.chapterCompletions.findFirst({
           where: and(
@@ -402,7 +392,6 @@ export async function getCurriculumProgress(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.query.curriculumProgress.findMany({
           where: and(...conditions),
@@ -441,7 +430,6 @@ export async function getProgressOverview(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -481,7 +469,6 @@ export async function getClassesBehindSchedule(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -519,7 +506,6 @@ export async function upsertCurriculumProgress(data: CurriculumProgressInsert): 
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Check if progress record exists
         const existing = await db.query.curriculumProgress.findFirst({
@@ -584,7 +570,6 @@ export async function calculateProgress(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get total chapters from program template
         const chapters = await db.query.programTemplateChapters.findMany({
@@ -666,7 +651,6 @@ export async function getProgressStatsByStatus(schoolId: string, termId: string)
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -694,7 +678,6 @@ export async function getProgressBySubject(schoolId: string, termId: string): R.
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -728,7 +711,6 @@ export async function getTeacherProgressSummary(teacherId: string, termId: strin
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get classes taught by this teacher
         const sessions = await db.query.classSessions.findMany({

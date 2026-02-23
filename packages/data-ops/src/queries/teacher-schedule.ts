@@ -46,7 +46,6 @@ export async function getTeacherDetailedSchedule(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const sessions = await db
           .select({

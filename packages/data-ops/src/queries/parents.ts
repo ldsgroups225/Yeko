@@ -100,7 +100,6 @@ export async function getParents(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const offset = (page - 1) * limit
@@ -172,7 +171,6 @@ export async function getParents(
 export async function getParentById(id: string): R.ResultAsync<ParentWithDetails, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const [parent] = await db
@@ -211,7 +209,6 @@ export async function getParentById(id: string): R.ResultAsync<ParentWithDetails
 export async function getStudentParents(studentId: string): R.ResultAsync<StudentParentDetail[], DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const results = await db
@@ -236,7 +233,6 @@ export async function getStudentParents(studentId: string): R.ResultAsync<Studen
 
 export async function findParentByPhone(phone: string): R.ResultAsync<Parent | null, DatabaseError> {
   return R.try({
-    immediate: true,
     try: async () => {
       const db = getDb()
       // Normalize phone number (remove spaces, dashes, etc.)
@@ -263,7 +259,6 @@ export async function findParentByPhone(phone: string): R.ResultAsync<Parent | n
 export async function autoMatchParents(schoolId: string): R.ResultAsync<AutoMatchResult, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const results = {
@@ -317,7 +312,6 @@ export async function autoMatchParents(schoolId: string): R.ResultAsync<AutoMatc
 export async function createParent(data: CreateParentInput): R.ResultAsync<Parent, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         // Check if parent with same phone exists
@@ -356,7 +350,6 @@ export async function createParent(data: CreateParentInput): R.ResultAsync<Paren
 export async function updateParent(id: string, data: Partial<CreateParentInput>): R.ResultAsync<Parent, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const [parent] = await db
@@ -379,7 +372,6 @@ export async function updateParent(id: string, data: Partial<CreateParentInput>)
 export async function deleteParent(id: string): R.ResultAsync<void, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         // Check if parent has linked children
@@ -406,7 +398,6 @@ export async function deleteParent(id: string): R.ResultAsync<void, DatabaseErro
 export async function linkParentToStudent(data: LinkParentInput): R.ResultAsync<typeof studentParents.$inferSelect, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         // Check if link already exists
@@ -446,7 +437,6 @@ export async function linkParentToStudent(data: LinkParentInput): R.ResultAsync<
 export async function unlinkParentFromStudent(studentId: string, parentId: string): R.ResultAsync<void, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         await db
@@ -466,7 +456,6 @@ export async function updateParentLink(
 ): R.ResultAsync<typeof studentParents.$inferSelect, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         // If setting as primary, unset other primaries
@@ -501,7 +490,6 @@ function hashToken(token: string): string {
 export async function sendParentInvitation(parentId: string, schoolId: string): R.ResultAsync<InvitationSendResult, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
 
@@ -602,7 +590,6 @@ export async function sendParentInvitation(parentId: string, schoolId: string): 
 export async function acceptParentInvitation(token: string, userId: string): R.ResultAsync<typeof parents.$inferSelect, DatabaseError> {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         // Hash the incoming token to compare with stored hash
@@ -652,7 +639,6 @@ export async function bulkImportParents(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
 

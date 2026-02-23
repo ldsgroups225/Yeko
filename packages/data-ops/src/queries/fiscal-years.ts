@@ -18,7 +18,6 @@ export async function getFiscalYears(params: GetFiscalYearsParams): R.ResultAsyn
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(fiscalYears.schoolId, schoolId)]
         if (status)
@@ -36,7 +35,6 @@ export async function getFiscalYearById(fiscalYearId: string): R.ResultAsync<Fis
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(fiscalYears).where(eq(fiscalYears.id, fiscalYearId)).limit(1)
         return rows[0] ?? null
@@ -51,7 +49,6 @@ export async function getFiscalYearBySchoolYear(schoolId: string, schoolYearId: 
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -70,7 +67,6 @@ export async function getOpenFiscalYear(schoolId: string): R.ResultAsync<FiscalY
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -89,7 +85,6 @@ export async function getFiscalYearForDate(schoolId: string, date: string): R.Re
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -110,7 +105,6 @@ export async function createFiscalYear(data: CreateFiscalYearData): R.ResultAsyn
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [fiscalYear] = await db.insert(fiscalYears).values({ id: crypto.randomUUID(), ...data }).returning()
         if (!fiscalYear) {
@@ -131,7 +125,6 @@ export async function closeFiscalYear(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [fiscalYear] = await db
           .update(fiscalYears)
@@ -150,7 +143,6 @@ export async function lockFiscalYear(fiscalYearId: string): R.ResultAsync<Fiscal
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [fiscalYear] = await db
           .update(fiscalYears)
@@ -169,7 +161,6 @@ export async function reopenFiscalYear(fiscalYearId: string): R.ResultAsync<Fisc
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [fiscalYear] = await db
           .update(fiscalYears)

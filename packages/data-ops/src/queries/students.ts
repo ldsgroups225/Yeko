@@ -139,7 +139,6 @@ export async function getStudents(filters: StudentFilters): R.ResultAsync<{
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(students.schoolId, schoolId)]
 
@@ -248,7 +247,6 @@ export async function getStudentById(id: string): R.ResultAsync<StudentFullProfi
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [student] = await db
           .select({
@@ -328,7 +326,6 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get or create sequence
         const [sequence] = await db
@@ -387,7 +384,6 @@ export async function createStudent(data: CreateStudentInput): R.ResultAsync<typ
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Generate matricule if not provided
         let matricule = data.matricule
@@ -458,7 +454,6 @@ export async function updateStudent(id: string, data: Partial<CreateStudentInput
   const { status } = data
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [student] = await db
           .update(students)
@@ -495,7 +490,6 @@ export async function updateStudentStatus(id: string, status: StudentStatus, rea
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [student] = await db
           .update(students)
@@ -537,7 +531,6 @@ export async function deleteStudent(id: string): R.ResultAsync<void, DatabaseErr
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // First check if student exists
         const [student] = await db.select().from(students).where(eq(students.id, id))
@@ -565,7 +558,6 @@ export async function bulkImportStudents(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
 
@@ -665,7 +657,6 @@ export async function getStudentStatistics(schoolId: string): R.ResultAsync<Stud
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(students.schoolId, schoolId)]
 

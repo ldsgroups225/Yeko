@@ -28,7 +28,6 @@ export async function getTimetableByClass(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.query.timetableSessions.findMany({
           where: and(
@@ -62,7 +61,6 @@ export async function getTimetableByTeacher(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.query.timetableSessions.findMany({
           where: and(
@@ -100,7 +98,6 @@ export async function getTimetableByClassroom(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.query.timetableSessions.findMany({
           where: and(
@@ -141,7 +138,6 @@ export async function getTimetableSessionById(id: string): R.ResultAsync<(typeof
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const res = await db.query.timetableSessions.findFirst({
           where: eq(timetableSessions.id, id),
@@ -168,7 +164,6 @@ export async function createTimetableSession(data: TimetableSessionInsert): R.Re
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [session] = await db.insert(timetableSessions).values(data).returning()
         if (!session)
@@ -188,7 +183,6 @@ export async function updateTimetableSession(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(timetableSessions)
@@ -209,7 +203,6 @@ export async function deleteTimetableSession(id: string): R.ResultAsync<void, Da
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(timetableSessions).where(eq(timetableSessions.id, id))
       },
@@ -223,7 +216,6 @@ export async function bulkCreateTimetableSessions(sessions: TimetableSessionInse
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.insert(timetableSessions).values(sessions).returning()
       },
@@ -237,7 +229,6 @@ export async function deleteClassTimetable(classId: string, schoolYearId: string
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db
           .delete(timetableSessions)
@@ -284,7 +275,6 @@ export async function detectConflicts(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conflicts: TimetableConflict[] = []
 
@@ -390,7 +380,6 @@ export async function getAllConflictsForSchool(schoolId: string, schoolYearId: s
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get all sessions grouped by day
         const sessions = await db.query.timetableSessions.findMany({
@@ -479,7 +468,6 @@ export async function getTeacherWeeklyHours(teacherId: string, schoolYearId: str
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const sessions = await db.query.timetableSessions.findMany({
           where: and(
@@ -522,7 +510,6 @@ export async function getTeacherAvailability(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -554,7 +541,6 @@ export async function getClassroomAvailability(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({

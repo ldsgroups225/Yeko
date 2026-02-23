@@ -12,7 +12,6 @@ export async function getAttendanceSettings(schoolId: string): R.ResultAsync<typ
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -49,7 +48,6 @@ export async function upsertAttendanceSettings(data: Omit<AttendanceSettingsInse
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .insert(attendanceSettings)
@@ -89,7 +87,6 @@ export async function updateAttendanceSettings(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(attendanceSettings)
@@ -116,7 +113,6 @@ export async function deleteAttendanceSettings(schoolId: string): R.ResultAsync<
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(attendanceSettings).where(eq(attendanceSettings.schoolId, schoolId))
       },

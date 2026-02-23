@@ -18,7 +18,6 @@ export function getDiscounts(params: GetDiscountsParams): R.ResultAsync<Discount
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(discounts.schoolId, schoolId)]
         if (type)
@@ -38,7 +37,6 @@ export function getDiscountById(discountId: string): R.ResultAsync<Discount | nu
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () => db.select().from(discounts).where(eq(discounts.id, discountId)).limit(1).then(rows => rows[0] ?? null),
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch discount by ID'),
     }),
@@ -50,7 +48,6 @@ export function getDiscountByCode(schoolId: string, code: string): R.ResultAsync
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -68,7 +65,6 @@ export function getAutoApplyDiscounts(schoolId: string): R.ResultAsync<Discount[
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select()
@@ -86,7 +82,6 @@ export async function createDiscount(data: CreateDiscountData): R.ResultAsync<Di
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [discount] = await db.insert(discounts).values({ id: crypto.randomUUID(), ...data }).returning()
         if (!discount) {
@@ -109,7 +104,6 @@ export async function updateDiscount(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [discount] = await db
           .update(discounts)
@@ -128,7 +122,6 @@ export async function deleteDiscount(discountId: string): R.ResultAsync<void, Da
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(discounts).where(eq(discounts.id, discountId))
       },

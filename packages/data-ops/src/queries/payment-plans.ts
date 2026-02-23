@@ -18,7 +18,6 @@ export async function getPaymentPlans(params: GetPaymentPlansParams): R.ResultAs
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(paymentPlans.schoolYearId, schoolYearId)]
         if (studentId)
@@ -38,7 +37,6 @@ export async function getPaymentPlanById(paymentPlanId: string): R.ResultAsync<P
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(paymentPlans).where(eq(paymentPlans.id, paymentPlanId)).limit(1)
         return rows[0] ?? null
@@ -53,7 +51,6 @@ export async function getPaymentPlanForStudent(studentId: string, schoolYearId: 
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -74,7 +71,6 @@ export async function createPaymentPlan(data: CreatePaymentPlanData): R.ResultAs
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [plan] = await db.insert(paymentPlans).values({ id: crypto.randomUUID(), ...data }).returning()
         if (!plan) {
@@ -106,7 +102,6 @@ export async function createPaymentPlanFromTemplate(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.transaction(async (tx) => {
           const [template] = await tx.select().from(paymentPlanTemplates).where(eq(paymentPlanTemplates.id, templateId)).limit(1)
@@ -177,7 +172,6 @@ export async function updatePaymentPlan(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [plan] = await db
           .update(paymentPlans)
@@ -210,7 +204,6 @@ export async function getPaymentPlansSummary(schoolYearId: string): R.ResultAsyn
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({

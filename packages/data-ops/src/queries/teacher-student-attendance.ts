@@ -43,7 +43,6 @@ export async function getClassRosterForAttendance(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Get all students confirmed in the class
         const classRoster = await db
@@ -123,7 +122,6 @@ export async function getOrCreateAttendanceSession(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db.transaction(async (tx) => {
           // Try to find existing session
@@ -194,7 +192,6 @@ export async function saveStudentAttendance(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db.transaction(async (tx) => {
           // Find enrollment to get student and class info
@@ -310,7 +307,6 @@ export async function bulkSaveAttendance(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db.transaction(async (tx) => {
           // Get all enrollments at once for student IDs
@@ -423,7 +419,6 @@ export function getClassAttendanceRates(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select({
@@ -498,7 +493,6 @@ export async function getClassAttendanceStats(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [totalStats, statusBreakdown] = await Promise.all([
           db
@@ -590,7 +584,6 @@ export function getStudentAttendanceHistory(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         Promise.all([
           db
@@ -641,7 +634,6 @@ export function getStudentAttendanceTrend(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select({

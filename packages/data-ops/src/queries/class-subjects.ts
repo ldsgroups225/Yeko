@@ -35,7 +35,6 @@ export async function getClassSubjects(filters: ClassSubjectFilters): R.ResultAs
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = []
 
@@ -110,7 +109,6 @@ export async function getAssignmentMatrix(schoolId: string, schoolYearId: string
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -144,7 +142,6 @@ export async function assignTeacherToClassSubject(classId: string, subjectId: st
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Validate teacher can teach this subject
         const [teacherSubject] = await db
@@ -195,7 +192,6 @@ export async function bulkAssignTeacher(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const results = []
 
@@ -246,7 +242,6 @@ export async function removeTeacherFromClassSubject(classId: string, subjectId: 
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(classSubjects)
@@ -265,7 +260,6 @@ export async function removeSubjectFromClass(classId: string, subjectId: string)
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [deleted] = await db
           .delete(classSubjects)
@@ -286,7 +280,6 @@ export async function detectTeacherConflicts(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const assignments = await db
           .select({
@@ -333,7 +326,6 @@ export async function addSubjectToClass(data: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [created] = await db
           .insert(classSubjects)
@@ -376,7 +368,6 @@ export async function updateClassSubjectDetails(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(classSubjects)
@@ -404,7 +395,6 @@ export async function copyClassSubjects(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // 1. Get source subjects
         const sourceSubjects = await db

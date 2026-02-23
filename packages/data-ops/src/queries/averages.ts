@@ -30,7 +30,6 @@ export function calculateSubjectAverage(params: {
 }) {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         const [result] = await db.select({
@@ -79,7 +78,6 @@ export function calculateTermAverage(params: {
 }) {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
 
@@ -158,7 +156,6 @@ export function calculateClassRankings(params: {
 }) {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
         // 1. Get all student averages for the class (overall, not per subject)
@@ -208,7 +205,6 @@ export function calculateAndStoreClassAverages(params: {
 }) {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
 
@@ -350,7 +346,6 @@ export function calculateAndStoreClassAverages(params: {
 export function getClassAveragesList(classId: string, termId: string) {
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const db = getDb()
 

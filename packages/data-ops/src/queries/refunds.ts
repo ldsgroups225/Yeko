@@ -30,7 +30,6 @@ export async function getRefunds(params: GetRefundsParams): R.ResultAsync<Pagina
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(refunds.schoolId, schoolId)]
         if (paymentId)
@@ -59,7 +58,6 @@ export async function getRefundById(refundId: string): R.ResultAsync<Refund | nu
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(refunds).where(eq(refunds.id, refundId)).limit(1)
         return rows[0] ?? null
@@ -74,7 +72,6 @@ export async function generateRefundNumber(schoolId: string): R.ResultAsync<stri
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const year = new Date().getFullYear()
         const prefix = `REF-${year}-`
@@ -107,7 +104,6 @@ export async function createRefund(data: CreateRefundData): R.ResultAsync<Refund
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const refundNumberResult = await generateRefundNumber(data.schoolId)
         if (R.isFailure(refundNumberResult))
@@ -130,7 +126,6 @@ export async function approveRefund(refundId: string, approvedBy: string): R.Res
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [refund] = await db
           .update(refunds)
@@ -149,7 +144,6 @@ export async function rejectRefund(refundId: string, rejectionReason: string): R
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [refund] = await db
           .update(refunds)
@@ -172,7 +166,6 @@ export async function processRefund(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.transaction(async (tx) => {
           const [refund] = await tx.select().from(refunds).where(eq(refunds.id, refundId)).limit(1)
@@ -214,7 +207,6 @@ export async function cancelRefund(refundId: string): R.ResultAsync<Refund | und
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [refund] = await db
           .update(refunds)
@@ -233,7 +225,6 @@ export async function getPendingRefundsCount(schoolId: string): R.ResultAsync<nu
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({ count: sql<number>`count(*)::int` })

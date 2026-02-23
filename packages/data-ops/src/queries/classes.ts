@@ -33,7 +33,6 @@ export async function getClasses(filters: ClassFilters) {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(classes.schoolId, filters.schoolId)]
 
@@ -95,7 +94,6 @@ export async function getClassById(schoolId: string, id: string) {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [classData] = await db
           .select({
@@ -146,7 +144,6 @@ export async function createClass(schoolId: string, data: ClassInsert) {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         if (data.schoolId !== schoolId) {
           throw dbError('PERMISSION_DENIED', getNestedErrorMessage('classes', 'differentSchool'))
@@ -196,7 +193,6 @@ export async function updateClass(schoolId: string, id: string, data: Partial<Cl
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Allow implicit security by adding schoolId to where clause
         const [updatedClass] = await db
@@ -221,7 +217,6 @@ export async function deleteClass(schoolId: string, id: string) {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Check if class has enrolled students
         const [enrollment] = await db

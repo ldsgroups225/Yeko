@@ -62,7 +62,6 @@ export async function getPayments(params: GetPaymentsParams): R.ResultAsync<Pagi
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(payments.schoolId, schoolId)]
         if (studentId)
@@ -115,7 +114,6 @@ export async function getPaymentById(paymentId: string): R.ResultAsync<Payment |
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(payments).where(eq(payments.id, paymentId)).limit(1)
         return rows[0] ?? null
@@ -130,7 +128,6 @@ export async function getPaymentByReceiptNumber(schoolId: string, receiptNumber:
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -149,7 +146,6 @@ export async function generateReceiptNumber(schoolId: string): R.ResultAsync<str
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const year = new Date().getFullYear()
         const prefix = `REC-${year}-`
@@ -192,7 +188,6 @@ export async function createPayment(data: CreatePaymentData): R.ResultAsync<Paym
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const receiptNumberResult = await generateReceiptNumber(data.schoolId)
         if (R.isFailure(receiptNumberResult))
@@ -219,7 +214,6 @@ export async function createPaymentWithAllocations(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Validate payment amount matches allocations
         const totalAllocated = allocationData.reduce((sum: number, a: CreatePaymentAllocationData) => sum + Number.parseFloat(a.amount), 0)
@@ -311,7 +305,6 @@ export async function cancelPayment(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const paymentResult = await getPaymentById(paymentId)
         if (R.isFailure(paymentResult))
@@ -392,7 +385,6 @@ export async function getCashierDailySummary(schoolId: string, cashierId: string
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const dayPayments = await db
           .select()

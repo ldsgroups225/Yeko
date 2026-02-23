@@ -51,7 +51,6 @@ export function getClassrooms(filters: ClassroomFilters): R.ResultAsync<Classroo
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select({
@@ -77,7 +76,6 @@ export async function getClassroomById(id: string): R.ResultAsync<{ classroom: t
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select({
@@ -121,7 +119,6 @@ export function createClassroom(data: ClassroomInsert): R.ResultAsync<typeof cla
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db.insert(classrooms).values(data).returning().then((rows) => {
           if (!rows[0])
@@ -138,7 +135,6 @@ export function updateClassroom(id: string, data: Partial<ClassroomInsert>): R.R
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .update(classrooms)
@@ -160,7 +156,6 @@ export async function deleteClassroom(id: string): R.ResultAsync<void, DatabaseE
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const assignedClasses = await db
           .select()
@@ -187,7 +182,6 @@ export async function checkClassroomAvailability(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select({

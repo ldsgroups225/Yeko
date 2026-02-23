@@ -31,7 +31,6 @@ export async function getActiveAlerts(schoolId: string, alertType?: string): R.R
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -93,7 +92,6 @@ export async function getAlerts(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [alerts, countResult] = await Promise.all([
           db
@@ -127,7 +125,6 @@ export async function createAlert(data: Omit<AttendanceAlertInsert, 'id' | 'crea
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .insert(attendanceAlerts)
@@ -175,7 +172,6 @@ export async function checkExistingAlert(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -195,7 +191,6 @@ export async function acknowledgeAlert(id: string, userId: string, schoolId: str
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(attendanceAlerts)
@@ -226,7 +221,6 @@ export async function resolveAlert(id: string, schoolId: string): R.ResultAsync<
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(attendanceAlerts)
@@ -256,7 +250,6 @@ export async function dismissAlert(id: string, userId: string, schoolId: string)
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(attendanceAlerts)
@@ -287,7 +280,6 @@ export async function deleteAlert(id: string, schoolId: string): R.ResultAsync<v
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(attendanceAlerts).where(and(
           eq(attendanceAlerts.id, id),
@@ -310,7 +302,6 @@ export async function getAlertCounts(schoolId: string): R.ResultAsync<{
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const results = await db
           .select({

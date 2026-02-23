@@ -42,7 +42,6 @@ export function getClassAttendance(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -97,7 +96,6 @@ export function upsertStudentAttendance(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .insert(studentAttendance)
@@ -143,7 +141,6 @@ export function bulkUpsertClassAttendance(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.transaction(async (tx) => {
           const records = params.entries.map(entry => ({
@@ -213,7 +210,6 @@ export function getStudentAttendanceHistory(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({
@@ -259,7 +255,6 @@ export function countStudentAbsences(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({ count: sql<number>`count(*)` })
@@ -285,7 +280,6 @@ export function excuseStudentAbsence(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(studentAttendance)
@@ -318,7 +312,6 @@ export function deleteStudentAttendance(attendanceId: string, schoolId: string):
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db
           .delete(studentAttendance)
@@ -364,7 +357,6 @@ export async function getAttendanceStatistics(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({
@@ -420,7 +412,6 @@ export function markParentNotified(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .update(studentAttendance)

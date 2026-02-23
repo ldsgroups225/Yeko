@@ -2,6 +2,11 @@
   "name": "saas-kit",
   "version": "1.0.0",
   "description": "",
+  "pnpm": {
+    "overrides": {
+      "react-hook-form": "7.71.2"
+    }
+  },
   "scripts": {
     "setup": "pnpm i && pnpm run build:logger && pnpm run build:data-ops",
     "build:data-ops": "pnpm run --filter data-ops build",
@@ -24,15 +29,15 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.28.2",
+  "packageManager": "pnpm@10.30.1",
   "devDependencies": {
-    "@praha/byethrow-docs": "^0.9.0",
+    "@praha/byethrow-docs": "^0.10.0",
     "@types/node": "catalog:",
-    "knip": "^5.83.1",
-    "lefthook": "^2.0.16",
+    "knip": "^5.85.0",
+    "lefthook": "^2.1.1",
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@praha/byethrow": "^0.9.0"
+    "@praha/byethrow": "^0.10.0"
   }
 }

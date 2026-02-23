@@ -38,7 +38,6 @@ export async function getGradesByClass(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Verify class belongs to school
         const classExists = await db.query.classes.findFirst({
@@ -116,7 +115,6 @@ export async function getPendingValidations(params: {
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.select({
           classId: studentGrades.classId,
@@ -167,7 +165,6 @@ export async function getClassGradeStatistics(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.select({
           subjectId: studentGrades.subjectId,
@@ -203,7 +200,6 @@ export async function createStudentGrade(schoolId: string, data: StudentGradeIns
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Validation: Class must belong to school
         const classExists = await db.query.classes.findFirst({
@@ -227,7 +223,6 @@ export async function updateStudentGrade(schoolId: string, id: string, data: Par
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Verify grade belongs to school (via class)
         const [grade] = await db.select({ id: studentGrades.id })
@@ -256,7 +251,6 @@ export async function getStudentGradeById(schoolId: string, id: string): R.Resul
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const grade = await db.query.studentGrades.findFirst({
           where: eq(studentGrades.id, id),
@@ -295,7 +289,6 @@ export async function updateGradesStatus(schoolId: string, gradeIds: string[], s
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const now = new Date()
 
@@ -346,7 +339,6 @@ export async function deleteDraftGrades(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         // Verify class belongs to school
         const classValid = await db.query.classes.findFirst({
@@ -384,7 +376,6 @@ export async function getGradeValidationHistory(gradeId: string): R.ResultAsync<
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.query.gradeValidations.findMany({
           where: eq(gradeValidations.gradeId, gradeId),
@@ -411,7 +402,6 @@ export async function getSubmittedGradeIds(params: {
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const classValid = await db.query.classes.findFirst({
           where: and(eq(classes.id, params.classId), eq(classes.schoolId, params.schoolId)),

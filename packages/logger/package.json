@@ -3,7 +3,7 @@
   "type": "module",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "pnpm@10.28.2",
+  "packageManager": "pnpm@10.30.1",
   "description": "Logger package for Yeko educational management platform using LogTape",
   "author": "Yeko Team",
   "license": "ISC",

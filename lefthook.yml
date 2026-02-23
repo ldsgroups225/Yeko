@@ -1,138 +1,189 @@
+# ─── Output ──────────────────────────────────────────────────────────
+output:
+  - meta
+  - summary
+  - success
+  - failure
+  - execution_out
+
+# ─── Pre-commit ──────────────────────────────────────────────────────
+# Runs ESLint (fix) + TypeScript check in parallel, per-package.
+# Only packages with staged files are checked (skip_empty).
 pre-commit:
   parallel: true
+  exclude:
+    - "**/routeTree.gen.ts"
+    - "**/i18n-types.ts"
+    - "**/i18n-util.ts"
+    - "**/auth-schema.ts"
 
   jobs:
-    - name: "ESLint (staged files with per-package configs)"
-      run: |
-        # Get unique parent directories (apps/*, packages/*) from staged files
-        for file in {staged_files}; do
-          dir="$(dirname "$file")"
-          # Find the package root (apps/* or packages/*)
-          while [ "$dir" != "." ] && [ "$dir" != "/" ]; do
-            if [ -f "$dir/package.json" ] && [ -f "$dir/eslint.config.js" ]; then
-              echo "$dir"
-              break
-            fi
-            dir="$(dirname "$dir")"
-          done
-        done | sort -u | while read pkg_dir; do
-          # Run eslint from each package directory with its own config
-          (cd "$pkg_dir" && pnpm exec eslint . --fix --quiet) &
-        done
-        wait
-      glob:
-        - "**/*.ts"
-        - "**/*.tsx"
-        - "**/*.js"
-        - "**/*.jsx"
-      stage_fixed: true
-      skip_empty: true
+    # ── ESLint (auto-fix staged files) ─────────────────────────────
+    - name: eslint
+      group:
+        parallel: true
+        glob: "*.{ts,tsx,js,jsx}"
+        jobs:
+          # Apps
+          - name: "eslint:core"
+            root: "apps/core/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in apps/core"
+          - name: "eslint:school"
+            root: "apps/school/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in apps/school"
+          - name: "eslint:teacher"
+            root: "apps/teacher/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in apps/teacher"
+          - name: "eslint:data-service"
+            root: "apps/data-service/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in apps/data-service"
+          # Packages
+          - name: "eslint:data-ops"
+            root: "packages/data-ops/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in packages/data-ops"
+          - name: "eslint:ui"
+            root: "packages/ui/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in packages/ui"
+          - name: "eslint:logger"
+            root: "packages/logger/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in packages/logger"
+          - name: "eslint:background-tasks"
+            root: "packages/background-tasks/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in packages/background-tasks"
+          - name: "eslint:queue-worker"
+            root: "packages/queue-worker/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in packages/queue-worker"
+          - name: "eslint:eslint-config"
+            root: "packages/eslint-config/"
+            run: pnpm exec eslint {staged_files} --fix --quiet
+            stage_fixed: true
+            skip_empty: true
+            fail_text: "ESLint failed in packages/eslint-config"
 
-    - name: "TypeScript (staged files with per-package configs)"
-      run: |
-        # Get unique parent directories from staged files
-        for file in {staged_files}; do
-          dir="$(dirname "$file")"
-          while [ "$dir" != "." ] && [ "$dir" != "/" ]; do
-            if [ -f "$dir/package.json" ] && [ -f "$dir/tsconfig.json" ]; then
-              echo "$dir"
-              break
-            fi
-            dir="$(dirname "$dir")"
-          done
-        done | sort -u | while read pkg_dir; do
-          # Run tsc from each package directory with its own config
-          (cd "$pkg_dir" && pnpm exec tsc --noEmit) &
-        done
-        wait
-      glob:
-        - "**/*.ts"
-        - "**/*.tsx"
-      skip_empty: true
-      allow_empty: true
+    # ── TypeScript (noEmit check) ──────────────────────────────────
+    - name: typecheck
+      group:
+        parallel: true
+        glob: "*.{ts,tsx}"
+        jobs:
+          # Apps
+          - name: "tsc:core"
+            root: "apps/core/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in apps/core"
+          - name: "tsc:school"
+            root: "apps/school/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in apps/school"
+          - name: "tsc:teacher"
+            root: "apps/teacher/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in apps/teacher"
+          - name: "tsc:data-service"
+            root: "apps/data-service/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in apps/data-service"
+          # Packages
+          - name: "tsc:data-ops"
+            root: "packages/data-ops/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in packages/data-ops"
+          - name: "tsc:ui"
+            root: "packages/ui/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in packages/ui"
+          - name: "tsc:logger"
+            root: "packages/logger/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in packages/logger"
+          - name: "tsc:background-tasks"
+            root: "packages/background-tasks/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in packages/background-tasks"
+          - name: "tsc:queue-worker"
+            root: "packages/queue-worker/"
+            run: pnpm exec tsc --noEmit
+            skip_empty: true
+            fail_text: "TypeScript errors in packages/queue-worker"
 
-    # - name: "Prettier (format unformatted files)"
-    #   run: pnpm exec prettier --write {staged_files}
-    #   glob:
-    #     - "**/*.ts"
-    #     - "**/*.tsx"
-    #     - "**/*.js"
-    #     - "**/*.jsx"
-    #     - "**/*.css"
-    #     - "**/*.json"
-    #     - "**/*.yaml"
-    #     - "**/*.yml"
-    #     - "**/*.md"
-    #   stage_fixed: true
-    #   skip_empty: true
-
-# Pre-push hook - runs before code is pushed to remote
-# More comprehensive checks since this is before shared history
+# ─── Pre-push ────────────────────────────────────────────────────────
+# Full checks before sharing code — lint + typecheck can run in parallel.
 pre-push:
-  parallel: false
+  parallel: true
   jobs:
-    # Full lint check on all files in the push
     - name: "Full ESLint Check"
       run: pnpm lint:check
-      description: "Run full lint check on all packages"
-      allow_empty: true
-
-    # Full typecheck on all packages
+      fail_text: "Fix lint errors before pushing"
     - name: "Full TypeScript Check"
       run: pnpm typecheck
-      description: "Run full TypeScript check on all packages"
-      allow_empty: true
+      fail_text: "Fix type errors before pushing"
 
-# Commit-msg hook - validate commit messages
-# Uncomment to enable conventional commits validation
-# commit-msg:
-#   parallel: true
-#   jobs:
-#     - name: "Validate Commit Message"
-#       run: pnpm exec commitlint --edit "$1"
-#       glob:
-#         - "**/*.js"
-#         - "**/*.ts"
-
-# Post-merge hook - run after git merge
-# Reinstall dependencies if package.json changed
+# ─── Post-merge ──────────────────────────────────────────────────────
+# Reinstall dependencies when lockfile or package.json changed.
 post-merge:
-  parallel: true
   jobs:
-    - name: "Install Dependencies (if package.json changed)"
+    - name: "Install Dependencies"
       run: |
-        if git diff --name-only HEAD~1 HEAD | grep -q "package.json\|pnpm-lock.yaml"; then
+        if git diff --name-only HEAD~1 HEAD | grep -qE "(^|/)package\.json$|pnpm-lock\.yaml$"; then
+          echo "📦 Dependencies changed — running pnpm install..."
           pnpm install
         fi
-      glob:
-        - "**/package.json"
-        - "**/pnpm-lock.yaml"
-      skip_empty: true
 
-# Post-checkout hook - run after git checkout
-# Useful for ensuring dependencies are up to date
+# ─── Post-checkout ───────────────────────────────────────────────────
+# Ensure node_modules exist after branch switch.
 post-checkout:
-  parallel: true
   jobs:
-    - name: "Install Dependencies (if needed)"
+    - name: "Install Dependencies (if missing)"
       run: |
         if [ ! -d "node_modules" ] || [ ! -d "packages/data-ops/node_modules" ]; then
+          echo "📦 node_modules missing — running pnpm install..."
           pnpm install
         fi
-      skip_empty: true
 
-# Custom hooks - can be run manually with `lefthook run <hook-name>`
-
-# Run with: lefthook run auto-fix
+# ─── Custom hooks (run manually) ─────────────────────────────────────
+# Usage: lefthook run auto-fix
 auto-fix:
   jobs:
     - name: "Auto-fix all issues"
       run: pnpm lint:fix
-      description: "Run lint:fix across all packages"
 
-# Run with: lefthook run typecheck-all
+# Usage: lefthook run typecheck-all
 typecheck-all:
   jobs:
     - name: "Full TypeScript Check"
       run: pnpm typecheck
-      description: "Run typecheck across all packages"

@@ -18,7 +18,6 @@ export function getFeeTypes(params: GetFeeTypesParams): R.ResultAsync<FeeType[],
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(feeTypes.schoolId, schoolId)]
         if (category)
@@ -38,7 +37,6 @@ export async function getFeeTypeById(feeTypeId: string): R.ResultAsync<FeeType |
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(feeTypes).where(eq(feeTypes.id, feeTypeId)).limit(1)
         return rows[0] ?? null
@@ -53,7 +51,6 @@ export async function getFeeTypeByCode(schoolId: string, code: string): R.Result
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -74,7 +71,6 @@ export async function createFeeType(data: CreateFeeTypeData): R.ResultAsync<FeeT
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [feeType] = await db.insert(feeTypes).values({ id: crypto.randomUUID(), ...data }).returning()
         if (!feeType) {
@@ -107,7 +103,6 @@ export async function updateFeeType(feeTypeId: string, data: UpdateFeeTypeData):
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [feeType] = await db
           .update(feeTypes)
@@ -126,7 +121,6 @@ export async function deleteFeeType(feeTypeId: string): R.ResultAsync<void, Data
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(feeTypes).where(eq(feeTypes.id, feeTypeId))
       },

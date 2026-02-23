@@ -23,7 +23,6 @@ export function getAccounts(params: GetAccountsParams): R.ResultAsync<Account[],
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(accounts.schoolId, schoolId)]
 
@@ -97,7 +96,6 @@ export function getAccountById(accountId: string): R.ResultAsync<Account | null,
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -116,7 +114,6 @@ export function getAccountByCode(schoolId: string, code: string): R.ResultAsync<
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -137,7 +134,6 @@ export function createAccount(data: CreateAccountData): R.ResultAsync<Account, D
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         let level = 1
         if (data.parentId) {
@@ -176,7 +172,6 @@ export function updateAccount(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         let level: number | undefined
         if (data.parentId !== undefined) {
@@ -215,7 +210,6 @@ export function updateAccountBalance(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [account] = await db
           .update(accounts)
@@ -235,7 +229,6 @@ export function deleteAccount(accountId: string): R.ResultAsync<void, DatabaseEr
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(accounts).where(eq(accounts.id, accountId))
       },
@@ -265,7 +258,6 @@ export function getAccountBalancesByType(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: () =>
         db
           .select({
@@ -289,7 +281,6 @@ export function getTotalBalanceByType(schoolId: string, type: AccountType): R.Re
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select({ total: sql<string>`COALESCE(SUM(${accounts.balance}), 0)` })

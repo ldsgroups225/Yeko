@@ -33,7 +33,6 @@ export async function getFeeTypeTemplates(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = []
         if (category) {
@@ -65,7 +64,6 @@ export async function getFeeTypeTemplateById(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -90,7 +88,6 @@ export async function getFeeTypeTemplateByCode(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db
           .select()
@@ -117,7 +114,6 @@ export async function createFeeTypeTemplate(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [template] = await db
           .insert(feeTypeTemplates)
@@ -151,7 +147,6 @@ export async function updateFeeTypeTemplate(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [template] = await db
           .update(feeTypeTemplates)
@@ -184,7 +179,6 @@ export async function deleteFeeTypeTemplate(templateId: string): R.ResultAsync<v
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         await db.delete(feeTypeTemplates).where(eq(feeTypeTemplates.id, templateId))
       },
@@ -205,7 +199,6 @@ export async function getTemplateCategoriesWithCounts(): R.ResultAsync<
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select({

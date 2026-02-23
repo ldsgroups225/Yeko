@@ -25,7 +25,6 @@ export async function getFiscalYearsBySchool(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db
           .select()
@@ -53,7 +52,6 @@ export async function updateFiscalYear(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [updated] = await db
           .update(fiscalYears)

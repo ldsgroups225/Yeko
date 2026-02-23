@@ -31,7 +31,6 @@ export async function getTransactions(params: GetTransactionsParams): R.ResultAs
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const conditions = [eq(transactions.schoolId, schoolId)]
         if (fiscalYearId)
@@ -64,7 +63,6 @@ export function getTransactionById(transactionId: string): R.ResultAsync<Transac
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const rows = await db.select().from(transactions).where(eq(transactions.id, transactionId)).limit(1)
         return rows[0] ?? null
@@ -79,7 +77,6 @@ export async function getTransactionWithLines(transactionId: string): R.ResultAs
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const [transaction] = await db.select().from(transactions).where(eq(transactions.id, transactionId)).limit(1)
         if (!transaction)
@@ -98,7 +95,6 @@ export function generateTransactionNumber(schoolId: string): R.ResultAsync<strin
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const year = new Date().getFullYear()
         const prefix = `TXN-${year}-`
@@ -140,7 +136,6 @@ export async function createJournalEntry(
 
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.transaction(async (tx) => {
           // Validate double-entry: debits must equal credits
@@ -206,7 +201,6 @@ export function voidTransaction(
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         return await db.transaction(async (tx) => {
           const txnWithLinesResult = await getTransactionWithLines(transactionId)
@@ -255,7 +249,6 @@ export function getTransactionLinesByAccount(accountId: string, fiscalYearId?: s
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         if (fiscalYearId) {
           const rows = await db
@@ -287,7 +280,6 @@ export async function getTrialBalance(schoolId: string, fiscalYearId: string): R
   const db = getDb()
   return R.pipe(
     R.try({
-      immediate: true,
       try: async () => {
         const result = await db
           .select({
