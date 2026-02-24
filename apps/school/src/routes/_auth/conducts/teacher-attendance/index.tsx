@@ -1,4 +1,4 @@
-import type { TeacherAttendanceEntry } from '@/components/attendance/teacher/teacher-attendance-grid'
+import type { TeacherAttendanceEntry } from '@/components/attendance/teacher/types'
 import { IconCalendar, IconChartBar } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'

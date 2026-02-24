@@ -1,9 +1,7 @@
-import { IconCalendar, IconChartBar, IconFileText, IconFilter, IconLayoutGrid, IconList, IconSchool, IconSearch } from '@tabler/icons-react'
+import { IconCalendar, IconLayoutGrid, IconSchool } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent } from '@workspace/ui/components/card'
-import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import {
   Select,
@@ -15,16 +13,16 @@ import {
 } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { ClassAveragesTable } from '@/components/grades'
 import { BulkGenerationDialog, ReportCardList } from '@/components/report-cards'
+import { ReportCardsToolbar } from '@/components/report-cards/report-cards-toolbar'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 import { schoolMutationKeys } from '@/lib/queries/keys'
-import { cn } from '@/lib/utils'
 import { getClassAverages, recalculateAverages } from '@/school/functions/averages'
 import { getClasses } from '@/school/functions/classes'
 import { getEnrollments } from '@/school/functions/enrollments'
@@ -55,11 +53,13 @@ function ReportCardsPage() {
   const [viewMode, setViewMode] = useState<'cards' | 'averages'>('cards')
   const navigate = useNavigate()
 
+  const [prevContextYear, setPrevContextYear] = useState(contextSchoolYearId)
   // Reset local filters when global school year changes
-  useEffect(() => {
+  if (contextSchoolYearId !== prevContextYear) {
+    setPrevContextYear(contextSchoolYearId)
     setSelectedTermId('')
     setSelectedClassId('')
-  }, [contextSchoolYearId])
+  }
 
   const effectiveYearId = contextSchoolYearId || ''
 
@@ -325,63 +325,15 @@ function ReportCardsPage() {
         </div>
 
         {canShowReportCards && (
-          <div className="pt-4 border-t border-border/10 flex flex-col sm:flex-row items-center gap-4">
-            <div className="relative flex-1 w-full">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
-              <Input
-                placeholder={t.students.searchPlaceholder()}
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                className="h-11 border-border/40 bg-background/40 pl-9 transition-all focus:bg-background shadow-none rounded-xl"
-              />
-            </div>
-            <div className="flex gap-2">
-              <div className="flex bg-muted/20 p-1 rounded-xl border border-border/20 mr-2">
-                <Button
-                  variant={viewMode === 'cards' ? 'secondary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('cards')}
-                  className={cn('h-9 px-3', viewMode === 'cards' && 'shadow-sm')}
-                >
-                  <IconList className="mr-2 h-4 w-4" />
-                  {t.academic.grades.averages.viewCards()}
-                </Button>
-                <Button
-                  variant={viewMode === 'averages' ? 'secondary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setViewMode('averages')}
-                  className={cn('h-9 px-3', viewMode === 'averages' && 'shadow-sm')}
-                >
-                  <IconChartBar className="mr-2 h-4 w-4" />
-                  {t.academic.grades.averages.viewAverages()}
-                </Button>
-              </div>
-
-              <Button
-                variant="outline"
-                className="h-11 px-6 border-border/40 bg-background/40 hover:bg-background rounded-xl font-bold uppercase tracking-widest text-[10px]"
-              >
-                <IconFilter className="mr-2 h-4 w-4" />
-                {t.common.filters()}
-              </Button>
-              <Button
-                variant={viewMode === 'averages' ? 'secondary' : 'default'}
-                className={cn('h-11 px-6 rounded-xl font-bold uppercase tracking-widest text-[10px]', viewMode === 'averages' ? 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20' : 'bg-primary hover:bg-primary/90 text-primary-foreground')}
-                onClick={() => {
-                  if (viewMode === 'averages')
-                    recalculateMutation.mutate()
-                  else
-                    setIsGenerationDialogOpen(true)
-                }}
-                disabled={recalculateMutation.isPending}
-              >
-                {recalculateMutation.isPending
-                  ? <IconSchool className="mr-2 h-4 w-4 animate-spin" />
-                  : <IconFileText className="mr-2 h-4 w-4" />}
-                {viewMode === 'averages' ? t.academic.grades.averages.recalculate() : t.reportCards.generate()}
-              </Button>
-            </div>
-          </div>
+          <ReportCardsToolbar
+            search={search}
+            setSearch={setSearch}
+            viewMode={viewMode}
+            setViewMode={setViewMode}
+            onRecalculate={() => recalculateMutation.mutate()}
+            isRecalculating={recalculateMutation.isPending}
+            onGenerateClick={() => setIsGenerationDialogOpen(true)}
+          />
         )}
       </motion.div>
 

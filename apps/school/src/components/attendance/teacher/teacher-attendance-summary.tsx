@@ -1,0 +1,56 @@
+import type { TeacherAttendanceStatus } from './types'
+import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
+import { useTeacherAttendance } from './teacher-attendance-context'
+import { STATUS_CONFIG } from './types'
+
+export function TeacherAttendanceSummary() {
+  const t = useTranslations()
+  const { state } = useTeacherAttendance()
+  const { summary } = state
+
+  return (
+    <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+      <SummaryCard
+        label={t.attendance.status.present()}
+        count={summary.present}
+        config={STATUS_CONFIG.present}
+      />
+      <SummaryCard
+        label={t.attendance.status.late()}
+        count={summary.late}
+        config={STATUS_CONFIG.late}
+      />
+      <SummaryCard
+        label={t.attendance.status.absent()}
+        count={summary.absent}
+        config={STATUS_CONFIG.absent}
+      />
+      <SummaryCard
+        label={t.attendance.status.excused()}
+        count={summary.excused}
+        config={STATUS_CONFIG.excused}
+      />
+    </div>
+  )
+}
+
+function SummaryCard({ label, count, config }: { label: string, count: number, config: typeof STATUS_CONFIG[TeacherAttendanceStatus] }) {
+  const Icon = config.icon
+  return (
+    <div className={cn(
+      'relative overflow-hidden p-3 rounded-2xl border transition-all duration-300 group',
+      config.bgColor,
+      config.borderColor,
+    )}
+    >
+      <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform duration-500">
+        <Icon className={cn('size-6', config.color)} />
+      </div>
+      <div className="relative z-10 flex flex-col">
+        <span className={cn('text-[8px] font-black uppercase tracking-widest mb-0.5 italic', config.color)}>{label}</span>
+        <span className="text-xl font-black italic tabular-nums group-hover:translate-x-1 transition-transform">{count}</span>
+      </div>
+    </div>
+  )
+}

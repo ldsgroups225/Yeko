@@ -9,17 +9,17 @@ import { useQuery } from '@tanstack/react-query'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
-
-import { Progress } from '@workspace/ui/components/progress'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
 import { generateUUID } from '@/utils/generateUUID'
+import { ClassCapacityCard } from './enrollments/class-capacity-card'
+import { GradeEnrollmentCard } from './enrollments/grade-enrollment-card'
+import { StatusBreakdownCard } from './enrollments/status-breakdown-card'
 
 interface StatCardProps {
   title: string
@@ -27,29 +27,6 @@ interface StatCardProps {
   description?: string
   icon: React.ReactNode
   trend?: number
-}
-
-interface GradeStats {
-  gradeId: string
-  gradeName: string
-  gradeOrder: number
-  count: number
-  boys: number
-  girls: number
-}
-
-interface ClassStats {
-  classId: string
-  className: string
-  maxStudents: number
-  count: number
-  boys: number
-  girls: number
-}
-
-interface StatusStats {
-  status: string
-  count: number
 }
 
 function StatCard({ title, value, description, icon, trend }: StatCardProps) {
@@ -61,16 +38,10 @@ function StatCard({ title, value, description, icon, trend }: StatCardProps) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        {description && (
-          <p className="text-xs text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="text-xs text-muted-foreground">{description}</p>}
         {trend !== undefined && (
-          <div
-            className={`flex items-center text-xs ${trend >= 0 ? 'text-success' : 'text-destructive'}`}
-          >
-            <IconTrendingUp
-              className={`mr-1 h-3 w-3 ${trend < 0 ? 'rotate-180' : ''}`}
-            />
+          <div className={`flex items-center text-xs ${trend >= 0 ? 'text-success' : 'text-destructive'}`}>
+            <IconTrendingUp className={`mr-1 h-3 w-3 ${trend < 0 ? 'rotate-180' : ''}`} />
             {Math.abs(trend)}
             % vs last month
           </div>
@@ -83,18 +54,12 @@ function StatCard({ title, value, description, icon, trend }: StatCardProps) {
 export function EnrollmentStats() {
   const t = useTranslations()
   const { schoolYearId } = useSchoolYearContext()
-
-  const { data, isPending, error } = useQuery({
-    ...enrollmentsOptions.statistics(schoolYearId || ''),
-    enabled: !!schoolYearId,
-  })
+  const { data, isPending, error } = useQuery({ ...enrollmentsOptions.statistics(schoolYearId || ''), enabled: !!schoolYearId })
 
   if (!schoolYearId) {
     return (
       <div className="flex min-h-[200px] items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/30 p-8 text-center">
-        <p className="text-muted-foreground">
-          {t.students.selectSchoolYearForStats()}
-        </p>
+        <p className="text-muted-foreground">{t.students.selectSchoolYearForStats()}</p>
       </div>
     )
   }
@@ -103,14 +68,9 @@ export function EnrollmentStats() {
     return (
       <div className="space-y-4">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }, () => (
-            <Card
-              key={`stat-${generateUUID()}`}
-              className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm"
-            >
-              <CardHeader className="pb-2">
-                <Skeleton className="h-4 w-24" />
-              </CardHeader>
+          {Array.from({ length: 4 }).map(() => (
+            <Card key={generateUUID()} className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+              <CardHeader className="pb-2"><Skeleton className="h-4 w-24" /></CardHeader>
               <CardContent>
                 <Skeleton className="h-8 w-16" />
                 <Skeleton className="mt-1 h-3 w-32" />
@@ -119,22 +79,12 @@ export function EnrollmentStats() {
           ))}
         </div>
         <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-5 w-32" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-[200px] w-full" />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <Skeleton className="h-5 w-32" />
-            </CardHeader>
-            <CardContent>
-              <Skeleton className="h-[200px] w-full" />
-            </CardContent>
-          </Card>
+          {Array.from({ length: 2 }).map(() => (
+            <Card key={generateUUID()}>
+              <CardHeader><Skeleton className="h-5 w-32" /></CardHeader>
+              <CardContent><Skeleton className="h-[200px] w-full" /></CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     )
@@ -151,183 +101,22 @@ export function EnrollmentStats() {
 
   if (!data)
     return null
-
-  const byGrade = data.byGrade as GradeStats[]
-  const byClass = data.byClass as ClassStats[]
-  const byStatus = data.byStatus as StatusStats[]
-
-  const totalBoys = byGrade.reduce((sum, g) => sum + Number(g.boys), 0)
-  const totalGirls = byGrade.reduce((sum, g) => sum + Number(g.girls), 0)
+  const totalBoys = (data.byGrade as any[]).reduce((sum, g) => sum + Number(g.boys), 0)
+  const totalGirls = (data.byGrade as any[]).reduce((sum, g) => sum + Number(g.girls), 0)
 
   return (
     <div className="space-y-4">
-      {/* Summary Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title={t.students.totalEnrollments()}
-          value={data.total}
-          icon={<IconUsers className="h-4 w-4 text-muted-foreground" />}
-        />
-        <StatCard
-          title={t.students.confirmedEnrollments()}
-          value={data.confirmed}
-          description={`${data.total > 0 ? Math.round((data.confirmed / data.total) * 100) : 0}% ${t.students.ofTotal()}`}
-          icon={<IconChartBar className="h-4 w-4 text-success" />}
-        />
-        <StatCard
-          title={t.students.pendingEnrollments()}
-          value={data.pending}
-          description={t.students.awaitingConfirmation()}
-          icon={<IconLoader2 className="h-4 w-4 text-accent-foreground" />}
-        />
-        <StatCard
-          title={t.students.genderRatio()}
-          value={`${totalBoys}/${totalGirls}`}
-          description={t.students.boysGirls()}
-          icon={<IconUsers className="h-4 w-4 text-secondary" />}
-        />
+        <StatCard title={t.students.totalEnrollments()} value={data.total} icon={<IconUsers className="h-4 w-4 text-muted-foreground" />} />
+        <StatCard title={t.students.confirmedEnrollments()} value={data.confirmed} description={`${data.total > 0 ? Math.round((data.confirmed / data.total) * 100) : 0}% ${t.students.ofTotal()}`} icon={<IconChartBar className="h-4 w-4 text-success" />} />
+        <StatCard title={t.students.pendingEnrollments()} value={data.pending} description={t.students.awaitingConfirmation()} icon={<IconLoader2 className="h-4 w-4 text-accent-foreground" />} />
+        <StatCard title={t.students.genderRatio()} value={`${totalBoys}/${totalGirls}`} description={t.students.boysGirls()} icon={<IconUsers className="h-4 w-4 text-secondary" />} />
       </div>
-
-      {/* Enrollment by Grade */}
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
-          <CardHeader>
-            <CardTitle>{t.students.enrollmentByGrade()}</CardTitle>
-            <CardDescription>
-              {t.students.enrollmentByGradeDescription()}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {byGrade.length === 0
-                ? (
-                    <p className="text-center text-sm text-muted-foreground">
-                      {t.students.noEnrollmentData()}
-                    </p>
-                  )
-                : (
-                    byGrade.map(grade => (
-                      <div key={grade.gradeId} className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="font-medium">{grade.gradeName}</span>
-                          <span className="text-muted-foreground">
-                            {grade.count}
-                            {' '}
-                            (
-                            {grade.boys}
-                            M /
-                            {grade.girls}
-                            F)
-                          </span>
-                        </div>
-                        <div className="flex gap-1">
-                          <Progress
-                            value={
-                              (Number(grade.boys)
-                                / Math.max(Number(grade.count), 1))
-                              * 100
-                            }
-                            className="h-2 flex-1 bg-pink-100"
-                          />
-                        </div>
-                      </div>
-                    ))
-                  )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Enrollment by Class */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{t.students.enrollmentByClass()}</CardTitle>
-            <CardDescription>
-              {t.students.classCapacityOverview()}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="max-h-[300px] space-y-3 overflow-y-auto">
-              {byClass.length === 0
-                ? (
-                    <p className="text-center text-sm text-muted-foreground">
-                      {t.students.noEnrollmentData()}
-                    </p>
-                  )
-                : (
-                    byClass.map((cls) => {
-                      const fillPercent
-                        = (Number(cls.count) / cls.maxStudents) * 100
-                      const isNearCapacity = fillPercent >= 90
-                      const isOverCapacity = fillPercent > 100
-
-                      return (
-                        <div key={cls.classId} className="space-y-1">
-                          <div className="flex items-center justify-between text-sm">
-                            <span className="font-medium">{cls.className}</span>
-                            <span
-                              className={`text-xs ${isOverCapacity ? 'text-destructive' : isNearCapacity ? 'text-accent-foreground' : 'text-muted-foreground'}`}
-                            >
-                              {cls.count}
-                              /
-                              {cls.maxStudents}
-                            </span>
-                          </div>
-                          <Progress
-                            value={Math.min(fillPercent, 100)}
-                            className={`h-2 ${isOverCapacity ? '[&>div]:bg-destructive' : isNearCapacity ? '[&>div]:bg-accent' : ''}`}
-                          />
-                        </div>
-                      )
-                    })
-                  )}
-            </div>
-          </CardContent>
-        </Card>
+        <GradeEnrollmentCard data={data.byGrade as any[]} />
+        <ClassCapacityCard data={data.byClass as any[]} />
       </div>
-
-      {/* Status Breakdown */}
-      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
-        <CardHeader>
-          <CardTitle>{t.students.enrollmentStatusBreakdown()}</CardTitle>
-          <CardDescription>
-            {t.students.enrollmentStatusDescription()}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            {byStatus.map((status) => {
-              const statusColors: Record<string, string> = {
-                confirmed: 'bg-success/10 text-success',
-                pending: 'bg-accent/10 text-accent-foreground',
-                cancelled: 'bg-destructive/10 text-destructive',
-                transferred: 'bg-secondary/10 text-secondary',
-              }
-              return (
-                <div
-                  key={status.status}
-                  className={`rounded-xl px-4 py-2 backdrop-blur-sm border border-border/20 ${statusColors[status.status] || 'bg-card/50 text-foreground'}`}
-                >
-                  <p className="text-2xl font-bold">{status.count}</p>
-                  <p className="text-xs capitalize">
-                    {{
-                      pending: t.enrollments.statusPending,
-                      confirmed: t.enrollments.statusConfirmed,
-                      cancelled: t.enrollments.statusCancelled,
-                      transferred: t.enrollments.statusTransferred,
-                    }[
-                      status.status as
-                      | 'pending'
-                      | 'confirmed'
-                      | 'cancelled'
-                      | 'transferred'
-                    ]()}
-                  </p>
-                </div>
-              )
-            })}
-          </div>
-        </CardContent>
-      </Card>
+      <StatusBreakdownCard data={data.byStatus as any[]} />
     </div>
   )
 }

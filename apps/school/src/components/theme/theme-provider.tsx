@@ -30,6 +30,7 @@ export function ThemeProvider({
   // Use useSyncExternalStore for hydration-safe mounted detection
   const isMounted = useSyncExternalStore(emptySubscribe, getClientSnapshot, getServerSnapshot)
 
+  // eslint-disable-next-line react-naming-convention/use-state
   const [theme, setThemeState] = useState<Theme>(() => {
     // During SSR, always return the default theme to avoid hydration mismatch
     if (typeof window === 'undefined') {

@@ -9,7 +9,7 @@ export const userSchema = z.object({
   status: z.enum(['active', 'inactive', 'suspended'], {
     message: 'Statut invalide',
   }),
-  roleIds: z.array(z.string()).default([]),
+  roleIds: z.array(z.string()),
 })
 
 export const userCreateSchema = userSchema

@@ -1,12 +1,7 @@
-import type { ColumnDef } from '@tanstack/react-table'
+import type { ClassroomItem } from './types'
 import {
   IconBuilding,
-  IconDots,
-  IconEye,
   IconSearch,
-  IconStack2,
-  IconTrash,
-  IconUsers,
 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -16,17 +11,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@workspace/ui/components/alert-dialog'
-import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import {
   Card,
@@ -34,12 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
 import {
   Empty,
   EmptyDescription,
@@ -57,23 +35,16 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteClassroom, getClassrooms } from '@/school/functions/classrooms'
-
-interface ClassroomItem {
-  id: string
-  name: string
-  code: string
-  type: string
-  capacity: number
-  status: 'active' | 'maintenance' | 'inactive'
-  assignedClassesCount?: number
-}
+import { useClassroomsTableColumns } from './classrooms-table-columns'
+import { ClassroomsTableDeleteDialog } from './classrooms-table-delete-dialog'
+import { ClassroomsTableMobileView } from './classrooms-table-mobile-view'
 
 interface ClassroomsTableProps {
   filters?: {
@@ -128,119 +99,7 @@ export function ClassroomsTable({
     deleteMutation.mutate(itemToDelete.id)
   }
 
-  const columns = useMemo<ColumnDef<ClassroomItem>[]>(
-    () => [
-      {
-        accessorKey: 'name',
-        header: 'Nom',
-        cell: ({ row }) => (
-          <div>
-            <div className="font-bold text-foreground">
-              {row.original.name}
-            </div>
-            <div className="font-mono text-xs font-medium text-muted-foreground">
-              {row.original.code}
-            </div>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'type',
-        header: 'Type',
-        cell: ({ row }) => (
-          <Badge variant="secondary" className="font-medium">
-            <span className="capitalize">{row.original.type}</span>
-          </Badge>
-        ),
-      },
-      {
-        accessorKey: 'capacity',
-        header: 'Capacité',
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <div className="p-1 rounded bg-muted/20">
-              <IconUsers className="h-3.5 w-3.5 text-muted-foreground" />
-            </div>
-            <span className="font-medium tabular-nums">
-              {row.original.capacity}
-            </span>
-          </div>
-        ),
-      },
-      {
-        id: 'assigned',
-        header: 'Classes assignées',
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <div className="p-1 rounded bg-muted/20">
-              <IconStack2 className="h-3.5 w-3.5 text-muted-foreground" />
-            </div>
-            <span className="font-medium tabular-nums">
-              {row.original.assignedClassesCount ?? 0}
-            </span>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'status',
-        header: 'Statut',
-        cell: ({ row }) => {
-          const status = row.original.status
-          return (
-            <Badge
-              variant={status === 'active' ? 'default' : 'secondary'}
-              className={`rounded-lg capitalize transition-colors ${
-                status === 'active'
-                  ? 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              {status === 'active'
-                ? 'Actif'
-                : status === 'maintenance'
-                  ? 'Maintenance'
-                  : 'Inactif'}
-            </Badge>
-          )
-        },
-      },
-      {
-        id: 'actions',
-        cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={(
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                  }}
-                >
-                  <IconDots className="h-4 w-4" />
-                </Button>
-              )}
-            />
-            <DropdownMenuContent
-              align="end"
-              className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
-            >
-              <DropdownMenuItem
-                className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
-                onClick={() => setItemToDelete(row.original)}
-              >
-                <IconTrash className="mr-2 h-4 w-4" />
-                {t.common.delete()}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
-      },
-    ],
-    [t],
-  )
+  const columns = useClassroomsTableColumns({ setItemToDelete })
 
   const table = useReactTable({
     data: data || [],
@@ -370,83 +229,7 @@ export function ClassroomsTable({
                 </Table>
               </div>
 
-              <div className="md:hidden space-y-4 p-4">
-                <AnimatePresence>
-                  {data?.map((item, index) => (
-                    <motion.div
-                      key={item.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-3"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-2">
-                          <div className="font-mono text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-md">
-                            {item.code}
-                          </div>
-                          <Badge
-                            variant={
-                              item.status === 'active'
-                                ? 'default'
-                                : 'secondary'
-                            }
-                            className="capitalize rounded-md text-[10px]"
-                          >
-                            {item.status === 'active'
-                              ? 'Actif'
-                              : 'Inactif'}
-                          </Badge>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 rounded-lg -mr-2 -mt-2 text-muted-foreground"
-                          onClick={() =>
-                            navigate({
-                              to: `/spaces/classrooms/${item.id}`,
-                            })}
-                        >
-                          <IconEye className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <div>
-                        <div className="font-bold text-lg">
-                          {item.name}
-                        </div>
-                        <Badge
-                          variant="outline"
-                          className="mt-1 font-medium text-xs capitalize"
-                        >
-                          {item.type}
-                        </Badge>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-3 pt-2">
-                        <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
-                          <IconUsers className="h-4 w-4 text-muted-foreground mb-1" />
-                          <span className="text-xs text-muted-foreground">
-                            Capacité
-                          </span>
-                          <span className="font-bold">
-                            {item.capacity}
-                          </span>
-                        </div>
-                        <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
-                          <IconStack2 className="h-4 w-4 text-muted-foreground mb-1" />
-                          <span className="text-xs text-muted-foreground">
-                            Classes
-                          </span>
-                          <span className="font-bold">
-                            {item.assignedClassesCount ?? 0}
-                          </span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
+              <ClassroomsTableMobileView data={data} />
             </>
           )}
 
@@ -500,34 +283,11 @@ export function ClassroomsTable({
         </CardContent>
       </Card>
 
-      <AlertDialog
-        open={!!itemToDelete}
-        onOpenChange={open => !open && setItemToDelete(null)}
-      >
-        <AlertDialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-bold">
-              {t.dialogs.deleteConfirmation.title()}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-muted-foreground/80">
-              {t.dialogs.deleteConfirmation.description({
-                item: itemToDelete ? itemToDelete.name : '',
-              })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="mt-4">
-            <AlertDialogCancel className="rounded-xl border-border/40">
-              {t.dialogs.deleteConfirmation.cancel()}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
-              onClick={handleDelete}
-            >
-              {t.dialogs.deleteConfirmation.delete()}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ClassroomsTableDeleteDialog
+        itemToDelete={itemToDelete}
+        setItemToDelete={setItemToDelete}
+        handleDelete={handleDelete}
+      />
     </div>
   )
 }

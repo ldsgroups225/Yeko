@@ -1,7 +1,3 @@
-import { IconCopy, IconLoader2, IconPlus, IconTrash, IconUserPlus } from '@tabler/icons-react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
 import {
   Card,
   CardContent,
@@ -9,40 +5,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
-import { ConfirmationDialog } from '@workspace/ui/components/confirmation-dialog'
-import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from '@workspace/ui/components/select'
-import { Skeleton } from '@workspace/ui/components/skeleton'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@workspace/ui/components/table'
-import { useState } from 'react'
-
-import { toast } from 'sonner'
+import { lazy, Suspense } from 'react'
 import { useTranslations } from '@/i18n'
-import {
-  classSubjectsKeys,
-  classSubjectsOptions,
-} from '@/lib/queries/class-subjects'
-import { schoolMutationKeys } from '@/lib/queries/keys'
-import { teacherOptions } from '@/lib/queries/teachers'
-import {
-  assignTeacherToClassSubject,
-  removeClassSubject,
-} from '@/school/functions/class-subjects'
 import { ClassCoverageSummary } from './class-coverage-summary'
-import { ClassSubjectDialog } from './class-subject-dialog'
-import { SubjectCopyDialog } from './subject-copy-dialog'
+import { useClassSubjectManager } from './class-subject-manager-context'
+import { ClassSubjectManagerProvider } from './class-subject-manager-provider'
+import { ClassSubjectManagerTable } from './class-subject-manager-table'
+
+const ClassSubjectManagerDialogs = lazy(() => import('./class-subject-manager-dialogs').then(m => ({ default: m.ClassSubjectManagerDialogs })))
 
 interface ClassSubjectManagerProps {
   classId: string
@@ -53,71 +23,18 @@ export function ClassSubjectManager({
   classId,
   className,
 }: ClassSubjectManagerProps) {
-  const t = useTranslations()
-  const queryClient = useQueryClient()
-  const { data: subjectsResult, isPending } = useQuery(
-    classSubjectsOptions.list({ classId }),
+  return (
+    <ClassSubjectManagerProvider classId={classId} className={className}>
+      <ClassSubjectManagerContent />
+    </ClassSubjectManagerProvider>
   )
+}
 
-  const subjects = subjectsResult || []
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [isCopyDialogOpen, setIsCopyDialogOpen] = useState(false)
-
-  const [subjectToDelete, setSubjectToDelete] = useState<{
-    id: string
-    name: string
-  } | null>(null)
-  const [pendingAssignment, setPendingAssignment] = useState<{
-    subjectId: string
-    subjectName: string
-    teacherId: string
-    teacherName: string
-  } | null>(null)
-
-  const deleteMutation = useMutation({
-    mutationKey: schoolMutationKeys.classSubjects.delete,
-    mutationFn: (data: { classId: string, subjectId: string }) =>
-      removeClassSubject({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: classSubjectsKeys.list({ classId }),
-      })
-      toast.success(t.academic.classes.removeSubjectSuccess())
-      setSubjectToDelete(null)
-    },
-    onError: () => {
-      toast.error(t.academic.classes.removeSubjectError())
-    },
-  })
-
-  // Quick Teacher Assignment
-  const { data: teachersResult } = useQuery({
-    ...teacherOptions.list({}, { page: 1, limit: 100 }),
-  })
-
-  const assignMutation = useMutation({
-    mutationKey: schoolMutationKeys.classSubjects.assignTeacher,
-    mutationFn: (data: { subjectId: string, teacherId: string }) =>
-      assignTeacherToClassSubject({
-        data: { classId, subjectId: data.subjectId, teacherId: data.teacherId },
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: classSubjectsKeys.list({ classId }),
-      })
-      toast.success(t.academic.grades.assignment.success())
-      setPendingAssignment(null)
-    },
-    onError: (error) => {
-      toast.error(error instanceof Error ? error.message : t.common.error())
-    },
-  })
-
-  const teachers = teachersResult ? (teachersResult.teachers || []) : []
-
-  // Group subjects by category for better display if needed, but for now simple list
-  // The query returns subjects sorted by name
+function ClassSubjectManagerContent() {
+  const t = useTranslations()
+  const { state, actions } = useClassSubjectManager()
+  const { subjects, className, isPending } = state
+  const { setIsDialogOpen, setIsCopyDialogOpen } = actions
 
   return (
     <div className="space-y-6">
@@ -134,221 +51,26 @@ export function ClassSubjectManager({
             </CardDescription>
           </div>
           <div className="flex gap-2">
-            <Button
+            <button
               onClick={() => setIsCopyDialogOpen(true)}
-              variant="outline"
-              size="sm"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-3"
             >
-              <IconCopy className="mr-2 h-4 w-4" />
               {t.academic.classes.copyFrom()}
-            </Button>
-            <Button onClick={() => setIsDialogOpen(true)} size="sm">
-              <IconPlus className="mr-2 h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setIsDialogOpen(true)}
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-3"
+            >
               {t.academic.classes.addSubject()}
-            </Button>
+            </button>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>{t.academic.classes.subject()}</TableHead>
-                  <TableHead>{t.academic.classes.teacher()}</TableHead>
-                  <TableHead className="text-center">
-                    {t.academic.classes.coeff()}
-                  </TableHead>
-                  <TableHead className="text-center">
-                    {t.academic.classes.hoursPerWeek()}
-                  </TableHead>
-                  <TableHead className="text-right">
-                    {t.common.actions()}
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isPending
-                  ? (
-                      Array.from({ length: 3 }, (_, i) => (
-                        <TableRow key={`skeleton-${i}`}>
-                          <TableCell>
-                            <Skeleton className="h-4 w-32" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-4 w-24" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-4 w-8 mx-auto" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-4 w-8 mx-auto" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-8 w-8 ml-auto" />
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )
-                  : subjects?.length === 0
-                    ? (
-                        <TableRow>
-                          <TableCell
-                            colSpan={5}
-                            className="h-24 text-center text-muted-foreground"
-                          >
-                            {t.academic.classes.noSubjects()}
-                          </TableCell>
-                        </TableRow>
-                      )
-                    : (
-                        subjects?.map(item => (
-                          <TableRow key={item.classSubject.id}>
-                            <TableCell className="font-medium">
-                              {item.subject.name}
-                              <span className="text-xs text-muted-foreground ml-2">
-                                (
-                                {item.subject.shortName}
-                                )
-                              </span>
-                            </TableCell>
-                            <TableCell>
-                              <Select
-                                disabled={assignMutation.isPending}
-                                value={item.teacher?.id || 'none'}
-                                onValueChange={(val) => {
-                                  if (val && val !== 'none') {
-                                    const teacherId = val as string
-                                    const teacher = teachers.find(t => t.id === teacherId)
-                                    if (teacher) {
-                                      setPendingAssignment({
-                                        subjectId: item.subject.id,
-                                        subjectName: item.subject.name,
-                                        teacherId,
-                                        teacherName: teacher.user.name,
-                                      })
-                                    }
-                                  }
-                                }}
-                              >
-                                <SelectTrigger className="h-8 w-[180px] text-xs border-none bg-transparent hover:bg-white/5 focus:ring-0 px-0 shadow-none">
-                                  <div className="flex items-center gap-2">
-                                    {assignMutation.isPending && assignMutation.variables?.subjectId === item.subject.id
-                                      ? (
-                                          <IconLoader2 className="size-3 animate-spin" />
-                                        )
-                                      : item.teacher?.name
-                                        ? (
-                                            <span className="font-medium">{item.teacher.name}</span>
-                                          )
-                                        : (
-                                            <div className="flex items-center gap-2 text-muted-foreground italic">
-                                              <IconUserPlus className="size-3" />
-                                              <span>{t.academic.classes.unassigned()}</span>
-                                            </div>
-                                          )}
-                                  </div>
-                                </SelectTrigger>
-                                <SelectContent className="backdrop-blur-xl bg-card/95 border-border/40">
-                                  <SelectItem value="none" disabled className="text-xs italic opacity-50">
-                                    {t.academic.classes.unassigned()}
-                                  </SelectItem>
-                                  {teachers.map(teacher => (
-                                    <SelectItem
-                                      key={teacher.id}
-                                      value={teacher.id}
-                                      className="text-xs font-medium focus:bg-primary/5 focus:text-primary"
-                                    >
-                                      {teacher.user.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <Badge variant="outline">
-                                {item.classSubject.coefficient}
-                              </Badge>
-                            </TableCell>
-                            <TableCell className="text-center">
-                              <span className="text-sm">
-                                {item.classSubject.hoursPerWeek}
-                                h
-                              </span>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                                onClick={() => {
-                                  setSubjectToDelete({
-                                    id: item.subject.id,
-                                    name: item.subject.name,
-                                  })
-                                }}
-                              >
-                                <IconTrash className="h-4 w-4" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-              </TableBody>
-            </Table>
-          </div>
+          <ClassSubjectManagerTable />
         </CardContent>
-
-        <ClassSubjectDialog
-          open={isDialogOpen}
-          onOpenChange={setIsDialogOpen}
-          classId={classId}
-          className={className}
-        />
-
-        <SubjectCopyDialog
-          open={isCopyDialogOpen}
-          onOpenChange={setIsCopyDialogOpen}
-          targetClassId={classId}
-          targetClassName={className}
-        />
-
-        <DeleteConfirmationDialog
-          open={!!subjectToDelete}
-          onOpenChange={open => !open && setSubjectToDelete(null)}
-          title={t.classes.removeSubject()}
-          description={t.academic.classes.removeSubjectConfirmation({
-            subjectName: subjectToDelete?.name,
-          })}
-          onConfirm={() => {
-            if (subjectToDelete) {
-              deleteMutation.mutate({
-                classId,
-                subjectId: subjectToDelete.id,
-              })
-            }
-          }}
-          isPending={deleteMutation.isPending}
-        />
-
-        <ConfirmationDialog
-          open={!!pendingAssignment}
-          onOpenChange={open => !open && setPendingAssignment(null)}
-          title={t.dialogs.updateAssignment.title()}
-          description={t.dialogs.updateAssignment.description({
-            teacherName: pendingAssignment?.teacherName || '',
-            subjectName: pendingAssignment?.subjectName || '',
-          })}
-          confirmLabel={t.dialogs.updateAssignment.confirm()}
-          onConfirm={() => {
-            if (pendingAssignment) {
-              assignMutation.mutate({
-                subjectId: pendingAssignment.subjectId,
-                teacherId: pendingAssignment.teacherId,
-              })
-            }
-          }}
-          isPending={assignMutation.isPending}
-        />
+        <Suspense fallback={null}>
+          <ClassSubjectManagerDialogs />
+        </Suspense>
       </Card>
     </div>
   )

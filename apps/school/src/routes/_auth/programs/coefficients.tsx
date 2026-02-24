@@ -22,7 +22,7 @@ function CoefficientsPage() {
   const [selectedSeriesId, setSelectedSeriesId] = useState<string>('all')
 
   // Fetch school years to get templates
-  const { data: schoolYearsResult, isPending: yearsPending } = useQuery({
+  const { data: schoolYearsResult, isPending: _yearsPending } = useQuery({
     queryKey: ['school-years'],
     queryFn: () => getSchoolYears(),
     staleTime: 5 * 60 * 1000,

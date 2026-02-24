@@ -1,18 +1,8 @@
 import type { FormEvent } from 'react'
 import type { CreateCoefficientTemplateInput } from '@/schemas/coefficients'
-import { IconAlertTriangle, IconCalculator, IconCopy, IconDeviceFloppy, IconDownload, IconFileDownload, IconFileUpload, IconPlus, IconTrash, IconX } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { Badge } from '@workspace/ui/components/badge'
-import { Button } from '@workspace/ui/components/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
-import { Input } from '@workspace/ui/components/input'
-import { Label } from '@workspace/ui/components/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
-import { Skeleton } from '@workspace/ui/components/skeleton'
-import { Tabs, TabsList, TabsTrigger } from '@workspace/ui/components/tabs'
-import { AnimatePresence, domMax, LazyMotion, m } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
@@ -32,6 +22,13 @@ import { schoolYearTemplatesQueryOptions } from '@/integrations/tanstack-query/p
 import { exportCoefficientsToExcel, generateCoefficientTemplate, parseCoefficientsExcel } from '@/lib/excel/coefficients-excel'
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
+
+import { CoefficientsHeader } from './coefficients/coefficients-header'
+import { CoefficientsStats } from './coefficients/coefficients-stats'
+import { CoefficientsForm } from './coefficients/coefficients-form'
+import { CoefficientsFilters } from './coefficients/coefficients-filters'
+import { CoefficientsMatrixView } from './coefficients/coefficients-matrix-view'
+import { CoefficientsListView } from './coefficients/coefficients-list-view'
 
 export const Route = createFileRoute('/_auth/app/catalogs/coefficients')({
   component: CoefficientsCatalog,
@@ -85,12 +82,10 @@ function CoefficientsCatalog() {
       setNewCoefGrade('')
       setNewCoefSeries('__none__')
       toast.success(COEFFICIENT_MESSAGES.CREATED)
-      logger.info('Coefficient template created')
     },
     onError: (error) => {
       const message = parseServerFnError(error, COEFFICIENT_MESSAGES.ERROR_CREATE)
       toast.error(message)
-      logger.error('Failed to create coefficient template', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -101,12 +96,10 @@ function CoefficientsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
       setDeletingCoefficient(null)
       toast.success(COEFFICIENT_MESSAGES.DELETED)
-      logger.info('Coefficient template deleted')
     },
     onError: (error) => {
       const message = parseServerFnError(error, COEFFICIENT_MESSAGES.ERROR_DELETE)
       toast.error(message)
-      logger.error('Failed to delete coefficient template', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
@@ -116,53 +109,30 @@ function CoefficientsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
       setEditingCells({})
       toast.success(COEFFICIENT_MESSAGES.BULK_UPDATED)
-      logger.info('Coefficients bulk updated')
     },
     onError: (error) => {
       const message = parseServerFnError(error, COEFFICIENT_MESSAGES.ERROR_BULK_UPDATE)
       toast.error(message)
-      logger.error('Failed to bulk update coefficients', error instanceof Error ? error : new Error(String(error)))
     },
   })
 
-  const bulkCreateMutation = useMutation({
-    ...bulkCreateCoefficientsMutationOptions,
-    onError: (error) => {
-      const message = parseServerFnError(error, 'Erreur lors de l\'import des coefficients')
-      toast.error(message)
-      logger.error('Failed to bulk create coefficients', error instanceof Error ? error : new Error(String(error)))
-    },
-  })
-
-  const validateImportMutation = useMutation({
-    ...validateCoefficientImportMutationOptions,
-    onError: (error) => {
-      const message = parseServerFnError(error, 'Erreur lors de la validation')
-      toast.error(message)
-      logger.error('Failed to validate coefficient import', error instanceof Error ? error : new Error(String(error)))
-    },
-  })
-
+  const bulkCreateMutation = useMutation({ ...bulkCreateCoefficientsMutationOptions })
+  const validateImportMutation = useMutation({ ...validateCoefficientImportMutationOptions })
   const copyMutation = useMutation({
     ...copyCoefficientsMutationOptions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
       queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
       toast.success(COEFFICIENT_MESSAGES.COPIED)
-      logger.info('Coefficients copied from previous year')
     },
     onError: (error) => {
       const message = parseServerFnError(error, COEFFICIENT_MESSAGES.ERROR_COPY)
       toast.error(message)
-      logger.error('Failed to copy coefficients', error)
     },
   })
 
   useEffect(() => {
-    logger.info('Coefficients catalog page viewed', {
-      page: 'coefficients-catalog',
-      timestamp: new Date().toISOString(),
-    })
+    logger.info('Coefficients catalog page viewed')
   }, [logger])
 
   const handleCreate = (e: FormEvent<HTMLFormElement>) => {
@@ -201,38 +171,25 @@ function CoefficientsCatalog() {
       toast.error('Impossible de trouver les années scolaires')
       return
     }
-
     const activeYear = schoolYears.find(y => y.isActive)
     const previousYear = schoolYears.find(y => !y.isActive)
-
     if (!activeYear || !previousYear) {
       toast.error('Impossible de trouver les années scolaires')
       return
     }
-
-    copyMutation.mutate({
-      sourceYearId: previousYear.id,
-      targetYearId: activeYear.id,
-    })
+    copyMutation.mutate({ sourceYearId: previousYear.id, targetYearId: activeYear.id })
   }
 
   const handleExport = async () => {
-    if (!coefficientsData || coefficientsData.coefficients.length === 0) {
+    if (!coefficientsData?.coefficients.length) {
       toast.error('Aucun coefficient à exporter')
       return
     }
-
     try {
-      await exportCoefficientsToExcel(
-        coefficientsData.coefficients,
-        `coefficients-${new Date().toISOString().split('T')[0]}.xlsx`,
-      )
+      await exportCoefficientsToExcel(coefficientsData.coefficients, `coefficients-${new Date().toISOString().split('T')[0]}.xlsx`)
       toast.success('Coefficients exportés avec succès')
-      logger.info('Coefficients exported to Excel')
-    }
-    catch (error) {
+    } catch (error) {
       toast.error('Erreur lors de l\'exportation')
-      logger.error('Failed to export coefficients', error instanceof Error ? error : new Error(String(error)))
     }
   }
 
@@ -240,199 +197,98 @@ function CoefficientsCatalog() {
     try {
       await generateCoefficientTemplate()
       toast.success('Modèle téléchargé avec succès')
-      logger.info('Coefficient template downloaded')
-    }
-    catch (error) {
+    } catch (error) {
       toast.error('Erreur lors du téléchargement du modèle')
-      logger.error('Failed to download template', error instanceof Error ? error : new Error(String(error)))
     }
-  }
-
-  const handleImportClick = () => {
-    fileInputRef.current?.click()
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file)
-      return
-
+    if (!file) return
     setIsImporting(true)
-
     try {
       const { data, errors } = await parseCoefficientsExcel(file)
-
-      if (errors.length > 0) {
-        toast.error(`Erreurs trouvées: ${errors.length}`, {
-          description: errors.slice(0, 3).join(', '),
-        })
-        logger.error('Excel import validation errors', new Error(errors.join('; ')))
-        setIsImporting(false)
+      if (errors.length > 0 || data.length === 0) {
+        toast.error('Erreurs ou aucune donnée dans le fichier')
         return
       }
+      
+      const subjectMap = new Map(subjects?.subjects.map(s => [s.name.toLowerCase().trim(), s.id]))
+      const gradeMap = new Map(grades?.map(g => [g.name.toLowerCase().trim(), g.id]))
+      const seriesMap = new Map(seriesData?.map(s => [s.name.toLowerCase().trim(), s.id]))
+      const yearMap = new Map(schoolYears?.map(y => [y.name.trim(), y.id]))
 
-      if (data.length === 0) {
-        toast.error('Aucune donnée trouvée dans le fichier')
-        setIsImporting(false)
-        return
-      }
-
-      // Create lookup maps for name-to-ID mapping
-      const subjectMap = new Map<string, string>(subjects?.subjects.map(s => [s.name.toLowerCase().trim(), s.id]) || [])
-      const gradeMap = new Map<string, string>(grades?.map(g => [g.name.toLowerCase().trim(), g.id]) || [])
-      const seriesMap = new Map<string, string>(seriesData?.map(s => [s.name.toLowerCase().trim(), s.id]) || [])
-      const yearMap = new Map<string, string>(schoolYears?.map((y: { name: string, id: string }) => [y.name.trim(), y.id]) || [])
-
-      // Map Excel data to coefficient IDs
-      const mappingErrors: string[] = []
-      const mappedData = data.map((row, index) => {
-        const rowNum = index + 1
+      const mappedData = data.map((row) => {
         const subjectId = subjectMap.get(row['Matière'].toLowerCase().trim())
         const gradeId = gradeMap.get(row.Classe.toLowerCase().trim())
         const seriesId = row['Série'] ? seriesMap.get(row['Série'].toLowerCase().trim()) : null
         const yearId = yearMap.get(row['Année Scolaire'].trim())
-
-        if (!yearId) {
-          mappingErrors.push(`Ligne ${rowNum}: Année scolaire "${row['Année Scolaire']}" introuvable`)
-        }
-        if (!subjectId) {
-          mappingErrors.push(`Ligne ${rowNum}: Matière "${row['Matière']}" introuvable`)
-        }
-        if (!gradeId) {
-          mappingErrors.push(`Ligne ${rowNum}: Classe "${row.Classe}" introuvable`)
-        }
-        if (row['Série'] && !seriesId) {
-          mappingErrors.push(`Ligne ${rowNum}: Série "${row['Série']}" introuvable`)
-        }
-
-        if (!yearId || !subjectId || !gradeId) {
-          return null
-        }
-
-        return {
-          weight: row.Coefficient,
-          schoolYearTemplateId: yearId,
-          subjectId,
-          gradeId,
-          seriesId: seriesId || null,
-        }
+        if (!yearId || !subjectId || !gradeId) return null
+        return { weight: row.Coefficient, schoolYearTemplateId: yearId, subjectId, gradeId, seriesId: seriesId || null }
       }).filter((item): item is NonNullable<typeof item> => item !== null)
 
-      // Show mapping errors if any
-      if (mappingErrors.length > 0) {
-        toast.error(`Erreurs de mapping: ${mappingErrors.length}`, {
-          description: mappingErrors.slice(0, 3).join('\n'),
-        })
-        logger.error('Excel mapping errors', new Error(mappingErrors.join('; ')))
-        setIsImporting(false)
+      if (mappedData.length === 0) {
+        toast.error('Données invalides ou incomplètes')
         return
       }
 
-      // Validate mapped data against database
-      toast.loading('Validation en cours...')
+      toast.loading('Validation...')
       const validationResult = await validateImportMutation.mutateAsync({ data: mappedData })
+      toast.dismiss()
 
       if (!validationResult.valid) {
-        toast.dismiss()
-        toast.error(`Erreurs de validation: ${validationResult.errors.length}`, {
-          description: validationResult.errors.slice(0, 3).map(e => `Ligne ${e.row}: ${e.message}`).join('\n'),
-        })
-        logger.error('Coefficient validation errors', new Error(JSON.stringify(validationResult.errors)))
-        setIsImporting(false)
+        toast.error('Erreurs de validation')
         return
       }
 
-      toast.dismiss()
-
-      // Bulk create coefficients
-      toast.loading(`Import de ${mappedData.length} coefficients en cours...`)
+      toast.loading('Importation...')
       await bulkCreateMutation.mutateAsync({ coefficients: mappedData })
-
       toast.dismiss()
-      toast.success(`${mappedData.length} coefficients importés avec succès`)
-      logger.info('Coefficients imported successfully', { count: mappedData.length })
-
-      // Invalidate queries to refresh data
+      toast.success('Import réussi')
       queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
       queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
-    }
-    catch (error) {
+    } catch (error) {
       toast.dismiss()
       toast.error('Erreur lors de l\'import')
-      logger.error('Failed to import coefficients', error instanceof Error ? error : new Error(String(error)))
-    }
-    finally {
+    } finally {
       setIsImporting(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
-  // Build matrix data with proper grade+series handling
   const matrixData = useMemo(() => {
-    if (!coefficientsData || !subjects || !grades)
-      return null
-
+    if (!coefficientsData || !subjects || !grades) return null
     const gradeOrderById = new Map(grades.map(grade => [grade.id, grade.order]))
-
-    // Build unique column keys from actual data (grade or grade+series)
     const columnKeys = new Set<string>()
-    const columnInfo: Record<string, { gradeId: string, gradeName: string, seriesId?: string, seriesName?: string }> = {}
+    const columnInfo: Record<string, any> = {}
 
     coefficientsData.coefficients.forEach((coef) => {
-      if (!coef.grade?.id)
-        return
-      const gradeName = coef.grade?.name || 'Unknown'
+      if (!coef.grade?.id) return
       const key = coef.series?.id ? `${coef.grade.id}__${coef.series.id}` : coef.grade.id
       columnKeys.add(key)
-      columnInfo[key] = {
-        gradeId: coef.grade.id,
-        gradeName,
-        seriesId: coef.series?.id,
-        seriesName: coef.series?.name,
-      }
+      columnInfo[key] = { gradeId: coef.grade.id, gradeName: coef.grade.name, seriesId: coef.series?.id, seriesName: coef.series?.name }
     })
 
-    // Sort columns by grade order then series name
     const sortedColumns = Array.from(columnKeys).sort((a, b) => {
-      const infoA = columnInfo[a]
-      const infoB = columnInfo[b]
-      const orderDiff = (gradeOrderById.get(infoA?.gradeId ?? '') || 0) - (gradeOrderById.get(infoB?.gradeId ?? '') || 0)
-      if (orderDiff !== 0)
-        return orderDiff
-      return (infoA?.seriesName || '').localeCompare(infoB?.seriesName || '')
+      const orderA = gradeOrderById.get(columnInfo[a].gradeId) || 0
+      const orderB = gradeOrderById.get(columnInfo[b].gradeId) || 0
+      if (orderA !== orderB) return orderA - orderB
+      return (columnInfo[a].seriesName || '').localeCompare(columnInfo[b].seriesName || '')
     })
 
-    // Build matrix: subject -> columnKey -> coefficient
-    const matrix: Record<string, Record<string, { id: string, weight: number }>> = {}
-
+    const matrix: Record<string, any> = {}
     coefficientsData.coefficients.forEach((coef) => {
-      if (!coef.grade?.id || !coef.subject?.name)
-        return
-      const subjectName = coef.subject.name
+      if (!coef.grade?.id || !coef.subject?.name) return
       const columnKey = coef.series?.id ? `${coef.grade.id}__${coef.series.id}` : coef.grade.id
-
-      const subjectMatrix = matrix[subjectName] || {}
-      subjectMatrix[columnKey] = {
-        id: coef.id,
-        weight: editingCells[coef.id] ?? coef.weight,
-      }
-      matrix[subjectName] = subjectMatrix
+      if (!matrix[coef.subject.name]) matrix[coef.subject.name] = {}
+      matrix[coef.subject.name][columnKey] = { id: coef.id, weight: editingCells[coef.id] ?? coef.weight }
     })
-
     return { matrix, columns: sortedColumns, columnInfo }
   }, [coefficientsData, subjects, grades, editingCells])
-
-  const activeYear = schoolYears?.find(y => y.isActive)
 
   if (yearsPending || statsPending) {
     return (
       <div className="space-y-6">
-        <div className="space-y-2">
-          <Skeleton className="h-8 w-64" />
-          <Skeleton className="h-4 w-96" />
-        </div>
         <CatalogStatsSkeleton />
         <CatalogListSkeleton count={5} />
       </div>
@@ -440,484 +296,78 @@ function CoefficientsCatalog() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Coefficients</h1>
-          <p className="text-muted-foreground">
-            Gérer les coefficients des matières pour le calcul des moyennes
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleDownloadTemplate}>
-            <IconFileDownload className="h-4 w-4 mr-2" />
-            Modèle
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleImportClick} disabled={isImporting}>
-            <IconFileUpload className="h-4 w-4 mr-2" />
-            {isImporting ? 'Import...' : 'Importer'}
-          </Button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".xlsx,.xls"
-            onChange={handleFileChange}
-            className="hidden"
-          />
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={!coefficientsData || coefficientsData.coefficients.length === 0}>
-            <IconDownload className="h-4 w-4 mr-2" />
-            Exporter
-          </Button>
-          <Button variant="outline" onClick={handleCopyFromPreviousYear} disabled={copyMutation.isPending}>
-            <IconCopy className="h-4 w-4 mr-2" />
-            Copier Année Précédente
-          </Button>
-          <Button onClick={() => setIsCreating(true)}>
-            <IconPlus className="h-4 w-4 mr-2" />
-            Nouveau Coefficient
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-6 max-w-7xl mx-auto px-4 py-8">
+      <CoefficientsHeader
+        onDownloadTemplate={handleDownloadTemplate}
+        onImportClick={() => fileInputRef.current?.click()}
+        onExport={handleExport}
+        onCopyFromPreviousYear={handleCopyFromPreviousYear}
+        onAddCoefficient={() => setIsCreating(true)}
+        isImporting={isImporting}
+        isCopyPending={copyMutation.isPending}
+        hasCoefficients={!!coefficientsData?.coefficients.length}
+        fileInputRef={fileInputRef}
+        handleFileChange={handleFileChange}
+      />
 
-      {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Coefficients</CardTitle>
-            <IconCalculator className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.total || 0}</div>
-            <p className="text-xs text-muted-foreground">Configurations actives</p>
-          </CardContent>
-        </Card>
+      <CoefficientsStats
+        total={stats?.total || 0}
+        activeYearName={schoolYears?.find(y => y.isActive)?.name || 'Aucune'}
+        pendingChangesCount={Object.keys(editingCells).length}
+      />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Année Active</CardTitle>
-            <IconCalculator className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeYear?.name || 'Aucune'}</div>
-            <p className="text-xs text-muted-foreground">Année scolaire en cours</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Modifications</CardTitle>
-            <IconDeviceFloppy className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{Object.keys(editingCells).length}</div>
-            <p className="text-xs text-muted-foreground">En attente de sauvegarde</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Create Form */}
       {isCreating && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Créer un Nouveau Coefficient</CardTitle>
-            <CardDescription>Ajouter un coefficient pour une matière et une classe</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="coef-year">Année Scolaire *</Label>
-                  <Select
-                    name="schoolYearTemplateId"
-                    required
-                    value={newCoefYear}
-                    onValueChange={val => val && setNewCoefYear(val)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner">
-                        {newCoefYear
-                          ? (() => {
-                              const year = schoolYears?.find(y => y.id === newCoefYear)
-                              return year
-                                ? (
-                                    <div className="flex items-center gap-2">
-                                      <span>{year.name}</span>
-                                      {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
-                                    </div>
-                                  )
-                                : undefined
-                            })()
-                          : undefined}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {schoolYears?.map(year => (
-                        <SelectItem key={year.id} value={year.id}>
-                          <div className="flex items-center gap-2">
-                            <span>{year.name}</span>
-                            {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="coef-subject">Matière *</Label>
-                  <Select name="subjectId" required value={newCoefSubject} onValueChange={val => val && setNewCoefSubject(val)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner la matière">
-                        {newCoefSubject
-                          ? subjects?.subjects.find(s => s.id === newCoefSubject)?.name
-                          : undefined}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {subjects?.subjects.map(subject => (
-                        <SelectItem key={subject.id} value={subject.id}>
-                          {subject.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="coef-grade">Classe *</Label>
-                  <Select name="gradeId" required value={newCoefGrade} onValueChange={val => val && setNewCoefGrade(val)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner la classe">
-                        {newCoefGrade
-                          ? grades?.find(g => g.id === newCoefGrade)?.name
-                          : undefined}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {grades?.map(grade => (
-                        <SelectItem key={grade.id} value={grade.id}>
-                          {grade.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="coef-series">Série (optionnel)</Label>
-                  <Select name="seriesId" defaultValue="__none__" value={newCoefSeries} onValueChange={val => val && setNewCoefSeries(val)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Aucune">
-                        {newCoefSeries === '__none__'
-                          ? 'Aucune'
-                          : seriesData?.find(s => s.id === newCoefSeries)?.name}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="__none__">Aucune</SelectItem>
-                      {seriesData?.map(serie => (
-                        <SelectItem key={serie.id} value={serie.id}>
-                          {serie.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="coef-weight">Coefficient *</Label>
-                  <Input
-                    id="coef-weight"
-                    name="weight"
-                    type="number"
-                    min={COEFFICIENT_LIMITS.MIN}
-                    max={COEFFICIENT_LIMITS.MAX}
-                    required
-                    placeholder={String(COEFFICIENT_LIMITS.DEFAULT)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Entre
-                    {' '}
-                    {COEFFICIENT_LIMITS.MIN}
-                    {' '}
-                    et
-                    {' '}
-                    {COEFFICIENT_LIMITS.MAX}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
-                  <IconX className="h-4 w-4 mr-2" />
-                  Annuler
-                </Button>
-                <Button type="submit" disabled={createMutation.isPending}>
-                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                  {createMutation.isPending ? 'Création...' : 'Créer'}
-                </Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+        <CoefficientsForm
+          onSubmit={handleCreate}
+          onCancel={() => setIsCreating(false)}
+          isPending={createMutation.isPending}
+          schoolYears={schoolYears || []}
+          subjects={subjects?.subjects || []}
+          grades={grades || []}
+          seriesData={seriesData || []}
+          newCoefYear={newCoefYear}
+          setNewCoefYear={setNewCoefYear}
+          newCoefSubject={newCoefSubject}
+          setNewCoefSubject={setNewCoefSubject}
+          newCoefGrade={newCoefGrade}
+          setNewCoefGrade={setNewCoefGrade}
+          newCoefSeries={newCoefSeries}
+          setNewCoefSeries={setNewCoefSeries}
+        />
       )}
 
-      {/* Filters & View Toggle */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Filtres</CardTitle>
-              <CardDescription>Filtrer les coefficients par année, classe ou série</CardDescription>
-            </div>
-            <Tabs value={viewMode} onValueChange={v => setViewMode(v as 'matrix' | 'list')}>
-              <TabsList>
-                <TabsTrigger value="matrix">Matrice</TabsTrigger>
-                <TabsTrigger value="list">Liste</TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
-            <Select value={yearFilter} onValueChange={val => val && setYearFilter(val)}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Année">
-                  {yearFilter === 'all'
-                    ? 'Toutes les années'
-                    : (() => {
-                        const year = schoolYears?.find(y => y.id === yearFilter)
-                        return year
-                          ? (
-                              <div className="flex items-center gap-2">
-                                <span>{year.name}</span>
-                                {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
-                              </div>
-                            )
-                          : undefined
-                      })()}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toutes les années</SelectItem>
-                {schoolYears?.map(year => (
-                  <SelectItem key={year.id} value={year.id}>
-                    {year.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={gradeFilter} onValueChange={val => val && setGradeFilter(val)}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Classe">
-                  {gradeFilter === 'all'
-                    ? 'Toutes les classes'
-                    : grades?.find(g => g.id === gradeFilter)?.name || undefined}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toutes les classes</SelectItem>
-                {grades?.map(grade => (
-                  <SelectItem key={grade.id} value={grade.id}>
-                    {grade.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={seriesFilter} onValueChange={val => val && setSeriesFilter(val)}>
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Série">
-                  {seriesFilter === 'all'
-                    ? 'Toutes les séries'
-                    : seriesData?.find(s => s.id === seriesFilter)?.name || undefined}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Toutes les séries</SelectItem>
-                {seriesData?.map(serie => (
-                  <SelectItem key={serie.id} value={serie.id}>
-                    {serie.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {Object.keys(editingCells).length > 0 && (
-              <Button onClick={handleSaveChanges} disabled={bulkUpdateMutation.isPending} className="ml-auto">
-                <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                Enregistrer (
-                {Object.keys(editingCells).length}
-                )
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <CoefficientsFilters
+        yearFilter={yearFilter}
+        setYearFilter={setYearFilter}
+        gradeFilter={gradeFilter}
+        setGradeFilter={setGradeFilter}
+        seriesFilter={seriesFilter}
+        setSeriesFilter={setSeriesFilter}
+        viewMode={viewMode}
+        setViewMode={setViewMode}
+        schoolYears={schoolYears || []}
+        grades={grades || []}
+        seriesData={seriesData || []}
+        editingCellsCount={Object.keys(editingCells).length}
+        onSaveChanges={handleSaveChanges}
+        isBulkUpdating={bulkUpdateMutation.isPending}
+      />
 
-      {/* Matrix View */}
-      {viewMode === 'matrix' && matrixData && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Vue Matrice</CardTitle>
-            <CardDescription>Cliquez sur un coefficient pour le modifier</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {matrixData.columns.length === 0
-              ? (
-                  <div className="text-center py-8">
-                    <IconCalculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
-                    <p className="text-muted-foreground">
-                      Commencez par créer votre premier coefficient.
-                    </p>
-                  </div>
-                )
-              : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left p-3 bg-muted sticky left-0 z-10">Matière</th>
-                          {matrixData.columns.map((columnKey) => {
-                            const info = matrixData.columnInfo[columnKey]
-                            return (
-                              <th key={columnKey} className="text-center p-3 bg-muted min-w-24">
-                                <div className="flex flex-col">
-                                  <span>{info?.gradeName}</span>
-                                  {info?.seriesName && (
-                                    <span className="text-xs font-normal text-muted-foreground">
-                                      {info.seriesName}
-                                    </span>
-                                  )}
-                                </div>
-                              </th>
-                            )
-                          })}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {Object.entries(matrixData.matrix).map(([subjectName, columnCoefs], index) => (
-                          <tr key={subjectName} className={index % 2 === 0 ? 'bg-muted/30' : ''}>
-                            <td className="font-medium p-3 border-r sticky left-0 bg-background">
-                              {subjectName}
-                            </td>
-                            {matrixData.columns.map((columnKey) => {
-                              const coef = columnCoefs[columnKey]
-                              return (
-                                <td key={columnKey} className="text-center p-3">
-                                  {coef
-                                    ? (
-                                        <div className="flex flex-col items-center gap-1">
-                                          <Input
-                                            type="number"
-                                            value={coef.weight}
-                                            onChange={e => handleCellEdit(coef.id, Number.parseInt(e.target.value))}
-                                            className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-secondary' : ''}`}
-                                            min={COEFFICIENT_LIMITS.MIN}
-                                            max={COEFFICIENT_LIMITS.MAX}
-                                          />
-                                          {coef.weight === 0 && (
-                                            <div className="flex items-center gap-1 text-xs text-secondary">
-                                              <IconAlertTriangle className="h-3 w-3" />
-                                              <span>Coef 0</span>
-                                            </div>
-                                          )}
-                                        </div>
-                                      )
-                                    : (
-                                        <span className="text-muted-foreground text-sm">-</span>
-                                      )}
-                                </td>
-                              )
-                            })}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-          </CardContent>
-        </Card>
+      {viewMode === 'matrix' ? (
+        <CoefficientsMatrixView matrixData={matrixData} onCellEdit={handleCellEdit} />
+      ) : (
+        <CoefficientsListView
+          isPending={coefficientsPending}
+          coefficients={coefficientsData?.coefficients || []}
+          onDelete={coef => setDeletingCoefficient({ id: coef.id, name: `${coef.subject?.name} - ${coef.grade?.name}` })}
+        />
       )}
 
-      {/* List View */}
-      {viewMode === 'list' && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Liste des Coefficients</CardTitle>
-            <CardDescription>
-              {coefficientsData?.pagination.total || 0}
-              {' '}
-              coefficient(s) au total
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {coefficientsPending
-              ? (
-                  <CatalogListSkeleton count={5} />
-                )
-              : !coefficientsData || coefficientsData.coefficients.length === 0
-                  ? (
-                      <div className="text-center py-8">
-                        <IconCalculator className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-medium">Aucun coefficient trouvé</h3>
-                        <p className="text-muted-foreground">
-                          Commencez par créer votre premier coefficient.
-                        </p>
-                      </div>
-                    )
-                  : (
-                      <div className="space-y-4">
-                        <LazyMotion features={domMax}>
-                          <AnimatePresence mode="popLayout">
-                            {coefficientsData.coefficients.map(coef => (
-                              <m.div
-                                key={coef.id}
-                                layout
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.2 }}
-                                className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
-                              >
-                                <div className="flex items-center gap-4 flex-1">
-                                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                    <span className="text-lg font-bold text-primary">{coef.weight}</span>
-                                  </div>
-                                  <div className="flex-1">
-                                    <div className="flex items-center gap-2">
-                                      <h3 className="font-semibold">{coef.subject?.name}</h3>
-                                      <Badge variant="outline">{coef.grade?.name}</Badge>
-                                      {coef.series && (
-                                        <Badge variant="secondary">{coef.series.name}</Badge>
-                                      )}
-                                    </div>
-                                    <div className="text-sm text-muted-foreground mt-1">
-                                      {coef.schoolYearTemplate?.name}
-                                    </div>
-                                  </div>
-                                </div>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => setDeletingCoefficient({
-                                    id: coef.id,
-                                    name: `${coef.subject?.name} - ${coef.grade?.name}`,
-                                  })}
-                                >
-                                  <IconTrash className="h-4 w-4" />
-                                </Button>
-                              </m.div>
-                            ))}
-                          </AnimatePresence>
-                        </LazyMotion>
-                      </div>
-                    )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         open={!!deletingCoefficient}
         onOpenChange={open => !open && setDeletingCoefficient(null)}
         title="Supprimer le coefficient"
-        description={`Êtes-vous sûr de vouloir supprimer le coefficient "${deletingCoefficient?.name}" ? Cette action est irréversible.`}
+        description={`Êtes-vous sûr de vouloir supprimer "${deletingCoefficient?.name}" ?`}
         confirmText={deletingCoefficient?.name}
         onConfirm={handleDelete}
         isPending={deleteMutation.isPending}

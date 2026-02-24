@@ -1,14 +1,6 @@
-import type { ColumnDef } from '@tanstack/react-table'
-import { formatDate, formatPhone } from '@repo/data-ops'
+import type { IconUser } from './users-table-columns'
 import {
-  IconCalendar,
-  IconDots,
-  IconEdit,
-  IconLoader2,
-  IconMail,
-  IconPhone,
   IconSearch,
-  IconTrash,
   IconUsers,
 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -18,30 +10,14 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@workspace/ui/components/alert-dialog'
-import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
+
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@workspace/ui/components/card'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@workspace/ui/components/dropdown-menu'
 import { Input } from '@workspace/ui/components/input'
 import {
   Table,
@@ -52,7 +28,7 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { EmptyState } from '@/components/hr/empty-state'
 import { TableSkeleton } from '@/components/hr/table-skeleton'
@@ -60,16 +36,8 @@ import { useDebounce } from '@/hooks/use-debounce'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingUser, getUsers } from '@/school/functions/users'
-
-interface IconUser {
-  id: string
-  name: string
-  email: string
-  phone: string | null
-  status: 'active' | 'inactive' | 'suspended'
-  lastLoginAt: Date | null
-  roles: string[]
-}
+import { useUsersTableColumns } from './users-table-columns'
+import { UsersTableDeleteDialog } from './users-table-delete-dialog'
 
 interface UsersTableProps {
   filters: {
@@ -121,140 +89,7 @@ export function UsersTable({ filters }: UsersTableProps) {
     },
   })
 
-  const columns = useMemo<ColumnDef<IconUser>[]>(
-    () => [
-      {
-        accessorKey: 'name',
-        header: t.hr.users.name(),
-        cell: ({ row }) => (
-          <div className="flex flex-col">
-            <span className="font-semibold text-foreground">
-              {row.original.name}
-            </span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
-              <IconMail className="h-3 w-3" />
-              {row.original.email}
-            </div>
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'phone',
-        header: t.hr.users.phone(),
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            {row.original.phone
-              ? (
-                  <>
-                    <IconPhone className="h-3.5 w-3.5" />
-                    {formatPhone(row.original.phone)}
-                  </>
-                )
-              : (
-                  '-'
-                )}
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'roles',
-        header: t.hr.users.roles(),
-        cell: ({ row }) => (
-          <div className="flex flex-wrap gap-1.5 max-w-[200px]">
-            {row.original.roles.map(role => (
-              <Badge
-                key={role}
-                variant="outline"
-                className="bg-primary/5 border-primary/10 text-primary text-[10px] font-medium px-2 py-0"
-              >
-                {role}
-              </Badge>
-            ))}
-          </div>
-        ),
-      },
-      {
-        accessorKey: 'status',
-        header: t.hr.users.status(),
-        cell: ({ row }) => {
-          const status = row.original.status
-          const variants = {
-            active: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
-            inactive: 'bg-slate-500/10 text-slate-600 border-slate-500/20',
-            suspended:
-              'bg-destructive/10 text-destructive border-destructive/20',
-          } as const
-          return (
-            <Badge
-              variant="outline"
-              className={`rounded-full border ${variants[status]} transition-colors`}
-            >
-              {{
-                active: t.hr.status.active,
-                inactive: t.hr.status.inactive,
-                suspended: t.hr.status.suspended,
-              }[status]()}
-            </Badge>
-          )
-        },
-      },
-      {
-        accessorKey: 'lastLoginAt',
-        header: t.hr.users.lastLogin(),
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <IconCalendar className="h-3.5 w-3.5" />
-            {row.original.lastLoginAt
-              ? formatDate(new Date(row.original.lastLoginAt), 'SHORT', 'fr')
-              : t.hr.users.neverLoggedIn()}
-          </div>
-        ),
-      },
-      {
-        id: 'actions',
-        cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={(
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="hover:bg-primary/10 hover:text-primary transition-colors"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    e.preventDefault()
-                  }}
-                >
-                  <IconDots className="h-4 w-4" />
-                </Button>
-              )}
-            />
-            <DropdownMenuContent
-              align="end"
-              className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
-            >
-              <DropdownMenuItem
-                className="cursor-pointer gap-2"
-                onClick={() =>
-                  navigate({ to: `/users/users/${row.original.id}/edit` })}
-              >
-                <IconEdit className="h-4 w-4" />
-                {t.common.edit()}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
-                onClick={() => setUserToDelete(row.original)}
-              >
-                <IconTrash className="h-4 w-4" />
-                {t.common.delete()}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
-      },
-    ],
-    [t, navigate],
-  )
+  const columns = useUsersTableColumns({ setUserToDelete })
 
   const usersData = data?.success ? data.data : undefined
 
@@ -437,47 +272,11 @@ export function UsersTable({ filters }: UsersTableProps) {
         </CardContent>
       </Card>
 
-      {/* Delete Dialog */}
-      <AlertDialog
-        open={!!userToDelete}
-        onOpenChange={open => !open && setUserToDelete(null)}
-      >
-        <AlertDialogContent className="rounded-2xl border-border/40 bg-card/95 backdrop-blur-2xl">
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-xl font-serif">
-              {t.common.deleteConfirmTitle()}
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-muted-foreground">
-              {t.common.deleteConfirmDescription({ name: userToDelete?.name })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="gap-2">
-            <AlertDialogCancel className="rounded-xl border-border/40 bg-background/50 hover:bg-background">
-              {t.common.cancel()}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
-              disabled={deleteMutation.isPending}
-              onClick={() => {
-                if (userToDelete) {
-                  deleteMutation.mutate(userToDelete.id)
-                }
-              }}
-            >
-              {deleteMutation.isPending
-                ? (
-                    <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                  )
-                : (
-                    <IconTrash className="mr-2 h-4 w-4" />
-                  )}
-              {deleteMutation.isPending
-                ? t.common.deleting()
-                : t.common.delete()}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <UsersTableDeleteDialog
+        userToDelete={userToDelete}
+        setUserToDelete={setUserToDelete}
+        deleteMutation={deleteMutation}
+      />
     </div>
   )
 }

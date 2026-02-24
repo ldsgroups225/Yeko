@@ -36,8 +36,11 @@ function CurriculumProgressPage() {
   const [selectedClassId, setSelectedClassId] = useState<string>('')
 
   // Reset local filters when global school year changes
+
   useEffect(() => {
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setSelectedTermId('')
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setSelectedClassId('')
   }, [contextSchoolYearId])
 

@@ -68,6 +68,29 @@ export default defineConfig({
   resolve: {
     dedupe: ['react', 'react-dom'],
   },
+  build: {
+    chunkSizeWarningLimit: 1300,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Suppress "dynamic import will not move module into another chunk" warnings
+        // for i18n and data-ops schemas — these are intentionally both statically
+        // and dynamically imported (base locale eager + locale switcher lazy)
+        if (
+          warning.message?.includes('dynamic import will not move module into another chunk')
+        ) {
+          return
+        }
+        warn(warning)
+      },
+      output: {
+        manualChunks: {
+          'xlsx-vendor': ['xlsx', 'xlsx-js-style'],
+          'phone-vendor': ['libphonenumber-js'],
+          'chart-vendor': ['recharts'],
+        },
+      },
+    },
+  },
   plugins: [
     dataOpsBrowserGuard(),
     viteTsConfigPaths({

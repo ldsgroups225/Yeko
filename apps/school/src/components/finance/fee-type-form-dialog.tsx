@@ -1,33 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { IconCopy, IconLoader2 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Button } from '@workspace/ui/components/button'
-import { Checkbox } from '@workspace/ui/components/checkbox'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@workspace/ui/components/dialog'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@workspace/ui/components/form'
-import { Input } from '@workspace/ui/components/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select'
 import { useCallback, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
@@ -35,8 +14,9 @@ import { z } from 'zod'
 import { useTranslations } from '@/i18n'
 import { feeTypesKeys, feeTypesOptions } from '@/lib/queries/fee-types'
 import { schoolMutationKeys } from '@/lib/queries/keys'
-import { feeCategories, feeCategoryLabels } from '@/schemas/fee-type'
+import { feeCategories } from '@/schemas/fee-type'
 import { createNewFeeType, updateExistingFeeType } from '@/school/functions/fee-types'
+import { FeeTypeForm } from './fee-types/fee-type-form'
 
 const feeTypeFormSchema = z.object({
   id: z.string().optional(),
@@ -97,7 +77,6 @@ export function FeeTypeFormDialog({
     }
   }, [templates, form])
 
-  // Reset form when opening/closing or switching modes
   const resetForm = useCallback(() => {
     if (editData) {
       form.reset({
@@ -124,11 +103,9 @@ export function FeeTypeFormDialog({
     }
   }, [editData, form])
 
-  // Reset form when opening or editData changes
   useEffect(() => {
-    if (open) {
+    if (open)
       resetForm()
-    }
   }, [open, resetForm])
 
   const createMutation = useMutation({
@@ -146,20 +123,16 @@ export function FeeTypeFormDialog({
           feeTypeTemplateId: data.templateId || null,
         },
       })
-      if (!result.success) {
+      if (!result.success)
         throw new Error(result.error)
-      }
       return result.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
       toast.success(t.finance.feeTypes.created())
-      resetForm()
       onOpenChange(false)
     },
-    onError: (err: Error) => {
-      toast.error(err.message)
-    },
+    onError: (err: Error) => toast.error(err.message),
   })
 
   const updateMutation = useMutation({
@@ -177,312 +150,45 @@ export function FeeTypeFormDialog({
           displayOrder: data.displayOrder,
         },
       })
-      if (!result.success) {
+      if (!result.success)
         throw new Error(result.error)
-      }
       return result.data
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
       toast.success('Type de frais mis à jour')
-      resetForm()
       onOpenChange(false)
     },
-    onError: (err: Error) => {
-      toast.error(err.message)
-    },
+    onError: (err: Error) => toast.error(err.message),
   })
 
   const onSubmit = (data: FeeTypeFormData) => {
-    if (isEditMode) {
+    if (isEditMode)
       updateMutation.mutate(data)
-    }
-    else {
-      createMutation.mutate(data)
-    }
+    else createMutation.mutate(data)
   }
-
-  const handleOpenChange = (newOpen: boolean) => {
-    if (!newOpen) {
-      resetForm()
-    }
-    onOpenChange(newOpen)
-  }
-
-  const isPending = createMutation.isPending || updateMutation.isPending
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            {isEditMode
-              ? 'Modifier le type de frais'
-              : t.finance.feeTypes.create()}
+            {isEditMode ? 'Modifier le type de frais' : t.finance.feeTypes.create()}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground/80">
-            {isEditMode
-              ? 'Modifier les informations du type de frais'
-              : t.finance.feeTypes.createDescription()}
+            {isEditMode ? 'Modifier les informations du type de frais' : t.finance.feeTypes.createDescription()}
           </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {!isEditMode && (
-              <FormField
-                control={form.control}
-                name="templateId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground flex items-center gap-2">
-                      <IconCopy className="h-3 w-3" />
-                      Import from template
-                    </FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        if (value) {
-                          field.onChange(value)
-                          handleTemplateSelect(value)
-                        }
-                      }}
-                      value={field.value || ''}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                          <SelectValue placeholder="Sélectionner un modèle...">
-                            {field.value
-                              ? (() => {
-                                  const tpl = templates?.find(t => t.id === field.value)
-                                  return tpl
-                                    ? (
-                                        <div className="flex items-center gap-2">
-                                          <span className="font-medium">{tpl.name}</span>
-                                          <span className="text-muted-foreground text-xs">
-                                            (
-                                            {tpl.code}
-                                            )
-                                          </span>
-                                        </div>
-                                      )
-                                    : undefined
-                                })()
-                              : undefined}
-                          </SelectValue>
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                        {templates?.map(template => (
-                          <SelectItem
-                            key={template.id}
-                            value={template.id}
-                            className="rounded-lg cursor-pointer focus:bg-primary/10"
-                          >
-                            <span className="font-medium">{template.name}</span>
-                            <span className="text-muted-foreground ml-2 text-xs">
-                              (
-                              {template.code}
-                              )
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription className="text-[11px]">
-                      Sélectionnez un modèle pour pré-remplir le formulaire
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-            )}
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.common.code()}
-                      {' '}
-                      *
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder={t.finance.feeTypes.placeholders.code()}
-                        className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                      {t.finance.feeTypes.category()}
-                      {' '}
-                      *
-                    </FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
-                          <SelectValue placeholder={t.finance.feeTypes.category()}>
-                            {field.value ? feeCategoryLabels[field.value as keyof typeof feeCategoryLabels] : null}
-                          </SelectValue>
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-                        {feeCategories.map(cat => (
-                          <SelectItem
-                            key={cat}
-                            value={cat}
-                            className="rounded-lg cursor-pointer focus:bg-primary/10"
-                          >
-                            {feeCategoryLabels[cat]}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    {t.common.name()}
-                    {' '}
-                    *
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={t.finance.feeTypes.placeholders.name()}
-                      className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="nameEn"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    {t.common.nameEn()}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={t.finance.feeTypes.placeholders.nameEn()}
-                      className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
-                    />
-                  </FormControl>
-                  <FormDescription className="text-[11px]">
-                    {t.common.optionalEnglishName()}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="displayOrder"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
-                    {t.common.displayOrder()}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min={0}
-                      {...field}
-                      className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex gap-6 pt-2">
-              <FormField
-                control={form.control}
-                name="isMandatory"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-3 space-y-0 rounded-xl border border-border/40 p-3 bg-muted/10">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-border/60 rounded-md"
-                      />
-                    </FormControl>
-                    <FormLabel className="font-medium cursor-pointer">
-                      {t.finance.feeTypes.mandatory()}
-                    </FormLabel>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="isRecurring"
-                render={({ field }) => (
-                  <FormItem className="flex items-center gap-3 space-y-0 rounded-xl border border-border/40 p-3 bg-muted/10">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-border/60 rounded-md"
-                      />
-                    </FormControl>
-                    <FormLabel className="font-medium cursor-pointer">
-                      {t.finance.feeTypes.recurring()}
-                    </FormLabel>
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <DialogFooter className="pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleOpenChange(false)}
-                className="rounded-xl border-border/40"
-              >
-                {t.common.cancel()}
-              </Button>
-              <Button
-                type="submit"
-                disabled={isPending}
-                className="rounded-xl shadow-lg shadow-primary/20"
-              >
-                {isPending && (
-                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                {isEditMode ? t.common.save() : t.finance.feeTypes.create()}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+        <FeeTypeForm
+          form={form}
+          onSubmit={onSubmit}
+          onCancel={() => onOpenChange(false)}
+          isPending={createMutation.isPending || updateMutation.isPending}
+          isEditMode={isEditMode}
+          templates={templates}
+          onTemplateSelect={handleTemplateSelect}
+        />
       </DialogContent>
     </Dialog>
   )

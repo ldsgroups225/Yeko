@@ -10,21 +10,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { PageHeader } from '@workspace/ui/components/page-header'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select'
+
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
 import { lazy, Suspense, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import {
-  TimetableViewSwitcher,
-} from '@/components/timetables'
+
+import { TimetableFilters } from '@/components/timetables/timetable-filters'
 import { TimetableImportDialog } from '@/components/timetables/timetable-import-dialog'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
@@ -372,155 +365,23 @@ function TimetablesPage() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl space-y-6"
       >
-        <div className="flex flex-col gap-6">
-          <TimetableViewSwitcher value={viewMode} onChange={handleViewModeChange} />
-
-          <div className="flex flex-col sm:flex-row gap-4 items-end">
-            {/* Class selector (for class view) */}
-            {viewMode === 'class' && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="w-full sm:w-[240px] space-y-1.5"
-              >
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
-                  {t.classes.title()}
-                </label>
-                {classesPending || contextPending
-                  ? (
-                      <Skeleton className="h-11 w-full rounded-xl" />
-                    )
-                  : (
-                      <Select
-                        value={selectedClassId}
-                        onValueChange={val => setSelectedClassId(val ?? '')}
-                        disabled={!effectiveYearId}
-                      >
-                        <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                          <SelectValue placeholder={t.classes.select()}>
-                            {selectedClassId
-                              ? (() => {
-                                  const item = classes?.find(i => i.class.id === selectedClassId)
-                                  return item
-                                    ? (
-                                        <div className="flex items-center gap-2">
-                                          <div className="size-2 rounded-full bg-primary" />
-                                          <span>
-                                            {item.grade.name}
-                                            {' '}
-                                            {item.class.section}
-                                          </span>
-                                        </div>
-                                      )
-                                    : undefined
-                                })()
-                              : undefined}
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                          {classes?.map(item => (
-                            <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                              {item.grade.name}
-                              {' '}
-                              {item.class.section}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-              </motion.div>
-            )}
-
-            {/* Teacher selector (for teacher view) */}
-            {viewMode === 'teacher' && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="w-full sm:w-[240px] space-y-1.5"
-              >
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
-                  {t.teachers.title()}
-                </label>
-                {teachersPending
-                  ? (
-                      <Skeleton className="h-11 w-full rounded-xl" />
-                    )
-                  : (
-                      <Select
-                        value={selectedTeacherId}
-                        onValueChange={val => setSelectedTeacherId(val ?? '')}
-                      >
-                        <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                          <SelectValue placeholder={t.teachers.select()}>
-                            {selectedTeacherId
-                              ? (() => {
-                                  const teacher = teachers?.find(t => t.id === selectedTeacherId)
-                                  return teacher
-                                    ? (
-                                        <div className="flex items-center gap-2">
-                                          <div className="size-2 rounded-full bg-success" />
-                                          <span>{teacher.user?.name}</span>
-                                        </div>
-                                      )
-                                    : undefined
-                                })()
-                              : undefined}
-                          </SelectValue>
-                        </SelectTrigger>
-                        <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                          {teachers?.map(teacher => (
-                            <SelectItem key={teacher.id} value={teacher.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                              {teacher.user?.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-              </motion.div>
-            )}
-            {/* Classroom selector (for classroom view) */}
-            {viewMode === 'classroom' && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="w-full sm:w-[240px] space-y-1.5"
-              >
-                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
-                  {t.spaces.title()}
-                </label>
-                <Select
-                  value={selectedClassroomId}
-                  onValueChange={val => setSelectedClassroomId(val ?? '')}
-                >
-                  <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
-                    <SelectValue placeholder={t.spaces.availability.title()}>
-                      {selectedClassroomId
-                        ? (() => {
-                            const classroom = classrooms?.find(c => c.id === selectedClassroomId)
-                            return classroom
-                              ? (
-                                  <div className="flex items-center gap-2">
-                                    <div className="size-2 rounded-full bg-primary" />
-                                    <span>{classroom.name}</span>
-                                  </div>
-                                )
-                              : undefined
-                          })()
-                        : undefined}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                    {classrooms?.map(classroom => (
-                      <SelectItem key={classroom.id} value={classroom.id} className="rounded-lg focus:bg-primary/10 font-medium">
-                        {classroom.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </motion.div>
-            )}
-          </div>
-        </div>
+        <TimetableFilters
+          viewMode={viewMode}
+          onViewModeChange={handleViewModeChange}
+          selectedClassId={selectedClassId}
+          onClassChange={setSelectedClassId}
+          selectedTeacherId={selectedTeacherId}
+          onTeacherChange={setSelectedTeacherId}
+          selectedClassroomId={selectedClassroomId}
+          onClassroomChange={setSelectedClassroomId}
+          classes={classes}
+          teachers={teachers}
+          classrooms={classrooms}
+          classesPending={classesPending}
+          teachersPending={teachersPending}
+          effectiveYearId={effectiveYearId}
+          contextPending={contextPending}
+        />
       </motion.div>
 
       <div className="min-h-[500px]">

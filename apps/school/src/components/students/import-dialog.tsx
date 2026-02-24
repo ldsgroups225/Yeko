@@ -1,9 +1,7 @@
+import type { ParsedStudent } from './import/import-utils'
 import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-
-// Utility functions for Excel data normalization
 import {
   IconAlertCircle,
-  IconCircleCheck,
   IconDownload,
   IconFileSpreadsheet,
   IconLoader2,
@@ -14,7 +12,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Alert,
   AlertDescription,
-  AlertTitle,
 } from '@workspace/ui/components/alert'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -26,217 +23,29 @@ import {
   DialogTitle,
 } from '@workspace/ui/components/dialog'
 import { useCallback, useState } from 'react'
-
 import { toast } from 'sonner'
 import * as XLSX from 'xlsx'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys } from '@/lib/queries/students'
 import { bulkImportStudents } from '@/school/functions/students'
-import { generateUUID } from '@/utils/generateUUID'
+import { ImportPreview } from './import/import-preview'
+import { ImportResultAlert } from './import/import-result-alert'
+import {
+  findColumnMapping,
+  mapRowToStudent,
 
-// Types for Excel data
+  parseExcelData,
+} from './import/import-utils'
 
 interface ImportDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-interface ParsedStudent {
-  firstName: string
-  lastName: string
-  dob: string
-  gender?: 'M' | 'F' | 'other'
-  matricule?: string
-  birthPlace?: string
-  nationality?: string
-  address?: string
-  emergencyContact?: string
-  emergencyPhone?: string
-  previousSchool?: string
-}
-
 interface ImportResult {
   success: number
   errors: Array<{ row: number, error: string }>
-}
-
-// Column mapping for flexible header matching
-const COLUMN_MAPPINGS: Record<string, string[]> = {
-  firstName: ['firstname', 'first_name', 'prenom', 'prénom', 'first name'],
-  lastName: ['lastname', 'last_name', 'nom', 'last name', 'nom de famille'],
-  dob: [
-    'dob',
-    'dateofbirth',
-    'date_of_birth',
-    'datenaissance',
-    'date_naissance',
-    'naissance',
-    'date of birth',
-    'date de naissance',
-  ],
-  gender: ['gender', 'sexe', 'genre', 'sex'],
-  matricule: ['matricule', 'student_id', 'studentid', 'id'],
-  birthPlace: [
-    'birthplace',
-    'birth_place',
-    'lieu_naissance',
-    'lieunaissance',
-    'lieu de naissance',
-  ],
-  nationality: ['nationality', 'nationalite', 'nationalité'],
-  address: ['address', 'adresse'],
-  emergencyContact: [
-    'emergencycontact',
-    'emergency_contact',
-    'contact_urgence',
-    'contacturgence',
-    'contact d\'urgence',
-  ],
-  emergencyPhone: [
-    'emergencyphone',
-    'emergency_phone',
-    'telephone_urgence',
-    'telephoneurgence',
-    'téléphone d\'urgence',
-  ],
-  previousSchool: [
-    'previousschool',
-    'previous_school',
-    'ecole_precedente',
-    'ecoleprecedente',
-    'école précédente',
-  ],
-}
-
-function normalizeHeader(header: string): string {
-  return header
-    .toLowerCase()
-    .replace(/[_\s\-']/g, '')
-    .trim()
-}
-
-function findColumnMapping(header: string): string | null {
-  const normalized = normalizeHeader(header)
-  for (const [field, aliases] of Object.entries(COLUMN_MAPPINGS)) {
-    if (
-      aliases.some(
-        alias =>
-          normalizeHeader(alias) === normalized
-          || normalized.includes(normalizeHeader(alias)),
-      )
-    ) {
-      return field
-    }
-  }
-  return null
-}
-
-function normalizeDate(value: unknown): string {
-  if (!value)
-    return ''
-
-  // Handle Excel date serial numbers
-  if (typeof value === 'number') {
-    const date = XLSX.SSF.parse_date_code(value)
-    if (date) {
-      return `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`
-    }
-  }
-
-  const str = String(value).trim()
-
-  // Already in YYYY-MM-DD format
-  if (/^\d{4}-\d{2}-\d{2}$/.test(str))
-    return str
-
-  // DD/MM/YYYY or MM/DD/YYYY
-  if (str.includes('/')) {
-    const parts = str.split('/')
-    if (parts.length === 3) {
-      const [a, b, c] = parts
-      // Assume DD/MM/YYYY if first part > 12
-      if (Number(a) > 12) {
-        return `${c}-${b?.padStart(2, '0')}-${a?.padStart(2, '0')}`
-      }
-      // Otherwise assume MM/DD/YYYY
-      return `${c}-${a?.padStart(2, '0')}-${b?.padStart(2, '0')}`
-    }
-  }
-
-  // Try parsing as date
-  const date = new Date(str)
-  if (!Number.isNaN(date.getTime())) {
-    return date.toISOString().split('T')[0] || ''
-  }
-
-  return str
-}
-
-function normalizeGender(value: unknown): 'M' | 'F' | 'other' | undefined {
-  if (!value)
-    return undefined
-  const str = String(value).toUpperCase().trim()
-  if (['M', 'MALE', 'MASCULIN', 'H', 'HOMME', 'GARÇON', 'GARCON'].includes(str))
-    return 'M'
-  if (['F', 'FEMALE', 'FEMININ', 'FÉMININ', 'FEMME', 'FILLE'].includes(str))
-    return 'F'
-  return undefined
-}
-
-function parseExcelData(workbook: XLSX.WorkBook): {
-  headers: string[]
-  rows: Record<string, any>[]
-} {
-  const firstSheet = workbook.Sheets[workbook.SheetNames[0] || '']
-  if (!firstSheet)
-    return { headers: [], rows: [] }
-
-  const jsonData = XLSX.utils.sheet_to_json<Record<string, any>>(firstSheet, {
-    defval: '',
-  })
-  const headers = jsonData.length > 0 ? Object.keys(jsonData[0] || {}) : []
-
-  return { headers, rows: jsonData }
-}
-
-function mapRowToStudent(
-  row: Record<string, any>,
-  headerMapping: Record<string, string>,
-): ParsedStudent | null {
-  const data: Record<string, any> = {}
-
-  for (const [originalHeader, value] of Object.entries(row)) {
-    const mappedField = headerMapping[originalHeader]
-    if (mappedField && value !== undefined && value !== '') {
-      data[mappedField] = value
-    }
-  }
-
-  // IconCheck required fields
-  if (!data.firstName || !data.lastName || !data.dob) {
-    return null
-  }
-
-  return {
-    firstName: String(data.firstName).trim(),
-    lastName: String(data.lastName).trim(),
-    dob: normalizeDate(data.dob),
-    gender: normalizeGender(data.gender),
-    matricule: data.matricule ? String(data.matricule).trim() : undefined,
-    birthPlace: data.birthPlace ? String(data.birthPlace).trim() : undefined,
-    nationality: data.nationality ? String(data.nationality).trim() : undefined,
-    address: data.address ? String(data.address).trim() : undefined,
-    emergencyContact: data.emergencyContact
-      ? String(data.emergencyContact).trim()
-      : undefined,
-    emergencyPhone: data.emergencyPhone
-      ? String(data.emergencyPhone).trim()
-      : undefined,
-    previousSchool: data.previousSchool
-      ? String(data.previousSchool).trim()
-      : undefined,
-  }
 }
 
 export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
@@ -250,8 +59,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
 
   const importMutation = useMutation({
     mutationKey: schoolMutationKeys.students.bulkImport,
-    mutationFn: (students: ParsedStudent[]) =>
-      bulkImportStudents({ data: students }),
+    mutationFn: (students: ParsedStudent[]) => bulkImportStudents({ data: students }),
     onSuccess: (result) => {
       if (!result.success) {
         toast.error(result.error)
@@ -259,87 +67,60 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       }
       setResult(result.data)
       queryClient.invalidateQueries({ queryKey: studentsKeys.all })
-      if (result.data.success > 0) {
+      if (result.data.success > 0)
         toast.success(t.students.importSuccess({ count: result.data.success }))
-      }
     },
-    onError: (err: Error) => {
-      toast.error(err.message)
-    },
+    onError: (err: Error) => toast.error(err.message),
   })
 
-  const handleFileChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const selectedFile = e.target.files?.[0]
-      if (!selectedFile)
-        return
-
-      setFile(selectedFile)
-      setParseError(null)
-      setResult(null)
-      setPreview([])
-      setAllParsed([])
-
-      const reader = new FileReader()
-      reader.onload = (event) => {
-        try {
-          const data = new Uint8Array(event.target?.result as ArrayBuffer)
-          const workbook = XLSX.read(data, { type: 'array', cellDates: true })
-
-          const { headers, rows } = parseExcelData(workbook)
-
-          if (headers.length === 0 || rows.length === 0) {
-            setParseError(t.students.importNoValidRows())
-            return
-          }
-
-          // Create header mapping
-          const headerMapping: Record<string, string> = {}
-          for (const header of headers) {
-            const mapped = findColumnMapping(header)
-            if (mapped) {
-              headerMapping[header] = mapped
-            }
-          }
-
-          // IconCheck for required columns
-          const mappedFields = Object.values(headerMapping)
-          const hasFirstName = mappedFields.includes('firstName')
-          const hasLastName = mappedFields.includes('lastName')
-          const hasDob = mappedFields.includes('dob')
-
-          if (!hasFirstName || !hasLastName || !hasDob) {
-            setParseError(t.students.importMissingColumns())
-            return
-          }
-
-          // Parse all rows
-          const parsed = rows
-            .map(row => mapRowToStudent(row, headerMapping))
-            .filter((s): s is ParsedStudent => s !== null)
-
-          if (parsed.length === 0) {
-            setParseError(t.students.importNoValidRows())
-            return
-          }
-
-          setAllParsed(parsed)
-          setPreview(parsed.slice(0, 5))
-        }
-        catch {
-          setParseError(t.students.importParseError())
-        }
-      }
-      reader.readAsArrayBuffer(selectedFile)
-    },
-    [t],
-  )
-
-  const handleImport = () => {
-    if (allParsed.length === 0)
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0]
+    if (!selectedFile)
       return
-    importMutation.mutate(allParsed)
-  }
+    setFile(selectedFile)
+    setParseError(null)
+    setResult(null)
+    setPreview([])
+    setAllParsed([])
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      try {
+        const data = new Uint8Array(event.target?.result as ArrayBuffer)
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true })
+        const { headers, rows } = parseExcelData(workbook)
+        if (headers.length === 0 || rows.length === 0) {
+          setParseError(t.students.importNoValidRows())
+          return
+        }
+
+        const headerMapping: Record<string, string> = {}
+        for (const header of headers) {
+          const mapped = findColumnMapping(header)
+          if (mapped)
+            headerMapping[header] = mapped
+        }
+
+        const mappedFields = Object.values(headerMapping)
+        if (!mappedFields.includes('firstName') || !mappedFields.includes('lastName') || !mappedFields.includes('dob')) {
+          setParseError(t.students.importMissingColumns())
+          return
+        }
+
+        const parsed = rows.map(row => mapRowToStudent(row, headerMapping)).filter((s): s is ParsedStudent => s !== null)
+        if (parsed.length === 0) {
+          setParseError(t.students.importNoValidRows())
+          return
+        }
+        setAllParsed(parsed)
+        setPreview(parsed.slice(0, 5))
+      }
+      catch { setParseError(t.students.importParseError()) }
+    }
+    reader.readAsArrayBuffer(selectedFile)
+  }, [t])
+
+  const handleImport = () => allParsed.length > 0 && importMutation.mutate(allParsed)
 
   const handleClose = () => {
     setFile(null)
@@ -351,7 +132,6 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
   }
 
   const downloadTemplate = () => {
-    // Template data with natural French column names
     interface StudentTemplate {
       'Nom': string
       'Prénom': string
@@ -364,35 +144,18 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       'Téléphone d\'Urgence': string
       'École Précédente': string
     }
-
-    const templateData: StudentTemplate[] = [
-      {
-        'Nom': 'Koné',
-        'Prénom': 'Aminata',
-        'Date de Naissance': '2010-05-15',
-        'Genre': 'F',
-        'Lieu de Naissance': 'Abidjan',
-        'Nationalité': 'Ivoirienne',
-        'Adresse': '123 Rue Example',
-        'Contact d\'Urgence': 'Papa Koné',
-        'Téléphone d\'Urgence': '+2250701020304',
-        'École Précédente': 'École Primaire ABC',
-      },
-      {
-        'Nom': 'Diallo',
-        'Prénom': 'Moussa',
-        'Date de Naissance': '2011-03-22',
-        'Genre': 'M',
-        'Lieu de Naissance': 'Bouaké',
-        'Nationalité': 'Ivoirien',
-        'Adresse': '456 Avenue Exemple',
-        'Contact d\'Urgence': 'Maman Diallo',
-        'Téléphone d\'Urgence': '+2250702030405',
-        'École Précédente': 'École Primaire XYZ',
-      },
-    ]
-
-    // Create schema with typed-xlsx
+    const templateData: StudentTemplate[] = [{
+      'Nom': 'Koné',
+      'Prénom': 'Aminata',
+      'Date de Naissance': '2010-05-15',
+      'Genre': 'F',
+      'Lieu de Naissance': 'Abidjan',
+      'Nationalité': 'Ivoirienne',
+      'Adresse': '123 Rue Example',
+      'Contact d\'Urgence': 'Papa Koné',
+      'Téléphone d\'Urgence': '+2250701020304',
+      'École Précédente': 'École Primaire ABC',
+    }]
     const schema = ExcelSchemaBuilder.create<StudentTemplate>()
       .column('lastName', { key: 'Nom' })
       .column('firstName', { key: 'Prénom' })
@@ -405,22 +168,8 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       .column('emergencyPhone', { key: 'Téléphone d\'Urgence' })
       .column('previousSchool', { key: 'École Précédente' })
       .build()
-
-    // Build Excel file
-    const excelFile = ExcelBuilder.create()
-      .sheet('Modèle Import Élèves')
-      .addTable({
-        data: templateData,
-        schema,
-      })
-      .build({ output: 'buffer' })
-
-    // IconDownload file
-    const uint8Array = new Uint8Array(excelFile)
-    const blob = new Blob([uint8Array], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    })
-    const url = URL.createObjectURL(blob)
+    const excelFile = ExcelBuilder.create().sheet('Modèle Import Élèves').addTable({ data: templateData, schema }).build({ output: 'buffer' })
+    const url = URL.createObjectURL(new Blob([new Uint8Array(excelFile)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }))
     const link = document.createElement('a')
     link.href = url
     link.download = 'modele_import_eleves.xlsx'
@@ -435,65 +184,14 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40">
         <DialogHeader>
           <DialogTitle>{t.students.importStudents()}</DialogTitle>
-          <DialogDescription>
-            {t.students.importStudentsDescriptionExcel()}
-          </DialogDescription>
+          <DialogDescription>{t.students.importStudentsDescriptionExcel()}</DialogDescription>
         </DialogHeader>
 
         {result
           ? (
               <div className="space-y-4">
-                <Alert
-                  variant={result.errors.length > 0 ? 'destructive' : 'default'}
-                >
-                  {result.errors.length > 0
-                    ? (
-                        <IconAlertCircle className="h-4 w-4" />
-                      )
-                    : (
-                        <IconCircleCheck className="h-4 w-4" />
-                      )}
-                  <AlertTitle>{t.students.importComplete()}</AlertTitle>
-                  <AlertDescription>
-                    <ul className="mt-2 space-y-1 text-sm">
-                      <li>
-                        {t.students.importSuccessCount({ count: result.success })}
-                      </li>
-                      {result.errors.length > 0 && (
-                        <li className="text-destructive">
-                          {t.students.importErrorCount({
-                            count: result.errors.length,
-                          })}
-                        </li>
-                      )}
-                    </ul>
-                  </AlertDescription>
-                </Alert>
-
-                {result.errors.length > 0 && (
-                  <div className="max-h-40 overflow-y-auto rounded border p-3 text-sm">
-                    {result.errors.slice(0, 10).map(err => (
-                      <p
-                        key={`error-${err.row}-${generateUUID()}`}
-                        className="text-destructive"
-                      >
-                        {t.students.importRowError({
-                          row: err.row,
-                          error: err.error,
-                        })}
-                      </p>
-                    ))}
-                    {result.errors.length > 10 && (
-                      <p className="mt-2 text-muted-foreground">
-                        {t.common.andMore({ count: result.errors.length - 10 })}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                <DialogFooter>
-                  <Button onClick={handleClose}>{t.common.close()}</Button>
-                </DialogFooter>
+                <ImportResultAlert result={result} />
+                <DialogFooter><Button onClick={handleClose}>{t.common.close()}</Button></DialogFooter>
               </div>
             )
           : (
@@ -504,7 +202,6 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                     {t.students.downloadTemplate()}
                   </Button>
                 </div>
-
                 <div className="rounded-lg border-2 border-dashed p-6 text-center">
                   {file
                     ? (
@@ -512,12 +209,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                           <IconFileSpreadsheet className="h-8 w-8 text-muted-foreground" />
                           <div className="text-left">
                             <p className="font-medium">{file.name}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {allParsed.length > 0
-                                && t.students.importPreviewCount({
-                                  count: allParsed.length,
-                                })}
-                            </p>
+                            <p className="text-sm text-muted-foreground">{allParsed.length > 0 && t.students.importPreviewCount({ count: allParsed.length })}</p>
                           </div>
                           <Button
                             variant="ghost"
@@ -536,88 +228,23 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                     : (
                         <label className="cursor-pointer">
                           <IconUpload className="mx-auto h-10 w-10 text-muted-foreground" />
-                          <p className="mt-2 font-medium">
-                            {t.students.importDropFile()}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {t.students.importFileTypesExcel()}
-                          </p>
-                          <input
-                            type="file"
-                            accept=".xlsx,.xls,.csv"
-                            onChange={handleFileChange}
-                            className="hidden"
-                          />
+                          <p className="mt-2 font-medium">{t.students.importDropFile()}</p>
+                          <p className="text-sm text-muted-foreground">{t.students.importFileTypesExcel()}</p>
+                          <input type="file" accept=".xlsx,.xls,.csv" onChange={handleFileChange} className="hidden" />
                         </label>
                       )}
                 </div>
-
                 {parseError && (
                   <Alert variant="destructive">
                     <IconAlertCircle className="h-4 w-4" />
                     <AlertDescription>{parseError}</AlertDescription>
                   </Alert>
                 )}
-
-                {preview.length > 0 && (
-                  <div className="rounded border">
-                    <div className="border-b bg-muted/50 px-3 py-2 text-sm font-medium">
-                      {t.students.importPreview()}
-                    </div>
-                    <div className="max-h-40 overflow-auto p-2">
-                      <table className="w-full text-sm">
-                        <thead>
-                          <tr className="border-b">
-                            <th className="px-2 py-1 text-left">
-                              {t.students.lastName()}
-                            </th>
-                            <th className="px-2 py-1 text-left">
-                              {t.students.firstName()}
-                            </th>
-                            <th className="px-2 py-1 text-left">
-                              {t.students.dateOfBirth()}
-                            </th>
-                            <th className="px-2 py-1 text-left">
-                              {t.students.gender()}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {preview.map(s => (
-                            <tr
-                              key={`preview-${generateUUID()}-${s.lastName}-${s.firstName}`}
-                              className="border-b last:border-0"
-                            >
-                              <td className="px-2 py-1">{s.lastName}</td>
-                              <td className="px-2 py-1">{s.firstName}</td>
-                              <td className="px-2 py-1">{s.dob}</td>
-                              <td className="px-2 py-1">{s.gender || '-'}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    {allParsed.length > 5 && (
-                      <div className="border-t bg-muted/30 px-3 py-2 text-center text-sm text-muted-foreground">
-                        {t.students.importAndMoreRows({
-                          count: allParsed.length - 5,
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )}
-
+                <ImportPreview preview={preview} totalItems={allParsed.length} />
                 <DialogFooter>
-                  <Button variant="outline" onClick={handleClose}>
-                    {t.common.cancel()}
-                  </Button>
-                  <Button
-                    onClick={handleImport}
-                    disabled={allParsed.length === 0 || importMutation.isPending}
-                  >
-                    {importMutation.isPending && (
-                      <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
+                  <Button variant="outline" onClick={handleClose}>{t.common.cancel()}</Button>
+                  <Button onClick={handleImport} disabled={allParsed.length === 0 || importMutation.isPending}>
+                    {importMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {t.students.importStart()}
                   </Button>
                 </DialogFooter>
