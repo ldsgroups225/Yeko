@@ -56,7 +56,9 @@ async function clearCoreTables() {
   await db.delete(coreSchema.tracks)
   await db.delete(coreSchema.educationLevels)
 
-  // Clear school tables
+  // Clear school tables (feeTypes before feeTypeTemplates due to FK)
+  await db.delete(schoolSchema.feeTypes)
+  await db.delete(coreSchema.feeTypeTemplates)
   await db.delete(schoolSchema.roles)
 
   console.log('✅ Core tables cleared')

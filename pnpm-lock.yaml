@@ -886,6 +886,9 @@ importers:
       jsdom:
         specifier: 'catalog:'
         version: 28.1.0(@noble/hashes@2.0.1)
+      rollup-plugin-visualizer:
+        specifier: 'catalog:'
+        version: 7.0.0(rollup@4.55.1)
       tw-animate-css:
         specifier: 'catalog:'
         version: 1.4.0

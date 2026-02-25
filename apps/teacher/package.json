@@ -61,6 +61,7 @@
     "@yeko/eslint-config": "workspace:^",
     "eslint": "catalog:",
     "jsdom": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
     "tw-animate-css": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
