@@ -3,7 +3,7 @@ packages:
   - apps/*
 
 catalog:
-  '@aws-sdk/client-s3': ^3.995.0
+  '@aws-sdk/client-s3': ^3.997.0
   '@aws-sdk/s3-request-presigner': ^3.995.0
   '@base-ui/react': ^1.2.0
   '@chronicstone/typed-xlsx': ^0.2.17
