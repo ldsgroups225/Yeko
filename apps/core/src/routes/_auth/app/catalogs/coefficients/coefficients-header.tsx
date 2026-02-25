@@ -1,6 +1,6 @@
-import { IconDownload, IconFileDownload, IconFileUpload, IconPlus, IconCopy } from '@tabler/icons-react'
-import { Button } from '@workspace/ui/components/button'
 import type { RefObject } from 'react'
+import { IconCopy, IconDownload, IconFileDownload, IconFileUpload, IconPlus } from '@tabler/icons-react'
+import { Button } from '@workspace/ui/components/button'
 
 interface CoefficientsHeaderProps {
   onDownloadTemplate: () => void

@@ -1,4 +1,5 @@
 import type { Grade } from '@repo/data-ops'
+import type { CreateGradeInput, CreateSerieInput, UpdateGradeInput, UpdateSerieInput } from '@/schemas/catalog'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
@@ -20,7 +21,6 @@ import {
 } from '@/integrations/tanstack-query/catalogs-options'
 import { exportGradesToExcel, exportSeriesToExcel, importSeriesFromExcel } from '@/lib/catalog-csv'
 import { useLogger } from '@/lib/logger'
-import type { CreateGradeInput, CreateSerieInput, UpdateGradeInput, UpdateSerieInput } from '@/schemas/catalog'
 import { parseServerFnError } from '@/utils/error-handlers'
 import { GradesSection } from './grades/grades-section'
 import { GradesStats } from './grades/grades-stats'
@@ -380,7 +380,10 @@ function GradesManagement() {
         title="Supprimer le niveau"
         description={`Êtes-vous sûr de vouloir supprimer le niveau "${deletingGrade?.name}" ? Cette action est irréversible.`}
         confirmText={deletingGrade?.name}
-        onConfirm={() => deletingGrade && deleteGradeMutation.mutate({ id: deletingGrade.id })}
+        onConfirm={() => {
+          if (deletingGrade)
+            deleteGradeMutation.mutate({ id: deletingGrade.id })
+        }}
         isPending={deleteGradeMutation.isPending}
       />
 
@@ -390,7 +393,10 @@ function GradesManagement() {
         title="Supprimer la série"
         description={`Êtes-vous sûr de vouloir supprimer la série "${deletingSerie?.name}" ? Cette action est irréversible.`}
         confirmText={deletingSerie?.name}
-        onConfirm={() => deletingSerie && deleteSerieMutation.mutate({ id: deletingSerie.id })}
+        onConfirm={() => {
+          if (deletingSerie)
+            deleteSerieMutation.mutate({ id: deletingSerie.id })
+        }}
         isPending={deleteSerieMutation.isPending}
       />
     </div>

@@ -5,6 +5,7 @@ export {
   getQueueBinding,
   setExecutionContext,
   setQueueBinding,
+  withTaskScope,
 } from './context'
 
 // Queue producers

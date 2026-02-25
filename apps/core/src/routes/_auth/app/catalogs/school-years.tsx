@@ -340,7 +340,10 @@ function SchoolYearsCatalog() {
           title="Supprimer l'année scolaire"
           description={`Êtes-vous sûr de vouloir supprimer l'année scolaire "${deletingYear?.name}" ? Cette action supprimera également toutes les périodes associées.`}
           confirmText={deletingYear?.name}
-          onConfirm={() => deletingYear && deleteYearMutation.mutate({ id: deletingYear.id })}
+          onConfirm={() => {
+            if (deletingYear)
+              deleteYearMutation.mutate({ id: deletingYear.id })
+          }}
           isPending={deleteYearMutation.isPending}
         />
 
@@ -350,7 +353,10 @@ function SchoolYearsCatalog() {
           title="Supprimer la période"
           description={`Êtes-vous sûr de vouloir supprimer la période "${deletingTerm?.name}" ?`}
           confirmText={deletingTerm?.name}
-          onConfirm={() => deletingTerm && deleteTermMutation.mutate({ id: deletingTerm.id })}
+          onConfirm={() => {
+            if (deletingTerm)
+              deleteTermMutation.mutate({ id: deletingTerm.id })
+          }}
           isPending={deleteTermMutation.isPending}
         />
       </LazyMotion>

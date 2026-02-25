@@ -112,10 +112,12 @@ export function CoefficientsFilters({
             {editingCellsCount > 0 && (
               <Button onClick={onSaveChanges} disabled={isBulkUpdating} className="bg-orange-500 hover:bg-orange-600 shadow-md transition-all active:scale-95 animate-in fade-in zoom-in slide-in-from-right-4">
                 <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                Enregistrer ({editingCellsCount})
+                Enregistrer (
+                {editingCellsCount}
+                )
               </Button>
             )}
-            
+
             <div className="h-8 w-px bg-border/50 hidden lg:block" />
 
             <Tabs value={viewMode} onValueChange={v => setViewMode(v as 'matrix' | 'list')} className="w-full lg:w-auto">

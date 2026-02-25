@@ -161,6 +161,8 @@ CREATE TABLE "schools" (
 	"phone" text,
 	"email" text,
 	"logo_url" text,
+	"latitude" numeric(10, 7),
+	"longitude" numeric(10, 7),
 	"status" text DEFAULT 'active' NOT NULL,
 	"settings" jsonb,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -1119,6 +1121,20 @@ CREATE TABLE "timetable_sessions" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "tracking_events" (
+	"id" text PRIMARY KEY NOT NULL,
+	"session_id" text NOT NULL,
+	"teacher_id" text NOT NULL,
+	"school_id" text NOT NULL,
+	"timestamp" timestamp NOT NULL,
+	"latitude" numeric(10, 7) NOT NULL,
+	"longitude" numeric(10, 7) NOT NULL,
+	"accuracy" numeric(8, 2),
+	"type" text NOT NULL,
+	"metadata" jsonb,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "transaction_lines" (
 	"id" text PRIMARY KEY NOT NULL,
 	"transaction_id" text NOT NULL,
@@ -1460,6 +1476,8 @@ ALTER TABLE "timetable_sessions" ADD CONSTRAINT "timetable_sessions_class_id_cla
 ALTER TABLE "timetable_sessions" ADD CONSTRAINT "timetable_sessions_subject_id_subjects_id_fk" FOREIGN KEY ("subject_id") REFERENCES "public"."subjects"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "timetable_sessions" ADD CONSTRAINT "timetable_sessions_teacher_id_teachers_id_fk" FOREIGN KEY ("teacher_id") REFERENCES "public"."teachers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "timetable_sessions" ADD CONSTRAINT "timetable_sessions_classroom_id_classrooms_id_fk" FOREIGN KEY ("classroom_id") REFERENCES "public"."classrooms"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tracking_events" ADD CONSTRAINT "tracking_events_teacher_id_teachers_id_fk" FOREIGN KEY ("teacher_id") REFERENCES "public"."teachers"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tracking_events" ADD CONSTRAINT "tracking_events_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "transaction_lines" ADD CONSTRAINT "transaction_lines_transaction_id_transactions_id_fk" FOREIGN KEY ("transaction_id") REFERENCES "public"."transactions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "transaction_lines" ADD CONSTRAINT "transaction_lines_account_id_accounts_id_fk" FOREIGN KEY ("account_id") REFERENCES "public"."accounts"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "transactions" ADD CONSTRAINT "transactions_school_id_schools_id_fk" FOREIGN KEY ("school_id") REFERENCES "public"."schools"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -1699,6 +1717,10 @@ CREATE INDEX "idx_timetable_teacher_day" ON "timetable_sessions" USING btree ("t
 CREATE INDEX "idx_timetable_classroom_day" ON "timetable_sessions" USING btree ("classroom_id","day_of_week");--> statement-breakpoint
 CREATE INDEX "idx_timetable_conflicts" ON "timetable_sessions" USING btree ("school_id","day_of_week","start_time","end_time");--> statement-breakpoint
 CREATE INDEX "idx_timetable_school_year_day" ON "timetable_sessions" USING btree ("school_id","school_year_id","day_of_week");--> statement-breakpoint
+CREATE INDEX "idx_tracking_session" ON "tracking_events" USING btree ("session_id");--> statement-breakpoint
+CREATE INDEX "idx_tracking_teacher" ON "tracking_events" USING btree ("teacher_id");--> statement-breakpoint
+CREATE INDEX "idx_tracking_school" ON "tracking_events" USING btree ("school_id");--> statement-breakpoint
+CREATE INDEX "idx_tracking_timestamp" ON "tracking_events" USING btree ("timestamp");--> statement-breakpoint
 CREATE INDEX "idx_transaction_lines_transaction" ON "transaction_lines" USING btree ("transaction_id");--> statement-breakpoint
 CREATE INDEX "idx_transaction_lines_account" ON "transaction_lines" USING btree ("account_id");--> statement-breakpoint
 CREATE INDEX "idx_transaction_lines_amounts" ON "transaction_lines" USING btree ("account_id","debit_amount","credit_amount");--> statement-breakpoint

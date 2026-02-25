@@ -130,107 +130,119 @@ export function GradesSection({
               <div>
                 <CardTitle>{track.name}</CardTitle>
                 <CardDescription>
-                  {trackGrades.length} niveau(x) - Glissez pour réorganiser
+                  {trackGrades.length}
+                  {' '}
+                  niveau(x) - Glissez pour réorganiser
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            {trackGrades.length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-4">Aucune niveau pour cette filière</p>
-            ) : editingId && trackGrades.some(g => g.id === editingId) ? (
-              <div className="space-y-4">
-                {trackGrades.map(grade => (
-                  <div key={grade.id}>
-                    {editingId === grade.id ? (
-                      <form onSubmit={e => onUpdate(e, grade.id)} className="border rounded-lg p-4 space-y-4">
-                        <div className="grid gap-4 md:grid-cols-3">
-                          <div className="space-y-2">
-                            <Label htmlFor={`edit-grade-name-${grade.id}`}>Nom *</Label>
-                            <Input id={`edit-grade-name-${grade.id}`} name="name" defaultValue={grade.name} required />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor={`edit-grade-code-${grade.id}`}>Code *</Label>
-                            <Input id={`edit-grade-code-${grade.id}`} name="code" defaultValue={grade.code} required />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor={`edit-grade-order-${grade.id}`}>Ordre *</Label>
-                            <Input id={`edit-grade-order-${grade.id}`} name="order" type="number" defaultValue={grade.order} required />
-                          </div>
+            {trackGrades.length === 0
+              ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">Aucune niveau pour cette filière</p>
+                )
+              : editingId && trackGrades.some(g => g.id === editingId)
+                ? (
+                    <div className="space-y-4">
+                      {trackGrades.map(grade => (
+                        <div key={grade.id}>
+                          {editingId === grade.id
+                            ? (
+                                <form onSubmit={e => onUpdate(e, grade.id)} className="border rounded-lg p-4 space-y-4">
+                                  <div className="grid gap-4 md:grid-cols-3">
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`edit-grade-name-${grade.id}`}>Nom *</Label>
+                                      <Input id={`edit-grade-name-${grade.id}`} name="name" defaultValue={grade.name} required />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`edit-grade-code-${grade.id}`}>Code *</Label>
+                                      <Input id={`edit-grade-code-${grade.id}`} name="code" defaultValue={grade.code} required />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor={`edit-grade-order-${grade.id}`}>Ordre *</Label>
+                                      <Input id={`edit-grade-order-${grade.id}`} name="order" type="number" defaultValue={grade.order} required />
+                                    </div>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Select value={editTrackId} onValueChange={val => val && setEditTrackId(val)}>
+                                      <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Sélectionner une filière">
+                                          {tracks?.find(t => t.id === editTrackId)?.name}
+                                        </SelectValue>
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        {tracks?.map(track => (
+                                          <SelectItem key={track.id} value={track.id}>
+                                            {track.name}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="flex nd gap-2">
+                                    <Button type="button" variant="outline" onClick={() => setEditingId(null)}>
+                                      <IconX className="h-4 w-4 mr-2" />
+                                      Annuler
+                                    </Button>
+                                    <Button type="submit" disabled={isPending.update}>
+                                      <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                      {isPending.update ? 'Enregistrement...' : 'Enregistrer'}
+                                    </Button>
+                                  </div>
+                                </form>
+                              )
+                            : (
+                                <div className="flex items-center justify-between border rounded-lg p-4 hover:bg-accent/50 transition-colors">
+                                  <div className="flex items-center gap-4">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                                      <IconSchool className="h-5 w-5 text-primary" />
+                                    </div>
+                                    <div>
+                                      <h3 className="font-semibold">{grade.name}</h3>
+                                      <div className="flex items-center gap-2 mt-1">
+                                        <Badge variant="outline" className="text-xs">{grade.code}</Badge>
+                                        <Badge variant="secondary" className="text-xs">
+                                          Ordre:
+                                          {grade.order}
+                                        </Badge>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      onClick={() => {
+                                        setEditingId(grade.id)
+                                        setEditTrackId(grade.trackId)
+                                      }}
+                                    >
+                                      <IconEdit className="h-4 w-4" />
+                                    </Button>
+                                    <Button variant="ghost" size="icon" onClick={() => onDelete({ id: grade.id, name: grade.name })}>
+                                      <IconTrash className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
                         </div>
-                        <div className="space-y-2">
-                          <Select value={editTrackId} onValueChange={val => val && setEditTrackId(val)}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Sélectionner une filière">
-                                {tracks?.find(t => t.id === editTrackId)?.name}
-                              </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {tracks?.map(track => (
-                                <SelectItem key={track.id} value={track.id}>
-                                  {track.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="flex nd gap-2">
-                          <Button type="button" variant="outline" onClick={() => setEditingId(null)}>
-                            <IconX className="h-4 w-4 mr-2" />
-                            Annuler
-                          </Button>
-                          <Button type="submit" disabled={isPending.update}>
-                            <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                            {isPending.update ? 'Enregistrement...' : 'Enregistrer'}
-                          </Button>
-                        </div>
-                      </form>
-                    ) : (
-                      <div className="flex items-center justify-between border rounded-lg p-4 hover:bg-accent/50 transition-colors">
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                            <IconSchool className="h-5 w-5 text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold">{grade.name}</h3>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge variant="outline" className="text-xs">{grade.code}</Badge>
-                              <Badge variant="secondary" className="text-xs">Ordre: {grade.order}</Badge>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={() => {
-                              setEditingId(grade.id)
-                              setEditTrackId(grade.trackId)
-                            }}
-                          >
-                            <IconEdit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="icon" onClick={() => onDelete({ id: grade.id, name: grade.name })}>
-                            <IconTrash className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <DraggableGradeList
-                grades={trackGrades}
-                onReorder={onReorder}
-                onEdit={id => {
-                  setEditingId(id)
-                  const grade = trackGrades.find(g => g.id === id)
-                  if (grade) setEditTrackId(grade.trackId)
-                }}
-                onDelete={onDelete}
-              />
-            )}
+                      ))}
+                    </div>
+                  )
+                : (
+                    <DraggableGradeList
+                      grades={trackGrades}
+                      onReorder={onReorder}
+                      onEdit={(id) => {
+                        setEditingId(id)
+                        const grade = trackGrades.find(g => g.id === id)
+                        if (grade)
+                          setEditTrackId(grade.trackId)
+                      }}
+                      onDelete={onDelete}
+                    />
+                  )}
           </CardContent>
         </Card>
       ))}

@@ -6,7 +6,7 @@ import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confir
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { CatalogListSkeleton, CatalogStatsSkeleton } from '@/components/catalogs/catalog-skeleton'
-import { COEFFICIENT_LIMITS, COEFFICIENT_MESSAGES } from '@/constants/coefficients'
+import { COEFFICIENT_MESSAGES } from '@/constants/coefficients'
 import { gradesQueryOptions, seriesQueryOptions, subjectsQueryOptions } from '@/integrations/tanstack-query/catalogs-options'
 import {
   bulkCreateCoefficientsMutationOptions,
@@ -23,12 +23,12 @@ import { exportCoefficientsToExcel, generateCoefficientTemplate, parseCoefficien
 import { useLogger } from '@/lib/logger'
 import { parseServerFnError } from '@/utils/error-handlers'
 
-import { CoefficientsHeader } from './coefficients/coefficients-header'
-import { CoefficientsStats } from './coefficients/coefficients-stats'
-import { CoefficientsForm } from './coefficients/coefficients-form'
 import { CoefficientsFilters } from './coefficients/coefficients-filters'
-import { CoefficientsMatrixView } from './coefficients/coefficients-matrix-view'
+import { CoefficientsForm } from './coefficients/coefficients-form'
+import { CoefficientsHeader } from './coefficients/coefficients-header'
 import { CoefficientsListView } from './coefficients/coefficients-list-view'
+import { CoefficientsMatrixView } from './coefficients/coefficients-matrix-view'
+import { CoefficientsStats } from './coefficients/coefficients-stats'
 
 export const Route = createFileRoute('/_auth/app/catalogs/coefficients')({
   component: CoefficientsCatalog,
@@ -188,7 +188,8 @@ function CoefficientsCatalog() {
     try {
       await exportCoefficientsToExcel(coefficientsData.coefficients, `coefficients-${new Date().toISOString().split('T')[0]}.xlsx`)
       toast.success('Coefficients exportés avec succès')
-    } catch (error) {
+    }
+    catch (error) {
       toast.error('Erreur lors de l\'exportation')
     }
   }
@@ -197,14 +198,16 @@ function CoefficientsCatalog() {
     try {
       await generateCoefficientTemplate()
       toast.success('Modèle téléchargé avec succès')
-    } catch (error) {
+    }
+    catch (error) {
       toast.error('Erreur lors du téléchargement du modèle')
     }
   }
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file)
+      return
     setIsImporting(true)
     try {
       const { data, errors } = await parseCoefficientsExcel(file)
@@ -212,7 +215,7 @@ function CoefficientsCatalog() {
         toast.error('Erreurs ou aucune donnée dans le fichier')
         return
       }
-      
+
       const subjectMap = new Map(subjects?.subjects.map(s => [s.name.toLowerCase().trim(), s.id]))
       const gradeMap = new Map(grades?.map(g => [g.name.toLowerCase().trim(), g.id]))
       const seriesMap = new Map(seriesData?.map(s => [s.name.toLowerCase().trim(), s.id]))
@@ -223,7 +226,8 @@ function CoefficientsCatalog() {
         const gradeId = gradeMap.get(row.Classe.toLowerCase().trim())
         const seriesId = row['Série'] ? seriesMap.get(row['Série'].toLowerCase().trim()) : null
         const yearId = yearMap.get(row['Année Scolaire'].trim())
-        if (!yearId || !subjectId || !gradeId) return null
+        if (!yearId || !subjectId || !gradeId)
+          return null
         return { weight: row.Coefficient, schoolYearTemplateId: yearId, subjectId, gradeId, seriesId: seriesId || null }
       }).filter((item): item is NonNullable<typeof item> => item !== null)
 
@@ -247,23 +251,28 @@ function CoefficientsCatalog() {
       toast.success('Import réussi')
       queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
       queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
-    } catch (error) {
+    }
+    catch (error) {
       toast.dismiss()
       toast.error('Erreur lors de l\'import')
-    } finally {
+    }
+    finally {
       setIsImporting(false)
-      if (fileInputRef.current) fileInputRef.current.value = ''
+      if (fileInputRef.current)
+        fileInputRef.current.value = ''
     }
   }
 
   const matrixData = useMemo(() => {
-    if (!coefficientsData || !subjects || !grades) return null
+    if (!coefficientsData || !subjects || !grades)
+      return null
     const gradeOrderById = new Map(grades.map(grade => [grade.id, grade.order]))
     const columnKeys = new Set<string>()
     const columnInfo: Record<string, any> = {}
 
     coefficientsData.coefficients.forEach((coef) => {
-      if (!coef.grade?.id) return
+      if (!coef.grade?.id)
+        return
       const key = coef.series?.id ? `${coef.grade.id}__${coef.series.id}` : coef.grade.id
       columnKeys.add(key)
       columnInfo[key] = { gradeId: coef.grade.id, gradeName: coef.grade.name, seriesId: coef.series?.id, seriesName: coef.series?.name }
@@ -272,15 +281,18 @@ function CoefficientsCatalog() {
     const sortedColumns = Array.from(columnKeys).sort((a, b) => {
       const orderA = gradeOrderById.get(columnInfo[a].gradeId) || 0
       const orderB = gradeOrderById.get(columnInfo[b].gradeId) || 0
-      if (orderA !== orderB) return orderA - orderB
+      if (orderA !== orderB)
+        return orderA - orderB
       return (columnInfo[a].seriesName || '').localeCompare(columnInfo[b].seriesName || '')
     })
 
     const matrix: Record<string, any> = {}
     coefficientsData.coefficients.forEach((coef) => {
-      if (!coef.grade?.id || !coef.subject?.name) return
+      if (!coef.grade?.id || !coef.subject?.name)
+        return
       const columnKey = coef.series?.id ? `${coef.grade.id}__${coef.series.id}` : coef.grade.id
-      if (!matrix[coef.subject.name]) matrix[coef.subject.name] = {}
+      if (!matrix[coef.subject.name])
+        matrix[coef.subject.name] = {}
       matrix[coef.subject.name][columnKey] = { id: coef.id, weight: editingCells[coef.id] ?? coef.weight }
     })
     return { matrix, columns: sortedColumns, columnInfo }
@@ -353,15 +365,17 @@ function CoefficientsCatalog() {
         isBulkUpdating={bulkUpdateMutation.isPending}
       />
 
-      {viewMode === 'matrix' ? (
-        <CoefficientsMatrixView matrixData={matrixData} onCellEdit={handleCellEdit} />
-      ) : (
-        <CoefficientsListView
-          isPending={coefficientsPending}
-          coefficients={coefficientsData?.coefficients || []}
-          onDelete={coef => setDeletingCoefficient({ id: coef.id, name: `${coef.subject?.name} - ${coef.grade?.name}` })}
-        />
-      )}
+      {viewMode === 'matrix'
+        ? (
+            <CoefficientsMatrixView matrixData={matrixData} onCellEdit={handleCellEdit} />
+          )
+        : (
+            <CoefficientsListView
+              isPending={coefficientsPending}
+              coefficients={coefficientsData?.coefficients || []}
+              onDelete={coef => setDeletingCoefficient({ id: coef.id, name: `${coef.subject?.name} - ${coef.grade?.name}` })}
+            />
+          )}
 
       <DeleteConfirmationDialog
         open={!!deletingCoefficient}

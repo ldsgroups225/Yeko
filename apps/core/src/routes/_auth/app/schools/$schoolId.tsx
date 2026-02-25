@@ -239,11 +239,11 @@ function SchoolDetails() {
             adminCount={adminCount}
             teacherCount={teacherCount}
             staffCount={staffCount}
-            onSuspend={user => {
+            onSuspend={(user) => {
               setSelectedUserForSuspend(user)
               setSuspendDialogOpen(true)
             }}
-            onRemove={user => {
+            onRemove={(user) => {
               setSelectedUserForRemove(user)
               setRemoveDialogOpen(true)
             }}
@@ -285,7 +285,10 @@ function SchoolDetails() {
             setSelectedUserForSuspend(null)
           }
         }}
-        onConfirm={() => selectedUserForSuspend && suspendUserMutation.mutate({ userId: selectedUserForSuspend.id, schoolId })}
+        onConfirm={() => {
+          if (selectedUserForSuspend)
+            suspendUserMutation.mutate({ userId: selectedUserForSuspend.id, schoolId })
+        }}
         title="Suspendre l'utilisateur"
         description={`Êtes-vous sûr de vouloir suspendre l'accès de "${selectedUserForSuspend?.name}" ?`}
         isPending={suspendUserMutation.isPending}
@@ -303,7 +306,10 @@ function SchoolDetails() {
         title="Supprimer l'utilisateur"
         description={`Êtes-vous sûr de vouloir supprimer "${selectedUserForRemove?.name}" ? Cette action est irréversible.`}
         confirmText="Supprimer"
-        onConfirm={handleRemoveUser}
+        onConfirm={() => {
+          if (selectedUserForRemove)
+            removeUserMutation.mutate({ userId: selectedUserForRemove.id, schoolId })
+        }}
         isPending={removeUserMutation.isPending}
       />
     </div>

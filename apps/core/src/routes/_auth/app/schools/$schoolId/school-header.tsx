@@ -1,3 +1,4 @@
+import type { DateFormatStyle } from '@repo/data-ops'
 import { IconArrowLeft, IconBuilding, IconCircleCheck, IconCircleX, IconClock, IconDotsVertical, IconEdit } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
@@ -9,9 +10,9 @@ interface SchoolHeaderProps {
     name: string
     code: string
     status: string
-    createdAt: string
+    createdAt: Date | string
   }
-  formatDate: (date: string, type: string) => string
+  formatDate: (date: Date | string, style?: DateFormatStyle) => string
   onDelete: () => void
 }
 

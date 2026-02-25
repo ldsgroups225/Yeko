@@ -1,3 +1,4 @@
+import type { FormEvent } from 'react'
 import { IconDeviceFloppy, IconX } from '@tabler/icons-react'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
@@ -6,7 +7,6 @@ import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { COEFFICIENT_LIMITS } from '@/constants/coefficients'
-import type { FormEvent } from 'react'
 
 interface CoefficientsFormProps {
   onSubmit: (e: FormEvent<HTMLFormElement>) => void

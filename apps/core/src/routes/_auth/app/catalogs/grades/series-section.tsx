@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@work
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
-import { AnimatePresence, LazyMotion, domMax, m } from 'motion/react'
+import { AnimatePresence, domMax, LazyMotion, m } from 'motion/react'
 
 interface SeriesSectionProps {
   isCreating: boolean
@@ -138,7 +138,9 @@ export function SeriesSection({
               <div>
                 <CardTitle>{track.name}</CardTitle>
                 <CardDescription>
-                  {trackSeries.length} série(s)
+                  {trackSeries.length}
+                  {' '}
+                  série(s)
                 </CardDescription>
               </div>
             </div>
@@ -147,95 +149,99 @@ export function SeriesSection({
             <div className="space-y-4">
               <LazyMotion features={domMax}>
                 <AnimatePresence mode="popLayout">
-                  {trackSeries.length === 0 ? (
-                    <m.p
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="text-sm text-muted-foreground text-center py-4"
-                    >
-                      Aucune série pour cette filière
-                    </m.p>
-                  ) : (
-                    trackSeries.map(serie => (
-                      <m.div
-                        key={serie.id}
-                        layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {editingId === serie.id ? (
-                          <form onSubmit={e => onUpdate(e, serie.id)} className="border rounded-lg p-4 space-y-4">
-                            <div className="grid gap-4 md:grid-cols-2">
-                              <div className="space-y-2">
-                                <Label htmlFor={`edit-serie-name-${serie.id}`}>Nom *</Label>
-                                <Input id={`edit-serie-name-${serie.id}`} name="name" defaultValue={serie.name} required />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor={`edit-serie-code-${serie.id}`}>Code *</Label>
-                                <Input id={`edit-serie-code-${serie.id}`} name="code" defaultValue={serie.code} required />
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <Select value={editTrackId} onValueChange={val => val && setEditTrackId(val)}>
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Sélectionner une filière">
-                                    {tracks?.find(t => t.id === editTrackId)?.name}
-                                  </SelectValue>
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {tracks?.map(track => (
-                                    <SelectItem key={track.id} value={track.id}>
-                                      {track.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="flex nd gap-2">
-                              <Button type="button" variant="outline" onClick={() => setEditingId(null)}>
-                                <IconX className="h-4 w-4 mr-2" />
-                                Annuler
-                              </Button>
-                              <Button type="submit" disabled={isPending.update}>
-                                <IconDeviceFloppy className="h-4 w-4 mr-2" />
-                                {isPending.update ? 'Enregistrement...' : 'Enregistrer'}
-                              </Button>
-                            </div>
-                          </form>
-                        ) : (
-                          <div className="flex items-center justify-between border rounded-lg p-4 hover:bg-accent/50 transition-colors">
-                            <div className="flex items-center gap-4">
-                              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
-                                <IconAward className="h-5 w-5 text-secondary" />
-                              </div>
-                              <div>
-                                <h3 className="font-semibold">{serie.name}</h3>
-                                <Badge variant="outline" className="text-xs mt-1">{serie.code}</Badge>
-                              </div>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                onClick={() => {
-                                  setEditingId(serie.id)
-                                  setEditTrackId(serie.trackId)
-                                }}
-                              >
-                                <IconEdit className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon" onClick={() => onDelete({ id: serie.id, name: serie.name })}>
-                                <IconTrash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                      </m.div>
-                    ))
-                  )}
+                  {trackSeries.length === 0
+                    ? (
+                        <m.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className="text-sm text-muted-foreground text-center py-4"
+                        >
+                          Aucune série pour cette filière
+                        </m.p>
+                      )
+                    : (
+                        trackSeries.map(serie => (
+                          <m.div
+                            key={serie.id}
+                            layout
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            {editingId === serie.id
+                              ? (
+                                  <form onSubmit={e => onUpdate(e, serie.id)} className="border rounded-lg p-4 space-y-4">
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-serie-name-${serie.id}`}>Nom *</Label>
+                                        <Input id={`edit-serie-name-${serie.id}`} name="name" defaultValue={serie.name} required />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor={`edit-serie-code-${serie.id}`}>Code *</Label>
+                                        <Input id={`edit-serie-code-${serie.id}`} name="code" defaultValue={serie.code} required />
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Select value={editTrackId} onValueChange={val => val && setEditTrackId(val)}>
+                                        <SelectTrigger className="w-full">
+                                          <SelectValue placeholder="Sélectionner une filière">
+                                            {tracks?.find(t => t.id === editTrackId)?.name}
+                                          </SelectValue>
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          {tracks?.map(track => (
+                                            <SelectItem key={track.id} value={track.id}>
+                                              {track.name}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="flex nd gap-2">
+                                      <Button type="button" variant="outline" onClick={() => setEditingId(null)}>
+                                        <IconX className="h-4 w-4 mr-2" />
+                                        Annuler
+                                      </Button>
+                                      <Button type="submit" disabled={isPending.update}>
+                                        <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                        {isPending.update ? 'Enregistrement...' : 'Enregistrer'}
+                                      </Button>
+                                    </div>
+                                  </form>
+                                )
+                              : (
+                                  <div className="flex items-center justify-between border rounded-lg p-4 hover:bg-accent/50 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
+                                        <IconAward className="h-5 w-5 text-secondary" />
+                                      </div>
+                                      <div>
+                                        <h3 className="font-semibold">{serie.name}</h3>
+                                        <Badge variant="outline" className="text-xs mt-1">{serie.code}</Badge>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => {
+                                          setEditingId(serie.id)
+                                          setEditTrackId(serie.trackId)
+                                        }}
+                                      >
+                                        <IconEdit className="h-4 w-4" />
+                                      </Button>
+                                      <Button variant="ghost" size="icon" onClick={() => onDelete({ id: serie.id, name: serie.name })}>
+                                        <IconTrash className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                          </m.div>
+                        ))
+                      )}
                 </AnimatePresence>
               </LazyMotion>
             </div>
