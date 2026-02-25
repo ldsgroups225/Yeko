@@ -5,9 +5,10 @@ import { databaseLogger, tapLogErr } from '@repo/logger'
 import { and, desc, eq, inArray, ne, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades, series } from '../drizzle/core-schema'
-import { classes, enrollments, schoolYears, students, users } from '../drizzle/school-schema'
+import { classes, enrollments, feeStructures, feeTypes, schoolYears, students, transactionLines, transactions, users } from '../drizzle/school-schema'
 import { DatabaseError, dbError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
+import { studentFees } from '../drizzle/school-schema'
 
 export type { Enrollment, EnrollmentInsert, EnrollmentStatus, Gender }
 
@@ -269,25 +270,159 @@ export async function createEnrollment(data: CreateEnrollmentInput): R.ResultAsy
   )
 }
 
+/**
+ * Generate a unique transaction number
+ */
+function generateTransactionNumber(): string {
+  const timestamp = Date.now().toString(36).toUpperCase()
+  const random = crypto.randomBytes(3).toString('hex').toUpperCase()
+  return `INV-${timestamp}-${random}`
+}
+
+/**
+ * Get default fee type accounts (AR and Revenue)
+ * In production, these should come from school configuration or fee_types table
+ */
+function getDefaultAccounts() {
+  return {
+    receivableAccountId: 'ACC-AR-001',  // Accounts Receivable
+    revenueAccountId: 'ACC-REV-001',    // Tuition Revenue
+  }
+}
+
 export async function confirmEnrollment(id: string, userId: string): R.ResultAsync<Enrollment, DatabaseError> {
   const db = getDb()
   return R.pipe(
     R.try({
       try: async () => {
-        const [enrollment] = await db
-          .update(enrollments)
-          .set({
-            status: 'confirmed',
-            confirmedAt: new Date(),
-            confirmedBy: userId,
-            updatedAt: new Date(),
-          })
-          .where(eq(enrollments.id, id))
-          .returning()
-        if (!enrollment) {
-          throw dbError('NOT_FOUND', `Enrollment with ID ${id} not found`)
-        }
-        return enrollment
+        // Start a transaction for atomicity
+        const result = await db.transaction(async (tx) => {
+          // 1. Confirm the enrollment
+          const [enrollment] = await tx
+            .update(enrollments)
+            .set({
+              status: 'confirmed',
+              confirmedAt: new Date(),
+              confirmedBy: userId,
+              updatedAt: new Date(),
+            })
+            .where(eq(enrollments.id, id))
+            .returning()
+          
+          if (!enrollment) {
+            throw dbError('NOT_FOUND', `Enrollment with ID ${id} not found`)
+          }
+
+          // 2. Look up applicable fee structures for the student's class/grade
+          const applicableFees = await tx
+            .select({
+              id: feeStructures.id,
+              schoolId: feeStructures.schoolId,
+              schoolYearId: feeStructures.schoolYearId,
+              gradeId: feeStructures.gradeId,
+              amount: feeStructures.amount,
+              feeTypeId: feeStructures.feeTypeId,
+              feeTypeName: feeTypes.name,
+              feeTypeCode: feeTypes.code,
+            })
+            .from(feeStructures)
+            .innerJoin(feeTypes, eq(feeStructures.feeTypeId, feeTypes.id))
+            .where(
+              and(
+                eq(feeStructures.schoolId, enrollment.schoolId),
+                eq(feeStructures.schoolYearId, enrollment.schoolYearId),
+                eq(feeStructures.gradeId, enrollment.gradeId)
+              )
+            )
+
+          // 3. Create student fees and accounting transactions for each fee
+          if (applicableFees.length > 0) {
+            const accounts = getDefaultAccounts()
+            const transactionDate = new Date()
+            const transactionNumber = generateTransactionNumber()
+            const totalAmount = applicableFees.reduce((sum, f) => sum + Number(f.amount), 0)
+
+            // Create a single transaction for all fees (invoice)
+            const [transaction] = await tx
+              .insert(transactions)
+              .values({
+                id: crypto.randomUUID(),
+                schoolId: enrollment.schoolId,
+                studentId: enrollment.studentId,
+                fiscalYearId: enrollment.schoolYearId,
+                transactionNumber,
+                type: 'journal',
+                category: 'invoice',
+                date: transactionDate,
+                status: 'completed',
+                amount: totalAmount,
+                description: `Invoice for enrollment ${id} - School Year ${enrollment.schoolYearId}`,
+                createdBy: userId,
+                createdAt: transactionDate,
+                updatedAt: transactionDate,
+              })
+              .returning()
+
+            // For each fee, create student_fee record + double-entry lines
+            for (const fee of applicableFees) {
+              const feeAmount = Number(fee.amount)
+
+              // Create student fee
+              await tx
+                .insert(studentFees)
+                .values({
+                  id: crypto.randomUUID(),
+                  schoolId: fee.schoolId,
+                  studentId: enrollment.studentId,
+                  enrollmentId: enrollment.id,
+                  feeStructureId: fee.id,
+                  schoolYearId: fee.schoolYearId,
+                  amount: feeAmount,
+                  amountDue: feeAmount,
+                  amountPaid: 0,
+                  status: 'pending',
+                  createdAt: new Date(),
+                  updatedAt: new Date(),
+                })
+
+              // Debit:increase Accounts Receivable ( asset)
+              await tx
+                .insert(transactionLines)
+                .values({
+                  id: crypto.randomUUID(),
+                  transactionId: transaction.id,
+                  accountId: accounts.receivableAccountId,
+                  debit: feeAmount,
+                  credit: 0,
+                  description: `${fee.feeTypeName} - Receivable`,
+                })
+
+              // Credit: Revenue (increase income)
+              await tx
+                .insert(transactionLines)
+                .values({
+                  id: crypto.randomUUID(),
+                  transactionId: transaction.id,
+                  accountId: accounts.revenueAccountId,
+                  debit: 0,
+                  credit: feeAmount,
+                  description: `${fee.feeTypeName} - Revenue`,
+                })
+            }
+
+            databaseLogger.info('Billing created for enrollment', {
+              enrollmentId: id,
+              studentId: enrollment.studentId,
+              feesCount: applicableFees.length,
+              totalAmount,
+              transactionId: transaction.id,
+            })
+          }
+
+          return enrollment
+        })
+
+        return result
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to confirm enrollment'),
     }),
