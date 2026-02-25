@@ -22,7 +22,7 @@ catalog:
   '@planetscale/database': ^1.19.0
   '@playwright/test': ^1.58.2
   '@polar-sh/better-auth': ^1.8.1
-  '@polar-sh/sdk': ^0.43.1
+  '@polar-sh/sdk': ^0.45.0
   '@polar-sh/tanstack-start': ^0.4.3
   '@praha/byethrow': ^0.10.0
   '@tabler/icons-react': ^3.37.1

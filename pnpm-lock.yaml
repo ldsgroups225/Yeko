@@ -64,8 +64,8 @@ catalogs:
       specifier: ^1.8.1
       version: 1.8.1
     '@polar-sh/sdk':
-      specifier: ^0.43.1
-      version: 0.43.1
+      specifier: ^0.45.0
+      version: 0.45.0
     '@praha/byethrow':
       specifier: ^0.10.0
       version: 0.10.0
@@ -359,7 +359,7 @@ importers:
         version: 5.2.2(react-hook-form@7.71.2(react@19.2.3))
       '@polar-sh/sdk':
         specifier: 'catalog:'
-        version: 0.43.1
+        version: 0.45.0
       '@praha/byethrow':
         specifier: 'catalog:'
         version: 0.10.0(typescript@5.9.3)
@@ -940,10 +940,10 @@ importers:
         version: 1.19.0
       '@polar-sh/better-auth':
         specifier: 'catalog:'
-        version: 1.8.1(50fd05b17917716b47e281f415cc679a)
+        version: 1.8.1(483f14867e8438a4fbb6a482719b8d2e)
       '@polar-sh/sdk':
         specifier: 'catalog:'
-        version: 0.43.1
+        version: 0.45.0
       '@repo/logger':
         specifier: workspace:*
         version: link:../logger
@@ -2936,8 +2936,8 @@ packages:
   '@polar-sh/sdk@0.42.5':
     resolution: {integrity: sha512-GzC3/ElCtMO55+KeXwFTANlydZzw5qI3DU/F9vAFIsUKuegSmh+Xu03KCL+ct9/imJOvLUQucYhUSsNKqo2j2Q==}
 
-  '@polar-sh/sdk@0.43.1':
-    resolution: {integrity: sha512-/JvFqmmj7Bb8HJ+zSbBtwJdESMUY8dQBXUGTpIQSI6dHDFjIGkGfrFGAjC/EOWSx/JIimeBkfXV4o1j7/2QIVg==}
+  '@polar-sh/sdk@0.45.0':
+    resolution: {integrity: sha512-5/xfFkSHBJ7DfXUEe728E1YkJPGA5dPhr/x0FwtAHadv1/Z/qjyaJWajjiKitCOcxN8jUoNOEEjiLOgVzMXD5g==}
 
   '@polar-sh/ui@0.1.2':
     resolution: {integrity: sha512-YTmMB2lr+PplMTDZnTs0Crgu0KNBKyQcSX4N0FYXSlo1Q6e9IKs4hwzEcqNUv3eHS4BxGO1SvxxNjuSK+il49Q==}
@@ -10313,10 +10313,10 @@ snapshots:
     dependencies:
       playwright: 1.58.2
 
-  '@polar-sh/better-auth@1.8.1(50fd05b17917716b47e281f415cc679a)':
+  '@polar-sh/better-auth@1.8.1(483f14867e8438a4fbb6a482719b8d2e)':
     dependencies:
       '@polar-sh/checkout': 0.2.0(@stripe/react-stripe-js@4.0.2(@stripe/stripe-js@7.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.3))(react-is@18.3.1)(react@19.2.3)
-      '@polar-sh/sdk': 0.43.1
+      '@polar-sh/sdk': 0.45.0
       better-auth: 1.4.18(@tanstack/react-start@1.162.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.1.2(@types/node@25.3.0)(jiti@2.6.1)(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2)))(better-sqlite3@12.6.2)(drizzle-kit@0.31.9)(drizzle-orm@0.45.1(@cloudflare/workers-types@4.20260228.0)(@electric-sql/pglite@0.3.15)(@neondatabase/serverless@1.0.2)(@planetscale/database@1.19.0)(@types/better-sqlite3@7.6.13)(@types/pg@8.16.0)(better-sqlite3@12.6.2)(kysely@0.28.10)(mysql2@3.17.4)(pg@8.18.0)(postgres@3.4.8)(sqlite3@5.1.7))(mysql2@3.17.4)(pg@8.18.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@types/node@25.3.0)(jiti@2.6.1)(jsdom@28.1.0(@noble/hashes@2.0.1))(lightningcss@1.31.1)(tsx@4.21.0)(yaml@2.8.2))
       zod: 4.3.6
     transitivePeerDependencies:
@@ -10352,7 +10352,7 @@ snapshots:
       standardwebhooks: 1.0.0
       zod: 4.3.6
 
-  '@polar-sh/sdk@0.43.1':
+  '@polar-sh/sdk@0.45.0':
     dependencies:
       standardwebhooks: 1.0.0
       zod: 4.3.6
