@@ -36,6 +36,19 @@ interface TeacherClassesProps {
   teacherId?: string
 }
 
+interface ClassItem {
+  class: {
+    id: string
+    gradeName: string
+    section: string
+  }
+}
+
+interface ClassSubjectItem {
+  subjectId: string
+  subjectName: string
+}
+
 export function TeacherClasses({ classes, isPending, teacherId }: TeacherClassesProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
@@ -58,10 +71,10 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
       setIsAddingClass(false)
       setSelectedClassId('')
       setSelectedSubjectId('')
-      toast.success(t.common.success?.() || 'Classe assignée avec succès')
+      toast.success(t.hr.teachers.assignSuccess())
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Erreur lors de l\'assignation')
+    onError: (error: Error) => {
+      toast.error(error.message || t.hr.teachers.assignError())
     },
   })
 
@@ -102,14 +115,14 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
         >
           {isAddingClass ? (
             <div className="flex flex-col gap-3 h-full">
-              <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">Nouvelle affectation</h3>
+              <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">{t.hr.teachers.newAssignment()}</h3>
               <div className="space-y-3 flex-1 flex flex-col justify-center">
                 <Select value={selectedClassId} onValueChange={(v) => setSelectedClassId(v || '')}>
                   <SelectTrigger className="w-full bg-background/50 border-primary/20 h-9">
-                    <SelectValue placeholder="Classe..." />
+                    <SelectValue placeholder={t.hr.teachers.classPlaceholder()} />
                   </SelectTrigger>
                   <SelectContent>
-                    {allClasses?.map((item: any) => (
+                    {(allClasses as unknown as ClassItem[] | undefined)?.map((item) => (
                       <SelectItem key={item.class.id} value={item.class.id}>
                         {item.class.gradeName} {item.class.section}
                       </SelectItem>
@@ -123,10 +136,10 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
                   disabled={!selectedClassId}
                 >
                   <SelectTrigger className="w-full bg-background/50 border-primary/20 h-9">
-                    <SelectValue placeholder="Matière..." />
+                    <SelectValue placeholder={t.hr.teachers.subjectPlaceholder()} />
                   </SelectTrigger>
                   <SelectContent>
-                    {classSubjects?.map((sub: any) => (
+                    {(classSubjects as unknown as ClassSubjectItem[] | undefined)?.map((sub) => (
                       <SelectItem key={sub.subjectId} value={sub.subjectId}>
                         {sub.subjectName}
                       </SelectItem>
@@ -146,7 +159,7 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
                   disabled={!selectedClassId || !selectedSubjectId || assignClassMutation.isPending}
                 >
                   <IconCheck className="mr-2 size-3" />
-                  Confirmer
+                  {t.common.confirm()}
                 </Button>
                 <Button
                   size="sm"
@@ -158,7 +171,7 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
                   }}
                 >
                   <IconX className="mr-2 size-3" />
-                  Annuler
+                  {t.common.cancel()}
                 </Button>
               </div>
             </div>
@@ -167,7 +180,7 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
               <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                 <IconPlus className="size-5 text-primary" />
               </div>
-              <span className="font-semibold text-primary text-sm">Ajouter une classe</span>
+              <span className="font-semibold text-primary text-sm">{t.hr.teachers.addClass()}</span>
             </>
           )}
         </motion.div>
@@ -242,7 +255,7 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
           <div className="col-span-full flex flex-col items-center justify-center py-12 text-center bg-card/40 rounded-2xl border border-dashed border-border/40 backdrop-blur-sm">
             <IconBuilding className="mb-4 size-12 text-muted-foreground/40" />
             <h3 className="text-lg font-semibold">{t.hr.teachers.noClasses()}</h3>
-            <p className="text-sm text-muted-foreground">Cet enseignant n'a pas encore de classes assignées.</p>
+            <p className="text-sm text-muted-foreground">{t.hr.teachers.noClassesDescription()}</p>
           </div>
         )
       )}

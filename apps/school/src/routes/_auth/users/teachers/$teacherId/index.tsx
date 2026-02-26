@@ -28,7 +28,7 @@ import {
   TabsTrigger,
 } from '@workspace/ui/components/tabs'
 import { motion } from 'motion/react'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
 import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
@@ -46,6 +46,16 @@ import { teacherKeys, teacherMutations } from '@/lib/queries/teachers'
 export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
   component: TeacherDetailsPage,
 })
+
+interface TeacherSubject {
+  subjectId: string
+  subjectName: string
+}
+
+interface SchoolSubject {
+  id: string
+  name: string
+}
 
 function TeacherDetailsPage() {
   const { teacherId } = Route.useParams()
@@ -88,25 +98,27 @@ function TeacherDetailsPage() {
       queryClient.invalidateQueries({ queryKey: teacherKeys.detail(teacherId) })
       setIsAddingSubject(false)
       setSelectedSubjectId('')
-      toast.success(t.common.success?.() || 'Matière ajoutée avec succès')
+      toast.success(t.hr.teachers.addSubjectSuccess())
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Erreur lors de l'ajout de la matière")
+    onError: (error: Error) => {
+      toast.error(error.message || t.hr.teachers.addSubjectError())
     },
   })
 
   const handleAddSubject = () => {
     if (!selectedSubjectId || !teacher) return
-    const currentSubjectIds = teacher.subjects?.map((s: any) => s.subjectId) || []
+    const currentSubjectIds = teacher.subjects?.map((s: TeacherSubject) => s.subjectId) || []
     assignSubjectsMutation.mutate({
       teacherId,
       subjectIds: [...currentSubjectIds, selectedSubjectId],
     })
   }
 
-  const availableSubjects = allSubjects?.subjects?.filter(
-    (s: any) => !teacher?.subjects?.some((ts: any) => ts.subjectId === s.id)
-  ) || []
+  const availableSubjects = useMemo(() => {
+    return (allSubjects?.subjects as SchoolSubject[] | undefined)?.filter(
+      (s) => !teacher?.subjects?.some((ts: TeacherSubject) => ts.subjectId === s.id)
+    ) || []
+  }, [allSubjects?.subjects, teacher?.subjects])
   if (isPending) {
     return (
       <div className="space-y-6">
@@ -132,8 +144,7 @@ function TeacherDetailsPage() {
         </div>
         <h2 className="text-2xl font-bold">{t.errors.notFound()}</h2>
         <p className="text-muted-foreground mt-2 max-w-xs">
-          Cet enseignant n'existe pas ou vous n'avez pas la permission de le
-          voir.
+          {t.hr.teachers.teacherNotFoundDescription()}
         </p>
         <Button
           render={(
@@ -353,7 +364,7 @@ function TeacherDetailsPage() {
               </h2>
               <div className="flex flex-wrap gap-3 items-center">
                 {teacher.subjects && teacher.subjects.length > 0 ? (
-                  teacher.subjects.map((sub: any) => (
+                  teacher.subjects.map((sub: TeacherSubject) => (
                     <Badge
                       key={sub.subjectId}
                       className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
@@ -381,10 +392,10 @@ function TeacherDetailsPage() {
                       onValueChange={(v) => setSelectedSubjectId(v || "")}
                     >
                       <SelectTrigger className="h-9 w-[200px] rounded-xl border-primary/20 bg-background/50">
-                        <SelectValue placeholder="Choisir une matière" />
+                        <SelectValue placeholder={t.hr.teachers.chooseSubject()} />
                       </SelectTrigger>
                       <SelectContent>
-                        {availableSubjects.map((subject: any) => (
+                        {availableSubjects.map((subject) => (
                           <SelectItem key={subject.id} value={subject.id}>
                             {subject.name}
                           </SelectItem>
@@ -416,7 +427,7 @@ function TeacherDetailsPage() {
                     onClick={() => setIsAddingSubject(true)}
                   >
                     <IconPlus className="mr-2 size-4" />
-                    Ajouter
+                    {t.hr.teachers.add()}
                   </Button>
                 )}
               </div>
