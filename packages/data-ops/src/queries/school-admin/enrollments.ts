@@ -81,36 +81,37 @@ export async function enrollStudent(data: {
 
   const db = getDb()
 
-  // 1. Verify student exists and belongs to school
-  const student = await db.query.students.findFirst({
-    where: and(
-      eq(students.id, data.studentId),
-      eq(students.schoolId, data.schoolId),
-    ),
-  })
+  // 1. Parallelize verification queries
+  const [student, classInfo, existing] = await Promise.all([
+    db.query.students.findFirst({
+      where: and(
+        eq(students.id, data.studentId),
+        eq(students.schoolId, data.schoolId),
+      ),
+    }),
+    db.query.classes.findFirst({
+      where: and(
+        eq(classes.id, data.classId),
+        eq(classes.schoolId, data.schoolId),
+      ),
+    }),
+    db.query.enrollments.findFirst({
+      where: and(
+        eq(enrollments.studentId, data.studentId),
+        eq(enrollments.schoolYearId, data.schoolYearId),
+        ne(enrollments.status, 'cancelled'),
+      ),
+    }),
+  ])
+
   if (!student) {
     throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
   }
 
-  // 2. Verify class exists and belongs to school
-  const classInfo = await db.query.classes.findFirst({
-    where: and(
-      eq(classes.id, data.classId),
-      eq(classes.schoolId, data.schoolId),
-    ),
-  })
   if (!classInfo) {
     throw new Error(SCHOOL_ERRORS.CLASS_NOT_FOUND)
   }
 
-  // 3. Check for duplicate enrollment
-  const existing = await db.query.enrollments.findFirst({
-    where: and(
-      eq(enrollments.studentId, data.studentId),
-      eq(enrollments.schoolYearId, data.schoolYearId),
-      ne(enrollments.status, 'cancelled'),
-    ),
-  })
   if (existing) {
     throw new Error(SCHOOL_ERRORS.ALREADY_ENROLLED)
   }
@@ -175,25 +176,26 @@ export async function transferStudent(data: {
 
   const db = getDb()
 
-  // 1. Get current enrollment
-  const enrollment = await db.query.enrollments.findFirst({
-    where: eq(enrollments.id, data.enrollmentId),
-    with: {
-      student: true,
-    },
-  })
+  // 1. Parallelize verification queries
+  const [enrollment, newClass] = await Promise.all([
+    db.query.enrollments.findFirst({
+      where: eq(enrollments.id, data.enrollmentId),
+      with: {
+        student: true,
+      },
+    }),
+    db.query.classes.findFirst({
+      where: and(
+        eq(classes.id, data.newClassId),
+        eq(classes.schoolId, data.schoolId),
+      ),
+    }),
+  ])
 
   if (!enrollment || enrollment.student.schoolId !== data.schoolId) {
     throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
   }
 
-  // 2. Verify new class exists
-  const newClass = await db.query.classes.findFirst({
-    where: and(
-      eq(classes.id, data.newClassId),
-      eq(classes.schoolId, data.schoolId),
-    ),
-  })
   if (!newClass) {
     throw new Error(SCHOOL_ERRORS.CLASS_NOT_FOUND)
   }
