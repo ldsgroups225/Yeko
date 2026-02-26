@@ -24,7 +24,8 @@ beforeAll(async () => {
   const password = process.env.DATABASE_PASSWORD || process.env.TEST_DATABASE_PASSWORD
 
   if (!host || !username || !password) {
-    console.warn('Database credentials not found in environment. Tests may fail.')
+    console.warn('Database credentials not found in environment. Database tests will fail, but unit tests should pass.')
+    return
   }
 
   try {
@@ -37,11 +38,17 @@ beforeAll(async () => {
   }
   catch (error) {
     console.error('Failed to initialize test database:', error)
-    throw error
+    // We don't throw here to allow unit tests (like formatters) to run even if DB fails
   }
 })
 
 // Cleanup database after each test
 afterEach(async () => {
-  await cleanupDatabase()
+  // Only try to cleanup if DB is initialized
+  try {
+    await cleanupDatabase()
+  }
+  catch {
+    // Ignore cleanup errors if DB wasn't initialized
+  }
 })

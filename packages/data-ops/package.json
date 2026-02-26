@@ -107,6 +107,7 @@
     "scrypt-js": "catalog:",
     "tsc-alias": "catalog:",
     "typescript": "catalog:",
+    "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:"
   }
 }
