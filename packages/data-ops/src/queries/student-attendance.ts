@@ -8,8 +8,14 @@ import { databaseLogger, tapLogErr } from '@repo/logger'
  */
 import { and, asc, count, desc, eq, gte, lte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
-import { grades } from '../drizzle/core-schema'
-import { classes, studentAttendance, students } from '../drizzle/school-schema'
+import { grades, schools } from '../drizzle/core-schema'
+import {
+  classes,
+  parents,
+  studentAttendance,
+  studentParents,
+  students,
+} from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
 
 /**
@@ -62,6 +68,96 @@ export function getClassAttendance(params: {
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch class attendance'),
     }),
     R.mapError(tapLogErr(databaseLogger, params)),
+  )
+}
+
+/**
+ * Get notification details for an attendance record
+ */
+export async function getAttendanceNotificationDetails(attendanceId: string, schoolId: string): R.ResultAsync<{
+  studentName: string
+  date: string
+  status: string
+  schoolName: string
+  parents: Array<{
+    name: string
+    email: string | null
+    phone: string
+  }>
+}, DatabaseError> {
+  const db = getDb()
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const results = await db
+          .select({
+            studentFirstName: students.firstName,
+            studentLastName: students.lastName,
+            date: studentAttendance.date,
+            status: studentAttendance.status,
+            schoolName: schools.name,
+            parentFirstName: parents.firstName,
+            parentLastName: parents.lastName,
+            parentEmail: parents.email,
+            parentPhone: parents.phone,
+          })
+          .from(studentAttendance)
+          .innerJoin(students, eq(studentAttendance.studentId, students.id))
+          .innerJoin(schools, eq(studentAttendance.schoolId, schools.id))
+          .innerJoin(studentParents, eq(students.id, studentParents.studentId))
+          .innerJoin(parents, eq(studentParents.parentId, parents.id))
+          .where(and(
+            eq(studentAttendance.id, attendanceId),
+            eq(studentAttendance.schoolId, schoolId),
+            eq(studentParents.receiveNotifications, true),
+          ))
+
+        if (results.length === 0) {
+          // If no parents to notify, we still want student and school info
+          const basicInfo = await db
+            .select({
+              studentFirstName: students.firstName,
+              studentLastName: students.lastName,
+              date: studentAttendance.date,
+              status: studentAttendance.status,
+              schoolName: schools.name,
+            })
+            .from(studentAttendance)
+            .innerJoin(students, eq(studentAttendance.studentId, students.id))
+            .innerJoin(schools, eq(studentAttendance.schoolId, schools.id))
+            .where(and(
+              eq(studentAttendance.id, attendanceId),
+              eq(studentAttendance.schoolId, schoolId),
+            ))
+            .limit(1)
+
+          if (basicInfo.length === 0)
+            throw new Error('Attendance record not found')
+
+          return {
+            studentName: `${basicInfo[0]!.studentFirstName} ${basicInfo[0]!.studentLastName}`,
+            date: basicInfo[0]!.date,
+            status: basicInfo[0]!.status,
+            schoolName: basicInfo[0]!.schoolName,
+            parents: [],
+          }
+        }
+
+        return {
+          studentName: `${results[0]!.studentFirstName} ${results[0]!.studentLastName}`,
+          date: results[0]!.date,
+          status: results[0]!.status,
+          schoolName: results[0]!.schoolName,
+          parents: results.map(r => ({
+            name: `${r.parentFirstName} ${r.parentLastName}`,
+            email: r.parentEmail,
+            phone: r.parentPhone,
+          })),
+        }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch attendance notification details'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { attendanceId, schoolId })),
   )
 }
 

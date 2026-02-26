@@ -6,12 +6,14 @@ import {
   countStudentAbsences,
   deleteStudentAttendance,
   excuseStudentAbsence,
+  getAttendanceNotificationDetails,
   getAttendanceStatistics,
   getClassAttendance,
   getStudentAttendanceHistory,
   markParentNotified,
   upsertStudentAttendance,
 } from '@repo/data-ops/queries/student-attendance'
+import { sendAbsenceNotificationEmail } from '@repo/data-ops/services/email'
 import { z } from 'zod'
 import {
   bulkStudentAttendanceSchema,
@@ -202,7 +204,52 @@ export const notifyParent = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('attendance', 'edit')
 
-    // TODO: Implement actual notification sending
+    // Fetch notification details
+    const detailsResult = await getAttendanceNotificationDetails(data.attendanceId, schoolId)
+    if (R.isFailure(detailsResult)) {
+      return { success: false as const, error: 'Impossible de récupérer les détails de la notification' }
+    }
+
+    const details = detailsResult.value
+
+    // Implement actual notification sending
+    if (data.method === 'email') {
+      if (details.parents.length === 0) {
+        return { success: false as const, error: 'Aucun parent configuré pour recevoir des notifications' }
+      }
+
+      const eligibleParents = details.parents.filter(p => !!p.email)
+      if (eligibleParents.length === 0) {
+        return { success: false as const, error: 'Aucun parent n\'a d\'adresse email configurée' }
+      }
+
+      const emailResults = await Promise.all(
+        eligibleParents.map(parent =>
+          sendAbsenceNotificationEmail({
+            to: parent.email!,
+            parentName: parent.name,
+            studentName: details.studentName,
+            schoolName: details.schoolName,
+            date: details.date,
+            status: details.status,
+          }),
+        ),
+      )
+
+      const anySuccess = emailResults.some(r => r.success)
+      if (!anySuccess) {
+        return { success: false as const, error: 'Échec de l\'envoi de la notification par email' }
+      }
+    }
+    else if (data.method === 'sms') {
+      // TODO: Implement SMS notification sending (e.g., via Twilio or Sinfonia)
+      return { success: false as const, error: 'La notification par SMS n\'est pas encore supportée' }
+    }
+    else if (data.method === 'in_app') {
+      // TODO: Implement In-App notification sending
+      return { success: false as const, error: 'La notification In-App n\'est pas encore supportée' }
+    }
+
     const _result6 = await markParentNotified({
       ...data,
       schoolId,

@@ -183,6 +183,147 @@ L'équipe Yeko
   `.trim()
 }
 
+// ==================== Absence Notification Email ====================
+
+interface AbsenceNotificationEmailData {
+  to: string
+  parentName: string
+  studentName: string
+  schoolName: string
+  date: string
+  status: string
+}
+
+function getStatusLabel(status: string): string {
+  switch (status) {
+    case 'absent': return 'absent(e)'
+    case 'late': return 'en retard'
+    case 'excused': return 'justifié(e)'
+    case 'present': return 'présent(e)'
+    default: return status
+  }
+}
+
+/**
+ * Send absence notification email to parent
+ */
+export async function sendAbsenceNotificationEmail(data: AbsenceNotificationEmailData): Promise<EmailResult> {
+  const statusLabel = getStatusLabel(data.status)
+  const subject = `Notification de présence - ${data.studentName} - ${data.schoolName}`
+
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('--- [DEVELOPMENT] EMAIL TO:', data.to, '---')
+    console.warn('Subject:', subject)
+    console.warn('Parent:', data.parentName)
+    console.warn('Student:', data.studentName)
+    console.warn('Status:', statusLabel)
+    console.warn('Date:', data.date)
+    console.warn('-------------------------------------------')
+    return { success: true, messageId: 'dev-mode-log' }
+  }
+
+  const resend = await getResendClient()
+
+  if (!resend) {
+    return { success: false, error: getErrorMessage('serverError') }
+  }
+
+  try {
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'Yeko <noreply@yeko.app>',
+      to: data.to,
+      subject,
+      html: generateAbsenceNotificationHTML(data),
+      text: generateAbsenceNotificationText(data),
+    })
+
+    if (result.error) {
+      return { success: false, error: result.error.message }
+    }
+
+    return { success: true, messageId: result.data?.id }
+  }
+  catch (error) {
+    console.error('Failed to send absence notification:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+function generateAbsenceNotificationHTML(data: AbsenceNotificationEmailData): string {
+  const statusLabel = getStatusLabel(data.status)
+  const dateFormatted = new Date(data.date).toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #ef4444; color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .header h1 { margin: 0; font-size: 24px; }
+    .content { background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
+    .info-box { background: #fef2f2; border-left: 4px solid #ef4444; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+    .footer { text-align: center; color: #6b7280; font-size: 12px; padding: 20px; background: #f9fafb; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📢 Notification de présence</h1>
+    </div>
+    <div class="content">
+      <h2>Bonjour ${data.parentName},</h2>
+      <p>Nous vous informons que votre enfant <strong>${data.studentName}</strong> a été marqué(e) comme <strong>${statusLabel}</strong> à <strong>${data.schoolName}</strong>.</p>
+
+      <div class="info-box">
+        <p><strong>📅 Date :</strong> ${dateFormatted}</p>
+        <p><strong>📊 Statut :</strong> ${statusLabel}</p>
+      </div>
+
+      <p>Si vous êtes déjà au courant ou s'il s'agit d'une erreur, veuillez contacter l'administration de l'école.</p>
+
+      <p>Cordialement,<br><strong>L'équipe ${data.schoolName}</strong></p>
+    </div>
+    <div class="footer">
+      <p>© ${new Date().getFullYear()} ${data.schoolName} - Via Yeko</p>
+    </div>
+  </div>
+</body>
+</html>
+  `.trim()
+}
+
+function generateAbsenceNotificationText(data: AbsenceNotificationEmailData): string {
+  const statusLabel = getStatusLabel(data.status)
+  const dateFormatted = new Date(data.date).toLocaleDateString('fr-FR')
+
+  return `
+Notification de présence - ${data.schoolName}
+
+Bonjour ${data.parentName},
+
+Nous vous informons que votre enfant ${data.studentName} a été marqué(e) comme ${statusLabel} à ${data.schoolName}.
+
+Date : ${dateFormatted}
+Statut : ${statusLabel}
+
+Si vous êtes déjà au courant ou s'il s'agit d'une erreur, veuillez contacter l'administration de l'école.
+
+Cordialement,
+L'équipe ${data.schoolName}
+  `.trim()
+}
+
 // ==================== Parent Invitation Email ====================
 
 interface ParentInvitationEmailData {
