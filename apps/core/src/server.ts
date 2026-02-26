@@ -2,6 +2,7 @@
 // This file is a good smoke test to make sure the custom server entry is working
 import { setAuth, withAuthScope } from '@repo/data-ops/auth/server'
 import { initDatabase, withDatabaseScope } from '@repo/data-ops/database/setup'
+import { sendVerificationEmail } from '@repo/data-ops/services/email'
 import handler from '@tanstack/react-start/server-entry'
 import { env } from 'cloudflare:workers'
 
@@ -25,7 +26,15 @@ export default {
           cookiePrefix: 'core',
           emailAndPassword: {
             enabled: true,
-            requireEmailVerification: false,
+            requireEmailVerification: true,
+            async sendVerificationEmail({ user, url }) {
+              await sendVerificationEmail({
+                to: user.email,
+                name: user.name,
+                verificationUrl: url,
+                apiKey: env.RESEND_API_KEY,
+              })
+            },
           },
           socialProviders: {
             google: {

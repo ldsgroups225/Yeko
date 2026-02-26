@@ -1,14 +1,14 @@
 import { getErrorMessage } from '../i18n'
 
 // Initialize Resend client
-async function getResendClient() {
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
+async function getResendClient(apiKey?: string) {
+  const key = apiKey || process.env.RESEND_API_KEY
+  if (!key) {
     console.warn('RESEND_API_KEY not configured - emails will not be sent')
     return null
   }
   const { Resend } = await import('resend')
-  return new Resend(apiKey)
+  return new Resend(key)
 }
 
 interface WelcomeEmailData {
@@ -18,6 +18,7 @@ interface WelcomeEmailData {
   password: string
   schoolName: string
   loginUrl: string
+  apiKey?: string
 }
 
 interface EmailResult {
@@ -41,7 +42,7 @@ export async function sendWelcomeEmail(data: WelcomeEmailData): Promise<EmailRes
     return { success: true, messageId: 'dev-mode-log' }
   }
 
-  const resend = await getResendClient()
+  const resend = await getResendClient(data.apiKey)
 
   if (!resend) {
     return { success: false, error: getErrorMessage('serverError') }
@@ -192,6 +193,7 @@ interface ParentInvitationEmailData {
   schoolName: string
   invitationUrl: string
   expiresAt: Date
+  apiKey?: string
 }
 
 /**
@@ -210,7 +212,7 @@ export async function sendParentInvitationEmail(data: ParentInvitationEmailData)
     return { success: true, messageId: 'dev-mode-log' }
   }
 
-  const resend = await getResendClient()
+  const resend = await getResendClient(data.apiKey)
 
   if (!resend) {
     return { success: false, error: getErrorMessage('serverError') }
@@ -349,6 +351,131 @@ ${data.invitationUrl}
 ⏰ IMPORTANT : Cette invitation expire le ${expiryDate}.
 
 Si vous n'êtes pas concerné(e) par cette invitation, vous pouvez ignorer cet email.
+
+Cordialement,
+L'équipe Yeko
+
+© ${new Date().getFullYear()} Yeko - Plateforme de gestion scolaire
+  `.trim()
+}
+
+// ==================== Email Verification Email ====================
+
+interface VerificationEmailData {
+  to: string
+  name: string
+  verificationUrl: string
+  apiKey?: string
+}
+
+/**
+ * Send verification email
+ */
+export async function sendVerificationEmail(data: VerificationEmailData): Promise<EmailResult> {
+  const subject = 'Vérification de votre email - Yeko'
+
+  if (process.env.NODE_ENV === 'development') {
+    console.warn('--- [DEVELOPMENT] EMAIL TO:', data.to, '---')
+    console.warn('Subject:', subject)
+    console.warn('Name:', data.name)
+    console.warn('Verification URL:', data.verificationUrl)
+    console.warn('-------------------------------------------')
+    return { success: true, messageId: 'dev-mode-log' }
+  }
+
+  const resend = await getResendClient(data.apiKey)
+
+  if (!resend) {
+    return { success: false, error: getErrorMessage('serverError') }
+  }
+
+  try {
+    const result = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'Yeko <noreply@yeko.app>',
+      to: data.to,
+      subject,
+      html: generateVerificationEmailHTML(data),
+      text: generateVerificationEmailText(data),
+    })
+
+    if (result.error) {
+      return { success: false, error: result.error.message }
+    }
+
+    return { success: true, messageId: result.data?.id }
+  }
+  catch (error) {
+    console.error('Failed to send verification email:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
+  }
+}
+
+function generateVerificationEmailHTML(data: VerificationEmailData): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white; padding: 30px 20px; text-align: center; border-radius: 8px 8px 0 0; }
+    .header h1 { margin: 0; font-size: 28px; }
+    .content { background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
+    .button { display: inline-block; background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); color: white !important; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
+    .button:hover { opacity: 0.9; }
+    .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px 16px; margin: 20px 0; border-radius: 0 8px 8px 0; }
+    .footer { text-align: center; color: #6b7280; font-size: 12px; padding: 20px; background: #f9fafb; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb; border-top: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔐 Vérification Email</h1>
+    </div>
+    <div class="content">
+      <h2>Bonjour ${data.name},</h2>
+      <p>Merci de vous être inscrit sur la plateforme Yeko. Pour activer votre compte, veuillez vérifier votre adresse email.</p>
+
+      <div style="text-align: center;">
+        <a href="${data.verificationUrl}" class="button">Vérifier mon email</a>
+      </div>
+
+      <div class="warning">
+        <p style="font-size: 12px; margin-bottom: 0;">Si le bouton ne fonctionne pas, copiez et collez cette URL dans votre navigateur :<br>
+        <span style="word-break: break-all;">${data.verificationUrl}</span></p>
+      </div>
+
+      <p>Si vous n'avez pas créé de compte sur Yeko, vous pouvez ignorer cet email.</p>
+
+      <p>Cordialement,<br><strong>L'équipe Yeko</strong></p>
+    </div>
+    <div class="footer">
+      <p>© ${new Date().getFullYear()} Yeko - Plateforme de gestion scolaire</p>
+      <p>Cet email contient des informations confidentielles.</p>
+    </div>
+  </div>
+</body>
+</html>
+  `.trim()
+}
+
+function generateVerificationEmailText(data: VerificationEmailData): string {
+  return `
+Vérification Email - Yeko
+
+Bonjour ${data.name},
+
+Merci de vous être inscrit sur la plateforme Yeko. Pour activer votre compte, veuillez vérifier votre adresse email.
+
+VÉRIFIER MON EMAIL :
+${data.verificationUrl}
+
+Si vous n'avez pas créé de compte sur Yeko, vous pouvez ignorer cet email.
 
 Cordialement,
 L'équipe Yeko

@@ -4,6 +4,7 @@ import { env } from 'cloudflare:workers'
 export const databaseMiddleware = createMiddleware().server(async ({ next }) => {
   const { initDatabase } = await import('@repo/data-ops/database/setup')
   const { setAuth } = await import('@repo/data-ops/auth/server')
+  const { sendVerificationEmail } = await import('@repo/data-ops/services/email')
 
   // Initialize database if needed
   const db = initDatabase({
@@ -19,7 +20,15 @@ export const databaseMiddleware = createMiddleware().server(async ({ next }) => 
     cookiePrefix: 'core',
     emailAndPassword: {
       enabled: true,
-      requireEmailVerification: false,
+      requireEmailVerification: true,
+      async sendVerificationEmail({ user, url }) {
+        await sendVerificationEmail({
+          to: user.email,
+          name: user.name,
+          verificationUrl: url,
+          apiKey: env.RESEND_API_KEY,
+        })
+      },
     },
     socialProviders: {
       google: {
