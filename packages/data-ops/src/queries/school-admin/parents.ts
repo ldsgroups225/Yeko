@@ -125,12 +125,6 @@ export async function updateParent(
 ) {
   const db = getDb()
 
-  // Verify parent exists
-  const parent = await getParentById(parentId)
-  if (!parent) {
-    throw new Error(SCHOOL_ERRORS.PARENT_NOT_FOUND)
-  }
-
   const [updated] = await db
     .update(parents)
     .set({
@@ -139,6 +133,10 @@ export async function updateParent(
     })
     .where(eq(parents.id, parentId))
     .returning()
+
+  if (!updated) {
+    throw new Error(SCHOOL_ERRORS.PARENT_NOT_FOUND)
+  }
 
   return updated
 }
