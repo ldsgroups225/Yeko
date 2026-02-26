@@ -1,5 +1,5 @@
 import { Result as R } from '@praha/byethrow'
-import { getTeacherNotificationsQuery } from '@repo/data-ops/queries/teacher-app'
+import { getTeacherNotificationsQuery, markAllNotificationsAsReadQuery } from '@repo/data-ops/queries/teacher-app'
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
 
@@ -71,20 +71,22 @@ export const markNotificationRead = createServerFn()
       teacherId: z.string(),
     }),
   )
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database operations
-    return {
-      success: true,
-    }
-  })
 
 // Mark all notifications as read
 export const markAllNotificationsRead = createServerFn()
   .inputValidator(z.object({ teacherId: z.string() }))
-  .handler(async ({ data: _data }) => {
-    // TODO: Implement with actual database operations
+  .handler(async ({ data }) => {
+    const result = await markAllNotificationsAsReadQuery(data.teacherId)
+
+    if (R.isFailure(result)) {
+      return {
+        success: false,
+        updatedCount: 0,
+      }
+    }
+
     return {
       success: true,
-      updatedCount: 0,
+      updatedCount: result.value.updatedCount,
     }
   })

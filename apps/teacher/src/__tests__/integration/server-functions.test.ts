@@ -44,19 +44,19 @@ describe('server Functions Integration Tests', () => {
     getTeacherCancelledSessions: vi.fn(),
   }
 
-  beforeAll(async () => {
-    // Setup mocks
-    vi.doMock(
-      '@repo/data-ops/queries/student-attendance',
-      () => mockAttendanceQueries,
-    )
-    vi.doMock('@repo/data-ops/queries/teacher-classes', () => mockClassQueries)
-    vi.doMock('@repo/data-ops/queries/teacher-notes', () => mockNotesQueries)
-    vi.doMock(
-      '@repo/data-ops/queries/teacher-schedule',
-      () => mockScheduleQueries,
-    )
-  })
+//   beforeAll(async () => {
+//     // Setup mocks
+//     vi.doMock(
+//       '@repo/data-ops/queries/student-attendance',
+//       () => mockAttendanceQueries,
+//     )
+//     vi.doMock('@repo/data-ops/queries/teacher-classes', () => mockClassQueries)
+//     vi.doMock('@repo/data-ops/queries/teacher-notes', () => mockNotesQueries)
+//     vi.doMock(
+//       '@repo/data-ops/queries/teacher-schedule',
+//       () => mockScheduleQueries,
+//     )
+//   })
 
   afterEach(() => {
     vi.clearAllMocks()

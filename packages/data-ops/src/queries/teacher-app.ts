@@ -1725,10 +1725,40 @@ export function getTeacherRecentMessages(params: {
 /**
  * Get notifications for teacher
  */
+export async function markAllNotificationsAsReadQuery(teacherId: string): R.ResultAsync<{ updatedCount: number }, DatabaseError> {
+  const db = getDb()
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const { teacherNotifications } = await import('../drizzle/school-schema')
+
+        const result = await db
+          .update(teacherNotifications)
+          .set({
+            isRead: true,
+            readAt: new Date(),
+          })
+          .where(
+            and(
+              eq(teacherNotifications.teacherId, teacherId),
+              eq(teacherNotifications.isRead, false),
+            ),
+          )
+          .returning({ id: teacherNotifications.id })
+
+        return { updatedCount: result.length }
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'notifications.markAllReadFailed'), { code: 'MARK_ALL_NOTIFICATIONS_READ_FAILED' }),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { teacherId })),
+  )
+}
+
+/**
+ * Get notifications for teacher
+ */
 export async function getTeacherNotificationsQuery(params: {
-  teacherId: string
-  unreadOnly?: boolean
-  limit?: number
 }): R.ResultAsync<Array<{
   id: string
   type: string
