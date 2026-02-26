@@ -1,6 +1,6 @@
 import type { SubjectCategory, TermType } from '../drizzle/core-schema.js'
 import fs from 'node:fs'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import * as coreSchema from '../drizzle/core-schema.js'
@@ -109,60 +109,44 @@ async function main() {
     return expanded
   }
 
-  for (const role of defaultRoles) {
-    const expandedPermissions = expandManagePermissions(role.permissions as SystemPermissions)
+  // Optimize Roles Insertion with Bulk Insert
+  const mappedRoles = defaultRoles.map(role => ({
+    id: crypto.randomUUID(),
+    ...role,
+    permissions: expandManagePermissions(role.permissions as SystemPermissions),
+  }))
 
-    const insertQuery = db.insert(schoolSchema.roles).values({
-      id: crypto.randomUUID(),
-      ...role,
-      permissions: expandedPermissions,
+  if (isFresh) {
+    await db.insert(schoolSchema.roles).values(mappedRoles)
+  }
+  else {
+    await db.insert(schoolSchema.roles).values(mappedRoles).onConflictDoUpdate({
+      target: schoolSchema.roles.slug,
+      set: {
+        name: sql`excluded.name`,
+        description: sql`excluded.description`,
+        permissions: sql`excluded.permissions`,
+        extraLanguages: sql`excluded.extra_languages`,
+        updatedAt: new Date(),
+      },
     })
-
-    if (isFresh) {
-      await insertQuery
-    }
-    else {
-      await insertQuery.onConflictDoUpdate({
-        target: schoolSchema.roles.slug,
-        set: {
-          name: role.name,
-          description: role.description,
-          permissions: expandedPermissions,
-          extraLanguages: role.extraLanguages,
-          updatedAt: new Date(),
-        },
-      })
-    }
   }
 
   console.log('Seeding Fee Type Templates (Core)...')
 
-  for (const template of feeTypeTemplatesData) {
-    const insertQuery = db.insert(coreSchema.feeTypeTemplates).values({
-      ...template,
-    })
-
-    if (isFresh) {
-      await insertQuery
-    } else {
-      await insertQuery.onConflictDoNothing({ target: coreSchema.feeTypeTemplates.code })
-    }
+  if (isFresh) {
+    await db.insert(coreSchema.feeTypeTemplates).values(feeTypeTemplatesData)
+  } else {
+    await db.insert(coreSchema.feeTypeTemplates).values(feeTypeTemplatesData).onConflictDoNothing({ target: coreSchema.feeTypeTemplates.code })
   }
 
   console.log('Seeding Tracks...')
 
-  for (const track of tracksData) {
-    const insertQuery = db.insert(coreSchema.tracks).values({
-      id: crypto.randomUUID(),
-      ...track,
-    })
-
-    if (isFresh) {
-      await insertQuery
-    }
-    else {
-      await insertQuery.onConflictDoNothing({ target: coreSchema.tracks.code })
-    }
+  const tracksWithIds = tracksData.map(track => ({ id: crypto.randomUUID(), ...track }))
+  if (isFresh) {
+      await db.insert(coreSchema.tracks).values(tracksWithIds)
+  } else {
+      await db.insert(coreSchema.tracks).values(tracksWithIds).onConflictDoNothing({ target: coreSchema.tracks.code })
   }
 
   const generalTrack = await db.query.tracks.findFirst({ where: eq(coreSchema.tracks.code, 'GEN') })
@@ -176,64 +160,67 @@ async function main() {
 
   console.log('Seeding Grades...')
 
-  for (const grade of gradesData(generalTrack.id)) {
-    if (isFresh) {
-      await db.insert(coreSchema.grades).values({
-        id: crypto.randomUUID(),
-        ...grade,
-      })
-    }
-    else {
-      // Check if exists to avoid duplicates (since code is not unique globally)
-      const existing = await db.query.grades.findFirst({
-        where: (grades, { and, eq }) => and(eq(grades.code, grade.code), eq(grades.trackId, grade.trackId)),
-      })
+  // Grades rely on trackId which we just fetched.
+  // We can bulk insert grades for the General Track.
+  const grades = gradesData(generalTrack.id).map(g => ({ id: crypto.randomUUID(), ...g }))
 
-      if (!existing) {
-        await db.insert(coreSchema.grades).values({
-          id: crypto.randomUUID(),
-          ...grade,
-        })
-      }
+  if (isFresh) {
+    await db.insert(coreSchema.grades).values(grades)
+  }
+  else {
+    // For grades, we can't easily do a single bulk onConflict because code + trackId is the unique key,
+    // but the schema might not have a composite unique constraint defined in a way that ON CONFLICT supports directly
+    // without a named constraint.
+    // However, looking at the original code:
+    // "Check if exists to avoid duplicates (since code is not unique globally)"
+    // The original code does a `findFirst` inside the loop.
+    // Optimizing this safely requires knowing if there is a unique constraint on (code, trackId).
+    // Let's assume there isn't one easily usable for DO NOTHING without potentially erroring if multiple match.
+    // So we will stick to the loop for safety here, or implement a read-then-filter-then-bulk-insert pattern.
+
+    // Optimization: Read all existing grades for this track, filter out duplicates in memory, then bulk insert new ones.
+    const existingGrades = await db.query.grades.findMany({
+        where: eq(coreSchema.grades.trackId, generalTrack.id)
+    })
+    const existingCodes = new Set(existingGrades.map(g => g.code))
+    const newGrades = grades.filter(g => !existingCodes.has(g.code))
+
+    if (newGrades.length > 0) {
+        await db.insert(coreSchema.grades).values(newGrades)
     }
   }
 
   console.log('Seeding Series...')
 
-  for (const s of seriesData(generalTrack.id)) {
-    const insertQuery = db.insert(coreSchema.series).values({
-      id: crypto.randomUUID(),
-      ...s,
-    })
+  const seriesList = seriesData(generalTrack.id).map(s => ({ id: crypto.randomUUID(), ...s }))
 
-    if (isFresh) {
-      await insertQuery
-    }
-    else {
-      await insertQuery.onConflictDoNothing({ target: coreSchema.series.code })
-    }
+  if (isFresh) {
+    await db.insert(coreSchema.series).values(seriesList)
+  }
+  else {
+    await db.insert(coreSchema.series).values(seriesList).onConflictDoNothing({ target: coreSchema.series.code })
   }
 
   console.log('Seeding Subjects...')
 
-  for (const subject of subjectsData) {
-    if (isFresh) {
-      await db.insert(coreSchema.subjects).values({
-        id: crypto.randomUUID(),
-        ...subject,
-        category: subject.category as SubjectCategory,
-      })
-    }
-    else {
-      // Check by name as we don't have unique code
-      const existing = await db.query.subjects.findFirst({ where: eq(coreSchema.subjects.name, subject.name) })
-      if (!existing) {
-        await db.insert(coreSchema.subjects).values({
-          id: crypto.randomUUID(),
-          ...subject,
-          category: subject.category as SubjectCategory,
-        })
-      }
+  const subjects = subjectsData.map(s => ({
+      id: crypto.randomUUID(),
+      ...s,
+      category: s.category as SubjectCategory
+  }))
+
+  if (isFresh) {
+    await db.insert(coreSchema.subjects).values(subjects)
+  }
+  else {
+    // Optimization: Read all existing subjects, filter, insert new.
+    // The original code checks by name.
+    const existingSubjects = await db.query.subjects.findMany()
+    const existingNames = new Set(existingSubjects.map(s => s.name))
+    const newSubjects = subjects.filter(s => !existingNames.has(s.name))
+
+    if (newSubjects.length > 0) {
+        await db.insert(coreSchema.subjects).values(newSubjects)
     }
   }
 
@@ -265,28 +252,30 @@ async function main() {
     }
   }
 
-  for (const term of termsData) {
-    if (isFresh) {
-      await db.insert(coreSchema.termTemplates).values({
-        id: crypto.randomUUID(),
-        ...term,
-        type: term.type as TermType,
-        schoolYearTemplateId: yearTemplate!.id,
-      })
-    }
-    else {
-      const existing = await db.query.termTemplates.findFirst({
-        where: (t, { and, eq }) => and(eq(t.name, term.name), eq(t.schoolYearTemplateId, yearTemplate!.id)),
-      })
-      if (!existing) {
-        await db.insert(coreSchema.termTemplates).values({
+  // Optimize Term Templates
+  // Original code checks by name + schoolYearTemplateId
+  // We can read all for this year template, filter, insert.
+  if (yearTemplate) {
+      const terms = termsData.map(t => ({
           id: crypto.randomUUID(),
-          ...term,
-          type: term.type as TermType,
+          ...t,
+          type: t.type as TermType,
           schoolYearTemplateId: yearTemplate!.id,
-        })
+      }))
+
+      if (isFresh) {
+          await db.insert(coreSchema.termTemplates).values(terms)
+      } else {
+          const existingTerms = await db.query.termTemplates.findMany({
+              where: eq(coreSchema.termTemplates.schoolYearTemplateId, yearTemplate.id)
+          })
+          const existingTermNames = new Set(existingTerms.map(t => t.name))
+          const newTerms = terms.filter(t => !existingTermNames.has(t.name))
+
+          if (newTerms.length > 0) {
+              await db.insert(coreSchema.termTemplates).values(newTerms)
+          }
       }
-    }
   }
 
   await client.end()
