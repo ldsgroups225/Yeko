@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ilike, or, sql } from 'drizzle-orm'
+import { and, count, desc, eq, ilike, or, sql, inArray } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { auth_user } from '../../drizzle/auth-schema'
 import { grades, series, subjects } from '../../drizzle/core-schema'
@@ -65,24 +65,39 @@ export async function getTeachersBySchool(
     .limit(limit)
     .offset(offset)
 
-  // Fetch subjects for each teacher
-  const teachersWithSubjects = await Promise.all(
-    teachersList.map(async (teacher: typeof teachersList[0]) => {
-      const subjectsList = await db
-        .select({
-          name: subjects.name,
-          shortName: subjects.shortName,
-        })
-        .from(teacherSubjects)
-        .innerJoin(subjects, eq(teacherSubjects.subjectId, subjects.id))
-        .where(eq(teacherSubjects.teacherId, teacher.id))
+  // Optimization: Fetch subjects for ALL teachers in one query
+  const teacherIds = teachersList.map(t => t.id)
 
-      return {
-        ...teacher,
-        subjects: subjectsList.map(s => s.shortName).filter(Boolean) as string[],
+  let subjectsByTeacherId: Record<string, string[]> = {}
+
+  if (teacherIds.length > 0) {
+    const allSubjects = await db
+      .select({
+        teacherId: teacherSubjects.teacherId,
+        subjectName: subjects.name,
+        subjectShortName: subjects.shortName,
+      })
+      .from(teacherSubjects)
+      .innerJoin(subjects, eq(teacherSubjects.subjectId, subjects.id))
+      .where(inArray(teacherSubjects.teacherId, teacherIds))
+
+    // Group subjects by teacher ID in memory
+    subjectsByTeacherId = allSubjects.reduce((acc, curr) => {
+      if (!acc[curr.teacherId]) {
+        acc[curr.teacherId] = []
       }
-    }),
-  )
+      if (curr.subjectShortName) {
+        acc[curr.teacherId]!.push(curr.subjectShortName)
+      }
+      return acc
+    }, {} as Record<string, string[]>)
+  }
+
+  // Map subjects back to teachers
+  const teachersWithSubjects = teachersList.map(teacher => ({
+    ...teacher,
+    subjects: subjectsByTeacherId[teacher.id] || [],
+  }))
 
   return teachersWithSubjects
 }
