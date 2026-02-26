@@ -561,6 +561,12 @@ export async function bulkImportStudents(
       try: async () => {
         const results = { success: 0, errors: [] as Array<{ row: number, error: string }> }
 
+        // Filter out empty rows
+        const validStudents = studentsData.filter(s => !!s)
+        if (validStudents.length === 0) {
+          return results
+        }
+
         const [activeYear] = await db
           .select()
           .from(schoolYears)
@@ -570,21 +576,74 @@ export async function bulkImportStudents(
           throw new Error(getNestedErrorMessage('students', 'noActiveSchoolYear'))
         }
 
-        // Prepare students for bulk insertion
+        // Count students needing matricule
+        const studentsNeedingMatricule = validStudents.filter(s => !s.matricule)
+        const countNeedingMatricule = studentsNeedingMatricule.length
+
+        let matriculeBase = { prefix: '', year: '', startNumber: 0 }
+
+        if (countNeedingMatricule > 0) {
+          // Get or create sequence (once)
+          let [sequence] = await db
+            .select()
+            .from(matriculeSequences)
+            .where(
+              and(eq(matriculeSequences.schoolId, schoolId), eq(matriculeSequences.schoolYearId, activeYear.id)),
+            )
+
+          if (!sequence) {
+            // Get school code for prefix
+            const [school] = await db.select().from(schools).where(eq(schools.id, schoolId))
+            const prefix = school?.code?.substring(0, 2).toUpperCase() || 'XX'
+
+            // Get year from school year
+            const year = new Date(activeYear.startDate).getFullYear().toString().slice(-2)
+
+            // Create new sequence
+            const [newSequence] = await db.insert(matriculeSequences).values({
+              id: crypto.randomUUID(),
+              schoolId,
+              schoolYearId: activeYear.id,
+              prefix,
+              lastNumber: countNeedingMatricule, // Reserve count immediately
+              format: `${prefix}${year}{sequence:4}`,
+            }).returning()
+
+            if (!newSequence) {
+              throw new Error('Failed to create matricule sequence')
+            }
+
+            matriculeBase = { prefix, year, startNumber: 1 } // Start from 1
+          } else {
+            // Update sequence immediately to reserve the range
+            const newLastNumber = sequence.lastNumber + countNeedingMatricule
+
+            await db
+              .update(matriculeSequences)
+              .set({ lastNumber: newLastNumber, updatedAt: new Date() })
+              .where(eq(matriculeSequences.id, sequence.id))
+
+            const prefix = sequence.prefix
+            const year = sequence.format.match(/\d{2}/)?.[0] || new Date().getFullYear().toString().slice(-2)
+
+            matriculeBase = { prefix, year, startNumber: sequence.lastNumber + 1 }
+          }
+        }
+
+        // Prepare students for bulk insertion with local matricule generation
+        let matriculeCounter = 0
         const studentsToInsert = []
-        for (let i = 0; i < studentsData.length; i++) {
-          const studentData = studentsData[i]
-          if (!studentData)
-            continue
+
+        for (let i = 0; i < validStudents.length; i++) {
+          const studentData = validStudents[i]! // Already filtered
 
           let matricule = studentData.matricule
           if (!matricule) {
-            const matriculeResult = await generateMatricule(schoolId, activeYear.id)
-            if (R.isFailure(matriculeResult)) {
-              results.errors.push({ row: i + 1, error: matriculeResult.error.message })
-              continue
-            }
-            matricule = matriculeResult.value
+            // Generate locally using reserved range
+            const currentNumber = matriculeBase.startNumber + matriculeCounter
+            const paddedNumber = currentNumber.toString().padStart(4, '0')
+            matricule = `${matriculeBase.prefix}${matriculeBase.year}${paddedNumber}`
+            matriculeCounter++
           }
 
           studentsToInsert.push({
