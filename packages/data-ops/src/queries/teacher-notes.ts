@@ -186,7 +186,7 @@ export async function getNotesTrend(params: {
         // Simplified for SQLite/Postgres compatibility in this context
         gte(
           conductRecords.createdAt,
-          sql`CURRENT_TIMESTAMP - (${sql.raw(months.toString())} || ' month')::interval`,
+          sql`CURRENT_TIMESTAMP - (${months} || ' month')::interval`,
         ),
       ),
     )
