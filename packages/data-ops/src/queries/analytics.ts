@@ -1,7 +1,7 @@
 import { and, count, desc, eq, gte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
-import { schools } from '../drizzle/core-schema'
-import { students } from '../drizzle/school-schema'
+import { grades, schools, series } from '../drizzle/core-schema'
+import { classes, enrollments, schoolYears, students } from '../drizzle/school-schema'
 import {
   getApiEndpointUsage,
   getAverageResponseTime,
@@ -377,8 +377,48 @@ export async function getEnrollmentStats(
   const dropoutRate = total > 0 ? Math.round((withdrawn / total) * 100) : 0
 
   // Note: byGrade and bySeries require joining with enrollments table
-  // For now, return empty arrays as students don't have direct grade/series references
-  // This would need to be implemented when enrollments are properly linked
+
+  // Implementation of byGrade logic
+  const byGradeResults = await db
+    .select({
+      grade: grades.name,
+      count: count(students.id),
+    })
+    .from(students)
+    .innerJoin(enrollments, eq(students.id, enrollments.studentId))
+    .innerJoin(schoolYears, eq(enrollments.schoolYearId, schoolYears.id))
+    .innerJoin(classes, eq(enrollments.classId, classes.id))
+    .innerJoin(grades, eq(classes.gradeId, grades.id))
+    .where(and(
+      eq(students.status, 'active'),
+      eq(enrollments.status, 'confirmed'),
+      eq(schoolYears.isActive, true),
+      ...(schoolId ? [eq(students.schoolId, schoolId)] : [])
+    ))
+    .groupBy(grades.name)
+
+  const byGrade = byGradeResults.map(r => ({ grade: r.grade, count: Number(r.count) }))
+
+  // Implementation of bySeries logic
+  const bySeriesResults = await db
+    .select({
+      series: series.name,
+      count: count(students.id),
+    })
+    .from(students)
+    .innerJoin(enrollments, eq(students.id, enrollments.studentId))
+    .innerJoin(schoolYears, eq(enrollments.schoolYearId, schoolYears.id))
+    .innerJoin(classes, eq(enrollments.classId, classes.id))
+    .innerJoin(series, eq(classes.seriesId, series.id))
+    .where(and(
+      eq(students.status, 'active'),
+      eq(enrollments.status, 'confirmed'),
+      eq(schoolYears.isActive, true),
+      ...(schoolId ? [eq(students.schoolId, schoolId)] : [])
+    ))
+    .groupBy(series.name)
+
+  const bySeries = bySeriesResults.map(r => ({ series: r.series, count: Number(r.count) }))
 
   return {
     total,
@@ -387,8 +427,8 @@ export async function getEnrollmentStats(
     graduated: graduatedResult?.count || 0,
     transferred: transferredResult?.count || 0,
     withdrawn,
-    byGrade: [], // TODO: Implement when enrollments are linked
-    bySeries: [], // TODO: Implement when enrollments are linked
+    byGrade,
+    bySeries,
     trends,
     dropoutRate,
   }
