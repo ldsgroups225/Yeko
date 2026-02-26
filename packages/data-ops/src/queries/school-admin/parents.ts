@@ -171,18 +171,20 @@ export async function linkParentToStudent(data: {
 
   const db = getDb()
 
-  // Verify student belongs to school
-  const student = await db.query.students.findFirst({
-    where: and(eq(students.id, data.studentId), eq(students.schoolId, data.schoolId)),
-  })
+  // Verify student belongs to school AND parent exists concurrently
+  const [student, parent] = await Promise.all([
+    db.query.students.findFirst({
+      where: and(eq(students.id, data.studentId), eq(students.schoolId, data.schoolId)),
+    }),
+    db.query.parents.findFirst({
+      where: eq(parents.id, data.parentId),
+    })
+  ])
+
   if (!student) {
     throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
   }
 
-  // Verify parent exists
-  const parent = await db.query.parents.findFirst({
-    where: eq(parents.id, data.parentId),
-  })
   if (!parent) {
     throw new Error(SCHOOL_ERRORS.PARENT_NOT_FOUND)
   }
