@@ -327,48 +327,80 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
   return R.pipe(
     R.try({
       try: async () => {
-        // Get or create sequence
-        const [sequence] = await db
-          .select()
-          .from(matriculeSequences)
+        // Atomic update strategy:
+        // Try to update the existing sequence and return the new value.
+        // If no row is updated (sequence doesn't exist), insert a new one.
+
+        const [updatedSequence] = await db
+          .update(matriculeSequences)
+          .set({
+            lastNumber: sql`${matriculeSequences.lastNumber} + 1`,
+            updatedAt: new Date()
+          })
           .where(
-            and(eq(matriculeSequences.schoolId, schoolId), eq(matriculeSequences.schoolYearId, schoolYearId)),
+            and(
+              eq(matriculeSequences.schoolId, schoolId),
+              eq(matriculeSequences.schoolYearId, schoolYearId)
+            )
           )
+          .returning()
 
-        if (!sequence) {
-          // Get school code for prefix
-          const [school] = await db.select().from(schools).where(eq(schools.id, schoolId))
-          const prefix = school?.code?.substring(0, 2).toUpperCase() || 'XX'
+        if (updatedSequence) {
+          // Format matricule using the updated sequence
+          const paddedNumber = updatedSequence.lastNumber.toString().padStart(4, '0')
+          const year = updatedSequence.format.match(/\d{2}/)?.[0] || new Date().getFullYear().toString().slice(-2)
+          return `${updatedSequence.prefix}${year}${paddedNumber}`
+        }
 
-          // Get year from school year
-          const [schoolYear] = await db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId))
-          const year = new Date(schoolYear?.startDate || new Date()).getFullYear().toString().slice(-2)
+        // Fallback: Sequence doesn't exist, create it.
+        // Get school code for prefix
+        const [school] = await db.select().from(schools).where(eq(schools.id, schoolId))
+        const prefix = school?.code?.substring(0, 2).toUpperCase() || 'XX'
 
-          // Create new sequence
+        // Get year from school year
+        const [schoolYear] = await db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId))
+        const year = new Date(schoolYear?.startDate || new Date()).getFullYear().toString().slice(-2)
+        const format = `${prefix}${year}{sequence:4}`
+
+        // Insert new sequence safely handling race conditions (unique constraint violation)
+        try {
           await db.insert(matriculeSequences).values({
             id: crypto.randomUUID(),
             schoolId,
             schoolYearId,
             prefix,
             lastNumber: 1,
-            format: `${prefix}${year}{sequence:4}`,
+            format,
           })
 
           return `${prefix}${year}0001`
+        } catch (insertError: any) {
+            // Check for unique constraint violation (Postgres error code 23505)
+            // This happens if another request inserted the sequence between our update attempt and insert attempt.
+            if (insertError.code === '23505') {
+                 // Retry the update one more time as the record now exists
+                const [retrySequence] = await db
+                .update(matriculeSequences)
+                .set({
+                  lastNumber: sql`${matriculeSequences.lastNumber} + 1`,
+                  updatedAt: new Date()
+                })
+                .where(
+                  and(
+                    eq(matriculeSequences.schoolId, schoolId),
+                    eq(matriculeSequences.schoolYearId, schoolYearId)
+                  )
+                )
+                .returning()
+
+                if (retrySequence) {
+                     const paddedNumber = retrySequence.lastNumber.toString().padStart(4, '0')
+                     const year = retrySequence.format.match(/\d{2}/)?.[0] || new Date().getFullYear().toString().slice(-2)
+                     return `${retrySequence.prefix}${year}${paddedNumber}`
+                }
+            }
+            throw insertError
         }
-
-        // Increment sequence
-        const newNumber = sequence.lastNumber + 1
-        await db
-          .update(matriculeSequences)
-          .set({ lastNumber: newNumber, updatedAt: new Date() })
-          .where(eq(matriculeSequences.id, sequence.id))
-
-        // Format matricule
-        const paddedNumber = newNumber.toString().padStart(4, '0')
-        const year = sequence.format.match(/\d{2}/)?.[0] || new Date().getFullYear().toString().slice(-2)
-
-        return `${sequence.prefix}${year}${paddedNumber}`
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'generateMatriculeFailed')),
     }),
