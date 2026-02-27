@@ -4,12 +4,13 @@
  */
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
+import { getTeacherContext } from '../middleware/teacher-context'
 
 // Schema for creating a student note
 export const createNoteSchema = z.object({
   studentId: z.string(),
   classId: z.string(),
-  teacherId: z.string(),
+  // teacherId removed to prevent impersonation
   title: z.string().min(1).max(200),
   content: z.string().min(1).max(2000),
   type: z.enum([
@@ -77,11 +78,17 @@ export const deleteNoteSchema = z.object({
 export const createStudentNote = createServerFn()
   .inputValidator(createNoteSchema)
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+
+    if (!context) {
+      throw new Error('Unauthorized')
+    }
+
     const { createStudentNote: createNote } = await import('@repo/data-ops/queries/teacher-notes')
     const note = await createNote({
       studentId: data.studentId,
       classId: data.classId,
-      teacherId: data.teacherId,
+      teacherId: context.teacherId,
       title: data.title,
       content: data.content,
       type: data.type,
