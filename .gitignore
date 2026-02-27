@@ -152,3 +152,5 @@ gha-creds-*.json
 config.toml
 daemon_state.json
 workspace/
+.playwright/
+login_script.js
