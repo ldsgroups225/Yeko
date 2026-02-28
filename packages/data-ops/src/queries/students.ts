@@ -2,7 +2,7 @@ import type { BloodType, EnrollmentStatus, Gender, Relationship, StudentInsert, 
 import crypto from 'node:crypto'
 import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
-import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, ilike, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades, schools, series } from '../drizzle/core-schema'
 import {
@@ -376,6 +376,62 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
   )
 }
 
+// Reserve a range of matricule numbers atomically using UPSERT
+export async function reserveMatriculeRange(
+  schoolId: string,
+  schoolYearId: string,
+  count: number,
+): R.ResultAsync<{ startNumber: number; matricules: string[] }, DatabaseError> {
+  const db = getDb()
+  return R.pipe(
+    R.try({
+      try: async () => {
+        // Get school code for prefix
+        const [school] = await db.select().from(schools).where(eq(schools.id, schoolId))
+        const prefix = school?.code?.substring(0, 2).toUpperCase() || 'XX'
+
+        // Get year from school year
+        const [schoolYear] = await db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId))
+        const year = new Date(schoolYear?.startDate || new Date()).getFullYear().toString().slice(-2)
+
+        // Atomic UPSERT: increment and return new number in one operation
+        const [updated] = await db
+          .insert(matriculeSequences)
+          .values({
+            id: crypto.randomUUID(),
+            schoolId,
+            schoolYearId,
+            prefix,
+            lastNumber: count,
+            format: `${prefix}${year}{sequence:4}`,
+          })
+          .onConflictDoUpdate(
+            target: [matriculeSequences.schoolId, matriculeSequences.schoolYearId],
+            set: {
+              lastNumber: sql`GREATEST(${matriculeSequences.lastNumber}, ${count})`,
+              updatedAt: new Date(),
+            },
+          )
+          .returning({ lastNumber: matriculeSequences.lastNumber })
+
+        const startNumber = (updated.lastNumber || 1) - count + 1
+
+        // Generate matricule strings
+        const matricules: string[] = []
+        for (let i = 0; i < count; i++) {
+          const num = startNumber + i
+          const paddedNumber = num.toString().padStart(4, '0')
+          matricules.push(`${prefix}${year}${paddedNumber}`)
+        }
+
+        return { startNumber, matricules }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'reserveMatriculeRangeFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, schoolYearId, count })),
+  )
+}
+
 // ==================== CRUD Operations ====================
 
 export async function createStudent(data: CreateStudentInput): R.ResultAsync<typeof students.$inferSelect, DatabaseError> {
@@ -570,21 +626,34 @@ export async function bulkImportStudents(
           throw new Error(getNestedErrorMessage('students', 'noActiveSchoolYear'))
         }
 
-        // Prepare students for bulk insertion
-        const studentsToInsert = []
-        for (let i = 0; i < studentsData.length; i++) {
-          const studentData = studentsData[i]
-          if (!studentData)
-            continue
+        // Filter out empty rows and separate custom matricules from auto-generated
+        const validStudents = studentsData.filter(s => !!s?.firstName && !!s?.lastName)
+        const studentsNeedingMatricule = validStudents.filter(s => !s.matricule)
+        const studentsWithMatricule = validStudents.filter(s => s.matricule)
 
+        // Reserve a range of matricules atomically (avoids race conditions)
+        let matriculeStart = 1
+        let reservedMatricules: string[] = []
+        
+        if (studentsNeedingMatricule.length > 0) {
+          const reserveResult = await reserveMatriculeRange(schoolId, activeYear.id, studentsNeedingMatricule.length)
+          if (R.isFailure(reserveResult)) {
+            throw new Error(reserveResult.error.message)
+          }
+          matriculeStart = reserveResult.value.startNumber
+          reservedMatricules = reserveResult.value.matricules
+        }
+
+        // Build students array with matricules
+        let reservedIndex = 0
+        const studentsToInsert = []
+        
+        for (const studentData of validStudents) {
           let matricule = studentData.matricule
-          if (!matricule) {
-            const matriculeResult = await generateMatricule(schoolId, activeYear.id)
-            if (R.isFailure(matriculeResult)) {
-              results.errors.push({ row: i + 1, error: matriculeResult.error.message })
-              continue
-            }
-            matricule = matriculeResult.value
+          
+          // Assign auto-generated matricule from reserved range
+          if (!matricule && reservedIndex < reservedMatricules.length) {
+            matricule = reservedMatricules[reservedIndex++]
           }
 
           studentsToInsert.push({
