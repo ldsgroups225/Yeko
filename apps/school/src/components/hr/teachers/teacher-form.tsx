@@ -116,19 +116,39 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+        className="
+          border-border/40 bg-card/50 rounded-xl border p-8 shadow-sm
+          backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-8">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="mb-8 flex items-center gap-2">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconInfoCircle className="h-4 w-4" />
           </div>
-          <h2 className="text-xl font-serif font-semibold">{t.hr.teachers.basicInfo()}</h2>
+          <h2 className="font-serif text-xl font-semibold">{t.hr.teachers.basicInfo()}</h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="
+          grid gap-6
+          md:grid-cols-2
+        "
+        >
           {!isEditing && (
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="userId" className="flex items-center gap-1.5 font-semibold text-foreground">
+            <div className="
+              space-y-2
+              md:col-span-2
+            "
+            >
+              <Label
+                htmlFor="userId"
+                className="
+                  text-foreground flex items-center gap-1.5 font-semibold
+                "
+              >
                 {t.hr.teachers.selectUser()}
                 <span className="text-destructive">*</span>
               </Label>
@@ -139,27 +159,42 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                   setValue('userId', userId, { shouldValidate: true })
                 }}
               />
-              <p className="text-[10px] text-muted-foreground ml-1">
+              <p className="text-muted-foreground ml-1 text-[10px]">
                 {t.hr.teachers.userIdHelp()}
               </p>
               {errors.userId && (
-                <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.userId.message)}</motion.p>
+                <motion.p
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-destructive text-xs font-medium"
+                >
+                  {String(errors.userId.message)}
+                </motion.p>
               )}
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="specialization" className="font-semibold text-foreground">{t.hr.teachers.specialization()}</Label>
+            <Label
+              htmlFor="specialization"
+              className="text-foreground font-semibold"
+            >
+              {t.hr.teachers.specialization()}
+            </Label>
             <Input
               id="specialization"
               {...register('specialization')}
               placeholder={t.hr.teachers.specializationPlaceholder()}
-              className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all"
+              className="
+                border-border/40 bg-background/50
+                focus:bg-background
+                h-11 rounded-xl transition-all
+              "
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hireDate" className="font-semibold text-foreground">{t.hr.teachers.hireDate()}</Label>
+            <Label htmlFor="hireDate" className="text-foreground font-semibold">{t.hr.teachers.hireDate()}</Label>
             <DatePicker
               captionLayout="dropdown"
               date={watch('hireDate') || undefined}
@@ -169,7 +204,12 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status" className="flex items-center gap-1.5 font-semibold text-foreground">
+            <Label
+              htmlFor="status"
+              className="
+                text-foreground flex items-center gap-1.5 font-semibold
+              "
+            >
               {t.hr.common.status()}
               <span className="text-destructive">*</span>
             </Label>
@@ -177,7 +217,12 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
               value={watch('status')}
               onValueChange={value => setValue('status', value as 'active' | 'inactive' | 'on_leave')}
             >
-              <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
+              <SelectTrigger className="
+                border-border/40 bg-background/50
+                focus:bg-background
+                h-11 rounded-xl transition-all
+              "
+              >
                 <SelectValue>
                   {watch('status')
                     ? (() => {
@@ -189,7 +234,11 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                         const config = statusConfig[watch('status') as keyof typeof statusConfig]
                         return (
                           <div className="flex items-center gap-2">
-                            <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                            <div className={`
+                              h-2 w-2 rounded-full
+                              ${config.color}
+                            `}
+                            />
                             <span>{config.label}</span>
                           </div>
                         )
@@ -197,29 +246,38 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
                     : null}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+              <SelectContent className="
+                bg-popover/90 border-border/40 rounded-xl backdrop-blur-2xl
+              "
+              >
                 <SelectItem value="active" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-success" />
+                    <div className="bg-success h-2 w-2 rounded-full" />
                     {t.hr.status.active()}
                   </div>
                 </SelectItem>
                 <SelectItem value="inactive" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                    <div className="bg-muted-foreground h-2 w-2 rounded-full" />
                     {t.hr.status.inactive()}
                   </div>
                 </SelectItem>
                 <SelectItem value="on_leave" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-accent" />
+                    <div className="bg-accent h-2 w-2 rounded-full" />
                     {t.hr.status.on_leave()}
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
             {errors.status && (
-              <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.status.message)}</motion.p>
+              <motion.p
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-destructive text-xs font-medium"
+              >
+                {String(errors.status.message)}
+              </motion.p>
             )}
           </div>
         </div>
@@ -229,19 +287,29 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+        className="
+          border-border/40 bg-card/50 rounded-xl border p-8 shadow-sm
+          backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="mb-2 flex items-center gap-2">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconBook className="h-4 w-4" />
           </div>
-          <h2 className="text-xl font-serif font-semibold">{t.hr.teachers.subjectAssignment()}</h2>
+          <h2 className="font-serif text-xl font-semibold">{t.hr.teachers.subjectAssignment()}</h2>
         </div>
-        <p className="mb-8 text-sm text-muted-foreground leading-relaxed">
+        <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
           {t.hr.teachers.subjectAssignmentDescription()}
         </p>
         <div className="space-y-4">
-          <Label htmlFor="subjectIds" className="flex items-center gap-1.5 font-semibold text-foreground">
+          <Label
+            htmlFor="subjectIds"
+            className="text-foreground flex items-center gap-1.5 font-semibold"
+          >
             {t.hr.teachers.subjects()}
             <span className="text-destructive">*</span>
           </Label>
@@ -252,24 +320,38 @@ export function TeacherForm({ teacher, onSuccess }: TeacherFormProps) {
             }}
           />
           {errors.subjectIds && (
-            <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.subjectIds.message)}</motion.p>
+            <motion.p
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-destructive text-xs font-medium"
+            >
+              {String(errors.subjectIds.message)}
+            </motion.p>
           )}
         </div>
       </motion.div>
 
-      <div className="flex justify-end items-center gap-4">
+      <div className="flex items-center justify-end gap-4">
         <Button
           type="button"
           variant="ghost"
           onClick={() => onSuccess?.()}
-          className="rounded-xl px-6 hover:bg-muted font-medium"
+          className="
+            hover:bg-muted
+            rounded-xl px-6 font-medium
+          "
         >
           {t.common.cancel()}
         </Button>
         <Button
           type="submit"
           disabled={isPending}
-          className="rounded-xl px-8 min-w-[140px] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20"
+          className="
+            shadow-primary/20 min-w-[140px] rounded-xl px-8 font-semibold
+            shadow-lg transition-all
+            hover:scale-[1.02]
+            active:scale-[0.98]
+          "
         >
           {isPending
             ? (

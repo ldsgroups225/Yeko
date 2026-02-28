@@ -82,26 +82,72 @@ function SchoolClassesPage() {
   }
 
   return (
-    <div className="flex flex-col gap-8 p-4 pb-24 max-w-5xl mx-auto w-full">
-      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 px-1">
-        <div className="space-y-2 text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-2">
-            <Avatar className="h-16 w-16 sm:h-20 sm:w-20 border-2 border-border/50 shadow-2xl rounded-2xl">
-              <AvatarImage src={schoolLogo ?? undefined} alt={schoolName} className="object-cover" />
-              <AvatarFallback className="bg-linear-to-br from-primary/20 to-primary/5 text-primary rounded-2xl">
-                <IconSchool className="w-8 h-8" />
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 p-4 pb-24">
+      <header className="
+        flex flex-col justify-between gap-6 px-1
+        sm:flex-row sm:items-end
+      "
+      >
+        <div className="
+          space-y-2 text-center
+          sm:text-left
+        "
+        >
+          <div className="
+            mb-2 flex flex-col items-center gap-4
+            sm:flex-row sm:gap-6
+          "
+          >
+            <Avatar className="
+              border-border/50 h-16 w-16 rounded-2xl border-2 shadow-2xl
+              sm:h-20 sm:w-20
+            "
+            >
+              <AvatarImage
+                src={schoolLogo ?? undefined}
+                alt={schoolName}
+                className="object-cover"
+              />
+              <AvatarFallback className="
+                from-primary/20 to-primary/5 text-primary rounded-2xl
+                bg-linear-to-br
+              "
+              >
+                <IconSchool className="h-8 w-8" />
               </AvatarFallback>
             </Avatar>
-            <div className="text-center sm:text-left space-y-2">
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tighter text-foreground leading-tight">
+            <div className="
+              space-y-2 text-center
+              sm:text-left
+            "
+            >
+              <h1 className="
+                text-foreground text-3xl leading-tight font-black
+                tracking-tighter
+                sm:text-4xl
+              "
+              >
                 {schoolName}
               </h1>
-              <div className="flex items-center justify-center sm:justify-start gap-3">
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wide">
-                  <IconBook className="w-3.5 h-3.5" />
+              <div className="
+                flex items-center justify-center gap-3
+                sm:justify-start
+              "
+              >
+                <div className="
+                  bg-primary/10 text-primary flex items-center gap-1.5
+                  rounded-full px-2.5 py-1 text-xs font-bold tracking-wide
+                  uppercase
+                "
+                >
+                  <IconBook className="h-3.5 w-3.5" />
                   {LL.classes.title()}
                 </div>
-                <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
+                <span className="
+                  text-muted-foreground/60 text-xs font-bold tracking-widest
+                  uppercase
+                "
+                >
                   {LL.profile.schoolYear()}
                 </span>
               </div>
@@ -110,15 +156,31 @@ function SchoolClassesPage() {
         </div>
 
         <div className="flex justify-center">
-          <Tabs value={viewMode} onValueChange={v => setViewMode(v as 'grid' | 'list')} className="w-fit">
-            <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1">
+          <Tabs
+            value={viewMode}
+            onValueChange={v => setViewMode(v as 'grid' | 'list')}
+            className="w-fit"
+          >
+            <TabsList className="bg-muted/50 grid w-full grid-cols-2 p-1">
               <TabsTrigger value="grid" className="gap-2 px-4">
-                <IconGridDots className="w-4 h-4" />
-                <span className="hidden sm:inline">{LL.classes.grid()}</span>
+                <IconGridDots className="h-4 w-4" />
+                <span className="
+                  hidden
+                  sm:inline
+                "
+                >
+                  {LL.classes.grid()}
+                </span>
               </TabsTrigger>
               <TabsTrigger value="list" className="gap-2 px-4">
-                <IconLayoutList className="w-4 h-4" />
-                <span className="hidden sm:inline">{LL.classes.list()}</span>
+                <IconLayoutList className="h-4 w-4" />
+                <span className="
+                  hidden
+                  sm:inline
+                "
+                >
+                  {LL.classes.list()}
+                </span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -134,7 +196,11 @@ function SchoolClassesPage() {
           className={cn(
             'w-full',
             viewMode === 'grid'
-              ? 'grid gap-6 md:grid-cols-2 lg:grid-cols-3'
+              ? `
+                grid gap-6
+                md:grid-cols-2
+                lg:grid-cols-3
+              `
               : 'flex flex-col gap-4',
           )}
         >
@@ -179,26 +245,60 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
 
   const content = (
     <Card className={cn(
-      'group relative overflow-hidden border-border/40 bg-card/40 backdrop-blur-xl transition-all hover:border-primary/40 hover:bg-card/60 hover:shadow-2xl active:scale-[0.99] border cursor-pointer',
-      viewMode === 'list' && 'flex items-center min-h-20',
+      `
+        group border-border/40 bg-card/40
+        hover:border-primary/40 hover:bg-card/60
+        relative cursor-pointer overflow-hidden border backdrop-blur-xl
+        transition-all
+        hover:shadow-2xl
+        active:scale-[0.99]
+      `,
+      viewMode === 'list' && 'flex min-h-20 items-center',
     )}
     >
-      <div className="absolute -right-12 -top-12 h-32 w-32 rounded-full bg-primary/5 blur-3xl transition-opacity opacity-0 group-hover:opacity-100" />
+      <div className="
+        bg-primary/5 absolute -top-12 -right-12 h-32 w-32 rounded-full opacity-0
+        blur-3xl transition-opacity
+        group-hover:opacity-100
+      "
+      />
 
-      <CardContent className={cn('p-4 relative z-10 w-full', viewMode === 'list' && 'py-3 px-4 flex items-center justify-between gap-4')}>
+      <CardContent className={cn('relative z-10 w-full p-4', viewMode === 'list' && `
+        flex items-center justify-between gap-4 px-4 py-3
+      `)}
+      >
         {/* Header Section */}
-        <div className={cn('space-y-3 flex-1', viewMode === 'list' && 'space-y-0 flex items-center gap-6')}>
-          <div className="space-y-1 min-w-[120px]">
-            <h3 className="text-xl sm:text-2xl font-black tracking-tight text-foreground group-hover:text-primary transition-colors">
+        <div className={cn('flex-1 space-y-3', viewMode === 'list' && `
+          flex items-center gap-6 space-y-0
+        `)}
+        >
+          <div className="min-w-[120px] space-y-1">
+            <h3 className="
+              text-foreground
+              group-hover:text-primary
+              text-xl font-black tracking-tight transition-colors
+              sm:text-2xl
+            "
+            >
               {classData.name}
             </h3>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-muted/30 text-[10px] uppercase tracking-widest font-black h-5 px-1.5">
+              <Badge
+                variant="outline"
+                className="
+                  bg-muted/30 h-5 px-1.5 text-[10px] font-black tracking-widest
+                  uppercase
+                "
+              >
                 {classData.gradeName}
               </Badge>
               {classData.isHomeroomTeacher && (
-                <Badge className="bg-primary/20 text-primary border-none text-[9px] uppercase tracking-tighter font-black h-5 px-1.5">
-                  <IconStar className="w-2.5 h-2.5 mr-1 fill-current" />
+                <Badge className="
+                  bg-primary/20 text-primary h-5 border-none px-1.5 text-[9px]
+                  font-black tracking-tighter uppercase
+                "
+                >
+                  <IconStar className="mr-1 h-2.5 w-2.5 fill-current" />
                   {LL.classes.homeroom()}
                 </Badge>
               )}
@@ -208,28 +308,55 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
           {/* Stats Grid */}
           <div className={cn(
             'w-full',
-            viewMode === 'grid' ? 'grid grid-cols-2 gap-3 pt-2' : 'flex flex-wrap items-center gap-8',
+            viewMode === 'grid'
+              ? 'grid grid-cols-2 gap-3 pt-2'
+              : `flex flex-wrap items-center gap-8`,
           )}
           >
             {/* Students & Gender - Full width in grid */}
-            <div className={cn('flex items-center gap-3', viewMode === 'grid' && 'col-span-2 bg-muted/20 p-2 rounded-lg border border-border/40')}>
+            <div className={cn('flex items-center gap-3', viewMode === 'grid' && `
+              bg-muted/20 border-border/40 col-span-2 rounded-lg border p-2
+            `)}
+            >
               {viewMode === 'grid' && (
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <IconUsers className="w-4 h-4" />
+                <div className="
+                  bg-primary/10 text-primary flex h-8 w-8 items-center
+                  justify-center rounded-lg
+                "
+                >
+                  <IconUsers className="h-4 w-4" />
                 </div>
               )}
-              <div className="flex flex-row items-center justify-between w-full gap-2">
+              <div className="
+                flex w-full flex-row items-center justify-between gap-2
+              "
+              >
                 <div className="flex flex-col">
-                  <span className="text-sm font-black leading-none">{classData.studentCount}</span>
-                  <span className="text-[9px] font-bold text-muted-foreground uppercase">{LL.classes.students()}</span>
+                  <span className="text-sm leading-none font-black">{classData.studentCount}</span>
+                  <span className="
+                    text-muted-foreground text-[9px] font-bold uppercase
+                  "
+                  >
+                    {LL.classes.students()}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 bg-blue-500/10 px-1.5 py-1 rounded-md text-[10px] font-bold text-blue-600 dark:text-blue-400">
-                    <IconMars className="w-3 h-3" />
+                  <div className="
+                    flex items-center gap-1 rounded-md bg-blue-500/10 px-1.5
+                    py-1 text-[10px] font-bold text-blue-600
+                    dark:text-blue-400
+                  "
+                  >
+                    <IconMars className="h-3 w-3" />
                     {classData.boysCount}
                   </div>
-                  <div className="flex items-center gap-1 bg-pink-500/10 px-1.5 py-1 rounded-md text-[10px] font-bold text-pink-600 dark:text-pink-400">
-                    <IconVenus className="w-3 h-3" />
+                  <div className="
+                    flex items-center gap-1 rounded-md bg-pink-500/10 px-1.5
+                    py-1 text-[10px] font-bold text-pink-600
+                    dark:text-pink-400
+                  "
+                  >
+                    <IconVenus className="h-3 w-3" />
                     {classData.girlsCount}
                   </div>
                 </div>
@@ -237,32 +364,55 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
             </div>
 
             {/* Average */}
-            <div className={cn('flex items-center gap-2.5', viewMode === 'grid' && 'bg-muted/10 p-2 rounded-lg border border-border/40')}>
+            <div className={cn('flex items-center gap-2.5', viewMode === 'grid' && `
+              bg-muted/10 border-border/40 rounded-lg border p-2
+            `)}
+            >
               {viewMode === 'grid' && (
-                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground">
-                  <IconChartBar className="w-3.5 h-3.5" />
+                <div className="
+                  bg-muted text-muted-foreground flex h-7 w-7 items-center
+                  justify-center rounded-md
+                "
+                >
+                  <IconChartBar className="h-3.5 w-3.5" />
                 </div>
               )}
               <div className="flex flex-col">
-                <span className={cn('text-sm font-black leading-none', averageColor)}>
+                <span className={cn('text-sm leading-none font-black', averageColor)}>
                   {classData.classAverage ? classData.classAverage.toFixed(2) : LL.common.notAvailable()}
                 </span>
-                <span className="text-[8px] font-bold text-muted-foreground uppercase mt-0.5">
+                <span className="
+                  text-muted-foreground mt-0.5 text-[8px] font-bold uppercase
+                "
+                >
                   {LL.classes.average()}
                 </span>
               </div>
             </div>
 
             {/* Subjects */}
-            <div className={cn('flex items-center gap-2.5', viewMode === 'grid' && 'bg-muted/10 p-2 rounded-lg border border-border/40', viewMode === 'list' && 'hidden lg:flex')}>
+            <div className={cn('flex items-center gap-2.5', viewMode === 'grid' && `
+              bg-muted/10 border-border/40 rounded-lg border p-2
+            `, viewMode === 'list' && `
+              hidden
+              lg:flex
+            `)}
+            >
               {viewMode === 'grid' && (
-                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-muted text-muted-foreground">
-                  <IconBook className="w-3.5 h-3.5" />
+                <div className="
+                  bg-muted text-muted-foreground flex h-7 w-7 items-center
+                  justify-center rounded-md
+                "
+                >
+                  <IconBook className="h-3.5 w-3.5" />
                 </div>
               )}
               <div className="flex flex-col">
-                <span className="text-sm font-black leading-none">{classData.subjectCount}</span>
-                <span className="text-[8px] font-bold text-muted-foreground uppercase mt-0.5">
+                <span className="text-sm leading-none font-black">{classData.subjectCount}</span>
+                <span className="
+                  text-muted-foreground mt-0.5 text-[8px] font-bold uppercase
+                "
+                >
                   {LL.classes.subjects()}
                 </span>
               </div>
@@ -271,14 +421,26 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
         </div>
 
         {viewMode === 'list' && (
-          <div className="hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted/30 text-muted-foreground transition-all group-hover:bg-primary/10 group-hover:text-primary group-hover:scale-110">
-            <IconChevronRight className="w-5 h-5" />
+          <div className="
+            bg-muted/30 text-muted-foreground
+            group-hover:bg-primary/10 group-hover:text-primary
+            hidden h-9 w-9 shrink-0 items-center justify-center rounded-full
+            transition-all
+            group-hover:scale-110
+            sm:flex
+          "
+          >
+            <IconChevronRight className="h-5 w-5" />
           </div>
         )}
 
         {viewMode === 'grid' && (
-          <div className="absolute right-4 bottom-4 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
-            <IconChevronRight className="w-5 h-5 text-primary" />
+          <div className="
+            absolute right-4 bottom-4 translate-x-2 opacity-0 transition-all
+            group-hover:translate-x-0 group-hover:opacity-100
+          "
+          >
+            <IconChevronRight className="text-primary h-5 w-5" />
           </div>
         )}
       </CardContent>
@@ -300,21 +462,38 @@ function ClassCard({ classData, viewMode, schoolId }: ClassCardProps) {
 function EmptyClassesState({ schoolName }: { schoolName: string }) {
   const { LL } = useI18nContext()
   return (
-    <div className="flex min-h-[70vh] flex-col items-center justify-center gap-8 p-4 text-center">
+    <div className="
+      flex min-h-[70vh] flex-col items-center justify-center gap-8 p-4
+      text-center
+    "
+    >
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', damping: 15 }}
         className="relative"
       >
-        <div className="absolute inset-0 rounded-full bg-primary/20 blur-[100px]" />
-        <div className="relative rounded-[2.5rem] bg-card/50 border border-border/50 p-12 shadow-2xl backdrop-blur-2xl">
-          <IconBook className="h-20 w-20 text-primary opacity-40" />
+        <div className="
+          bg-primary/20 absolute inset-0 rounded-full blur-[100px]
+        "
+        />
+        <div className="
+          bg-card/50 border-border/50 relative rounded-[2.5rem] border p-12
+          shadow-2xl backdrop-blur-2xl
+        "
+        >
+          <IconBook className="text-primary h-20 w-20 opacity-40" />
         </div>
       </motion.div>
-      <div className="space-y-4 max-w-sm px-6">
+      <div className="max-w-sm space-y-4 px-6">
         <div className="space-y-2">
-          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-3">
+          <Badge
+            variant="outline"
+            className="
+              bg-primary/5 text-primary border-primary/20 px-3 text-[10px]
+              font-black tracking-widest uppercase
+            "
+          >
             {schoolName}
           </Badge>
           <h2 className="text-3xl font-black tracking-tight">{LL.classes.noClasses()}</h2>
@@ -329,20 +508,45 @@ function EmptyClassesState({ schoolName }: { schoolName: string }) {
 
 function ClassesPageSkeleton() {
   return (
-    <div className="flex flex-col gap-8 p-4 pb-24 max-w-5xl mx-auto w-full">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 px-1">
-        <div className="space-y-4 text-center sm:text-left">
-          <Skeleton className="h-3 w-32 rounded-full mx-auto sm:mx-0" />
-          <Skeleton className="h-12 w-64 rounded-xl mx-auto sm:mx-0" />
-          <Skeleton className="h-4 w-80 rounded-lg mx-auto sm:mx-0" />
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 p-4 pb-24">
+      <div className="
+        flex flex-col justify-between gap-6 px-1
+        sm:flex-row sm:items-end
+      "
+      >
+        <div className="
+          space-y-4 text-center
+          sm:text-left
+        "
+        >
+          <Skeleton className="
+            mx-auto h-3 w-32 rounded-full
+            sm:mx-0
+          "
+          />
+          <Skeleton className="
+            mx-auto h-12 w-64 rounded-xl
+            sm:mx-0
+          "
+          />
+          <Skeleton className="
+            mx-auto h-4 w-80 rounded-lg
+            sm:mx-0
+          "
+          />
         </div>
         <Skeleton className="h-10 w-48 rounded-lg" />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+        lg:grid-cols-3
+      "
+      >
         {[1, 2, 3, 4, 5, 6].map(i => (
-          <Card key={i} className="overflow-hidden border-border/40 bg-card/30">
-            <CardContent className="p-6 space-y-6">
+          <Card key={i} className="border-border/40 bg-card/30 overflow-hidden">
+            <CardContent className="space-y-6 p-6">
               <div className="space-y-3">
                 <Skeleton className="h-8 w-3/4 rounded-lg" />
                 <div className="flex gap-2">

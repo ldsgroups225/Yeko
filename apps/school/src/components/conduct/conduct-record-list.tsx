@@ -52,14 +52,20 @@ export function ConductRecordList({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm p-12 flex flex-col items-center text-center"
+        className="
+          border-border/60 bg-card/20 flex flex-col items-center rounded-3xl
+          border border-dashed p-12 text-center backdrop-blur-sm
+        "
       >
-        <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
-          <IconFileAlert className="size-12 text-muted-foreground/20" />
+        <div className="bg-background/50 mb-6 rounded-full p-6 shadow-inner">
+          <IconFileAlert className="text-muted-foreground/20 size-12" />
         </div>
-        <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.conduct.noRecords()}</h3>
-        <p className="text-sm text-muted-foreground max-w-xs mb-8">{t.conduct.noRecordsDescription()}</p>
-        <Button className="rounded-2xl h-12 px-8 font-black uppercase tracking-widest text-[10px]">
+        <h3 className="text-muted-foreground mb-2 text-xl font-bold">{t.conduct.noRecords()}</h3>
+        <p className="text-muted-foreground mb-8 max-w-xs text-sm">{t.conduct.noRecordsDescription()}</p>
+        <Button className="
+          h-12 rounded-2xl px-8 text-[10px] font-black tracking-widest uppercase
+        "
+        >
           <IconPlus className="mr-2 h-4 w-4" />
           {t.common.create()}
         </Button>
@@ -68,7 +74,12 @@ export function ConductRecordList({
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="
+      grid gap-6
+      md:grid-cols-2
+      lg:grid-cols-3
+    "
+    >
       {records.map(record => (
         <ConductRecordCard
           key={record.id}
@@ -84,7 +95,12 @@ export function ConductRecordList({
 
 function ConductRecordListSkeleton() {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="
+      grid gap-6
+      md:grid-cols-2
+      lg:grid-cols-3
+    "
+    >
       {Array.from({ length: 6 }).map(() => (
         <Skeleton key={generateUUID()} className="h-[220px] w-full rounded-3xl" />
       ))}

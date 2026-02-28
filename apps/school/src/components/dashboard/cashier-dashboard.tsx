@@ -39,7 +39,11 @@ export function CashierDashboard() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+        className="
+          grid gap-4
+          md:grid-cols-2
+          lg:grid-cols-4
+        "
       >
         <MetricCard
           title={t.dashboard.cashier.dailyCollections()}
@@ -68,17 +72,27 @@ export function CashierDashboard() {
       </motion.div>
 
       {/* Quick Payment Form */}
-      <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
+      <motion.div
+        variants={item}
+        className="border-border/40 bg-card rounded-lg border p-6"
+      >
         <h2 className="mb-4 text-lg font-semibold">{t.dashboard.cashier.recordPayment()}</h2>
         <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="
+            grid gap-4
+            sm:grid-cols-2
+          "
+          >
             <div className="space-y-2">
               <label htmlFor="student-matricule" className="text-sm font-medium">{t.dashboard.cashier.studentMatricule()}</label>
               <input
                 id="student-matricule"
                 type="text"
                 placeholder={t.placeholders.studentMatricule()}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="
+                  border-input bg-background w-full rounded-md border px-3 py-2
+                  text-sm
+                "
               />
             </div>
             <div className="space-y-2">
@@ -87,7 +101,10 @@ export function CashierDashboard() {
                 id="payment-amount"
                 type="number"
                 placeholder="45000"
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="
+                  border-input bg-background w-full rounded-md border px-3 py-2
+                  text-sm
+                "
               />
             </div>
           </div>
@@ -95,7 +112,11 @@ export function CashierDashboard() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.95 }}
             type="button"
-            className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+            className="
+              bg-primary text-primary-foreground
+              hover:bg-primary/90
+              rounded-md px-4 py-2 text-sm font-medium
+            "
           >
             {t.dashboard.cashier.recordPayment()}
           </motion.button>
@@ -103,7 +124,10 @@ export function CashierDashboard() {
       </motion.div>
 
       {/* Recent Payments */}
-      <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
+      <motion.div
+        variants={item}
+        className="border-border/40 bg-card rounded-lg border p-6"
+      >
         <h2 className="mb-4 text-lg font-semibold">{t.dashboard.cashier.recentPayments()}</h2>
         <div className="space-y-3">
           <PaymentItem
@@ -148,15 +172,19 @@ function MetricCard({ title, value, currency, icon: Icon }: MetricCardProps) {
     <motion.div
       variants={item}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className="rounded-lg border border-border/40 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+      className="
+        border-border/40 bg-card rounded-lg border p-6 shadow-sm
+        transition-shadow
+        hover:shadow-md
+      "
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <h3 className="text-muted-foreground text-sm font-medium">{title}</h3>
+        <Icon className="text-muted-foreground h-4 w-4" />
       </div>
       <div className="mt-2">
         <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{currency}</p>
+        <p className="text-muted-foreground text-xs">{currency}</p>
       </div>
     </motion.div>
   )
@@ -174,11 +202,15 @@ interface PaymentItemProps {
 function PaymentItem({ name, matricule, amount, method, time, status }: PaymentItemProps) {
   const t = useTranslations()
   return (
-    <div className="flex items-center justify-between rounded-md border border-border/40 bg-background p-4">
+    <div className="
+      border-border/40 bg-background flex items-center justify-between
+      rounded-md border p-4
+    "
+    >
       <div className="space-y-1">
         <p className="text-sm font-medium">{name}</p>
-        <p className="text-xs text-muted-foreground">{matricule}</p>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">{matricule}</p>
+        <p className="text-muted-foreground text-xs">
           {method}
           {' '}
           •
@@ -192,10 +224,13 @@ function PaymentItem({ name, matricule, amount, method, time, status }: PaymentI
           FCFA
         </p>
         <span
-          className={`text-xs ${status === 'completed'
-            ? 'text-success'
-            : 'text-accent-foreground'
-          }`}
+          className={`
+            text-xs
+            ${status === 'completed'
+      ? 'text-success'
+      : 'text-accent-foreground'
+    }
+          `}
         >
           {status === 'completed' ? t.dashboard.cashier.completed() : t.dashboard.cashier.pending()}
         </span>

@@ -111,7 +111,11 @@ function ReportCardTemplatesSettingsPage() {
       <div className="flex justify-end">
         <Button
           onClick={() => setIsCreateDialogOpen(true)}
-          className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90"
+          className="
+            shadow-primary/20 bg-primary
+            hover:bg-primary/90
+            rounded-xl shadow-lg
+          "
         >
           <IconPlus className="mr-2 h-4 w-4" />
           {t.common.create()}
@@ -124,10 +128,18 @@ function ReportCardTemplatesSettingsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
-          <CardHeader className="border-b border-border/40 bg-muted/5">
-            <CardTitle className="flex items-center gap-2 text-xl font-bold uppercase tracking-wider text-muted-foreground">
-              <IconFileText className="h-5 w-5 text-primary" />
+        <Card className="
+          border-border/40 bg-card/40 overflow-hidden rounded-3xl border
+          shadow-sm backdrop-blur-xl
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
+            <CardTitle className="
+              text-muted-foreground flex items-center gap-2 text-xl font-bold
+              tracking-wider uppercase
+            "
+            >
+              <IconFileText className="text-primary h-5 w-5" />
               {t.settings.reportCards.title()}
             </CardTitle>
             <CardDescription className="text-muted-foreground/80">
@@ -150,14 +162,27 @@ function ReportCardTemplatesSettingsPage() {
                 ? (
                     <Table>
                       <TableHeader className="bg-muted/50">
-                        <TableRow className="hover:bg-transparent border-border/40">
-                          <TableHead className="font-semibold text-muted-foreground pl-6">
+                        <TableRow className="
+                          border-border/40
+                          hover:bg-transparent
+                        "
+                        >
+                          <TableHead className="
+                            text-muted-foreground pl-6 font-semibold
+                          "
+                          >
                             {t.common.name()}
                           </TableHead>
-                          <TableHead className="font-semibold text-muted-foreground">
+                          <TableHead className="
+                            text-muted-foreground font-semibold
+                          "
+                          >
                             {t.common.status()}
                           </TableHead>
-                          <TableHead className="text-right font-semibold text-muted-foreground pr-6">
+                          <TableHead className="
+                            text-muted-foreground pr-6 text-right font-semibold
+                          "
+                          >
                             {t.common.actions()}
                           </TableHead>
                         </TableRow>
@@ -170,9 +195,16 @@ function ReportCardTemplatesSettingsPage() {
                               initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.05 }}
-                              className="group hover:bg-muted/30 border-border/40 transition-colors"
+                              className="
+                                group
+                                hover:bg-muted/30
+                                border-border/40 transition-colors
+                              "
                             >
-                              <TableCell className="font-bold pl-6 text-foreground">
+                              <TableCell className="
+                                text-foreground pl-6 font-bold
+                              "
+                              >
                                 {template.name}
                               </TableCell>
                               <TableCell>
@@ -180,26 +212,40 @@ function ReportCardTemplatesSettingsPage() {
                                   ? (
                                       <Badge
                                         variant="default"
-                                        className="gap-1 bg-green-500/15 text-green-700 hover:bg-green-500/25 border-green-200 dark:border-green-800 dark:text-green-400 rounded-lg pr-3 pl-3"
+                                        className="
+                                          gap-1 rounded-lg border-green-200
+                                          bg-green-500/15 pr-3 pl-3
+                                          text-green-700
+                                          hover:bg-green-500/25
+                                          dark:border-green-800
+                                          dark:text-green-400
+                                        "
                                       >
                                         <IconCircleCheck className="h-3.5 w-3.5" />
                                         Default
                                       </Badge>
                                     )
                                   : (
-                                      <span className="text-muted-foreground text-sm">
+                                      <span className="
+                                        text-muted-foreground text-sm
+                                      "
+                                      >
                                         -
                                       </span>
                                     )}
                               </TableCell>
-                              <TableCell className="text-right pr-6">
+                              <TableCell className="pr-6 text-right">
                                 <DropdownMenu>
                                   <DropdownMenuTrigger
                                     render={(
                                       <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="
+                                          h-8 w-8 rounded-lg opacity-0
+                                          transition-opacity
+                                          group-hover:opacity-100
+                                        "
                                       >
                                         <IconDots className="h-4 w-4" />
                                       </Button>
@@ -207,22 +253,39 @@ function ReportCardTemplatesSettingsPage() {
                                   />
                                   <DropdownMenuContent
                                     align="end"
-                                    className="rounded-xl border-border/40 bg-card/95 backdrop-blur-xl shadow-xl w-48"
+                                    className="
+                                      border-border/40 bg-card/95 w-48
+                                      rounded-xl shadow-xl backdrop-blur-xl
+                                    "
                                   >
                                     {!template.isDefault && (
                                       <DropdownMenuItem
                                         onClick={() =>
                                           setDefaultMutation.mutate(template.id)}
                                         disabled={setDefaultMutation.isPending}
-                                        className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+                                        className="
+                                          focus:bg-primary/10
+                                          cursor-pointer rounded-lg font-medium
+                                        "
                                       >
-                                        <IconCircleCheck className="mr-2 h-4 w-4 text-green-600" />
+                                        <IconCircleCheck className="
+                                          mr-2 h-4 w-4 text-green-600
+                                        "
+                                        />
                                         {t.settings.reportCards.isDefault()}
                                       </DropdownMenuItem>
                                     )}
-                                    <DropdownMenuSeparator className="bg-border/40" />
+                                    <DropdownMenuSeparator className="
+                                      bg-border/40
+                                    "
+                                    />
                                     <DropdownMenuItem
-                                      className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+                                      className="
+                                        text-destructive
+                                        focus:bg-destructive/10
+                                        focus:text-destructive
+                                        cursor-pointer rounded-lg font-medium
+                                      "
                                       onClick={() => setDeleteConfirmId(template.id)}
                                     >
                                       <IconTrash className="mr-2 h-4 w-4" />
@@ -238,15 +301,25 @@ function ReportCardTemplatesSettingsPage() {
                     </Table>
                   )
                 : (
-                    <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
-                      <div className="p-4 rounded-full bg-muted/20">
-                        <IconFileText className="h-10 w-10 text-muted-foreground/50" />
+                    <div className="
+                      flex flex-col items-center justify-center space-y-4 py-16
+                      text-center
+                    "
+                    >
+                      <div className="bg-muted/20 rounded-full p-4">
+                        <IconFileText className="
+                          text-muted-foreground/50 h-10 w-10
+                        "
+                        />
                       </div>
                       <div className="space-y-1">
-                        <h3 className="text-lg font-bold text-foreground">
+                        <h3 className="text-foreground text-lg font-bold">
                           {t.empty.noResults()}
                         </h3>
-                        <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                        <p className="
+                          text-muted-foreground mx-auto max-w-sm text-sm
+                        "
+                        >
                           {t.settings.reportCards.createDescription()}
                         </p>
                       </div>
@@ -275,7 +348,12 @@ function ReportCardTemplatesSettingsPage() {
         open={!!deleteConfirmId}
         onOpenChange={() => setDeleteConfirmId(null)}
       >
-        <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6 sm:max-w-[425px]">
+        <DialogContent className="
+          bg-card/95 border-border/40 rounded-3xl p-6 shadow-2xl
+          backdrop-blur-xl
+          sm:max-w-[425px]
+        "
+        >
           <DialogHeader>
             <DialogTitle className="text-xl font-bold">
               {t.settings.reportCards.deleteTitle()}
@@ -284,11 +362,15 @@ function ReportCardTemplatesSettingsPage() {
               {t.settings.reportCards.deleteDescription()}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="
+            gap-2
+            sm:gap-0
+          "
+          >
             <Button
               variant="outline"
               onClick={() => setDeleteConfirmId(null)}
-              className="rounded-xl border-border/40"
+              className="border-border/40 rounded-xl"
             >
               {t.common.cancel()}
             </Button>
@@ -297,7 +379,7 @@ function ReportCardTemplatesSettingsPage() {
               onClick={() =>
                 deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
               disabled={deleteMutation.isPending}
-              className="rounded-xl shadow-lg shadow-destructive/20"
+              className="shadow-destructive/20 rounded-xl shadow-lg"
             >
               {deleteMutation.isPending && (
                 <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -367,20 +449,29 @@ function CreateTemplateDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6 sm:max-w-[500px]">
+      <DialogContent className="
+        bg-card/95 border-border/40 rounded-3xl p-6 shadow-2xl backdrop-blur-xl
+        sm:max-w-[500px]
+      "
+      >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black tracking-tight uppercase italic">
+          <DialogTitle className="
+            text-2xl font-black tracking-tight uppercase italic
+          "
+          >
             {t.settings.reportCards.createTitle()}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground/80 font-medium">
             {t.settings.reportCards.createDescription()}
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-6">
           <div className="space-y-2">
             <Label
               htmlFor="name"
-              className="text-xs uppercase font-bold tracking-wider text-muted-foreground"
+              className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
             >
               {t.settings.reportCards.templateName()}
             </Label>
@@ -393,35 +484,47 @@ function CreateTemplateDialog({
             />
           </div>
 
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/10 border border-border/40">
+          <div className="
+            bg-muted/10 border-border/40 flex items-center gap-3 rounded-xl
+            border p-4
+          "
+          >
             <input
               type="checkbox"
               id="isDefault"
               checked={isDefault}
               onChange={e => setIsDefault(e.target.checked)}
-              className="h-5 w-5 rounded-md border-border/40 text-primary focus:ring-primary/20 bg-muted/20"
+              className="
+                border-border/40 text-primary
+                focus:ring-primary/20
+                bg-muted/20 h-5 w-5 rounded-md
+              "
             />
             <Label
               htmlFor="isDefault"
-              className="text-sm font-medium cursor-pointer select-none"
+              className="cursor-pointer text-sm font-medium select-none"
             >
               {t.settings.reportCards.setAsDefault()}
             </Label>
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0 pt-2">
+          <DialogFooter className="
+            gap-2 pt-2
+            sm:gap-0
+          "
+          >
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="rounded-xl border-border/40"
+              className="border-border/40 rounded-xl"
             >
               {t.common.cancel()}
             </Button>
             <Button
               type="submit"
               disabled={createMutation.isPending}
-              className="rounded-xl shadow-lg shadow-primary/20"
+              className="shadow-primary/20 rounded-xl shadow-lg"
             >
               {createMutation.isPending && (
                 <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />

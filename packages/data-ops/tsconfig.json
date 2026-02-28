@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@repo/data-ops/*": ["./src/*"]
     },
     "types": ["@cloudflare/workers-types", "vitest/globals", "node"],
     "allowImportingTsExtensions": false,
-    "declaration": true,
     "declarationMap": false,
+    "emitDeclarationOnly": true,
     "noEmit": false,
     "outDir": "./dist",
     "module": "ESNext",
@@ -19,5 +20,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["**/*.ts", "**/*.tsx", "scripts/listUsers.mjs"]
+  "references": [
+    { "path": "../logger" }
+  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "config/**/*.ts", "scripts/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }

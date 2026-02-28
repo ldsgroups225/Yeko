@@ -1,9 +1,13 @@
+import type { ServerFnAfterMiddleware as _FixTS2742 } from '@tanstack/start-client-core'
 import type { TranslationFunctions } from '../../i18n/i18n-types'
 import { DatabaseError } from '@repo/data-ops/errors'
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
 import { getServerTranslations } from '../../lib/i18n-server'
 import { getAuthContext } from '../middleware/auth'
 import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
+
+export { createServerFn } from '@tanstack/react-start'
+export type { _FixTS2742 }
 
 export interface ServerContext {
   auth: { userId: string, email: string, name: string }

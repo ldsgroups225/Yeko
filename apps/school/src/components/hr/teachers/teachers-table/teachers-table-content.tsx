@@ -54,10 +54,13 @@ export function TeachersTableContent() {
         header: t.hr.teachers.name(),
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-semibold text-foreground">
+            <span className="text-foreground font-semibold">
               {row.original.user.name}
             </span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+            <div className="
+              text-muted-foreground mt-0.5 flex items-center gap-1.5 text-xs
+            "
+            >
               <IconMail className="h-3 w-3" />
               {row.original.user.email}
             </div>
@@ -68,24 +71,27 @@ export function TeachersTableContent() {
         accessorKey: 'subjects',
         header: t.hr.teachers.subjects(),
         cell: ({ row }) => (
-          <div className="flex flex-wrap gap-1.5 max-w-[240px]">
+          <div className="flex max-w-[240px] flex-wrap gap-1.5">
             {row.original.subjects && row.original.subjects.length > 0
               ? (
                   row.original.subjects.slice(0, 3).map((subject: string) => (
                     <Badge
                       key={subject}
                       variant="outline"
-                      className="bg-primary/5 border-primary/10 text-primary text-[10px] font-medium px-2 py-0"
+                      className="
+                        bg-primary/5 border-primary/10 text-primary px-2 py-0
+                        text-[10px] font-medium
+                      "
                     >
                       {subject}
                     </Badge>
                   ))
                 )
               : (
-                  <span className="text-sm text-muted-foreground">-</span>
+                  <span className="text-muted-foreground text-sm">-</span>
                 )}
             {row.original.subjects && row.original.subjects.length > 3 && (
-              <Badge variant="outline" className="text-[10px] px-1.5 py-0">
+              <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
                 +
                 {' '}
                 {row.original.subjects.length - 3}
@@ -99,7 +105,7 @@ export function TeachersTableContent() {
         header: t.hr.teachers.specialization(),
         cell: ({ row }) => (
           <div className="flex items-center gap-2 text-sm">
-            <IconBook className="h-3.5 w-3.5 text-muted-foreground" />
+            <IconBook className="text-muted-foreground h-3.5 w-3.5" />
             <span className="font-medium">
               {row.original.specialization || '-'}
             </span>
@@ -119,7 +125,11 @@ export function TeachersTableContent() {
           return (
             <Badge
               variant="outline"
-              className={`rounded-full border ${variants[status]} transition-colors`}
+              className={`
+                rounded-full border
+                ${variants[status]}
+                transition-colors
+              `}
             >
               {{
                 active: t.hr.status.active,
@@ -134,7 +144,7 @@ export function TeachersTableContent() {
         accessorKey: 'hireDate',
         header: t.hr.teachers.hireDate(),
         cell: ({ row }) => (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <IconCalendar className="h-3.5 w-3.5" />
             {row.original.hireDate
               ? formatDate(row.original.hireDate, 'MEDIUM')
@@ -151,7 +161,10 @@ export function TeachersTableContent() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="hover:bg-primary/10 hover:text-primary transition-colors"
+                  className="
+                    hover:bg-primary/10 hover:text-primary
+                    transition-colors
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     e.preventDefault()
@@ -163,7 +176,9 @@ export function TeachersTableContent() {
             />
             <DropdownMenuContent
               align="end"
-              className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
+              className="
+                bg-popover/90 border-border/40 min-w-[160px] backdrop-blur-2xl
+              "
             >
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
@@ -173,7 +188,12 @@ export function TeachersTableContent() {
                 <IconEdit className="h-4 w-4" />
                 {t.common.edit()}
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10">
+              <DropdownMenuItem className="
+                text-destructive
+                focus:text-destructive focus:bg-destructive/10
+                cursor-pointer gap-2
+              "
+              >
                 <IconTrash className="h-4 w-4" />
                 {t.common.delete()}
               </DropdownMenuItem>
@@ -225,18 +245,26 @@ export function TeachersTableContent() {
   }
 
   return (
-    <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden">
+    <div className="
+      border-border/40 bg-background/30 overflow-hidden rounded-xl border
+    "
+    >
       <Table>
         <TableHeader className="bg-muted/50 backdrop-blur-md">
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow
               key={headerGroup.id}
-              className="hover:bg-transparent border-border/40"
+              className="
+                border-border/40
+                hover:bg-transparent
+              "
             >
               {headerGroup.headers.map(header => (
                 <TableHead
                   key={header.id}
-                  className="text-xs uppercase tracking-wider font-semibold py-4"
+                  className="
+                    py-4 text-xs font-semibold tracking-wider uppercase
+                  "
                 >
                   {header.isPlaceholder
                     ? null
@@ -262,7 +290,11 @@ export function TeachersTableContent() {
                   delay: index * 0.03,
                   ease: 'easeOut',
                 }}
-                className="group hover:bg-primary/5 transition-colors border-border/40 cursor-pointer"
+                className="
+                  group
+                  hover:bg-primary/5
+                  border-border/40 cursor-pointer transition-colors
+                "
                 onClick={() =>
                   navigate({ to: `/users/teachers/${row.original.id}` })}
               >

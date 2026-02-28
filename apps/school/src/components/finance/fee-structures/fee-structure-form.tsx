@@ -62,14 +62,22 @@ export function FeeStructureForm({
           name="feeTypeId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t('finance.feeStructures.feeType')}
                 {' '}
                 *
               </FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                  <SelectTrigger className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
+                  >
                     <SelectValue>
                       {selectedFeeType
                         ? (
@@ -89,12 +97,19 @@ export function FeeStructureForm({
                     </SelectValue>
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+                <SelectContent className="
+                  bg-popover/95 border-border/40 rounded-xl shadow-xl
+                  backdrop-blur-xl
+                "
+                >
                   {feeTypeList?.map(ft => (
                     <SelectItem
                       key={ft.id}
                       value={ft.id}
-                      className="rounded-lg cursor-pointer focus:bg-primary/10"
+                      className="
+                        focus:bg-primary/10
+                        cursor-pointer rounded-lg
+                      "
                     >
                       {ft.name}
                       {' '}
@@ -116,7 +131,11 @@ export function FeeStructureForm({
             name="gradeId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                <FormLabel className="
+                  text-muted-foreground text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t('finance.feeStructures.grade')}
                   {' '}
                   (
@@ -128,7 +147,12 @@ export function FeeStructureForm({
                   value={field.value ?? 'all'}
                 >
                   <FormControl>
-                    <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                    <SelectTrigger className="
+                      border-border/40 bg-muted/20
+                      focus:bg-background
+                      rounded-xl transition-colors
+                    "
+                    >
                       <SelectValue placeholder={t('finance.feeStructures.allLevels')}>
                         {field.value === 'all'
                           ? t('finance.feeStructures.allLevels')
@@ -157,7 +181,11 @@ export function FeeStructureForm({
             name="seriesId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                <FormLabel className="
+                  text-muted-foreground text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t('finance.feeStructures.series')}
                   {' '}
                   (
@@ -169,7 +197,12 @@ export function FeeStructureForm({
                   value={field.value ?? 'all'}
                 >
                   <FormControl>
-                    <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                    <SelectTrigger className="
+                      border-border/40 bg-muted/20
+                      focus:bg-background
+                      rounded-xl transition-colors
+                    "
+                    >
                       <SelectValue placeholder={t('finance.feeStructures.allSeries')}>
                         {field.value === 'all'
                           ? t('finance.feeStructures.allSeries')
@@ -197,7 +230,10 @@ export function FeeStructureForm({
           name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t('finance.feeStructures.amount')}
                 {' '}
                 *
@@ -208,7 +244,11 @@ export function FeeStructureForm({
                   type="text"
                   placeholder="0.00"
                   value={field.value ?? ''}
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormMessage />
@@ -221,7 +261,10 @@ export function FeeStructureForm({
           name="newStudentAmount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t('finance.feeStructures.newStudentAmount')}
               </FormLabel>
               <FormControl>
@@ -230,7 +273,11 @@ export function FeeStructureForm({
                   type="text"
                   placeholder="0.00"
                   value={field.value ?? ''}
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormMessage />
@@ -243,7 +290,10 @@ export function FeeStructureForm({
           name="effectiveDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t('finance.feeStructures.effectiveDate')}
               </FormLabel>
               <FormControl>
@@ -251,7 +301,11 @@ export function FeeStructureForm({
                   date={field.value ? new Date(field.value) : undefined}
                   onSelect={(date: Date | undefined) => field.onChange(date ? (date.toISOString().split('T')[0] ?? '') : null)}
                   placeholder={t('finance.feeStructures.effectiveDate')}
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormMessage />
@@ -264,14 +318,14 @@ export function FeeStructureForm({
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="rounded-xl border-border/40"
+            className="border-border/40 rounded-xl"
           >
             {t('common.cancel')}
           </Button>
           <Button
             type="submit"
             disabled={isPending}
-            className="rounded-xl shadow-lg shadow-primary/20"
+            className="shadow-primary/20 rounded-xl shadow-lg"
           >
             {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t('common.save')}

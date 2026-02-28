@@ -24,7 +24,10 @@ function TimetableImportDialogInner() {
   const { handleClose, handleImport } = actions
 
   return (
-    <DialogContent className="max-w-4xl backdrop-blur-xl bg-card/95 border-border/40">
+    <DialogContent className="
+      bg-card/95 border-border/40 max-w-4xl backdrop-blur-xl
+    "
+    >
       <DialogHeader>
         <DialogTitle>{t.timetables.importTitle()}</DialogTitle>
         <DialogDescription>
@@ -68,7 +71,7 @@ function TimetableImportDialogInner() {
 export function TimetableImportDialog(props: TimetableImportProps) {
   return (
     <Dialog open={props.open} onOpenChange={props.onOpenChange}>
-      <Suspense fallback={<IconLoader2 className="h-8 w-8 animate-spin mx-auto" />}>
+      <Suspense fallback={<IconLoader2 className="mx-auto h-8 w-8 animate-spin" />}>
         <TimetableImportProvider {...props}>
           <TimetableImportDialogInner />
         </TimetableImportProvider>

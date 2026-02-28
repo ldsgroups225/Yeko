@@ -106,13 +106,27 @@ function ConductPage() {
     <div className="space-y-8 p-1">
       <div className="flex justify-end gap-3">
         <Link to="/conducts/conduct/reports">
-          <Button variant="outline" className="h-12 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-muted/50 px-6 transition-all">
+          <Button
+            variant="outline"
+            className="
+              border-border/40
+              hover:bg-muted/50
+              h-12 rounded-2xl px-6 text-[10px] font-black tracking-widest
+              uppercase transition-all
+            "
+          >
             <IconChartBar className="mr-2 h-4 w-4" />
             {t.conduct.reports()}
           </Button>
         </Link>
         <Link to="/conducts/conduct/new">
-          <Button className="h-12 rounded-2xl bg-primary shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-[10px] px-8 transition-all hover:scale-105 active:scale-95">
+          <Button className="
+            bg-primary shadow-primary/20 h-12 rounded-2xl px-8 text-[10px]
+            font-black tracking-widest uppercase shadow-xl transition-all
+            hover:scale-105
+            active:scale-95
+          "
+          >
             <IconPlus className="mr-2 h-4 w-4" />
             {t.conduct.newRecord()}
           </Button>
@@ -124,11 +138,23 @@ function ConductPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="flex flex-col gap-4 rounded-3xl border border-border/40 bg-card/20 p-6 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between shadow-xl"
+        className="
+          border-border/40 bg-card/20 flex flex-col gap-4 rounded-3xl border p-6
+          shadow-xl backdrop-blur-xl
+          sm:flex-row sm:items-center sm:justify-between
+        "
       >
-        <div className="flex flex-1 flex-col sm:flex-row gap-4">
+        <div className="
+          flex flex-1 flex-col gap-4
+          sm:flex-row
+        "
+        >
           <div className="flex-1 space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center gap-2">
+            <label className="
+              text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+              font-black tracking-widest uppercase
+            "
+            >
               <IconSearch className="size-3" />
               {t.conduct.searchPlaceholder()}
             </label>
@@ -138,13 +164,21 @@ function ConductPage() {
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
-                className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold pr-12"
+                className="
+                  bg-background/50 border-border/40
+                  focus:ring-primary/20
+                  h-12 rounded-2xl pr-12 font-bold transition-all
+                "
               />
               {searchTerm && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground/40 hover:text-muted-foreground rounded-xl"
+                  className="
+                    text-muted-foreground/40
+                    hover:text-muted-foreground
+                    absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 rounded-xl
+                  "
                   onClick={() => {
                     setSearchTerm('')
                     handleSearch()
@@ -156,14 +190,30 @@ function ConductPage() {
             </div>
           </div>
 
-          <div className="space-y-2 w-full sm:w-[180px]">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center gap-2">
+          <div className="
+            w-full space-y-2
+            sm:w-[180px]
+          "
+          >
+            <label className="
+              text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+              font-black tracking-widest uppercase
+            "
+            >
               {t.conduct.filterByType()}
             </label>
             <Select value={search.type ?? 'all'} onValueChange={v => handleTypeChange(v ?? 'all')}>
-              <SelectTrigger className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+              <SelectTrigger className="
+                bg-background/50 border-border/40
+                focus:ring-primary/20
+                h-12 rounded-2xl font-bold transition-all
+              "
+              >
                 <SelectValue placeholder={t.conduct.filterByType()}>
-                  <span className="font-bold uppercase tracking-widest text-[10px]">
+                  <span className="
+                    text-[10px] font-bold tracking-widest uppercase
+                  "
+                  >
                     {search.type === 'incident' && t.conduct.type.incident()}
                     {search.type === 'sanction' && t.conduct.type.sanction()}
                     {search.type === 'reward' && t.conduct.type.reward()}
@@ -172,25 +222,84 @@ function ConductPage() {
                   </span>
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.common.all()}</SelectItem>
-                <SelectItem value="incident" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.type.incident()}</SelectItem>
-                <SelectItem value="sanction" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.type.sanction()}</SelectItem>
-                <SelectItem value="reward" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.type.reward()}</SelectItem>
-                <SelectItem value="note" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.type.note()}</SelectItem>
+              <SelectContent className="
+                bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+              "
+              >
+                <SelectItem
+                  value="all"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.common.all()}
+                </SelectItem>
+                <SelectItem
+                  value="incident"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.type.incident()}
+                </SelectItem>
+                <SelectItem
+                  value="sanction"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.type.sanction()}
+                </SelectItem>
+                <SelectItem
+                  value="reward"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.type.reward()}
+                </SelectItem>
+                <SelectItem
+                  value="note"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.type.note()}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="space-y-2 w-full sm:w-[180px]">
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 flex items-center gap-2">
+          <div className="
+            w-full space-y-2
+            sm:w-[180px]
+          "
+          >
+            <label className="
+              text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+              font-black tracking-widest uppercase
+            "
+            >
               <IconInfoCircle className="size-3" />
               {t.conduct.filterByStatus()}
             </label>
             <Select value={search.status ?? 'all'} onValueChange={v => handleStatusChange(v ?? 'all')}>
-              <SelectTrigger className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+              <SelectTrigger className="
+                bg-background/50 border-border/40
+                focus:ring-primary/20
+                h-12 rounded-2xl font-bold transition-all
+              "
+              >
                 <SelectValue placeholder={t.conduct.filterByStatus()}>
-                  <span className="font-bold uppercase tracking-widest text-[10px]">
+                  <span className="
+                    text-[10px] font-bold tracking-widest uppercase
+                  "
+                  >
                     {search.status === 'open' && t.conduct.status.open()}
                     {search.status === 'investigating' && t.conduct.status.investigating()}
                     {search.status === 'pending_decision' && t.conduct.status.pending_decision()}
@@ -201,14 +310,73 @@ function ConductPage() {
                   </span>
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-                <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.common.all()}</SelectItem>
-                <SelectItem value="open" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.open()}</SelectItem>
-                <SelectItem value="investigating" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.investigating()}</SelectItem>
-                <SelectItem value="pending_decision" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.pending_decision()}</SelectItem>
-                <SelectItem value="resolved" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.resolved()}</SelectItem>
-                <SelectItem value="closed" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.closed()}</SelectItem>
-                <SelectItem value="appealed" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.status.appealed()}</SelectItem>
+              <SelectContent className="
+                bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+              "
+              >
+                <SelectItem
+                  value="all"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.common.all()}
+                </SelectItem>
+                <SelectItem
+                  value="open"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.status.open()}
+                </SelectItem>
+                <SelectItem
+                  value="investigating"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.status.investigating()}
+                </SelectItem>
+                <SelectItem
+                  value="pending_decision"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.status.pending_decision()}
+                </SelectItem>
+                <SelectItem
+                  value="resolved"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.status.resolved()}
+                </SelectItem>
+                <SelectItem
+                  value="closed"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.status.closed()}
+                </SelectItem>
+                <SelectItem
+                  value="appealed"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
+                  {t.conduct.status.appealed()}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -221,9 +389,18 @@ function ConductPage() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="flex items-center gap-2 mt-6 sm:mt-0"
+                className="
+                  mt-6 flex items-center gap-2
+                  sm:mt-0
+                "
               >
-                <Badge variant="secondary" className="h-12 px-4 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-none font-bold">
+                <Badge
+                  variant="secondary"
+                  className="
+                    bg-primary/10 text-primary border-primary/20 h-12 rounded-xl
+                    border px-4 font-bold shadow-none
+                  "
+                >
                   {selectedIds.size}
                   {' '}
                   {t.common.selected()}
@@ -233,7 +410,12 @@ function ConductPage() {
                   variant="outline"
                   size="sm"
                   onClick={handleBulkDelete}
-                  className="h-12 rounded-xl font-bold uppercase tracking-widest text-[10px] border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
+                  className="
+                    border-destructive/30 text-destructive
+                    hover:bg-destructive hover:text-destructive-foreground
+                    h-12 rounded-xl text-[10px] font-bold tracking-widest
+                    uppercase shadow-sm transition-all
+                  "
                 >
                   <IconTrash className="mr-1.5 size-4" />
                   {t.common.delete()}

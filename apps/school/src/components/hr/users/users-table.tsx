@@ -111,20 +111,39 @@ export function UsersTable({ filters }: UsersTableProps) {
 
   return (
     <div className="space-y-6">
-      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm overflow-hidden">
+      <Card className="
+        border-border/40 bg-card/50 overflow-hidden shadow-sm backdrop-blur-xl
+      "
+      >
         <CardHeader className="pb-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle className="text-2xl font-serif">
+          <div className="
+            flex flex-col gap-4
+            sm:flex-row sm:items-center sm:justify-between
+          "
+          >
+            <CardTitle className="font-serif text-2xl">
               {t.hr.users.listTitle()}
             </CardTitle>
-            <div className="relative w-full sm:w-72">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <div className="
+              relative w-full
+              sm:w-72
+            "
+            >
+              <IconSearch className="
+                text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                -translate-y-1/2
+              "
+              />
               <Input
                 placeholder={t.hr.users.searchPlaceholder()}
                 value={searchInput}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchInput(e.target.value)}
-                className="pl-10 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all"
+                className="
+                  bg-background/50 border-border/40
+                  focus:bg-background
+                  rounded-xl pl-10 transition-all
+                "
               />
             </div>
           </div>
@@ -158,18 +177,27 @@ export function UsersTable({ filters }: UsersTableProps) {
 
           {/* Table */}
           {!hasNoData && (
-            <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden">
+            <div className="
+              border-border/40 bg-background/30 overflow-hidden rounded-xl
+              border
+            "
+            >
               <Table>
                 <TableHeader className="bg-muted/50 backdrop-blur-md">
                   {table.getHeaderGroups().map(headerGroup => (
                     <TableRow
                       key={headerGroup.id}
-                      className="hover:bg-transparent border-border/40"
+                      className="
+                        border-border/40
+                        hover:bg-transparent
+                      "
                     >
                       {headerGroup.headers.map(header => (
                         <TableHead
                           key={header.id}
-                          className="text-xs uppercase tracking-wider font-semibold py-4"
+                          className="
+                            py-4 text-xs font-semibold tracking-wider uppercase
+                          "
                         >
                           {header.isPlaceholder
                             ? null
@@ -195,7 +223,11 @@ export function UsersTable({ filters }: UsersTableProps) {
                           delay: index * 0.03,
                           ease: 'easeOut',
                         }}
-                        className="group hover:bg-primary/5 transition-colors border-border/40 cursor-pointer"
+                        className="
+                          group
+                          hover:bg-primary/5
+                          border-border/40 cursor-pointer transition-colors
+                        "
                         onClick={() =>
                           navigate({ to: `/users/users/${row.original.id}` })}
                       >
@@ -217,8 +249,12 @@ export function UsersTable({ filters }: UsersTableProps) {
 
           {/* Pagination */}
           {!hasNoData && usersData && usersData.totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-              <div className="text-sm text-muted-foreground font-medium">
+            <div className="
+              mt-6 flex flex-col items-center justify-between gap-4
+              sm:flex-row
+            "
+            >
+              <div className="text-muted-foreground text-sm font-medium">
                 {t.common.showing()}
                 {' '}
                 <span className="text-foreground">
@@ -239,7 +275,11 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
+                  className="
+                    border-border/40 bg-background/50
+                    hover:bg-background
+                    rounded-xl px-4 transition-all
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     navigate({
@@ -254,7 +294,11 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
+                  className="
+                    border-border/40 bg-background/50
+                    hover:bg-background
+                    rounded-xl px-4 transition-all
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     navigate({

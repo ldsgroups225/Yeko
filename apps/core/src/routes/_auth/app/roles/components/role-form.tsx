@@ -35,17 +35,47 @@ interface RoleFormProps {
 
 export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
   return (
-    <DialogContent className="max-w-lg sm:max-w-3xl max-h-[90vh] p-0 gap-0 overflow-hidden backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl">
-      <DialogHeader className="p-5 sm:p-8 bg-linear-to-b from-primary/5 to-transparent border-b border-border/20 sticky top-0 bg-background/80 backdrop-blur-md z-10">
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="p-2.5 sm:p-3 rounded-2xl bg-primary/10 text-primary shrink-0">
-            <IconPlus className="w-5 h-5 sm:w-6 sm:h-6" />
+    <DialogContent className="
+      bg-card/95 border-border/40 max-h-[90vh] max-w-lg gap-0 overflow-hidden
+      rounded-3xl p-0 shadow-2xl backdrop-blur-xl
+      sm:max-w-3xl
+    "
+    >
+      <DialogHeader className="
+        from-primary/5 border-border/20 bg-background/80 sticky top-0 z-10
+        border-b bg-linear-to-b to-transparent p-5 backdrop-blur-md
+        sm:p-8
+      "
+      >
+        <div className="
+          flex items-center gap-3
+          sm:gap-4
+        "
+        >
+          <div className="
+            bg-primary/10 text-primary shrink-0 rounded-2xl p-2.5
+            sm:p-3
+          "
+          >
+            <IconPlus className="
+              h-5 w-5
+              sm:h-6 sm:w-6
+            "
+            />
           </div>
           <div>
-            <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">
+            <DialogTitle className="
+              text-xl font-bold tracking-tight
+              sm:text-2xl
+            "
+            >
               {editingRole ? t.roles.edit() : t.roles.create()}
             </DialogTitle>
-            <DialogDescription className="text-sm sm:text-base line-clamp-1">
+            <DialogDescription className="
+              line-clamp-1 text-sm
+              sm:text-base
+            "
+            >
               Définissez précisément les responsabilités et les accès.
             </DialogDescription>
           </div>
@@ -58,9 +88,16 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
           e.stopPropagation()
           form.handleSubmit()
         }}
-        className="p-5 sm:p-8 space-y-8 overflow-y-auto max-h-[calc(90vh-120px)] scrollbar-none"
+        className="
+          scrollbar-none max-h-[calc(90vh-120px)] space-y-8 overflow-y-auto p-5
+          sm:p-8
+        "
       >
-        <FieldGroup className="grid-cols-1 sm:grid-cols-2">
+        <FieldGroup className="
+          grid-cols-1
+          sm:grid-cols-2
+        "
+        >
           {/* Name */}
           <form.Field
             name="name"
@@ -70,7 +107,12 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
                 <Input
                   id={field.name}
                   placeholder="ex: Superviseur Pédagogique"
-                  className="h-11 sm:h-12! rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold"
+                  className="
+                    bg-background/50 border-border/40
+                    focus:ring-primary/20
+                    h-11 rounded-xl font-bold transition-all
+                    sm:h-12!
+                  "
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
@@ -91,14 +133,41 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
                   onValueChange={val => field.handleChange(val as SchoolScope)}
                   disabled={!!editingRole}
                 >
-                  <SelectTrigger id={field.name} className="w-full h-11! sm:h-12! rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                  <SelectTrigger
+                    id={field.name}
+                    className="
+                      bg-background/50 border-border/40
+                      focus:ring-primary/20
+                      h-11! w-full rounded-xl font-bold transition-all
+                      sm:h-12!
+                    "
+                  >
                     <SelectValue placeholder="Choisir le périmètre">
                       {field.state.value === 'system' ? 'Yeko Core' : 'Yeko School'}
                     </SelectValue>
                   </SelectTrigger>
-                  <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
-                    <SelectItem value="system" className="rounded-lg focus:bg-primary/10 focus:text-primary font-medium">Yeko Core</SelectItem>
-                    <SelectItem value="school" className="rounded-lg focus:bg-primary/10 focus:text-primary font-medium">Yeko School</SelectItem>
+                  <SelectContent className="
+                    bg-popover/90 border-border/40 rounded-xl backdrop-blur-xl
+                  "
+                  >
+                    <SelectItem
+                      value="system"
+                      className="
+                        focus:bg-primary/10 focus:text-primary
+                        rounded-lg font-medium
+                      "
+                    >
+                      Yeko Core
+                    </SelectItem>
+                    <SelectItem
+                      value="school"
+                      className="
+                        focus:bg-primary/10 focus:text-primary
+                        rounded-lg font-medium
+                      "
+                    >
+                      Yeko School
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FieldError errors={field.state.meta.errors} />
@@ -116,7 +185,11 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
                   id={field.name}
                   placeholder="superviseur_pedagogique"
                   disabled={!!editingRole}
-                  className="h-11 sm:h-12! rounded-xl bg-muted/30 font-mono text-xs border-border/40 opacity-70"
+                  className="
+                    bg-muted/30 border-border/40 h-11 rounded-xl font-mono
+                    text-xs opacity-70
+                    sm:h-12!
+                  "
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
@@ -135,7 +208,12 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
                 <Input
                   id={field.name}
                   placeholder="Objectif principal de ce rôle..."
-                  className="h-11 sm:h-12! rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-medium"
+                  className="
+                    bg-background/50 border-border/40
+                    focus:ring-primary/20
+                    h-11 rounded-xl font-medium transition-all
+                    sm:h-12!
+                  "
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={e => field.handleChange(e.target.value)}
@@ -147,9 +225,24 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
         </FieldGroup>
 
         <div className="space-y-6 pt-4">
-          <div className="flex items-center justify-between border-b border-border/20 pb-3">
-            <h3 className="text-lg sm:text-xl font-bold tracking-tight">{t.roles.permissions()}</h3>
-            <Badge variant="outline" className="rounded-full bg-primary/5 text-primary border-primary/20 text-xs px-3 py-1">
+          <div className="
+            border-border/20 flex items-center justify-between border-b pb-3
+          "
+          >
+            <h3 className="
+              text-lg font-bold tracking-tight
+              sm:text-xl
+            "
+            >
+              {t.roles.permissions()}
+            </h3>
+            <Badge
+              variant="outline"
+              className="
+                bg-primary/5 text-primary border-primary/20 rounded-full px-3
+                py-1 text-xs
+              "
+            >
               Configuration Granulaire
             </Badge>
           </div>
@@ -167,17 +260,35 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
                         {filteredResources.map((resource, idx) => (
                           <div
                             key={resource.id}
-                            className={`rounded-2xl border border-border/40 p-5 transition-all hover:border-primary/30 ${idx % 2 === 0 ? 'bg-muted/5' : 'bg-background/30'}`}
+                            className={`
+                              border-border/40
+                              hover:border-primary/30
+                              rounded-2xl border p-5 transition-all
+                              ${idx % 2 === 0
+                            ? `bg-muted/5`
+                            : `bg-background/30`}
+                            `}
                           >
                             <div className="space-y-4">
                               <div className="flex items-center justify-between">
                                 <div>
-                                  <p className="font-bold text-sm">{resource.name}</p>
-                                  <code className="text-[10px] text-muted-foreground/50 font-mono uppercase">{resource.category}</code>
+                                  <p className="text-sm font-bold">{resource.name}</p>
+                                  <code className="
+                                    text-muted-foreground/50 font-mono
+                                    text-[10px] uppercase
+                                  "
+                                  >
+                                    {resource.category}
+                                  </code>
                                 </div>
                               </div>
 
-                              <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-3">
+                              <div className="
+                                xs:grid-cols-3
+                                grid grid-cols-2 gap-3
+                                sm:grid-cols-5
+                              "
+                              >
                                 {ACTIONS.map((action) => {
                                   const currentPerms = (field.state.value[resource.id] || []) as string[]
                                   const isChecked = currentPerms.includes(action.id)
@@ -203,16 +314,37 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
                                         if (e.key === 'Enter' || e.key === ' ')
                                           toggle()
                                       }}
-                                      className={`flex flex-col items-center justify-center gap-2.5 p-3 rounded-2xl border text-xs font-medium transition-all active:scale-95 cursor-pointer shadow-xs ${isChecked
-                                        ? 'bg-primary/10 border-primary/40 text-primary ring-1 ring-primary/20'
-                                        : 'bg-background/40 border-border/60 text-muted-foreground hover:bg-primary/5 hover:border-primary/20'}`}
+                                      className={`
+                                        flex cursor-pointer flex-col
+                                        items-center justify-center gap-2.5
+                                        rounded-2xl border p-3 text-xs
+                                        font-medium shadow-xs transition-all
+                                        active:scale-95
+                                        ${isChecked
+                                      ? `
+                                        bg-primary/10 border-primary/40
+                                        text-primary ring-primary/20 ring-1
+                                      `
+                                      : `
+                                        bg-background/40 border-border/60
+                                        text-muted-foreground
+                                        hover:bg-primary/5
+                                        hover:border-primary/20
+                                      `}
+                                      `}
                                     >
                                       <Checkbox
                                         checked={!!isChecked}
                                         onCheckedChange={toggle}
                                         className="pointer-events-none"
                                       />
-                                      <span className="text-[10px] font-black uppercase tracking-wider">{action.name}</span>
+                                      <span className="
+                                        text-[10px] font-black tracking-wider
+                                        uppercase
+                                      "
+                                      >
+                                        {action.name}
+                                      </span>
                                     </div>
                                   )
                                 })}
@@ -229,8 +361,14 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
           />
         </div>
 
-        <DialogFooter className="pt-8 gap-3 border-t border-border/10">
-          <Button type="button" variant="ghost" size="lg" className="rounded-xl font-bold px-6" onClick={onCancel}>
+        <DialogFooter className="border-border/10 gap-3 border-t pt-8">
+          <Button
+            type="button"
+            variant="ghost"
+            size="lg"
+            className="rounded-xl px-6 font-bold"
+            onClick={onCancel}
+          >
             {t.common.cancel()}
           </Button>
           <form.Subscribe
@@ -239,7 +377,11 @@ export function RoleForm({ form, editingRole, onCancel, t }: RoleFormProps) {
               <Button
                 type="submit"
                 size="lg"
-                className="rounded-xl px-10 font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]"
+                className="
+                  shadow-primary/20 rounded-xl px-10 font-black tracking-widest
+                  uppercase shadow-xl transition-all
+                  hover:scale-[1.02]
+                "
                 disabled={!canSubmit || isSubmitting}
               >
                 {isSubmitting ? t.common.loading() : editingRole ? t.common.save() : t.common.create()}

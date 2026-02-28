@@ -21,7 +21,7 @@ export function StatusBreakdownCard({ data }: StatusBreakdownCardProps) {
   }
 
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+    <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
       <CardHeader>
         <CardTitle>{t.students.enrollmentStatusBreakdown()}</CardTitle>
         <CardDescription>{t.students.enrollmentStatusDescription()}</CardDescription>
@@ -31,7 +31,10 @@ export function StatusBreakdownCard({ data }: StatusBreakdownCardProps) {
           {data.map(status => (
             <div
               key={status.status}
-              className={`rounded-xl px-4 py-2 backdrop-blur-sm border border-border/20 ${statusColors[status.status] || 'bg-card/50 text-foreground'}`}
+              className={`
+                border-border/20 rounded-xl border px-4 py-2 backdrop-blur-sm
+                ${statusColors[status.status] || `bg-card/50 text-foreground`}
+              `}
             >
               <p className="text-2xl font-bold">{status.count}</p>
               <p className="text-xs capitalize">

@@ -13,8 +13,11 @@ function AuthLayout() {
 
   if (session.isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Spinner className="size-8 text-primary" />
+      <div className="
+        bg-background flex min-h-screen items-center justify-center
+      "
+      >
+        <Spinner className="text-primary size-8" />
       </div>
     )
   }

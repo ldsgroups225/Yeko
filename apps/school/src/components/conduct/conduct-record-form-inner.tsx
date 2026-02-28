@@ -54,7 +54,11 @@ export function ConductRecordFormInner({
           animate={{ opacity: 1, y: 0 }}
           className="space-y-3"
         >
-          <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          <Label className="
+            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+            font-black tracking-[0.2em] uppercase
+          "
+          >
             <IconUsers className="size-3.5" />
             {t.conduct.student()}
           </Label>
@@ -63,20 +67,32 @@ export function ConductRecordFormInner({
             onSelect={id => form.setValue('studentId', id)}
           />
           {form.formState.errors.studentId && (
-            <p className="text-[10px] font-black uppercase tracking-widest text-destructive ml-1">
+            <p className="
+              text-destructive ml-1 text-[10px] font-black tracking-widest
+              uppercase
+            "
+            >
               {form.formState.errors.studentId.message}
             </p>
           )}
         </motion.div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+      "
+      >
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="space-y-3"
         >
-          <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          <Label className="
+            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+            font-black tracking-[0.2em] uppercase
+          "
+          >
             <IconTag className="size-3.5" />
             {t.conduct.form.type()}
           </Label>
@@ -85,21 +101,35 @@ export function ConductRecordFormInner({
             onValueChange={v =>
               form.setValue('type', v as (typeof conductTypes)[number])}
           >
-            <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all">
+            <SelectTrigger className="
+              bg-card/50 border-border/40
+              focus:ring-primary/20
+              h-12 rounded-2xl backdrop-blur-xl transition-all
+            "
+            >
               <SelectValue placeholder={t.conduct.form.type()}>
                 {form.watch('type') && (
-                  <span className="font-bold uppercase tracking-widest text-[10px]">
+                  <span className="
+                    text-[10px] font-bold tracking-widest uppercase
+                  "
+                  >
                     {t.conduct.type[form.watch('type') as (typeof conductTypes)[number]]()}
                   </span>
                 )}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
+            <SelectContent className="
+              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+            "
+            >
               {conductTypes.map(type => (
                 <SelectItem
                   key={type}
                   value={type}
-                  className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
                 >
                   {t.conduct.type[type]()}
                 </SelectItem>
@@ -113,7 +143,11 @@ export function ConductRecordFormInner({
           animate={{ opacity: 1, x: 0 }}
           className="space-y-3"
         >
-          <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          <Label className="
+            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+            font-black tracking-[0.2em] uppercase
+          "
+          >
             <IconTag className="size-3.5" />
             {t.conduct.form.category()}
           </Label>
@@ -122,21 +156,36 @@ export function ConductRecordFormInner({
             onValueChange={v =>
               form.setValue('category', v as (typeof conductCategories)[number])}
           >
-            <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all">
+            <SelectTrigger className="
+              bg-card/50 border-border/40
+              focus:ring-primary/20
+              h-12 rounded-2xl backdrop-blur-xl transition-all
+            "
+            >
               <SelectValue placeholder={t.conduct.form.category()}>
                 {form.watch('category') && (
-                  <span className="font-bold uppercase tracking-widest text-[10px]">
+                  <span className="
+                    text-[10px] font-bold tracking-widest uppercase
+                  "
+                  >
                     {t.conduct.category[form.watch('category') as (typeof conductCategories)[number]]()}
                   </span>
                 )}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40 overflow-y-auto max-h-[300px]">
+            <SelectContent className="
+              bg-popover/90 border-border/40 max-h-[300px] overflow-y-auto
+              rounded-2xl backdrop-blur-2xl
+            "
+            >
               {conductCategories.map(cat => (
                 <SelectItem
                   key={cat}
                   value={cat}
-                  className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3"
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
                 >
                   {t.conduct.category[cat]()}
                 </SelectItem>
@@ -151,18 +200,30 @@ export function ConductRecordFormInner({
         animate={{ opacity: 1, y: 0 }}
         className="space-y-3"
       >
-        <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+        <Label className="
+          text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+          font-black tracking-[0.2em] uppercase
+        "
+        >
           <IconTag className="size-3.5" />
           {t.conduct.form.title()}
         </Label>
         <Input
           id="title"
           {...form.register('title')}
-          className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold"
+          className="
+            bg-card/50 border-border/40
+            focus:ring-primary/20
+            h-12 rounded-2xl font-bold backdrop-blur-xl transition-all
+          "
           placeholder={t.conduct.form.title()}
         />
         {form.formState.errors.title && (
-          <p className="text-[10px] font-black uppercase tracking-widest text-destructive ml-1">
+          <p className="
+            text-destructive ml-1 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
             {form.formState.errors.title.message}
           </p>
         )}
@@ -174,18 +235,31 @@ export function ConductRecordFormInner({
         transition={{ delay: 0.1 }}
         className="space-y-3"
       >
-        <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+        <Label className="
+          text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+          font-black tracking-[0.2em] uppercase
+        "
+        >
           <IconTag className="size-3.5" />
           {t.conduct.form.description()}
         </Label>
         <Textarea
           id="description"
           {...form.register('description')}
-          className="rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all min-h-[120px] font-medium italic"
+          className="
+            bg-card/50 border-border/40
+            focus:ring-primary/20
+            min-h-[120px] rounded-2xl font-medium italic backdrop-blur-xl
+            transition-all
+          "
           placeholder={t.conduct.form.description()}
         />
         {form.formState.errors.description && (
-          <p className="text-[10px] font-black uppercase tracking-widest text-destructive ml-1">
+          <p className="
+            text-destructive ml-1 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
             {form.formState.errors.description.message}
           </p>
         )}
@@ -197,7 +271,11 @@ export function ConductRecordFormInner({
           animate={{ opacity: 1, height: 'auto' }}
           className="space-y-3 overflow-hidden"
         >
-          <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          <Label className="
+            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+            font-black tracking-[0.2em] uppercase
+          "
+          >
             <IconAlertCircle className="size-3.5" />
             {t.conduct.form.severity()}
           </Label>
@@ -206,7 +284,13 @@ export function ConductRecordFormInner({
             onValueChange={v =>
               form.setValue('severity', v as (typeof severityLevels)[number])}
           >
-            <SelectTrigger className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all text-destructive font-black">
+            <SelectTrigger className="
+              bg-card/50 border-border/40
+              focus:ring-primary/20
+              text-destructive h-12 rounded-2xl font-black backdrop-blur-xl
+              transition-all
+            "
+            >
               <SelectValue placeholder={t.conduct.form.selectSeverity()}>
                 {form.watch('severity') && (() => {
                   const severityConfig = {
@@ -218,7 +302,11 @@ export function ConductRecordFormInner({
                   const config = severityConfig[form.watch('severity') as keyof typeof severityConfig]
                   return (
                     <div className="flex items-center gap-2">
-                      <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                      <div className={`
+                        h-2 w-2 rounded-full
+                        ${config.color}
+                      `}
+                      />
                       <span>
                         {config.icon}
                         {' '}
@@ -229,12 +317,18 @@ export function ConductRecordFormInner({
                 })()}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
+            <SelectContent className="
+              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+            "
+            >
               {severityLevels.map(level => (
                 <SelectItem
                   key={level}
                   value={level}
-                  className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3 text-destructive"
+                  className="
+                    text-destructive rounded-xl py-3 text-[10px] font-bold
+                    tracking-widest uppercase
+                  "
                 >
                   {t.conduct.severity[level]()}
                 </SelectItem>
@@ -246,19 +340,29 @@ export function ConductRecordFormInner({
 
       <ConductRecordIncidentFields form={form} />
 
-      <div className="flex justify-end gap-3 pt-6 border-t border-border/10">
+      <div className="border-border/10 flex justify-end gap-3 border-t pt-6">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          className="rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-muted/50 h-12 px-8 transition-all"
+          className="
+            border-border/40
+            hover:bg-muted/50
+            h-12 rounded-2xl px-8 text-[10px] font-black tracking-widest
+            uppercase transition-all
+          "
         >
           {t.common.cancel()}
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-2xl bg-primary shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-[10px] h-12 px-10 transition-all hover:scale-105 active:scale-95"
+          className="
+            bg-primary shadow-primary/20 h-12 rounded-2xl px-10 text-[10px]
+            font-black tracking-widest uppercase shadow-xl transition-all
+            hover:scale-105
+            active:scale-95
+          "
         >
           {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>

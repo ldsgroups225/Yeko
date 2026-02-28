@@ -35,7 +35,11 @@ export function ClassroomAvailability() {
   if (isPending) {
     return (
       <div className="space-y-6">
-        <div className="grid gap-6 md:grid-cols-4">
+        <div className="
+          grid gap-6
+          md:grid-cols-4
+        "
+        >
           {[1, 2, 3, 4].map(i => (
             <Skeleton key={i} className="h-40 w-full rounded-3xl" />
           ))}
@@ -77,27 +81,37 @@ export function ClassroomAvailability() {
         inactive={inactiveCount}
       />
 
-      <Card className="border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
-        <CardHeader className="border-b border-border/40 bg-muted/5">
-          <CardTitle className="text-lg font-bold flex items-center gap-2">
-            <IconBuilding className="h-5 w-5 text-primary" />
+      <Card className="
+        border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+      "
+      >
+        <CardHeader className="border-border/40 bg-muted/5 border-b">
+          <CardTitle className="flex items-center gap-2 text-lg font-bold">
+            <IconBuilding className="text-primary h-5 w-5" />
             {t.spaces.classrooms.details()}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
             <TableHeader className="bg-muted/50">
-              <TableRow className="hover:bg-transparent border-border/40">
-                <TableHead className="font-semibold text-muted-foreground pl-6">
+              <TableRow className="
+                border-border/40
+                hover:bg-transparent
+              "
+              >
+                <TableHead className="text-muted-foreground pl-6 font-semibold">
                   {t.spaces.classrooms.classroom()}
                 </TableHead>
-                <TableHead className="font-semibold text-muted-foreground">
+                <TableHead className="text-muted-foreground font-semibold">
                   {t.spaces.classrooms.type()}
                 </TableHead>
-                <TableHead className="font-semibold text-muted-foreground">
+                <TableHead className="text-muted-foreground font-semibold">
                   {t.spaces.classrooms.occupation()}
                 </TableHead>
-                <TableHead className="w-[150px] text-right font-semibold text-muted-foreground pr-6">
+                <TableHead className="
+                  text-muted-foreground w-[150px] pr-6 text-right font-semibold
+                "
+                >
                   {t.common.status()}
                 </TableHead>
               </TableRow>
@@ -118,14 +132,20 @@ export function ClassroomAvailability() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="hover:bg-muted/30 border-border/40 transition-colors"
+                    className="
+                      hover:bg-muted/30
+                      border-border/40 transition-colors
+                    "
                   >
                     <TableCell className="pl-6">
                       <div>
-                        <div className="font-bold text-foreground">
+                        <div className="text-foreground font-bold">
                           {item.name}
                         </div>
-                        <div className="font-mono text-xs font-medium text-muted-foreground">
+                        <div className="
+                          text-muted-foreground font-mono text-xs font-medium
+                        "
+                        >
                           {item.code}
                         </div>
                       </div>
@@ -139,13 +159,17 @@ export function ClassroomAvailability() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-4 max-w-[300px]">
+                      <div className="flex max-w-[300px] items-center gap-4">
                         <Progress
                           value={occupancyPercent}
-                          className="h-2 flex-1 rounded-full bg-muted/50"
+                          className="bg-muted/50 h-2 flex-1 rounded-full"
                           // indicatorClassName={isAvailable ? "bg-green-500" : "bg-blue-500"} // Custom prop if available, or class override
                         />
-                        <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">
+                        <span className="
+                          text-muted-foreground text-xs font-medium
+                          whitespace-nowrap
+                        "
+                        >
                           {item.assignedClassesCount}
                           {' '}
                           {t.spaces.classrooms.classes()}
@@ -156,12 +180,17 @@ export function ClassroomAvailability() {
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right pr-6">
+                    <TableCell className="pr-6 text-right">
                       {isAvailable
                         ? (
                             <Badge
                               variant="outline"
-                              className="bg-green-500/10 text-green-700 hover:bg-green-500/20 border-green-200 dark:border-green-800 dark:text-green-400 rounded-lg"
+                              className="
+                                rounded-lg border-green-200 bg-green-500/10
+                                text-green-700
+                                hover:bg-green-500/20
+                                dark:border-green-800 dark:text-green-400
+                              "
                             >
                               {t.spaces.classrooms.available()}
                             </Badge>
@@ -170,7 +199,9 @@ export function ClassroomAvailability() {
                           ? (
                               <Badge
                                 variant="secondary"
-                                className="bg-muted text-muted-foreground rounded-lg"
+                                className="
+                                  bg-muted text-muted-foreground rounded-lg
+                                "
                               >
                                 {item.status === 'maintenance'
                                   ? t.spaces.classrooms.maintenance()
@@ -180,7 +211,10 @@ export function ClassroomAvailability() {
                           : (
                               <Badge
                                 variant="default"
-                                className="bg-blue-600 hover:bg-blue-700 rounded-lg"
+                                className="
+                                  rounded-lg bg-blue-600
+                                  hover:bg-blue-700
+                                "
                               >
                                 {t.spaces.classrooms.occupied()}
                               </Badge>

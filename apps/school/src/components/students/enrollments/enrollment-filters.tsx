@@ -34,10 +34,18 @@ export function EnrollmentFilters({
   const t = useTranslations()
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-1 gap-2 flex-wrap">
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <div className="
+      flex flex-col gap-4
+      sm:flex-row sm:items-center sm:justify-between
+    "
+    >
+      <div className="flex flex-1 flex-wrap gap-2">
+        <div className="relative max-w-sm min-w-[200px] flex-1">
+          <IconSearch className="
+            text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+            -translate-y-1/2
+          "
+          />
           <Input
             placeholder={t.enrollments.searchPlaceholder()}
             value={search}

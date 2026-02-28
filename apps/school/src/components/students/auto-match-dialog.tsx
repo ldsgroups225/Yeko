@@ -112,7 +112,10 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="
+        bg-card/95 border-border/40 max-w-2xl backdrop-blur-xl
+      "
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <IconWand className="h-5 w-5" />
@@ -125,21 +128,30 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
           ? <AutoMatchResultView linked={results.linked} created={results.created} onClose={handleClose} />
           : isPending
             ? (
-                <div className="flex items-center justify-center py-8"><IconLoader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
+                <div className="flex items-center justify-center py-8">
+                  <IconLoader2 className="
+                    text-muted-foreground h-8 w-8 animate-spin
+                  "
+                  />
+                </div>
               )
             : suggestions.length === 0
               ? (
-                  <div className="flex flex-col items-center justify-center gap-3 py-8 text-center">
-                    <IconUsers className="h-12 w-12 text-muted-foreground" />
+                  <div className="
+                    flex flex-col items-center justify-center gap-3 py-8
+                    text-center
+                  "
+                  >
+                    <IconUsers className="text-muted-foreground h-12 w-12" />
                     <h3 className="font-semibold">{t.students.noMatchSuggestions()}</h3>
-                    <p className="text-sm text-muted-foreground">{t.students.noMatchSuggestionsDescription()}</p>
+                    <p className="text-muted-foreground text-sm">{t.students.noMatchSuggestionsDescription()}</p>
                     <DialogFooter className="mt-4"><Button variant="outline" onClick={handleClose}>{t.common.close()}</Button></DialogFooter>
                   </div>
                 )
               : (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">{t.students.matchSuggestionsCount({ count: suggestions.length })}</p>
+                      <p className="text-muted-foreground text-sm">{t.students.matchSuggestionsCount({ count: suggestions.length })}</p>
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" onClick={() => setSelectedMatches(new Map(suggestions.map(s => [s.studentId, { studentId: s.studentId, relationship: 'guardian', createNew: !s.existingParent }])))}>{t.common.selectAll()}</Button>
                         <Button variant="outline" size="sm" onClick={() => setSelectedMatches(new Map())}>{t.common.deselectAll()}</Button>
@@ -160,7 +172,9 @@ export function AutoMatchDialog({ open, onOpenChange }: AutoMatchDialogProps) {
                     <DialogFooter>
                       <Button variant="outline" onClick={handleClose}>{t.common.cancel()}</Button>
                       <Button onClick={processMatches} disabled={selectedMatches.size === 0 || isProcessing}>
-                        {isProcessing && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {isProcessing && (
+                          <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
                         <IconWand className="mr-2 h-4 w-4" />
                         {t.students.linkSelected({ count: selectedMatches.size })}
                       </Button>

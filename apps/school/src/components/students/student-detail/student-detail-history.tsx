@@ -21,10 +21,19 @@ export function StudentDetailHistory({ enrollmentHistory, onEnroll }: StudentDet
   const t = useTranslations()
 
   return (
-    <Card className="border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
-      <CardHeader className="flex flex-row items-center justify-between border-b border-border/10 bg-white/30 px-6 py-4">
+    <Card className="
+      border-border/20
+      dark:bg-card/20
+      bg-white/50 backdrop-blur-xl
+    "
+    >
+      <CardHeader className="
+        border-border/10 flex flex-row items-center justify-between border-b
+        bg-white/30 px-6 py-4
+      "
+      >
         <CardTitle className="flex items-center gap-2 text-lg">
-          <IconCalendar className="h-5 w-5 text-primary" />
+          <IconCalendar className="text-primary h-5 w-5" />
           {t.students.enrollmentHistory()}
         </CardTitle>
         <Button

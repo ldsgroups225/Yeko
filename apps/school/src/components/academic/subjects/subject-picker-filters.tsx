@@ -27,23 +27,51 @@ export function SubjectPickerFilters() {
   const currentConfig = categoryConfig[categoryFilter as keyof typeof categoryConfig] || categoryConfig.all
 
   return (
-    <div className="px-6 py-4 flex flex-col sm:flex-row gap-4 bg-white/5 border-b border-border/10">
+    <div className="
+      border-border/10 flex flex-col gap-4 border-b bg-white/5 px-6 py-4
+      sm:flex-row
+    "
+    >
       <div className="relative flex-1">
-        <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <IconSearch className="
+          text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2
+        "
+        />
         <Input
           placeholder={t.academic.subjects.searchPlaceholder()}
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="pl-10 h-10 bg-white/5 border-border/10 focus:ring-primary/40 shadow-none text-sm transition-all focus:bg-white/10"
+          className="
+            border-border/10
+            focus:ring-primary/40
+            h-10 bg-white/5 pl-10 text-sm shadow-none transition-all
+            focus:bg-white/10
+          "
         />
       </div>
       <div className="flex items-center gap-2">
-        <IconFilter className="h-4 w-4 text-muted-foreground hidden sm:block" />
+        <IconFilter className="
+          text-muted-foreground hidden h-4 w-4
+          sm:block
+        "
+        />
         <Select value={categoryFilter} onValueChange={val => val && setCategoryFilter(val)}>
-          <SelectTrigger id="category-filter" className="w-full sm:w-[180px] h-10 bg-white/5 border-border/10 focus:ring-primary/40 shadow-none text-sm">
+          <SelectTrigger
+            id="category-filter"
+            className="
+              border-border/10
+              focus:ring-primary/40
+              h-10 w-full bg-white/5 text-sm shadow-none
+              sm:w-[180px]
+            "
+          >
             <SelectValue placeholder={t.academic.subjects.allCategories()}>
               <div className="flex items-center gap-2">
-                <div className={`h-2 w-2 rounded-full ${currentConfig.color}`} />
+                <div className={`
+                  h-2 w-2 rounded-full
+                  ${currentConfig.color}
+                `}
+                />
                 <span>
                   {currentConfig.icon}
                   {' '}
@@ -52,7 +80,10 @@ export function SubjectPickerFilters() {
               </div>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
+          <SelectContent className="
+            bg-card/95 border-border/10 backdrop-blur-xl
+          "
+          >
             <SelectItem value="all">{t.academic.subjects.allCategories()}</SelectItem>
             <SelectItem value="Scientifique">{t.academic.subjects.categories.scientifique()}</SelectItem>
             <SelectItem value="Littéraire">{t.academic.subjects.categories.litteraire()}</SelectItem>

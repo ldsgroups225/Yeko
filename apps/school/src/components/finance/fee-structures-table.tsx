@@ -56,14 +56,19 @@ export function FeeStructuresTable({
 
   if (feeStructures.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconStack2 className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconStack2 className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">
           {t('finance.feeStructures.noFeeStructures')}
         </p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+        <p className="text-muted-foreground/70 mt-1 max-w-sm text-sm">
           {t('finance.feeStructures.description')}
         </p>
       </div>
@@ -72,10 +77,18 @@ export function FeeStructuresTable({
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">
                 {t('finance.feeTypes.title')}
               </TableHead>
@@ -104,16 +117,22 @@ export function FeeStructuresTable({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-muted/30 border-border/40 transition-colors"
+                  className="
+                    group
+                    hover:bg-muted/30
+                    border-border/40 transition-colors
+                  "
                 >
                   <TableCell>
                     <div>
-                      <span className="font-bold text-foreground">
+                      <span className="text-foreground font-bold">
                         {structure.feeTypeName}
                       </span>
                       <Badge
                         variant="outline"
-                        className="ml-2 text-[10px] font-mono tracking-wider bg-muted/50"
+                        className="
+                          bg-muted/50 ml-2 font-mono text-[10px] tracking-wider
+                        "
                       >
                         {structure.feeTypeCode}
                       </Badge>
@@ -133,7 +152,7 @@ export function FeeStructuresTable({
                           </Badge>
                         )
                       : (
-                          <span className="text-muted-foreground italic text-sm">
+                          <span className="text-muted-foreground text-sm italic">
                             {t('finance.feeStructures.allSeries')}
                           </span>
                         )}
@@ -146,7 +165,10 @@ export function FeeStructuresTable({
                   <TableCell className="text-right">
                     {structure.newStudentAmount
                       ? (
-                          <span className="font-medium tabular-nums text-muted-foreground">
+                          <span className="
+                            text-muted-foreground font-medium tabular-nums
+                          "
+                          >
                             {formatCurrency(
                               structure.newStudentAmount,
                               structure.currency,
@@ -154,17 +176,24 @@ export function FeeStructuresTable({
                           </span>
                         )
                       : (
-                          <span className="text-muted-foreground italic text-sm">
+                          <span className="text-muted-foreground text-sm italic">
                             -
                           </span>
                         )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="
+                      flex justify-end gap-1 opacity-0 transition-opacity
+                      group-hover:opacity-100
+                    "
+                    >
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-lg hover:bg-muted"
+                        className="
+                          hover:bg-muted
+                          h-8 w-8 rounded-lg
+                        "
                         onClick={() => onEdit?.(structure.id)}
                         aria-label={t('common.edit')}
                       >
@@ -173,7 +202,11 @@ export function FeeStructuresTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg"
+                        className="
+                          text-destructive
+                          hover:text-destructive hover:bg-destructive/10
+                          h-8 w-8 rounded-lg
+                        "
                         onClick={() => onDelete?.(structure.id)}
                         aria-label={t('common.delete')}
                       >
@@ -188,7 +221,11 @@ export function FeeStructuresTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {feeStructures.map((structure, index) => (
             <motion.div
@@ -196,14 +233,20 @@ export function FeeStructuresTable({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-4"
+              className="
+                bg-card/50 border-border/40 space-y-4 rounded-2xl border p-4
+                backdrop-blur-md
+              "
             >
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div>
-                  <div className="font-bold text-lg">
+                  <div className="text-lg font-bold">
                     {structure.feeTypeName}
                   </div>
-                  <div className="text-xs font-mono text-muted-foreground mt-0.5">
+                  <div className="
+                    text-muted-foreground mt-0.5 font-mono text-xs
+                  "
+                  >
                     {structure.feeTypeCode}
                   </div>
                 </div>
@@ -214,7 +257,7 @@ export function FeeStructuresTable({
                       </Badge>
                     )
                   : (
-                      <span className="text-xs text-muted-foreground italic">
+                      <span className="text-muted-foreground text-xs italic">
                         {t('classes.grade')}
                         {' '}
                         {structure.gradeName || t('finance.feeStructures.allLevels')}
@@ -223,20 +266,33 @@ export function FeeStructuresTable({
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-xl bg-muted/20 border border-border/20">
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                <div className="
+                  bg-muted/20 border-border/20 rounded-xl border p-3
+                "
+                >
+                  <div className="
+                    text-muted-foreground mb-1 text-xs tracking-wider uppercase
+                  "
+                  >
                     {t('finance.amount')}
                   </div>
-                  <div className="font-bold text-lg">
+                  <div className="text-lg font-bold">
                     {formatCurrency(structure.amount, structure.currency)}
                   </div>
                 </div>
                 {structure.newStudentAmount && (
-                  <div className="p-3 rounded-xl bg-muted/20 border border-border/20">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                  <div className="
+                    bg-muted/20 border-border/20 rounded-xl border p-3
+                  "
+                  >
+                    <div className="
+                      text-muted-foreground mb-1 text-xs tracking-wider
+                      uppercase
+                    "
+                    >
                       {t('finance.feeStructures.newStudentAmount')}
                     </div>
-                    <div className="font-bold text-lg text-muted-foreground">
+                    <div className="text-muted-foreground text-lg font-bold">
                       {formatCurrency(
                         structure.newStudentAmount,
                         structure.currency,
@@ -246,7 +302,10 @@ export function FeeStructuresTable({
                 )}
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-border/30">
+              <div className="
+                border-border/30 flex justify-end gap-2 border-t pt-2
+              "
+              >
                 <Button
                   size="sm"
                   variant="ghost"
@@ -259,7 +318,11 @@ export function FeeStructuresTable({
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-8 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="
+                    text-destructive
+                    hover:text-destructive hover:bg-destructive/10
+                    h-8 rounded-lg
+                  "
                   onClick={() => onDelete?.(structure.id)}
                 >
                   <IconTrash className="mr-2 h-3.5 w-3.5" />

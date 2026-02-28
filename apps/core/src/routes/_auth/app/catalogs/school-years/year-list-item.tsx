@@ -88,14 +88,21 @@ export function YearListItem({
             <button
               type="button"
               onClick={onToggleExpand}
-              className="p-1 hover:bg-accent rounded"
+              className="
+                hover:bg-accent
+                rounded-sm p-1
+              "
             >
               <m.div animate={{ rotate: isExpanded ? 90 : 0 }} transition={{ duration: 0.2 }}>
                 <IconChevronRight className="h-5 w-5" />
               </m.div>
             </button>
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <IconCalendar className="h-5 w-5 text-primary" />
+            <div className="
+              bg-primary/10 flex h-10 w-10 items-center justify-center
+              rounded-lg
+            "
+            >
+              <IconCalendar className="text-primary h-5 w-5" />
             </div>
             {isEditing
               ? (
@@ -155,15 +162,15 @@ export function YearListItem({
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <CardContent className="pt-4 border-t">
+            <CardContent className="border-t pt-4">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium flex items-center gap-2">
+                  <h4 className="flex items-center gap-2 font-medium">
                     <IconClock className="h-4 w-4" />
                     Périodes (Trimestres/Semestres)
                   </h4>
                   <Button size="sm" variant="outline" onClick={() => setAddingTermToYear(year.id)}>
-                    <IconPlus className="h-4 w-4 mr-1" />
+                    <IconPlus className="mr-1 h-4 w-4" />
                     Ajouter
                   </Button>
                 </div>
@@ -174,10 +181,14 @@ export function YearListItem({
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="p-4 bg-muted/50 rounded-lg"
+                      className="bg-muted/50 rounded-lg p-4"
                     >
                       <form onSubmit={onCreateTerm} className="space-y-4">
-                        <div className="grid gap-4 md:grid-cols-3">
+                        <div className="
+                          grid gap-4
+                          md:grid-cols-3
+                        "
+                        >
                           <div className="space-y-2">
                             <Label>Nom *</Label>
                             <Input name="name" placeholder="1er Trimestre" required />
@@ -216,8 +227,11 @@ export function YearListItem({
 
                 {year.terms.length === 0
                   ? (
-                      <div className="text-center py-6 text-muted-foreground">
-                        <IconCalendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                      <div className="text-muted-foreground py-6 text-center">
+                        <IconCalendar className="
+                          mx-auto mb-2 h-8 w-8 opacity-50
+                        "
+                        />
                         <p>Aucune période configurée</p>
                         <p className="text-sm">Ajoutez des trimestres ou semestres pour cette année</p>
                       </div>

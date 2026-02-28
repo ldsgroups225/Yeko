@@ -81,13 +81,18 @@ export function SubjectMultiSelect({
               aria-expanded={open}
               aria-controls="subject-list"
               className={cn(
-                'w-full justify-between font-medium rounded-xl h-11 border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm',
+                `
+                  border-border/40 bg-background/50
+                  hover:bg-background
+                  h-11 w-full justify-between rounded-xl font-medium shadow-sm
+                  transition-all
+                `,
                 open
-                && 'ring-2 ring-primary/20 border-primary/50 bg-background',
+                && 'ring-primary/20 border-primary/50 bg-background ring-2',
               )}
             >
               <div className="flex items-center gap-2 truncate">
-                <IconBook className="h-4 w-4 text-muted-foreground" />
+                <IconBook className="text-muted-foreground h-4 w-4" />
                 <span className="truncate">
                   {value.length > 0
                     ? `${value.length} ${t.hr.teachers.subjects().toLowerCase()}`
@@ -99,17 +104,27 @@ export function SubjectMultiSelect({
           )}
         />
         <PopoverContent
-          className="w-(--radix-popover-trigger-width) p-0 rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 shadow-xl overflow-hidden"
+          className="
+            bg-popover/90 border-border/40 w-(--radix-popover-trigger-width)
+            overflow-hidden rounded-xl p-0 shadow-xl backdrop-blur-2xl
+          "
           align="start"
         >
           <Command className="bg-transparent" shouldFilter={false}>
-            <div className="relative border-b border-border/40">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <div className="border-border/40 relative border-b">
+              <IconSearch className="
+                text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                -translate-y-1/2
+              "
+              />
               <CommandInput
                 placeholder={t.common.search()}
                 value={search}
                 onValueChange={setSearch}
-                className="border-none focus:ring-0 pl-9 py-4 h-11 bg-transparent"
+                className="
+                  h-11 border-none bg-transparent py-4 pl-9
+                  focus:ring-0
+                "
               />
             </div>
             <CommandList id="subject-list">
@@ -123,7 +138,10 @@ export function SubjectMultiSelect({
                         exit={{ opacity: 0 }}
                         className="flex items-center justify-center py-8"
                       >
-                        <IconLoader2 className="h-5 w-5 animate-spin text-primary/60" />
+                        <IconLoader2 className="
+                          text-primary/60 h-5 w-5 animate-spin
+                        "
+                        />
                       </motion.div>
                     )
                   : subjects.length === 0
@@ -134,7 +152,10 @@ export function SubjectMultiSelect({
                           animate={{ opacity: 1 }}
                           className="py-10 text-center"
                         >
-                          <CommandEmpty className="text-sm text-muted-foreground">
+                          <CommandEmpty className="
+                            text-muted-foreground text-sm
+                          "
+                          >
                             {t.common.noResults()}
                           </CommandEmpty>
                         </motion.div>
@@ -146,15 +167,29 @@ export function SubjectMultiSelect({
                               key={subject.id}
                               value={subject.id}
                               onSelect={() => handleSelect(subject.id)}
-                              className="rounded-lg py-3 px-3 cursor-pointer data-[selected=true]:bg-primary/10 transition-colors"
+                              className="
+                                data-[selected=true]:bg-primary/10
+                                cursor-pointer rounded-lg px-3 py-3
+                                transition-colors
+                              "
                             >
-                              <div className="flex items-center w-full">
+                              <div className="flex w-full items-center">
                                 <div
                                   className={cn(
-                                    'flex h-8 w-8 shrink-0 items-center justify-center rounded-full mr-3 border transition-colors',
+                                    `
+                                      mr-3 flex h-8 w-8 shrink-0 items-center
+                                      justify-center rounded-full border
+                                      transition-colors
+                                    `,
                                     value.includes(subject.id)
-                                      ? 'bg-primary border-primary text-primary-foreground'
-                                      : 'bg-muted border-border/40 text-muted-foreground',
+                                      ? `
+                                        bg-primary border-primary
+                                        text-primary-foreground
+                                      `
+                                      : `
+                                        bg-muted border-border/40
+                                        text-muted-foreground
+                                      `,
                                   )}
                                 >
                                   {value.includes(subject.id)
@@ -165,11 +200,17 @@ export function SubjectMultiSelect({
                                         <IconBook className="h-4 w-4" />
                                       )}
                                 </div>
-                                <div className="flex flex-col flex-1 truncate">
-                                  <span className="font-semibold text-foreground truncate">
+                                <div className="flex flex-1 flex-col truncate">
+                                  <span className="
+                                    text-foreground truncate font-semibold
+                                  "
+                                  >
                                     {subject.name}
                                   </span>
-                                  <span className="text-xs text-muted-foreground truncate">
+                                  <span className="
+                                    text-muted-foreground truncate text-xs
+                                  "
+                                  >
                                     {subject.shortName}
                                     {' '}
                                     •
@@ -192,7 +233,10 @@ export function SubjectMultiSelect({
           <motion.div
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-wrap gap-2 p-3 rounded-xl bg-primary/5 border border-primary/10"
+            className="
+              bg-primary/5 border-primary/10 flex flex-wrap gap-2 rounded-xl
+              border p-3
+            "
           >
             {selectedSubjects.map(subject => (
               <motion.div
@@ -204,13 +248,21 @@ export function SubjectMultiSelect({
               >
                 <Badge
                   variant="ghost"
-                  className="pl-3 pr-1 py-1 gap-2 rounded-lg bg-card border-border/40 shadow-sm group hover:border-primary/30 transition-colors"
+                  className="
+                    bg-card border-border/40 group
+                    hover:border-primary/30
+                    gap-2 rounded-lg py-1 pr-1 pl-3 shadow-sm transition-colors
+                  "
                 >
                   <span className="text-xs font-semibold">{subject.name}</span>
                   <button
                     type="button"
                     onClick={() => handleRemove(subject.id)}
-                    className="flex h-5 w-5 items-center justify-center rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors"
+                    className="
+                      hover:bg-destructive/10 hover:text-destructive
+                      flex h-5 w-5 items-center justify-center rounded-md
+                      transition-colors
+                    "
                   >
                     <IconX className="h-3 w-3" />
                   </button>

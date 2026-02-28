@@ -82,19 +82,28 @@ export function EnrollmentDialog({ open, onOpenChange, studentId, studentName }:
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px] backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="
+        bg-card/95 border-border/40 backdrop-blur-xl
+        sm:max-w-[425px]
+      "
+      >
         <DialogHeader>
           <DialogTitle>{t.students.enrollStudent()}</DialogTitle>
           <DialogDescription>{t.students.enrollStudentDescription({ name: studentName })}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(d => enrollMutation.mutate(d))} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(d => enrollMutation.mutate(d))}
+            className="space-y-4"
+          >
             <EnrollmentFormFields form={form} schoolYears={schoolYears} classes={classes || []} isPendingClasses={isPendingClasses} selectedYearId={selectedYearId} />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t.common.cancel()}</Button>
               <Button type="submit" disabled={enrollMutation.isPending}>
-                {enrollMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {enrollMutation.isPending && (
+                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {t.students.enroll()}
               </Button>
             </DialogFooter>

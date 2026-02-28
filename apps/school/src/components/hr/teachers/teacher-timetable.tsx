@@ -41,24 +41,35 @@ export function TeacherTimetable({ teacherId }: TeacherTimetableProps) {
   if (isPending) {
     return (
       <div className="space-y-4">
-        <div className="h-10 w-48 animate-pulse rounded-lg bg-card" />
-        <div className="h-[400px] animate-pulse rounded-2xl bg-card/40 border border-border/40" />
+        <div className="bg-card h-10 w-48 animate-pulse rounded-lg" />
+        <div className="
+          bg-card/40 border-border/40 h-[400px] animate-pulse rounded-2xl border
+        "
+        />
       </div>
     )
   }
 
   if (formattedSessions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center bg-card/40 rounded-2xl border border-dashed border-border/40 backdrop-blur-sm">
-        <IconCalendar className="mb-4 size-12 text-muted-foreground/40" />
+      <div className="
+        bg-card/40 border-border/40 flex flex-col items-center justify-center
+        rounded-2xl border border-dashed py-20 text-center backdrop-blur-sm
+      "
+      >
+        <IconCalendar className="text-muted-foreground/40 mb-4 size-12" />
         <h3 className="text-lg font-semibold">{t.hr.teachers.noSchedule?.() || 'Aucun emploi du temps'}</h3>
-        <p className="text-sm text-muted-foreground">Cet enseignant n'a pas encore de séances d'emploi du temps.</p>
+        <p className="text-muted-foreground text-sm">Cet enseignant n'a pas encore de séances d'emploi du temps.</p>
       </div>
     )
   }
 
   return (
-    <div className="rounded-2xl border border-border/40 bg-card/20 p-4 shadow-sm backdrop-blur-sm">
+    <div className="
+      border-border/40 bg-card/20 rounded-2xl border p-4 shadow-sm
+      backdrop-blur-sm
+    "
+    >
       <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-xl" />}>
         <TimetableGrid
           sessions={formattedSessions}

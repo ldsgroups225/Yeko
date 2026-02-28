@@ -51,36 +51,75 @@ export function TimetableSessionCard({
     <>
       {compact
         ? (
-            <div className="text-[10px] leading-tight flex flex-col justify-center h-full relative">
-              <p className="font-bold truncate">{session.subjectName}</p>
-              <p className="opacity-80 truncate font-medium text-[9px]">
+            <div className="
+              relative flex h-full flex-col justify-center text-[10px]
+              leading-tight
+            "
+            >
+              <p className="truncate font-bold">{session.subjectName}</p>
+              <p className="truncate text-[9px] font-medium opacity-80">
                 {session.startTime}
                 -
                 {session.endTime}
               </p>
               {session.hasConflict && (
-                <span className="absolute -top-1 -right-1 text-[8px] font-black bg-destructive text-white rounded-full h-3 w-3 flex items-center justify-center shadow-sm border border-white dark:border-slate-900">!</span>
+                <span className="
+                  bg-destructive absolute -top-1 -right-1 flex h-3 w-3
+                  items-center justify-center rounded-full border border-white
+                  text-[8px] font-black text-white shadow-sm
+                  dark:border-slate-900
+                "
+                >
+                  !
+                </span>
               )}
             </div>
           )
         : (
-            <div className="space-y-1 h-full flex flex-col">
+            <div className="flex h-full flex-col space-y-1">
               <div className="flex items-start justify-between gap-1">
-                <p className="font-black tracking-tight text-xs leading-none line-clamp-2">{session.subjectName}</p>
+                <p className="
+                  line-clamp-2 text-xs leading-none font-black tracking-tight
+                "
+                >
+                  {session.subjectName}
+                </p>
                 {session.hasConflict && (
-                  <span className="text-[9px] font-black bg-destructive text-destructive-foreground rounded-md px-1 py-0.5 shadow-sm animate-pulse">!</span>
+                  <span className="
+                    bg-destructive text-destructive-foreground animate-pulse
+                    rounded-md px-1 py-0.5 text-[9px] font-black shadow-sm
+                  "
+                  >
+                    !
+                  </span>
                 )}
               </div>
-              <p className="text-[10px] uppercase font-bold opacity-90 truncate tracking-wide">{session.teacherName}</p>
-              <div className="mt-auto flex items-center justify-between text-[9px] opacity-80 font-medium">
-                <span className="tabular-nums tracking-tighter">
+              <p className="
+                truncate text-[10px] font-bold tracking-wide uppercase
+                opacity-90
+              "
+              >
+                {session.teacherName}
+              </p>
+              <div className="
+                mt-auto flex items-center justify-between text-[9px] font-medium
+                opacity-80
+              "
+              >
+                <span className="tracking-tighter tabular-nums">
                   {showDay && `${dayOfWeekShortLabels[session.dayOfWeek]} `}
                   {session.startTime}
                   -
                   {session.endTime}
                 </span>
                 {session.classroomName && (
-                  <span className="truncate ml-1 bg-black/10 dark:bg-white/10 px-1 rounded-sm">{session.classroomName}</span>
+                  <span className="
+                    ml-1 truncate rounded-sm bg-black/10 px-1
+                    dark:bg-white/10
+                  "
+                  >
+                    {session.classroomName}
+                  </span>
                 )}
               </div>
               {children}
@@ -97,9 +136,19 @@ export function TimetableSessionCard({
           whileTap={{ scale: 0.98 }}
           onClick={() => onClick(session)}
           className={cn(
-            'rounded-xl p-2.5 text-white transition-all text-left w-full h-full shadow-md hover:shadow-lg',
-            'cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-1',
-            session.hasConflict && 'ring-2 ring-destructive ring-offset-1 shadow-destructive/20',
+            `
+              h-full w-full rounded-xl p-2.5 text-left text-white shadow-md
+              transition-all
+              hover:shadow-lg
+            `,
+            `
+              focus:ring-primary/50
+              cursor-pointer
+              focus:ring-2 focus:ring-offset-1 focus:outline-none
+            `,
+            session.hasConflict && `
+              ring-destructive shadow-destructive/20 ring-2 ring-offset-1
+            `,
             className,
           )}
           style={{
@@ -113,8 +162,10 @@ export function TimetableSessionCard({
     : (
         <div
           className={cn(
-            'rounded-xl p-2.5 text-white transition-all h-full shadow-md',
-            session.hasConflict && 'ring-2 ring-destructive ring-offset-1 shadow-destructive/20',
+            'h-full rounded-xl p-2.5 text-white shadow-md transition-all',
+            session.hasConflict && `
+              ring-destructive shadow-destructive/20 ring-2 ring-offset-1
+            `,
             className,
           )}
           style={{
@@ -131,8 +182,11 @@ export function TimetableSessionCard({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger render={card} />
-          <TooltipContent className="bg-destructive text-destructive-foreground flex flex-col gap-0.5">
-            <p className="font-bold text-xs">{t.timetables.conflictDetected()}</p>
+          <TooltipContent className="
+            bg-destructive text-destructive-foreground flex flex-col gap-0.5
+          "
+          >
+            <p className="text-xs font-bold">{t.timetables.conflictDetected()}</p>
             <p className="text-[10px] opacity-90">{t.timetables.conflictDescription()}</p>
           </TooltipContent>
         </Tooltip>

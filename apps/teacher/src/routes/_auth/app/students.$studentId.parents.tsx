@@ -50,9 +50,12 @@ function StudentParentsPage() {
           )
         : (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <IconUser className="h-12 w-12 text-muted-foreground/50" />
-                <p className="mt-4 text-sm text-muted-foreground">
+              <CardContent className="
+                flex flex-col items-center justify-center py-12
+              "
+              >
+                <IconUser className="text-muted-foreground/50 h-12 w-12" />
+                <p className="text-muted-foreground mt-4 text-sm">
                   {LL.parents.noParents()}
                 </p>
               </CardContent>
@@ -108,40 +111,60 @@ function ParentCard({ parent }: { parent: Parent }) {
           </CardTitle>
           <div className="flex gap-2">
             {parent.isPrimary && (
-              <span className="rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+              <span className="
+                bg-primary/10 text-primary rounded-full px-2 py-1 text-xs
+                font-medium
+              "
+              >
                 {LL.parents.primary()}
               </span>
             )}
             {parent.isVerified && (
-              <span className="rounded-full bg-success/10 px-2 py-1 text-xs font-medium text-success">
+              <span className="
+                bg-success/10 text-success rounded-full px-2 py-1 text-xs
+                font-medium
+              "
+              >
                 {LL.parents.verified()}
               </span>
             )}
           </div>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {getRelationshipLabel(parent.relationship)}
         </p>
       </CardHeader>
       <CardContent className="space-y-3">
         {parent.phone && (
           <div className="flex items-center gap-3">
-            <IconPhone className="h-4 w-4 text-muted-foreground" />
-            <a href={`tel:${parent.phone}`} className="text-sm hover:underline">
+            <IconPhone className="text-muted-foreground h-4 w-4" />
+            <a
+              href={`tel:${parent.phone}`}
+              className="
+                text-sm
+                hover:underline
+              "
+            >
               {parent.phone}
             </a>
           </div>
         )}
         {parent.email && (
           <div className="flex items-center gap-3">
-            <IconMail className="h-4 w-4 text-muted-foreground" />
-            <a href={`mailto:${parent.email}`} className="text-sm hover:underline">
+            <IconMail className="text-muted-foreground h-4 w-4" />
+            <a
+              href={`mailto:${parent.email}`}
+              className="
+                text-sm
+                hover:underline
+              "
+            >
               {parent.email}
             </a>
           </div>
         )}
         {parent.preferredContact && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             {LL.parents.prefers()}
             :
             {getPreferredContactLabel(parent.preferredContact)}

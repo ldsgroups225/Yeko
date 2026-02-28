@@ -19,32 +19,48 @@ export function AssignmentMatrixTable() {
   return (
     <CardContent className="p-0">
       <div
-        className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10"
+        className="scrollbar-thin scrollbar-thumb-white/10 overflow-x-auto"
         role="region"
         aria-label={t.assignmentMatrix.ariaLabel()}
       >
         <Table aria-label={t.assignmentMatrix.ariaLabel()}>
           <TableHeader>
-            <TableRow className="border-border/10 hover:bg-transparent">
+            <TableRow className="
+              border-border/10
+              hover:bg-transparent
+            "
+            >
               <TableHead
-                className="sticky left-0 bg-background/80 backdrop-blur-md z-20 min-w-[140px] border-r border-border/10"
+                className="
+                  bg-background/80 border-border/10 sticky left-0 z-20
+                  min-w-[140px] border-r backdrop-blur-md
+                "
                 scope="col"
               >
-                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
+                <span className="
+                  text-muted-foreground/70 text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.common.classes()}
                 </span>
               </TableHead>
               {subjects.map(subject => (
                 <TableHead
                   key={subject.id}
-                  className="text-center min-w-[160px] border-b border-border/10 py-4"
+                  className="
+                    border-border/10 min-w-[160px] border-b py-4 text-center
+                  "
                   scope="col"
                 >
                   <div className="flex flex-col items-center">
-                    <span className="font-semibold text-foreground">
+                    <span className="text-foreground font-semibold">
                       {subject.name}
                     </span>
-                    <span className="text-[10px] text-muted-foreground uppercase">
+                    <span className="
+                      text-muted-foreground text-[10px] uppercase
+                    "
+                    >
                       {subject.shortName}
                     </span>
                   </div>
@@ -56,10 +72,18 @@ export function AssignmentMatrixTable() {
             {classes.map(cls => (
               <TableRow
                 key={cls.id}
-                className="border-border/5 hover:bg-white/5 transition-colors group"
+                className="
+                  border-border/5 group transition-colors
+                  hover:bg-white/5
+                "
               >
                 <TableCell
-                  className="sticky left-0 bg-card/60 backdrop-blur-md z-10 font-medium border-r border-border/10 py-4 group-hover:bg-primary/5 transition-colors"
+                  className="
+                    bg-card/60 border-border/10
+                    group-hover:bg-primary/5
+                    sticky left-0 z-10 border-r py-4 font-medium
+                    backdrop-blur-md transition-colors
+                  "
                   scope="row"
                 >
                   {cls.name}

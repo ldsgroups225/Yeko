@@ -101,16 +101,26 @@ function ComposeMessagePage() {
                 {selectedParent
                   ? (
                       <Card>
-                        <CardContent className="flex items-center justify-between p-3">
+                        <CardContent className="
+                          flex items-center justify-between p-3
+                        "
+                        >
                           <div className="flex items-center gap-3">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                              <IconUser className="h-4 w-4 text-muted-foreground" />
+                            <div className="
+                              bg-muted flex h-8 w-8 items-center justify-center
+                              rounded-full
+                            "
+                            >
+                              <IconUser className="
+                                text-muted-foreground h-4 w-4
+                              "
+                              />
                             </div>
                             <div>
                               <p className="text-sm font-medium">
                                 {selectedParent.name}
                               </p>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-muted-foreground text-xs">
                                 {selectedParent.studentName}
                                 {' '}
                                 •
@@ -131,7 +141,11 @@ function ComposeMessagePage() {
                   : (
                       <div className="space-y-2">
                         <div className="relative">
-                          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                          <IconSearch className="
+                            text-muted-foreground absolute top-1/2 left-3 h-4
+                            w-4 -translate-y-1/2
+                          "
+                          />
                           <Input
                             placeholder={LL.messages.searchParent()}
                             value={searchQuery}
@@ -151,12 +165,19 @@ function ComposeMessagePage() {
                                   )
                                 : searchResults && searchResults.length > 0
                                   ? (
-                                      <div className="max-h-48 space-y-1 overflow-y-auto">
+                                      <div className="
+                                        max-h-48 space-y-1 overflow-y-auto
+                                      "
+                                      >
                                         {searchResults.map(parent => (
                                           <button
                                             type="button"
                                             key={parent.id}
-                                            className="flex w-full items-center gap-3 rounded-md p-2 text-left hover:bg-muted"
+                                            className="
+                                              hover:bg-muted
+                                              flex w-full items-center gap-3
+                                              rounded-md p-2 text-left
+                                            "
                                             onClick={() => {
                                               setSelectedParent({
                                                 id: parent.id,
@@ -168,14 +189,24 @@ function ComposeMessagePage() {
                                             }}
                                           >
                                             {' '}
-                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted">
-                                              <IconUser className="h-4 w-4 text-muted-foreground" />
+                                            <div className="
+                                              bg-muted flex h-8 w-8 items-center
+                                              justify-center rounded-full
+                                            "
+                                            >
+                                              <IconUser className="
+                                                text-muted-foreground h-4 w-4
+                                              "
+                                              />
                                             </div>
                                             <div>
                                               <p className="text-sm font-medium">
                                                 {parent.name}
                                               </p>
-                                              <p className="text-xs text-muted-foreground">
+                                              <p className="
+                                                text-muted-foreground text-xs
+                                              "
+                                              >
                                                 {parent.studentName}
                                                 {' '}
                                                 •
@@ -187,7 +218,11 @@ function ComposeMessagePage() {
                                       </div>
                                     )
                                   : (
-                                      <p className="p-2 text-center text-sm text-muted-foreground">
+                                      <p className="
+                                        text-muted-foreground p-2 text-center
+                                        text-sm
+                                      "
+                                      >
                                         {LL.common.noResults()}
                                       </p>
                                     )}
@@ -223,7 +258,7 @@ function ComposeMessagePage() {
           )}
 
       {/* Send button */}
-      <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
+      <div className="bg-background fixed inset-x-0 bottom-16 border-t p-4">
         <Button
           className="w-full"
           onClick={handleSend}

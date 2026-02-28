@@ -27,17 +27,29 @@ export function SubjectPickerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl sm:max-w-3xl max-h-[90vh] backdrop-blur-xl bg-card/95 border-border/40 p-0 overflow-hidden flex flex-col">
+      <DialogContent className="
+        bg-card/95 border-border/40 flex max-h-[90vh] max-w-2xl flex-col
+        overflow-hidden p-0 backdrop-blur-xl
+        sm:max-w-3xl
+      "
+      >
         <SubjectPickerProvider open={open} onOpenChange={onOpenChange} schoolYearId={schoolYearId}>
-          <div className="p-6 pb-4 border-b border-border/10">
+          <div className="border-border/10 border-b p-6 pb-4">
             <DialogHeader>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <IconBook className="h-5 w-5 text-primary" />
+              <div className="mb-1 flex items-center gap-3">
+                <div className="
+                  bg-primary/10 flex h-10 w-10 items-center justify-center
+                  rounded-xl
+                "
+                >
+                  <IconBook className="text-primary h-5 w-5" />
                 </div>
                 <div>
                   <DialogTitle className="text-xl font-bold">{t.academic.subjects.picker.title()}</DialogTitle>
-                  <DialogDescription className="text-xs font-semibold opacity-70 uppercase tracking-wider">
+                  <DialogDescription className="
+                    text-xs font-semibold tracking-wider uppercase opacity-70
+                  "
+                  >
                     {t.academic.subjects.picker.description()}
                   </DialogDescription>
                 </div>
@@ -47,7 +59,7 @@ export function SubjectPickerDialog({
 
           <SubjectPickerFilters />
 
-          <div className="flex-1 px-6 py-4 overflow-y-auto scrollbar-none">
+          <div className="scrollbar-none flex-1 overflow-y-auto px-6 py-4">
             <SubjectPickerGrid />
           </div>
 

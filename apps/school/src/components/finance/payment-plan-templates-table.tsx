@@ -69,12 +69,17 @@ export function PaymentPlanTemplatesTable({
 
   if (templates.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconFileText className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconFileText className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">{t.finance.paymentPlanTemplates.noTemplates()}</p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+        <p className="text-muted-foreground/70 mt-1 max-w-sm text-sm">
           {t.finance.paymentPlanTemplates.description()}
         </p>
       </div>
@@ -83,10 +88,18 @@ export function PaymentPlanTemplatesTable({
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">
                 {t.common.name()}
               </TableHead>
@@ -109,12 +122,19 @@ export function PaymentPlanTemplatesTable({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-muted/30 border-border/40 transition-colors"
+                  className="
+                    group
+                    hover:bg-muted/30
+                    border-border/40 transition-colors
+                  "
                 >
-                  <TableCell className="font-bold flex items-center gap-2">
+                  <TableCell className="flex items-center gap-2 font-bold">
                     {template.name}
                     {template.isDefault && (
-                      <Badge variant="secondary" className="text-[10px] py-0 px-1.5 h-4">
+                      <Badge
+                        variant="secondary"
+                        className="h-4 px-1.5 py-0 text-[10px]"
+                      >
                         {t.finance.paymentPlanTemplates.isDefault()}
                       </Badge>
                     )}
@@ -126,9 +146,12 @@ export function PaymentPlanTemplatesTable({
                     <Badge
                       variant="outline"
                       className={cn(
-                        'font-medium border',
+                        'border font-medium',
                         template.status === 'active'
-                          ? 'bg-green-500/10 text-green-700 border-green-200 dark:border-green-900/30 dark:text-green-400'
+                          ? `
+                            border-green-200 bg-green-500/10 text-green-700
+                            dark:border-green-900/30 dark:text-green-400
+                          `
                           : 'bg-muted text-muted-foreground border-border',
                       )}
                     >
@@ -142,7 +165,10 @@ export function PaymentPlanTemplatesTable({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="
+                              h-8 w-8 rounded-lg opacity-0 transition-opacity
+                              group-hover:opacity-100
+                            "
                           >
                             <IconDots className="h-4 w-4" />
                           </Button>
@@ -150,16 +176,25 @@ export function PaymentPlanTemplatesTable({
                       />
                       <DropdownMenuContent
                         align="end"
-                        className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+                        className="
+                          bg-card/95 border-border/40 rounded-xl p-1 shadow-xl
+                          backdrop-blur-xl
+                        "
                       >
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation()
                             onEdit?.(template)
                           }}
-                          className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+                          className="
+                            focus:bg-primary/10
+                            cursor-pointer rounded-lg font-medium
+                          "
                         >
-                          <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <IconEdit className="
+                            text-muted-foreground mr-2 h-4 w-4
+                          "
+                          />
                           {t.common.edit()}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator className="bg-border/40" />
@@ -168,7 +203,11 @@ export function PaymentPlanTemplatesTable({
                             e.stopPropagation()
                             onDelete?.(template)
                           }}
-                          className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+                          className="
+                            text-destructive
+                            focus:bg-destructive/10 focus:text-destructive
+                            cursor-pointer rounded-lg font-medium
+                          "
                         >
                           <IconTrash className="mr-2 h-4 w-4" />
                           {t.common.delete()}
@@ -183,7 +222,11 @@ export function PaymentPlanTemplatesTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {templates.map((template, index) => (
             <motion.div
@@ -191,10 +234,13 @@ export function PaymentPlanTemplatesTable({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="p-4 rounded-2xl border border-border/40 backdrop-blur-md bg-card/50 space-y-3"
+              className="
+                border-border/40 bg-card/50 space-y-3 rounded-2xl border p-4
+                backdrop-blur-md
+              "
             >
-              <div className="flex justify-between items-start">
-                <div className="font-bold text-lg flex items-center gap-2">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-2 text-lg font-bold">
                   {template.name}
                   {template.isDefault && (
                     <Badge variant="secondary" className="text-[10px]">
@@ -208,7 +254,7 @@ export function PaymentPlanTemplatesTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 rounded-lg -mr-2 -mt-2"
+                        className="-mt-2 -mr-2 h-8 w-8 rounded-lg"
                       >
                         <IconDots className="h-4 w-4" />
                       </Button>
@@ -216,16 +262,22 @@ export function PaymentPlanTemplatesTable({
                   />
                   <DropdownMenuContent
                     align="end"
-                    className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+                    className="
+                      bg-card/95 border-border/40 rounded-xl p-1 shadow-xl
+                      backdrop-blur-xl
+                    "
                   >
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation()
                         onEdit?.(template)
                       }}
-                      className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+                      className="
+                        focus:bg-primary/10
+                        cursor-pointer rounded-lg font-medium
+                      "
                     >
-                      <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <IconEdit className="text-muted-foreground mr-2 h-4 w-4" />
                       {t.common.edit()}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-border/40" />
@@ -234,7 +286,11 @@ export function PaymentPlanTemplatesTable({
                         e.stopPropagation()
                         onDelete?.(template)
                       }}
-                      className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+                      className="
+                        text-destructive
+                        focus:bg-destructive/10 focus:text-destructive
+                        cursor-pointer rounded-lg font-medium
+                      "
                     >
                       <IconTrash className="mr-2 h-4 w-4" />
                       {t.common.delete()}
@@ -243,8 +299,11 @@ export function PaymentPlanTemplatesTable({
                 </DropdownMenu>
               </div>
 
-              <div className="flex justify-between items-center pt-2 border-t border-border/30">
-                <span className="text-sm text-muted-foreground">
+              <div className="
+                border-border/30 flex items-center justify-between border-t pt-2
+              "
+              >
+                <span className="text-muted-foreground text-sm">
                   {t.finance.paymentPlanTemplates.installmentsCount()}
                 </span>
                 <span className="font-bold">{template.installmentsCount}</span>

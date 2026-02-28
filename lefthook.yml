@@ -12,152 +12,152 @@ output:
 pre-commit:
   parallel: true
   exclude:
-    - "**/routeTree.gen.ts"
-    - "**/i18n-types.ts"
-    - "**/i18n-util.ts"
-    - "**/auth-schema.ts"
+    - '**/routeTree.gen.ts'
+    - '**/i18n-types.ts'
+    - '**/i18n-util.ts'
+    - '**/auth-schema.ts'
 
   jobs:
     # ── ESLint (auto-fix staged files) ─────────────────────────────
     - name: eslint
       group:
         parallel: true
-        glob: "*.{ts,tsx,js,jsx}"
+        glob: '*.{ts,tsx,js,jsx}'
         jobs:
           # Apps
-          - name: "eslint:core"
-            root: "apps/core/"
+          - name: 'eslint:core'
+            root: apps/core/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in apps/core"
-          - name: "eslint:school"
-            root: "apps/school/"
+            fail_text: ESLint failed in apps/core
+          - name: 'eslint:school'
+            root: apps/school/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in apps/school"
-          - name: "eslint:teacher"
-            root: "apps/teacher/"
+            fail_text: ESLint failed in apps/school
+          - name: 'eslint:teacher'
+            root: apps/teacher/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in apps/teacher"
-          - name: "eslint:data-service"
-            root: "apps/data-service/"
+            fail_text: ESLint failed in apps/teacher
+          - name: 'eslint:data-service'
+            root: apps/data-service/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in apps/data-service"
+            fail_text: ESLint failed in apps/data-service
           # Packages
-          - name: "eslint:data-ops"
-            root: "packages/data-ops/"
+          - name: 'eslint:data-ops'
+            root: packages/data-ops/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in packages/data-ops"
-          - name: "eslint:ui"
-            root: "packages/ui/"
+            fail_text: ESLint failed in packages/data-ops
+          - name: 'eslint:ui'
+            root: packages/ui/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in packages/ui"
-          - name: "eslint:logger"
-            root: "packages/logger/"
+            fail_text: ESLint failed in packages/ui
+          - name: 'eslint:logger'
+            root: packages/logger/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in packages/logger"
-          - name: "eslint:background-tasks"
-            root: "packages/background-tasks/"
+            fail_text: ESLint failed in packages/logger
+          - name: 'eslint:background-tasks'
+            root: packages/background-tasks/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in packages/background-tasks"
-          - name: "eslint:queue-worker"
-            root: "packages/queue-worker/"
+            fail_text: ESLint failed in packages/background-tasks
+          - name: 'eslint:queue-worker'
+            root: packages/queue-worker/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in packages/queue-worker"
-          - name: "eslint:eslint-config"
-            root: "packages/eslint-config/"
+            fail_text: ESLint failed in packages/queue-worker
+          - name: 'eslint:eslint-config'
+            root: packages/eslint-config/
             run: pnpm exec eslint {staged_files} --fix --quiet
             stage_fixed: true
             skip_empty: true
-            fail_text: "ESLint failed in packages/eslint-config"
+            fail_text: ESLint failed in packages/eslint-config
 
     # ── TypeScript (noEmit check) ──────────────────────────────────
     - name: typecheck
       group:
         parallel: true
-        glob: "*.{ts,tsx}"
+        glob: '*.{ts,tsx}'
         jobs:
           # Apps
-          - name: "tsc:core"
-            root: "apps/core/"
+          - name: 'tsc:core'
+            root: apps/core/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in apps/core"
-          - name: "tsc:school"
-            root: "apps/school/"
+            fail_text: TypeScript errors in apps/core
+          - name: 'tsc:school'
+            root: apps/school/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in apps/school"
-          - name: "tsc:teacher"
-            root: "apps/teacher/"
+            fail_text: TypeScript errors in apps/school
+          - name: 'tsc:teacher'
+            root: apps/teacher/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in apps/teacher"
-          - name: "tsc:data-service"
-            root: "apps/data-service/"
+            fail_text: TypeScript errors in apps/teacher
+          - name: 'tsc:data-service'
+            root: apps/data-service/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in apps/data-service"
+            fail_text: TypeScript errors in apps/data-service
           # Packages
-          - name: "tsc:data-ops"
-            root: "packages/data-ops/"
+          - name: 'tsc:data-ops'
+            root: packages/data-ops/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in packages/data-ops"
-          - name: "tsc:ui"
-            root: "packages/ui/"
+            fail_text: TypeScript errors in packages/data-ops
+          - name: 'tsc:ui'
+            root: packages/ui/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in packages/ui"
-          - name: "tsc:logger"
-            root: "packages/logger/"
+            fail_text: TypeScript errors in packages/ui
+          - name: 'tsc:logger'
+            root: packages/logger/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in packages/logger"
-          - name: "tsc:background-tasks"
-            root: "packages/background-tasks/"
+            fail_text: TypeScript errors in packages/logger
+          - name: 'tsc:background-tasks'
+            root: packages/background-tasks/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in packages/background-tasks"
-          - name: "tsc:queue-worker"
-            root: "packages/queue-worker/"
+            fail_text: TypeScript errors in packages/background-tasks
+          - name: 'tsc:queue-worker'
+            root: packages/queue-worker/
             run: pnpm exec tsc --noEmit
             skip_empty: true
-            fail_text: "TypeScript errors in packages/queue-worker"
+            fail_text: TypeScript errors in packages/queue-worker
 
 # ─── Pre-push ────────────────────────────────────────────────────────
 # Full checks before sharing code — lint + typecheck can run in parallel.
 pre-push:
   parallel: true
   jobs:
-    - name: "Full ESLint Check"
+    - name: Full ESLint Check
       run: pnpm lint:check
-      fail_text: "Fix lint errors before pushing"
-    - name: "Full TypeScript Check"
+      fail_text: Fix lint errors before pushing
+    - name: Full TypeScript Check
       run: pnpm typecheck
-      fail_text: "Fix type errors before pushing"
+      fail_text: Fix type errors before pushing
 
 # ─── Post-merge ──────────────────────────────────────────────────────
 # Reinstall dependencies when lockfile or package.json changed.
 post-merge:
   jobs:
-    - name: "Install Dependencies"
+    - name: Install Dependencies
       run: |
         if git diff --name-only HEAD~1 HEAD | grep -qE "(^|/)package\.json$|pnpm-lock\.yaml$"; then
           echo "📦 Dependencies changed — running pnpm install..."
@@ -168,7 +168,7 @@ post-merge:
 # Ensure node_modules exist after branch switch.
 post-checkout:
   jobs:
-    - name: "Install Dependencies (if missing)"
+    - name: Install Dependencies (if missing)
       run: |
         if [ ! -d "node_modules" ] || [ ! -d "packages/data-ops/node_modules" ]; then
           echo "📦 node_modules missing — running pnpm install..."
@@ -179,11 +179,11 @@ post-checkout:
 # Usage: lefthook run auto-fix
 auto-fix:
   jobs:
-    - name: "Auto-fix all issues"
+    - name: Auto-fix all issues
       run: pnpm lint:fix
 
 # Usage: lefthook run typecheck-all
 typecheck-all:
   jobs:
-    - name: "Full TypeScript Check"
+    - name: Full TypeScript Check
       run: pnpm typecheck

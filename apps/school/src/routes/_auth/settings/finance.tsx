@@ -42,8 +42,11 @@ function AccountingSetupPage() {
       title: t.finance.wizard.steps.step2(),
       description: t.finance.wizard.steps.step2Description(),
       component: (
-        <div className="p-4 bg-muted/50 rounded-xl border border-dashed border-border/60">
-          <p className="text-sm text-center italic">...</p>
+        <div className="
+          bg-muted/50 border-border/60 rounded-xl border border-dashed p-4
+        "
+        >
+          <p className="text-center text-sm italic">...</p>
         </div>
       ),
     },
@@ -51,8 +54,11 @@ function AccountingSetupPage() {
       title: t.finance.wizard.steps.step3(),
       description: t.finance.wizard.steps.step3Description(),
       component: (
-        <div className="p-4 bg-muted/50 rounded-xl border border-dashed border-border/60">
-          <p className="text-sm text-center italic">...</p>
+        <div className="
+          bg-muted/50 border-border/60 rounded-xl border border-dashed p-4
+        "
+        >
+          <p className="text-center text-sm italic">...</p>
         </div>
       ),
     },
@@ -60,8 +66,11 @@ function AccountingSetupPage() {
       title: t.finance.wizard.steps.step4(),
       description: t.finance.wizard.steps.step4Description(),
       component: (
-        <div className="p-4 bg-muted/50 rounded-xl border border-dashed border-border/60">
-          <p className="text-sm text-center italic">...</p>
+        <div className="
+          bg-muted/50 border-border/60 rounded-xl border border-dashed p-4
+        "
+        >
+          <p className="text-center text-sm italic">...</p>
         </div>
       ),
     },
@@ -69,8 +78,11 @@ function AccountingSetupPage() {
       title: t.finance.wizard.steps.step5(),
       description: t.finance.wizard.steps.step5Description(),
       component: (
-        <div className="p-4 bg-muted/50 rounded-xl border border-dashed border-border/60">
-          <p className="text-sm text-center italic">...</p>
+        <div className="
+          bg-muted/50 border-border/60 rounded-xl border border-dashed p-4
+        "
+        >
+          <p className="text-center text-sm italic">...</p>
         </div>
       ),
     },
@@ -78,28 +90,40 @@ function AccountingSetupPage() {
       title: t.finance.wizard.steps.step6(),
       description: t.finance.wizard.steps.step6Description(),
       component: (
-        <div className="p-4 bg-muted/50 rounded-xl border border-dashed border-border/60">
-          <p className="text-sm text-center italic">...</p>
+        <div className="
+          bg-muted/50 border-border/60 rounded-xl border border-dashed p-4
+        "
+        >
+          <p className="text-center text-sm italic">...</p>
         </div>
       ),
     },
   ]
 
   return (
-    <div className="container max-w-5xl mx-auto py-12 px-6">
+    <div className="container mx-auto max-w-5xl px-6 py-12">
       <div className="flex flex-col gap-8">
         <div className="flex justify-end pt-4">
           <Button
             size="lg"
             onClick={() => setWizardOpen(true)}
-            className="rounded-2xl gap-2 px-8 shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
+            className="
+              shadow-primary/20 gap-2 rounded-2xl px-8 shadow-xl
+              transition-transform
+              hover:scale-[1.02]
+            "
           >
             <IconRocket className="h-5 w-5" />
             {t.finance.wizard.launchWizard()}
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="
+          grid grid-cols-1 gap-6
+          md:grid-cols-2
+          lg:grid-cols-3
+        "
+        >
           <SetupCard
             step="1"
             title={t.finance.wizard.cards.step1Title()}
@@ -158,13 +182,27 @@ function SetupCard({ step, title, description, icon, href }: { step: string, tit
   const t = useTranslations()
 
   return (
-    <Card className="rounded-3xl border border-border/40 bg-card/50 backdrop-blur-sm hover:bg-card/80 transition-colors group">
+    <Card className="
+      border-border/40 bg-card/50
+      hover:bg-card/80
+      group rounded-3xl border backdrop-blur-sm transition-colors
+    "
+    >
       <CardHeader className="flex flex-row items-center gap-4">
-        <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+        <div className="
+          bg-muted text-muted-foreground
+          group-hover:bg-primary/10 group-hover:text-primary
+          flex h-12 w-12 items-center justify-center rounded-2xl
+          transition-colors
+        "
+        >
           {icon}
         </div>
         <div className="flex-1">
-          <div className="text-xs font-bold text-primary mb-0.5 uppercase tracking-wider">
+          <div className="
+            text-primary mb-0.5 text-xs font-bold tracking-wider uppercase
+          "
+          >
             {t.finance.wizard.cards.stepLabel()}
             {' '}
             {step}
@@ -178,7 +216,10 @@ function SetupCard({ step, title, description, icon, href }: { step: string, tit
         </CardDescription>
         <Link
           to={href}
-          className={cn(buttonVariants({ variant: 'ghost' }), 'w-full justify-between rounded-xl hover:bg-primary/5 hover:text-primary')}
+          className={cn(buttonVariants({ variant: 'ghost' }), `
+            hover:bg-primary/5 hover:text-primary
+            w-full justify-between rounded-xl
+          `)}
         >
           {t.finance.wizard.manage()}
           <IconArrowRight className="h-4 w-4" />

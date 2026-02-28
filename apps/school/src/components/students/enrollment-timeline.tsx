@@ -70,9 +70,12 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
 
   if (!enrollments || enrollments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-8 text-center">
-        <IconSchool className="h-12 w-12 text-muted-foreground" />
-        <p className="mt-2 text-muted-foreground">
+      <div className="
+        flex flex-col items-center justify-center py-8 text-center
+      "
+      >
+        <IconSchool className="text-muted-foreground h-12 w-12" />
+        <p className="text-muted-foreground mt-2">
           {t.students.noEnrollmentHistory()}
         </p>
       </div>
@@ -89,7 +92,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
   return (
     <div className="relative">
       {/* Timeline line */}
-      <div className="absolute left-4 top-0 h-full w-0.5 bg-border/40" />
+      <div className="bg-border/40 absolute top-0 left-4 h-full w-0.5" />
 
       <div className="space-y-6">
         {sortedEnrollments.map((item, index) => {
@@ -103,9 +106,12 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
               {/* Timeline dot */}
               <div
                 className={cn(
-                  'absolute left-2 flex h-5 w-5 items-center justify-center rounded-full border-2 bg-card backdrop-blur-sm',
+                  `
+                    bg-card absolute left-2 flex h-5 w-5 items-center
+                    justify-center rounded-full border-2 backdrop-blur-sm
+                  `,
                   config.borderColor,
-                  isFirst && 'ring-2 ring-offset-2 ring-primary/20',
+                  isFirst && 'ring-primary/20 ring-2 ring-offset-2',
                   isFirst && config.bgColor,
                 )}
               >
@@ -115,18 +121,25 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
               {/* Content */}
               <div
                 className={cn(
-                  'flex-1 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm p-4 transition-all hover:shadow-sm',
+                  `
+                    border-border/40 bg-card/50 flex-1 rounded-xl border p-4
+                    backdrop-blur-sm transition-all
+                    hover:shadow-sm
+                  `,
                   isFirst && 'border-primary/50 bg-primary/5 shadow-sm',
                 )}
               >
-                <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="
+                  flex flex-wrap items-start justify-between gap-2
+                "
+                >
                   <div>
                     <p className="font-semibold">
                       {item.class.gradeName}
                       {' '}
                       {item.class.section}
                       {item.class.seriesName && (
-                        <span className="font-normal text-muted-foreground">
+                        <span className="text-muted-foreground font-normal">
                           {' '}
                           (
                           {item.class.seriesName}
@@ -135,7 +148,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                       )}
                     </p>
                     {item.schoolYear && (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         {item.schoolYear.name}
                       </p>
                     )}
@@ -152,7 +165,10 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   </Badge>
                 </div>
 
-                <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <div className="
+                  text-muted-foreground mt-3 flex flex-wrap gap-4 text-sm
+                "
+                >
                   <div className="flex items-center gap-1">
                     <IconCalendar className="h-3.5 w-3.5" />
                     <span>
@@ -173,7 +189,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.confirmedAt && (
                     <div className="flex items-center gap-1">
-                      <IconCircleCheck className="h-3.5 w-3.5 text-success" />
+                      <IconCircleCheck className="text-success h-3.5 w-3.5" />
                       <span>
                         {t.students.confirmedOn()}
                         :
@@ -184,7 +200,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.transferredAt && (
                     <div className="flex items-center gap-1">
-                      <IconArrowRight className="h-3.5 w-3.5 text-primary" />
+                      <IconArrowRight className="text-primary h-3.5 w-3.5" />
                       <span>
                         {t.students.transferredOn()}
                         :
@@ -195,7 +211,7 @@ export function EnrollmentTimeline({ enrollments }: EnrollmentTimelineProps) {
                   )}
                   {item.enrollment.cancelledAt && (
                     <div className="flex items-center gap-1">
-                      <IconCircleX className="h-3.5 w-3.5 text-destructive" />
+                      <IconCircleX className="text-destructive h-3.5 w-3.5" />
                       <span>
                         {t.students.cancelledOn()}
                         :

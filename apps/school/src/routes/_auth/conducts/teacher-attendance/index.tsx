@@ -79,7 +79,16 @@ function TeacherAttendancePage() {
     <div className="space-y-6">
       <div className="flex justify-end">
         <Link to="/conducts/teacher-attendance/reports">
-          <Button variant="outline" size="sm" className="rounded-xl border-border/40 hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px] h-10 px-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="
+              border-border/40
+              hover:bg-primary/10 hover:text-primary
+              h-10 rounded-xl px-4 text-[10px] font-black tracking-widest
+              uppercase transition-all
+            "
+          >
             <IconChartBar className="mr-2 h-4 w-4" />
             {t.attendance.punctualityReport()}
           </Button>
@@ -89,14 +98,28 @@ function TeacherAttendancePage() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
+        className="
+          bg-card/20 border-border/40 rounded-3xl border p-6 backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-4 ml-1">
-          <IconCalendar className="size-3 text-muted-foreground/60" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.common.date()}</span>
+        <div className="mb-4 ml-1 flex items-center gap-2">
+          <IconCalendar className="text-muted-foreground/60 size-3" />
+          <span className="
+            text-muted-foreground/60 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
+            {t.common.date()}
+          </span>
         </div>
         <div className="flex flex-wrap gap-4">
-          <DatePicker date={date} onSelect={d => d && setDate(d)} className="h-12 rounded-2xl bg-background/50 border-border/40 font-bold" />
+          <DatePicker
+            date={date}
+            onSelect={d => d && setDate(d)}
+            className="
+              bg-background/50 border-border/40 h-12 rounded-2xl font-bold
+            "
+          />
         </div>
       </motion.div>
 

@@ -68,7 +68,10 @@ function StaffDetailPage() {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+          <div className="
+            bg-muted flex h-16 w-16 items-center justify-center rounded-full
+          "
+          >
             <IconUser className="h-8 w-8" />
           </div>
           <div>
@@ -113,19 +116,19 @@ function StaffDetailPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-muted-foreground text-sm font-medium">
                     {t.hr.staff.position()}
                   </p>
                   <p className="text-base">{staff.position}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-muted-foreground text-sm font-medium">
                     {t.hr.staff.department()}
                   </p>
                   <p className="text-base">{staff.department || '-'}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-muted-foreground text-sm font-medium">
                     {t.hr.staff.hireDate()}
                   </p>
                   <p className="text-base">
@@ -135,7 +138,7 @@ function StaffDetailPage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-muted-foreground text-sm font-medium">
                     {t.hr.staff.status()}
                   </p>
                   <div>{getStatusBadge(staff.status)}</div>
@@ -151,7 +154,7 @@ function StaffDetailPage() {
               <CardTitle>{t.hr.staff.recentActivity()}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {t.hr.staff.noActivity()}
               </p>
             </CardContent>

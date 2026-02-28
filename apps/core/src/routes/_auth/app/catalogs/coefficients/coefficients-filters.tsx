@@ -39,12 +39,24 @@ export function CoefficientsFilters({
   isBulkUpdating,
 }: CoefficientsFiltersProps) {
   return (
-    <Card className="bg-white/40 dark:bg-card/40 backdrop-blur-sm border-white/20 dark:border-border/10">
+    <Card className="
+      dark:bg-card/40 dark:border-border/10
+      border-white/20 bg-white/40 backdrop-blur-sm
+    "
+    >
       <CardContent className="py-4">
-        <div className="flex flex-col lg:flex-row items-start lg:items-center gap-4">
-          <div className="flex flex-wrap items-center gap-3 flex-1">
+        <div className="
+          flex flex-col items-start gap-4
+          lg:flex-row lg:items-center
+        "
+        >
+          <div className="flex flex-1 flex-wrap items-center gap-3">
             <Select value={yearFilter} onValueChange={val => val && setYearFilter(val)}>
-              <SelectTrigger className="w-[180px] bg-white/50 dark:bg-card/50">
+              <SelectTrigger className="
+                dark:bg-card/50
+                w-[180px] bg-white/50
+              "
+              >
                 <SelectValue placeholder="Année">
                   {yearFilter === 'all'
                     ? 'Toutes les années'
@@ -54,7 +66,17 @@ export function CoefficientsFilters({
                           ? (
                               <div className="flex items-center gap-2">
                                 <span>{year.name}</span>
-                                {year.isActive && <Badge variant="secondary" className="text-[10px] h-4 bg-primary/10 text-primary border-none">Active</Badge>}
+                                {year.isActive && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="
+                                      bg-primary/10 text-primary h-4 border-none
+                                      text-[10px]
+                                    "
+                                  >
+                                    Active
+                                  </Badge>
+                                )}
                               </div>
                             )
                           : undefined
@@ -72,7 +94,11 @@ export function CoefficientsFilters({
             </Select>
 
             <Select value={gradeFilter} onValueChange={val => val && setGradeFilter(val)}>
-              <SelectTrigger className="w-[180px] bg-white/50 dark:bg-card/50">
+              <SelectTrigger className="
+                dark:bg-card/50
+                w-[180px] bg-white/50
+              "
+              >
                 <SelectValue placeholder="Classe">
                   {gradeFilter === 'all'
                     ? 'Toutes les classes'
@@ -90,7 +116,11 @@ export function CoefficientsFilters({
             </Select>
 
             <Select value={seriesFilter} onValueChange={val => val && setSeriesFilter(val)}>
-              <SelectTrigger className="w-[180px] bg-white/50 dark:bg-card/50">
+              <SelectTrigger className="
+                dark:bg-card/50
+                w-[180px] bg-white/50
+              "
+              >
                 <SelectValue placeholder="Série">
                   {seriesFilter === 'all'
                     ? 'Toutes les séries'
@@ -108,22 +138,68 @@ export function CoefficientsFilters({
             </Select>
           </div>
 
-          <div className="flex items-center gap-4 w-full lg:w-auto">
+          <div className="
+            flex w-full items-center gap-4
+            lg:w-auto
+          "
+          >
             {editingCellsCount > 0 && (
-              <Button onClick={onSaveChanges} disabled={isBulkUpdating} className="bg-orange-500 hover:bg-orange-600 shadow-md transition-all active:scale-95 animate-in fade-in zoom-in slide-in-from-right-4">
-                <IconDeviceFloppy className="h-4 w-4 mr-2" />
+              <Button
+                onClick={onSaveChanges}
+                disabled={isBulkUpdating}
+                className="
+                  animate-in fade-in zoom-in slide-in-from-right-4 bg-orange-500
+                  shadow-md transition-all
+                  hover:bg-orange-600
+                  active:scale-95
+                "
+              >
+                <IconDeviceFloppy className="mr-2 h-4 w-4" />
                 Enregistrer (
                 {editingCellsCount}
                 )
               </Button>
             )}
 
-            <div className="h-8 w-px bg-border/50 hidden lg:block" />
+            <div className="
+              bg-border/50 hidden h-8 w-px
+              lg:block
+            "
+            />
 
-            <Tabs value={viewMode} onValueChange={v => setViewMode(v as 'matrix' | 'list')} className="w-full lg:w-auto">
-              <TabsList className="grid grid-cols-2 lg:inline-flex bg-background/50 p-1 rounded-lg">
-                <TabsTrigger value="matrix" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Matrice</TabsTrigger>
-                <TabsTrigger value="list" className="rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Liste</TabsTrigger>
+            <Tabs
+              value={viewMode}
+              onValueChange={v => setViewMode(v as 'matrix' | 'list')}
+              className="
+                w-full
+                lg:w-auto
+              "
+            >
+              <TabsList className="
+                bg-background/50 grid grid-cols-2 rounded-lg p-1
+                lg:inline-flex
+              "
+              >
+                <TabsTrigger
+                  value="matrix"
+                  className="
+                    data-[state=active]:bg-primary
+                    data-[state=active]:text-primary-foreground
+                    rounded-md
+                  "
+                >
+                  Matrice
+                </TabsTrigger>
+                <TabsTrigger
+                  value="list"
+                  className="
+                    data-[state=active]:bg-primary
+                    data-[state=active]:text-primary-foreground
+                    rounded-md
+                  "
+                >
+                  Liste
+                </TabsTrigger>
               </TabsList>
             </Tabs>
           </div>

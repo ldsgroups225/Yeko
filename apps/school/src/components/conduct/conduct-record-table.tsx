@@ -100,15 +100,18 @@ export function ConductRecordTable({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm p-20 flex flex-col items-center text-center"
+        className="
+          border-border/60 bg-card/20 flex flex-col items-center rounded-3xl
+          border border-dashed p-20 text-center backdrop-blur-sm
+        "
       >
-        <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
-          <IconFileAlert className="size-12 text-muted-foreground/20" />
+        <div className="bg-background/50 mb-6 rounded-full p-6 shadow-inner">
+          <IconFileAlert className="text-muted-foreground/20 size-12" />
         </div>
-        <h3 className="text-xl font-bold text-muted-foreground mb-2">
+        <h3 className="text-muted-foreground mb-2 text-xl font-bold">
           {t.conduct.noRecords()}
         </h3>
-        <p className="text-sm text-muted-foreground max-w-xs">
+        <p className="text-muted-foreground max-w-xs text-sm">
           {t.conduct.noRecordsDescription()}
         </p>
       </motion.div>
@@ -119,7 +122,10 @@ export function ConductRecordTable({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-3xl border border-border/40 bg-card/30 backdrop-blur-xl overflow-hidden shadow-2xl"
+      className="
+        border-border/40 bg-card/30 overflow-hidden rounded-3xl border
+        shadow-2xl backdrop-blur-xl
+      "
     >
       <div className="overflow-x-auto">
         <Table>
@@ -127,12 +133,18 @@ export function ConductRecordTable({
             {table.getHeaderGroups().map(headerGroup => (
               <TableRow
                 key={headerGroup.id}
-                className="hover:bg-transparent border-b border-border/20 bg-muted/20"
+                className="
+                  border-border/20 bg-muted/20 border-b
+                  hover:bg-transparent
+                "
               >
                 {headerGroup.headers.map(header => (
                   <TableHead
                     key={header.id}
-                    className="h-14 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-6"
+                    className="
+                      text-muted-foreground/60 h-14 px-6 text-[10px] font-black
+                      tracking-[0.2em] uppercase
+                    "
                   >
                     {header.isPlaceholder
                       ? null
@@ -149,7 +161,12 @@ export function ConductRecordTable({
             {table.getRowModel().rows.map(row => (
               <TableRow
                 key={row.id}
-                className="group border-b border-border/10 hover:bg-primary/5 transition-colors data-[selected=true]:bg-primary/5 cursor-pointer"
+                className="
+                  group border-border/10
+                  hover:bg-primary/5
+                  data-[selected=true]:bg-primary/5
+                  cursor-pointer border-b transition-colors
+                "
                 onClick={() => onView?.(row.original.id)}
                 data-selected={row.getIsSelected()}
               >
@@ -165,8 +182,16 @@ export function ConductRecordTable({
       </div>
 
       {table.getPageCount() > 1 && (
-        <div className="flex items-center justify-between py-4 px-6 bg-muted/10 border-t border-border/20">
-          <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+        <div className="
+          bg-muted/10 border-border/20 flex items-center justify-between
+          border-t px-6 py-4
+        "
+        >
+          <div className="
+            text-muted-foreground/40 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
             Page
             {' '}
             {table.getState().pagination.pageIndex + 1}
@@ -181,7 +206,12 @@ export function ConductRecordTable({
               size="sm"
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="rounded-xl border-border/40 bg-background/50 hover:bg-background h-10 px-6 font-black uppercase tracking-widest text-[10px] transition-all"
+              className="
+                border-border/40 bg-background/50
+                hover:bg-background
+                h-10 rounded-xl px-6 text-[10px] font-black tracking-widest
+                uppercase transition-all
+              "
             >
               {t.common.previous()}
             </Button>
@@ -190,7 +220,12 @@ export function ConductRecordTable({
               size="sm"
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="rounded-xl border-border/40 bg-background/50 hover:bg-background h-10 px-6 font-black uppercase tracking-widest text-[10px] transition-all"
+              className="
+                border-border/40 bg-background/50
+                hover:bg-background
+                h-10 rounded-xl px-6 text-[10px] font-black tracking-widest
+                uppercase transition-all
+              "
             >
               {t.common.next()}
             </Button>

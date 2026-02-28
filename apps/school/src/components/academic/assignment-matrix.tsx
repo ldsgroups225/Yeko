@@ -34,7 +34,10 @@ function AssignmentMatrixContent() {
       animate={{ opacity: 1, scale: 1 }}
       className="space-y-4"
     >
-      <Card className="border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
+      <Card className="
+        border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+      "
+      >
         <AssignmentMatrixHeader />
         <Suspense fallback={<AssignmentMatrixSkeleton />}>
           <AssignmentMatrixTable />

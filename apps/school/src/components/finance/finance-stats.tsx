@@ -70,10 +70,21 @@ export function FinanceStats({
 
   if (isPending) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+        lg:grid-cols-4
+      "
+      >
         {Array.from({ length: 4 }).map(() => (
-          <Card key={generateUUID()} className="rounded-2xl border-border/40 bg-card/40 backdrop-blur-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card
+            key={generateUUID()}
+            className="border-border/40 bg-card/40 rounded-2xl backdrop-blur-xl"
+          >
+            <CardHeader className="
+              flex flex-row items-center justify-between space-y-0 pb-2
+            "
+            >
               <Skeleton className="h-4 w-24" />
               <Skeleton className="h-10 w-10 rounded-xl" />
             </CardHeader>
@@ -87,7 +98,12 @@ export function FinanceStats({
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="
+      grid gap-6
+      md:grid-cols-2
+      lg:grid-cols-4
+    "
+    >
       {stats.map((stat, index) => (
         <motion.div
           key={stat.title}
@@ -95,20 +111,43 @@ export function FinanceStats({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
         >
-          <Card className={`rounded-2xl border bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300 ${stat.borderColor}`}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wider">
+          <Card className={`
+            bg-card/40 rounded-2xl border shadow-sm backdrop-blur-xl
+            transition-all duration-300
+            hover:shadow-md
+            ${stat.borderColor}
+          `}
+          >
+            <CardHeader className="
+              flex flex-row items-center justify-between space-y-0 pb-2
+            "
+            >
+              <CardTitle className="
+                text-muted-foreground text-sm font-bold tracking-wider uppercase
+              "
+              >
                 {stat.title}
               </CardTitle>
-              <div className={`p-2.5 rounded-xl border backdrop-blur-md ${stat.bgColor}`}>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
+              <div className={`
+                rounded-xl border p-2.5 backdrop-blur-md
+                ${stat.bgColor}
+              `}
+              >
+                <stat.icon className={`
+                  h-5 w-5
+                  ${stat.color}
+                `}
+                />
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-black tracking-tight">
                 {stat.value}
                 {stat.suffix && (
-                  <span className="ml-1 text-sm font-medium text-muted-foreground/80">
+                  <span className="
+                    text-muted-foreground/80 ml-1 text-sm font-medium
+                  "
+                  >
                     {stat.suffix}
                   </span>
                 )}

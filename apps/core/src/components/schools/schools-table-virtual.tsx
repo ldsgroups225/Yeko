@@ -75,7 +75,7 @@ export function SchoolsTableVirtual({
   }
 
   return (
-    <div ref={parentRef} className="h-[600px] overflow-auto border rounded-lg">
+    <div ref={parentRef} className="h-[600px] overflow-auto rounded-lg border">
       <div
         style={{
           height: `${virtualizer.getTotalSize()}px`,
@@ -84,7 +84,7 @@ export function SchoolsTableVirtual({
         }}
       >
         <Table>
-          <TableHeader className="sticky top-0 bg-background z-10">
+          <TableHeader className="bg-background sticky top-0 z-10">
             <TableRow>
               <TableHead>École</TableHead>
               <TableHead>Code</TableHead>
@@ -121,14 +121,21 @@ export function SchoolsTableVirtual({
                           src={school.logoUrl || undefined}
                           alt={school.name}
                         />
-                        <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
+                        <AvatarFallback className="
+                          bg-primary/10 text-primary rounded-lg font-medium
+                        "
+                        >
                           {school.name.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-medium">{school.name}</div>
                         {school.address && (
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <div className="
+                            text-muted-foreground flex items-center gap-1
+                            text-xs
+                          "
+                          >
                             <IconMapPin className="h-3 w-3" />
                             {school.address}
                           </div>
@@ -137,7 +144,10 @@ export function SchoolsTableVirtual({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-mono text-xs bg-muted px-2 py-1 rounded">
+                    <span className="
+                      bg-muted rounded-sm px-2 py-1 font-mono text-xs
+                    "
+                    >
                       {school.code}
                     </span>
                   </TableCell>
@@ -145,13 +155,13 @@ export function SchoolsTableVirtual({
                     <div className="space-y-1">
                       {school.email && (
                         <div className="flex items-center gap-1 text-xs">
-                          <IconMail className="h-3 w-3 text-muted-foreground" />
+                          <IconMail className="text-muted-foreground h-3 w-3" />
                           {school.email}
                         </div>
                       )}
                       {school.phone && (
                         <div className="flex items-center gap-1 text-xs">
-                          <IconPhone className="h-3 w-3 text-muted-foreground" />
+                          <IconPhone className="text-muted-foreground h-3 w-3" />
                           {school.phone}
                         </div>
                       )}
@@ -220,7 +230,11 @@ export function SchoolsTableVirtual({
                           )}
                         />
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive focus:text-destructive">
+                        <DropdownMenuItem className="
+                          text-destructive
+                          focus:text-destructive
+                        "
+                        >
                           <IconBan className="mr-2 h-4 w-4" />
                           {' '}
                           Suspendre

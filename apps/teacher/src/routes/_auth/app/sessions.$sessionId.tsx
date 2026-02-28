@@ -171,7 +171,7 @@ function SessionDetailPage() {
         </Button>
         <div className="flex-1">
           <h1 className="font-semibold">{session?.className ?? LL.session.title()}</h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {session?.subjectName ?? ''}
           </p>
         </div>
@@ -185,19 +185,43 @@ function SessionDetailPage() {
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="attendance" className="gap-1.5 p-1">
             <IconClipboardList className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.session.attendance()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.session.attendance()}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="participation" className="gap-1.5 p-1">
             <IconUsers className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.session.participation()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.session.participation()}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="homework" className="gap-1.5 p-1">
             <IconBook className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.session.homework()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.session.homework()}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="details" className="gap-1.5 p-1">
             <IconPencil className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.session.notes()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.session.notes()}
+            </span>
           </TabsTrigger>
         </TabsList>
 
@@ -250,7 +274,7 @@ function SessionDetailPage() {
               <CardTitle className="text-base">{LL.session.homework()}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Fonctionnalité de devoirs à venir.
               </p>
             </CardContent>
@@ -263,7 +287,7 @@ function SessionDetailPage() {
               <CardTitle className="text-base">{LL.session.notes()}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {LL.session.addNotes()}
               </p>
             </CardContent>
@@ -272,15 +296,24 @@ function SessionDetailPage() {
       </Tabs>
 
       {/* Complete Session Button */}
-      <div className="fixed bottom-20 left-0 right-0 border-t bg-background p-4 space-y-4">
+      <div className="
+        bg-background fixed right-0 bottom-20 left-0 space-y-4 border-t p-4
+      "
+      >
 
-        <div className="flex items-center space-x-2 bg-muted/50 p-3 rounded-lg">
+        <div className="bg-muted/50 flex items-center space-x-2 rounded-lg p-3">
           <Checkbox
             id="program-completed"
             checked={programCompleted}
             onCheckedChange={checked => setProgramCompleted(checked === true)}
           />
-          <Label htmlFor="program-completed" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          <Label
+            htmlFor="program-completed"
+            className="
+              text-sm leading-none font-medium
+              peer-disabled:cursor-not-allowed peer-disabled:opacity-70
+            "
+          >
             Programme ministériel terminé
           </Label>
         </div>

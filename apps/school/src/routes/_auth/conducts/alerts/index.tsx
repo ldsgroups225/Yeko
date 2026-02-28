@@ -80,10 +80,18 @@ function AlertsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+        <Card className="
+          border-border/40 bg-card/30 relative overflow-hidden rounded-3xl
+          shadow-2xl backdrop-blur-xl
+        "
+        >
 
-          <CardHeader className="relative border-b border-border/10 bg-muted/20">
-            <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+          <CardHeader className="border-border/10 bg-muted/20 relative border-b">
+            <CardTitle className="
+              text-muted-foreground/60 flex items-center gap-2 text-[10px]
+              font-black tracking-[0.2em] uppercase
+            "
+            >
               <IconBell className="h-3 w-3" />
               {t.alerts.activeAlerts()}
             </CardTitle>

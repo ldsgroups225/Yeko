@@ -12,8 +12,12 @@ export function StaffTablePagination() {
     return null
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-      <div className="text-sm text-muted-foreground font-medium">
+    <div className="
+      mt-6 flex flex-col items-center justify-between gap-4
+      sm:flex-row
+    "
+    >
+      <div className="text-muted-foreground text-sm font-medium">
         {t.common.showing()}
         {' '}
         <span className="text-foreground">
@@ -34,7 +38,11 @@ export function StaffTablePagination() {
         <Button
           variant="outline"
           size="sm"
-          className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
+          className="
+            border-border/40 bg-background/50
+            hover:bg-background
+            rounded-xl px-4 transition-all
+          "
           onClick={(e) => {
             e.stopPropagation()
             handlePageChange(staffData.page - 1)
@@ -46,7 +54,11 @@ export function StaffTablePagination() {
         <Button
           variant="outline"
           size="sm"
-          className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
+          className="
+            border-border/40 bg-background/50
+            hover:bg-background
+            rounded-xl px-4 transition-all
+          "
           onClick={(e) => {
             e.stopPropagation()
             handlePageChange(staffData.page + 1)

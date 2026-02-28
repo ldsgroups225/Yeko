@@ -10,15 +10,22 @@ export function WizardStep0() {
 
   return (
     <div className="space-y-6">
-      <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20 flex items-start gap-4">
-        <div className="p-3 rounded-xl bg-primary/10">
-          <IconCalendar className="h-6 w-6 text-primary" />
+      <div className="
+        bg-primary/5 border-primary/20 flex items-start gap-4 rounded-2xl border
+        p-6
+      "
+      >
+        <div className="bg-primary/10 rounded-xl p-3">
+          <IconCalendar className="text-primary h-6 w-6" />
         </div>
         <div className="space-y-1">
           <h4 className="font-bold">{t.finance.wizard.steps.step0ActiveYear()}</h4>
           {activeYear
             ? (
-                <div className="flex items-center gap-2 text-green-600 font-medium">
+                <div className="
+                  flex items-center gap-2 font-medium text-green-600
+                "
+                >
                   <IconCircleCheck className="h-4 w-4" />
                   <span>
                     {t.finance.wizard.steps.step0YearActive({ name: activeYear.template?.name ?? '' })}
@@ -33,7 +40,7 @@ export function WizardStep0() {
         </div>
       </div>
 
-      <div className="text-sm text-muted-foreground leading-relaxed">
+      <div className="text-muted-foreground text-sm leading-relaxed">
         {t.finance.wizard.steps.step0Explanation()}
       </div>
     </div>

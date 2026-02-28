@@ -18,7 +18,7 @@ export function ClassesTablePagination() {
   }
 
   return (
-    <div className="flex items-center justify-center gap-2 mt-4">
+    <div className="mt-4 flex items-center justify-center gap-2">
       <Button
         variant="outline"
         size="sm"
@@ -26,10 +26,10 @@ export function ClassesTablePagination() {
         disabled={!table.getCanPreviousPage()}
         className="border-border/40 bg-card/50 backdrop-blur-sm"
       >
-        <IconChevronLeft className="h-4 w-4 mr-1" />
+        <IconChevronLeft className="mr-1 h-4 w-4" />
         {t.common.previous()}
       </Button>
-      <span className="text-sm text-muted-foreground">
+      <span className="text-muted-foreground text-sm">
         {t.common.showing()}
         {' '}
         {table.getState().pagination.pageIndex + 1}
@@ -46,7 +46,7 @@ export function ClassesTablePagination() {
         className="border-border/40 bg-card/50 backdrop-blur-sm"
       >
         {t.common.next()}
-        <IconChevronRight className="h-4 w-4 ml-1" />
+        <IconChevronRight className="ml-1 h-4 w-4" />
       </Button>
     </div>
   )

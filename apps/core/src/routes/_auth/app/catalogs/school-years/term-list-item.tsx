@@ -37,8 +37,11 @@ export function TermListItem({
 }: TermListItemProps) {
   if (isEditing) {
     return (
-      <div className="flex items-center justify-between p-3 bg-background border rounded-lg">
-        <form onSubmit={onUpdate} className="flex items-center gap-2 flex-1">
+      <div className="
+        bg-background flex items-center justify-between rounded-lg border p-3
+      "
+      >
+        <form onSubmit={onUpdate} className="flex flex-1 items-center gap-2">
           <Input name="name" defaultValue={term.name} className="w-40" />
           <Select
             name="type"
@@ -55,7 +58,13 @@ export function TermListItem({
               <SelectItem value="semester">Semestre</SelectItem>
             </SelectContent>
           </Select>
-          <Input name="order" type="number" min="1" defaultValue={term.order} className="w-20" />
+          <Input
+            name="order"
+            type="number"
+            min="1"
+            defaultValue={term.order}
+            className="w-20"
+          />
           <Button type="submit" size="sm" disabled={isPending}>
             <IconCheck className="h-4 w-4" />
           </Button>
@@ -68,9 +77,16 @@ export function TermListItem({
   }
 
   return (
-    <div className="flex items-center justify-between p-3 bg-background border rounded-lg">
+    <div className="
+      bg-background flex items-center justify-between rounded-lg border p-3
+    "
+    >
       <div className="flex items-center gap-3">
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-medium">
+        <span className="
+          bg-primary/10 flex h-6 w-6 items-center justify-center rounded-full
+          text-xs font-medium
+        "
+        >
           {term.order}
         </span>
         <span className="font-medium">{term.name}</span>

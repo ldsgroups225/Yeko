@@ -113,14 +113,16 @@ function ProfilePage() {
             <div className="relative">
               <Avatar className="h-24 w-24">
                 <AvatarImage src={user?.image ?? undefined} />
-                <AvatarFallback className="bg-primary/10 text-2xl text-primary">
+                <AvatarFallback className="bg-primary/10 text-primary text-2xl">
                   {getInitials(user?.name ?? LL.profile.mainTeacher())}
                 </AvatarFallback>
               </Avatar>
               <Button
                 size="icon"
                 variant="secondary"
-                className="absolute bottom-0 right-0 h-8 w-8 rounded-full shadow-md"
+                className="
+                  absolute right-0 bottom-0 h-8 w-8 rounded-full shadow-md
+                "
                 onClick={() => {
                   setNewName(user?.name || '')
                   setIsEditProfileOpen(true)
@@ -132,7 +134,7 @@ function ProfilePage() {
 
             <div className="space-y-1">
               <h2 className="text-xl font-semibold">{user?.name ?? LL.profile.mainTeacher()}</h2>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+              <p className="text-muted-foreground text-sm">{user?.email}</p>
               <Badge variant="secondary" className="mt-2">
                 {LL.profile.mainTeacher()}
               </Badge>
@@ -141,13 +143,26 @@ function ProfilePage() {
 
           <div className="mt-6 grid grid-cols-2 gap-4">
             {stats.map(stat => (
-              <div key={stat.label + stat.bg} className="flex flex-col items-center gap-2 rounded-lg bg-muted/50 p-3">
-                <div className={`p-2 rounded-full ${stat.bg}`}>
-                  <stat.icon className={`w-5 h-5 ${stat.color}`} />
+              <div
+                key={stat.label + stat.bg}
+                className="
+                  bg-muted/50 flex flex-col items-center gap-2 rounded-lg p-3
+                "
+              >
+                <div className={`
+                  rounded-full p-2
+                  ${stat.bg}
+                `}
+                >
+                  <stat.icon className={`
+                    h-5 w-5
+                    ${stat.color}
+                  `}
+                  />
                 </div>
                 <div className="text-center">
                   <p className="text-xl font-bold">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
+                  <p className="text-muted-foreground text-xs">{stat.label}</p>
                 </div>
               </div>
             ))}
@@ -188,11 +203,11 @@ function ProfilePage() {
       <Tabs defaultValue="settings">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="settings" className="gap-2">
-            <IconSettings className="w-4 h-4" />
+            <IconSettings className="h-4 w-4" />
             {LL.profile.settings()}
           </TabsTrigger>
           <TabsTrigger value="account" className="gap-2">
-            <IconUser className="w-4 h-4" />
+            <IconUser className="h-4 w-4" />
             {LL.profile.account()}
           </TabsTrigger>
         </TabsList>
@@ -201,7 +216,7 @@ function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <IconSettings className="w-4 h-4" />
+                <IconSettings className="h-4 w-4" />
                 {LL.profile.preferences()}
               </CardTitle>
             </CardHeader>
@@ -209,7 +224,7 @@ function ProfilePage() {
               {/* Language */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
-                  <IconLanguage className="w-4 h-4" />
+                  <IconLanguage className="h-4 w-4" />
                   {LL.profile.language()}
                 </Label>
                 <Select
@@ -234,7 +249,7 @@ function ProfilePage() {
               {/* Theme */}
               <div className="space-y-2">
                 <Label className="flex items-center gap-2">
-                  <IconSun className="w-4 h-4" />
+                  <IconSun className="h-4 w-4" />
                   {LL.profile.theme()}
                 </Label>
                 <Select
@@ -248,9 +263,9 @@ function ProfilePage() {
                   <SelectTrigger>
                     <SelectValue>
                       <div className="flex items-center gap-2">
-                        {theme === 'light' && <IconSun className="w-4 h-4" />}
-                        {theme === 'dark' && <IconMoon className="w-4 h-4" />}
-                        {theme === 'system' && <IconSettings className="w-4 h-4" />}
+                        {theme === 'light' && <IconSun className="h-4 w-4" />}
+                        {theme === 'dark' && <IconMoon className="h-4 w-4" />}
+                        {theme === 'system' && <IconSettings className="h-4 w-4" />}
                         {theme === 'light' ? LL.profile.themes.light() : theme === 'dark' ? LL.profile.themes.dark() : LL.profile.themes.system()}
                       </div>
                     </SelectValue>
@@ -258,19 +273,19 @@ function ProfilePage() {
                   <SelectContent>
                     <SelectItem value="light">
                       <div className="flex items-center gap-2">
-                        <IconSun className="w-4 h-4" />
+                        <IconSun className="h-4 w-4" />
                         {LL.profile.themes.light()}
                       </div>
                     </SelectItem>
                     <SelectItem value="dark">
                       <div className="flex items-center gap-2">
-                        <IconMoon className="w-4 h-4" />
+                        <IconMoon className="h-4 w-4" />
                         {LL.profile.themes.dark()}
                       </div>
                     </SelectItem>
                     <SelectItem value="system">
                       <div className="flex items-center gap-2">
-                        <IconSettings className="w-4 h-4" />
+                        <IconSettings className="h-4 w-4" />
                         {LL.profile.themes.system()}
                       </div>
                     </SelectItem>
@@ -281,7 +296,7 @@ function ProfilePage() {
               {/* Notifications */}
               <div className="flex items-center justify-between">
                 <Label className="flex items-center gap-2">
-                  <IconBell className="w-4 h-4" />
+                  <IconBell className="h-4 w-4" />
                   {LL.profile.notifications()}
                 </Label>
                 <Switch
@@ -297,30 +312,30 @@ function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
-                <IconUser className="w-4 h-4" />
+                <IconUser className="h-4 w-4" />
                 {LL.profile.accountInfo()}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-1">
                 <p className="text-sm font-medium">{LL.auth.email()}</p>
-                <p className="text-sm text-muted-foreground">{user?.email}</p>
+                <p className="text-muted-foreground text-sm">{user?.email}</p>
               </div>
               <div className="grid gap-1">
                 <p className="text-sm font-medium">{LL.profile.teacherId()}</p>
-                <p className="text-sm font-mono text-muted-foreground">{context?.teacherId}</p>
+                <p className="text-muted-foreground font-mono text-sm">{context?.teacherId}</p>
               </div>
               <div className="grid gap-1">
                 <p className="text-sm font-medium">{LL.profile.schoolId()}</p>
-                <p className="text-sm text-muted-foreground">{context?.schoolId}</p>
+                <p className="text-muted-foreground text-sm">{context?.schoolId}</p>
               </div>
               <div className="grid gap-1">
                 <p className="text-sm font-medium">{LL.profile.schoolYear()}</p>
-                <p className="text-sm text-muted-foreground">{context?.schoolYearId ?? LL.profile.notDefined()}</p>
+                <p className="text-muted-foreground text-sm">{context?.schoolYearId ?? LL.profile.notDefined()}</p>
               </div>
               <div className="grid gap-1">
                 <p className="text-sm font-medium">{LL.profile.memberSince()}</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {user?.createdAt ? new Date(user.createdAt).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US') : LL.profile.notAvailable()}
                 </p>
               </div>
@@ -328,7 +343,10 @@ function ProfilePage() {
           </Card>
 
           <Card>
-            <CardContent className="pt-6 text-center text-sm text-muted-foreground">
+            <CardContent className="
+              text-muted-foreground pt-6 text-center text-sm
+            "
+            >
               <p>
                 {LL.profile.version()}
                 {' '}
@@ -341,7 +359,7 @@ function ProfilePage() {
       </Tabs>
 
       <Button variant="destructive" className="mt-4 w-full" onClick={handleLogout}>
-        <IconLogout className="mr-2 w-4 h-4" />
+        <IconLogout className="mr-2 h-4 w-4" />
         {LL.auth.logout()}
       </Button>
     </div>

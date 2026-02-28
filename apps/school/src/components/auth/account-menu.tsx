@@ -70,8 +70,8 @@ export function AccountMenu() {
       <DropdownMenuContent className="w-80" align="end">
         <div className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="text-sm leading-none font-medium">{user.name}</p>
+            <p className="text-muted-foreground text-xs leading-none">
               {user.email}
             </p>
           </div>
@@ -91,8 +91,12 @@ export function AccountMenu() {
 
         {/* Theme Toggle */}
         <div className="px-2 py-2">
-          <div className="flex items-center justify-between py-2 px-2 rounded-lg border bg-card pointer-events-none">
-            <span className="text-sm font-medium flex items-center gap-2">
+          <div className="
+            bg-card pointer-events-none flex items-center justify-between
+            rounded-lg border px-2 py-2
+          "
+          >
+            <span className="flex items-center gap-2 text-sm font-medium">
               <IconPalette className="h-4 w-4" />
               {t.account.theme()}
             </span>
@@ -104,8 +108,12 @@ export function AccountMenu() {
 
         {/* Language Switcher */}
         <div className="px-2 pb-2">
-          <div className="flex items-center justify-between py-2 px-2 rounded-lg border bg-card pointer-events-none">
-            <span className="text-sm font-medium flex items-center gap-2">
+          <div className="
+            bg-card pointer-events-none flex items-center justify-between
+            rounded-lg border px-2 py-2
+          "
+          >
+            <span className="flex items-center gap-2 text-sm font-medium">
               <IconLanguage className="h-4 w-4" />
               {t.account.language()}
             </span>
@@ -118,7 +126,10 @@ export function AccountMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleSignOut}
-          className="text-destructive focus:text-destructive"
+          className="
+            text-destructive
+            focus:text-destructive
+          "
         >
           <IconLogout className="mr-2 h-4 w-4" />
           <span>{t.auth.signOut()}</span>

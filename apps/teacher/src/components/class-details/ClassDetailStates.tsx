@@ -8,10 +8,10 @@ export function EmptyStudents() {
   const { LL } = useI18nContext()
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
-      <div className="rounded-full bg-muted p-4 mb-4">
-        <IconInbox className="h-10 w-10 text-muted-foreground/40" />
+      <div className="bg-muted mb-4 rounded-full p-4">
+        <IconInbox className="text-muted-foreground/40 h-10 w-10" />
       </div>
-      <h3 className="text-lg font-semibold text-foreground">{LL.class_details.noStudents()}</h3>
+      <h3 className="text-foreground text-lg font-semibold">{LL.class_details.noStudents()}</h3>
       <p className="text-muted-foreground mt-1 max-w-[250px]">
         {LL.class_details.noStudentsDescription()}
       </p>
@@ -22,11 +22,14 @@ export function EmptyStudents() {
 export function ClassNotFound({ schoolId }: { schoolId: string }) {
   const { LL } = useI18nContext()
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-      <div className="mb-6 rounded-full bg-destructive/10 p-4">
-        <IconSchool className="h-12 w-12 text-destructive" />
+    <div className="
+      flex min-h-[60vh] flex-col items-center justify-center px-4 text-center
+    "
+    >
+      <div className="bg-destructive/10 mb-6 rounded-full p-4">
+        <IconSchool className="text-destructive h-12 w-12" />
       </div>
-      <h1 className="text-2xl font-bold mb-2">{LL.class_details.notFound()}</h1>
+      <h1 className="mb-2 text-2xl font-bold">{LL.class_details.notFound()}</h1>
       <p className="text-muted-foreground mb-8 max-w-md">
         {LL.class_details.notFoundDescription()}
       </p>
@@ -51,7 +54,7 @@ export function ClassDetailSkeleton() {
           </div>
           <Skeleton className="h-10 w-24 rounded-xl" />
         </div>
-        <div className="flex gap-2 pb-2 overflow-x-auto">
+        <div className="flex gap-2 overflow-x-auto pb-2">
           {[1, 2, 3].map(i => (
             <Skeleton key={i} className="h-8 w-24 shrink-0 rounded-full" />
           ))}

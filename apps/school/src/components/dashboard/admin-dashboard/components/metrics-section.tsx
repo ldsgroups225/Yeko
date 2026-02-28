@@ -16,12 +16,21 @@ function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps
     <motion.div
       variants={item}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className="group relative overflow-hidden rounded-xl border border-border/40 bg-card/60 p-6 shadow-sm backdrop-blur-xl transition-all hover:shadow-lg"
+      className="
+        group border-border/40 bg-card/60 relative overflow-hidden rounded-xl
+        border p-6 shadow-sm backdrop-blur-xl transition-all
+        hover:shadow-lg
+      "
     >
-      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-primary/10 transition-all group-hover:bg-primary/20 blur-2xl" />
+      <div className="
+        bg-primary/10
+        group-hover:bg-primary/20
+        absolute -top-6 -right-6 h-24 w-24 rounded-full blur-2xl transition-all
+      "
+      />
       <div className="relative flex items-center justify-between">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        <div className="rounded-full bg-primary/10 p-2 text-primary">
+        <h3 className="text-muted-foreground text-sm font-medium">{title}</h3>
+        <div className="bg-primary/10 text-primary rounded-full p-2">
           <Icon className="h-4 w-4" />
         </div>
       </div>
@@ -29,12 +38,15 @@ function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps
         <div className="text-2xl font-bold">{value}</div>
         {change && (
           <p
-            className={`text-xs ${trend === 'up'
-              ? 'text-success'
-              : trend === 'down'
-                ? 'text-destructive'
-                : 'text-muted-foreground'
-            }`}
+            className={`
+              text-xs
+              ${trend === 'up'
+            ? 'text-success'
+            : trend === 'down'
+              ? 'text-destructive'
+              : 'text-muted-foreground'
+          }
+            `}
           >
             {change}
           </p>
@@ -55,7 +67,11 @@ export function MetricsSection({ metrics, t }: MetricsSectionProps) {
       variants={container}
       initial="hidden"
       animate="show"
-      className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+      className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-4
+      "
     >
       <MetricCard
         title={t.dashboard.totalStudents()}

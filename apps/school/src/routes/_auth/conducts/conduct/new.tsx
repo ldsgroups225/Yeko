@@ -101,7 +101,12 @@ function NewConductRecordPage() {
 
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.conduct.newRecord()}</h1>
-          <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.conduct.newRecordDescription()}</p>
+          <p className="
+            text-muted-foreground max-w-md text-sm font-medium italic
+          "
+          >
+            {t.conduct.newRecordDescription()}
+          </p>
         </div>
       </motion.div>
 
@@ -110,10 +115,20 @@ function NewConductRecordPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="max-w-4xl relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+        <Card className="
+          border-border/40 bg-card/30 relative max-w-4xl overflow-hidden
+          rounded-3xl shadow-2xl backdrop-blur-xl
+        "
+        >
 
-          <CardHeader className="relative border-b border-border/10 bg-muted/20">
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">{t.conduct.form.title()}</CardTitle>
+          <CardHeader className="border-border/10 bg-muted/20 relative border-b">
+            <CardTitle className="
+              text-muted-foreground/60 text-[10px] font-black tracking-[0.2em]
+              uppercase
+            "
+            >
+              {t.conduct.form.title()}
+            </CardTitle>
           </CardHeader>
           <CardContent className="pt-8">
             <ConductRecordForm

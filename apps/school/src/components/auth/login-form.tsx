@@ -24,12 +24,17 @@ export function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen">
       {/* Left Panel - Branding */}
       <BrandPanel />
 
       {/* Right Panel - Auth Forms */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-8 lg:p-12 bg-background">
+      <div className="
+        bg-background flex flex-1 items-center justify-center p-6
+        sm:p-8
+        lg:p-12
+      "
+      >
         <div className="w-full max-w-md">
           {view === 'login' && (
             <LoginView

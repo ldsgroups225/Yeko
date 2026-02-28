@@ -111,7 +111,7 @@ export function StudentCombobox({
                   <span className="truncate">
                     {selectedStudent.user?.name ?? 'Unknown'}
                     {selectedStudent.matricule && (
-                      <span className="ml-2 text-muted-foreground">
+                      <span className="text-muted-foreground ml-2">
                         (
                         {selectedStudent.matricule}
                         )
@@ -169,7 +169,7 @@ export function StudentCombobox({
                           />
                           <div className="flex flex-col">
                             <span>{student.user?.name ?? 'Unknown'}</span>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-muted-foreground text-xs">
                               {student.matricule}
                               {student.currentEnrollment?.class?.name && (
                                 <>

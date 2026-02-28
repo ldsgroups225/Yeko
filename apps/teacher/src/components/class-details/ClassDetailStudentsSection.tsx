@@ -142,13 +142,17 @@ export function ClassDetailStudentsSection({
     <>
       {!isEntryMode && !isSessionActive && (
         <div className="relative mb-6">
-          <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <IconSearch className="
+            text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+            -translate-y-1/2
+          "
+          />
           <Input
             type="text"
             placeholder={LL.search.students()}
             value={searchQuery}
             onChange={e => onSearchChange(e.target.value)}
-            className="pl-10 h-11 rounded-xl"
+            className="h-11 rounded-xl pl-10"
           />
         </div>
       )}
@@ -209,7 +213,11 @@ export function ClassDetailStudentsSection({
 
               {!isSessionActive && (
                 <>
-                  <div className="block lg:hidden">
+                  <div className="
+                    block
+                    lg:hidden
+                  "
+                  >
                     <motion.div
                       variants={container}
                       initial="hidden"

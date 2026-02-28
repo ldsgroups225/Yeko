@@ -15,7 +15,11 @@ export function ClassroomsTableMobileView({
   const navigate = useNavigate()
 
   return (
-    <div className="md:hidden space-y-4 p-4">
+    <div className="
+      space-y-4 p-4
+      md:hidden
+    "
+    >
       <AnimatePresence>
         {data.map((item, index) => (
           <motion.div
@@ -23,16 +27,23 @@ export function ClassroomsTableMobileView({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
-            className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-3"
+            className="
+              bg-card/50 border-border/40 space-y-3 rounded-2xl border p-4
+              backdrop-blur-md
+            "
           >
-            <div className="flex justify-between items-start">
+            <div className="flex items-start justify-between">
               <div className="flex items-center gap-2">
-                <div className="font-mono text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-md">
+                <div className="
+                  text-muted-foreground bg-muted/20 rounded-md px-2 py-1
+                  font-mono text-xs font-bold
+                "
+                >
                   {item.code}
                 </div>
                 <Badge
                   variant={item.status === 'active' ? 'default' : 'secondary'}
-                  className="capitalize rounded-md text-[10px]"
+                  className="rounded-md text-[10px] capitalize"
                 >
                   {item.status === 'active' ? 'Actif' : 'Inactif'}
                 </Badge>
@@ -40,7 +51,7 @@ export function ClassroomsTableMobileView({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-lg -mr-2 -mt-2 text-muted-foreground"
+                className="text-muted-foreground -mt-2 -mr-2 h-8 w-8 rounded-lg"
                 onClick={() =>
                   navigate({
                     to: `/spaces/classrooms/${item.id}`,
@@ -51,24 +62,32 @@ export function ClassroomsTableMobileView({
             </div>
 
             <div>
-              <div className="font-bold text-lg">{item.name}</div>
+              <div className="text-lg font-bold">{item.name}</div>
               <Badge
                 variant="outline"
-                className="mt-1 font-medium text-xs capitalize"
+                className="mt-1 text-xs font-medium capitalize"
               >
                 {item.type}
               </Badge>
             </div>
 
             <div className="grid grid-cols-2 gap-3 pt-2">
-              <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
-                <IconUsers className="h-4 w-4 text-muted-foreground mb-1" />
-                <span className="text-xs text-muted-foreground">Capacité</span>
+              <div className="
+                bg-muted/20 flex flex-col items-center justify-center rounded-xl
+                p-2 text-center
+              "
+              >
+                <IconUsers className="text-muted-foreground mb-1 h-4 w-4" />
+                <span className="text-muted-foreground text-xs">Capacité</span>
                 <span className="font-bold">{item.capacity}</span>
               </div>
-              <div className="p-2 rounded-xl bg-muted/20 flex flex-col items-center justify-center text-center">
-                <IconStack2 className="h-4 w-4 text-muted-foreground mb-1" />
-                <span className="text-xs text-muted-foreground">Classes</span>
+              <div className="
+                bg-muted/20 flex flex-col items-center justify-center rounded-xl
+                p-2 text-center
+              "
+              >
+                <IconStack2 className="text-muted-foreground mb-1 h-4 w-4" />
+                <span className="text-muted-foreground text-xs">Classes</span>
                 <span className="font-bold">
                   {item.assignedClassesCount ?? 0}
                 </span>

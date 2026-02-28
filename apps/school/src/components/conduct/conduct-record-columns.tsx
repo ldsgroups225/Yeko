@@ -40,7 +40,11 @@ export function getConductRecordColumns({
                 onCheckedChange={value =>
                   table.toggleAllPageRowsSelected(!!value)}
                 aria-label={t.common.selectAll()}
-                className="translate-y-[2px] border-primary/50 data-[state=checked]:border-primary"
+                className="
+                  border-primary/50
+                  data-[state=checked]:border-primary
+                  translate-y-[2px]
+                "
               />
             ),
             cell: ({ row }: { row: Row<ConductRecord> }) => (
@@ -48,7 +52,11 @@ export function getConductRecordColumns({
                 checked={row.getIsSelected()}
                 onCheckedChange={value => row.toggleSelected(!!value)}
                 aria-label={t.common.selectRow()}
-                className="translate-y-[2px] border-primary/50 data-[state=checked]:border-primary"
+                className="
+                  border-primary/50
+                  data-[state=checked]:border-primary
+                  translate-y-[2px]
+                "
               />
             ),
             enableSorting: false,
@@ -66,14 +74,18 @@ export function getConductRecordColumns({
 
         return (
           <div className="flex flex-col gap-0.5">
-            <span className="font-black tracking-tight text-sm">
+            <span className="text-sm font-black tracking-tight">
               {date.toLocaleDateString(undefined, {
                 day: '2-digit',
                 month: 'short',
                 year: 'numeric',
               })}
             </span>
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
+            <span className="
+              text-muted-foreground/50 text-[10px] font-black tracking-widest
+              uppercase
+            "
+            >
               {date.toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -88,12 +100,21 @@ export function getConductRecordColumns({
       header: t.conduct.student(),
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
-          <Avatar className="h-9 w-9 border-2 border-primary/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
+          <Avatar className="
+            border-primary/10 h-9 w-9 border-2 shadow-inner transition-transform
+            duration-500
+            group-hover:scale-110
+          "
+          >
             <AvatarImage
               src={row.original.studentPhoto || undefined}
               alt={row.original.studentName}
             />
-            <AvatarFallback className="bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest">
+            <AvatarFallback className="
+              bg-primary/5 text-primary text-[10px] font-black tracking-widest
+              uppercase
+            "
+            >
               {row.original.studentName.substring(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -101,7 +122,10 @@ export function getConductRecordColumns({
             <Link
               to="/students/$studentId"
               params={{ studentId: row.original.studentId }}
-              className="font-black tracking-tight hover:text-primary transition-colors"
+              className="
+                hover:text-primary
+                font-black tracking-tight transition-colors
+              "
             >
               {row.original.studentName}
             </Link>
@@ -118,15 +142,17 @@ export function getConductRecordColumns({
       accessorKey: 'title',
       header: t.conduct.title(),
       cell: ({ row }) => (
-        <div className="flex flex-col max-w-[300px]">
+        <div className="flex max-w-[300px] flex-col">
           <span
-            className="font-bold tracking-tight text-sm truncate"
+            className="truncate text-sm font-bold tracking-tight"
             title={row.original.title}
           >
             {row.original.title}
           </span>
           <span
-            className="text-[10px] font-medium text-muted-foreground/60 truncate italic"
+            className="
+              text-muted-foreground/60 truncate text-[10px] font-medium italic
+            "
             title={row.original.description}
           >
             {row.original.description}
@@ -143,7 +169,11 @@ export function getConductRecordColumns({
               <ConductSeverityBadge severity={row.original.severity} />
             )
           : (
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">
+              <span className="
+                text-muted-foreground/30 text-[10px] font-black tracking-widest
+                uppercase
+              "
+              >
                 -
               </span>
             ),
@@ -163,7 +193,10 @@ export function getConductRecordColumns({
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                className="
+                  hover:bg-primary/10 hover:text-primary
+                  rounded-xl transition-colors
+                "
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()
@@ -175,14 +208,19 @@ export function getConductRecordColumns({
           />
           <DropdownMenuContent
             align="end"
-            className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40"
+            className="
+              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+            "
           >
             {onEdit && (
               <DropdownMenuItem
                 onClick={() => onEdit(row.original.id)}
-                className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2"
+                className="
+                  rounded-xl py-2 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
               >
-                <IconEdit className="mr-2 h-4 w-4 text-primary/60" />
+                <IconEdit className="text-primary/60 mr-2 h-4 w-4" />
                 {t.common.edit()}
               </DropdownMenuItem>
             )}
@@ -191,7 +229,12 @@ export function getConductRecordColumns({
                 <DropdownMenuSeparator className="bg-border/10" />
                 <DropdownMenuItem
                   onClick={() => onDelete(row.original.id)}
-                  className="rounded-xl text-destructive focus:text-destructive font-bold uppercase tracking-widest text-[10px] py-2"
+                  className="
+                    text-destructive
+                    focus:text-destructive
+                    rounded-xl py-2 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
                 >
                   <IconTrash className="mr-2 h-4 w-4" />
                   {t.common.delete()}

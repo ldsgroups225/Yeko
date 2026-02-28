@@ -51,7 +51,10 @@ function RoleDetailPage() {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+          <div className="
+            bg-muted flex h-16 w-16 items-center justify-center rounded-full
+          "
+          >
             <IconShield className="h-8 w-8" />
           </div>
           <div>
@@ -87,20 +90,24 @@ function RoleDetailPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+      "
+      >
         <Card>
           <CardHeader>
             <CardTitle>{t.hr.roles.information()}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-muted-foreground text-sm font-medium">
                 {t.hr.roles.slug()}
               </p>
-              <p className="text-base font-mono">{role.slug}</p>
+              <p className="font-mono text-base">{role.slug}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-muted-foreground text-sm font-medium">
                 {t.hr.roles.scope()}
               </p>
               <Badge
@@ -110,13 +117,13 @@ function RoleDetailPage() {
               </Badge>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-muted-foreground text-sm font-medium">
                 {t.hr.roles.usersWithRole()}
               </p>
               <p className="text-base">{role.userCount || 0}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-muted-foreground text-sm font-medium">
                 {t.hr.roles.permissionCount()}
               </p>
               <p className="text-base">{role.permissionCount || 0}</p>
@@ -143,7 +150,7 @@ function RoleDetailPage() {
                 </div>
               ))}
               {Object.keys(permissions).length === 0 && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t.hr.roles.noPermissions()}
                 </p>
               )}

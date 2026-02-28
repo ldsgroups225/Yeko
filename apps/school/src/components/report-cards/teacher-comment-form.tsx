@@ -71,7 +71,10 @@ export function TeacherCommentForm({
           aria-describedby={`comment-count-${subjectId}`}
         />
         <div className="flex items-center justify-between text-sm">
-          <span id={`comment-count-${subjectId}`} className="text-muted-foreground">
+          <span
+            id={`comment-count-${subjectId}`}
+            className="text-muted-foreground"
+          >
             {charCount}
             /500
           </span>

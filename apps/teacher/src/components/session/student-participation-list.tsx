@@ -58,7 +58,7 @@ export function StudentParticipationList({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {gradedCount}
           /
           {students.length}
@@ -74,7 +74,7 @@ export function StudentParticipationList({
         {students.map(student => (
           <div
             key={student.id}
-            className="rounded-lg border bg-card p-3 transition-colors"
+            className="bg-card rounded-lg border p-3 transition-colors"
           >
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10">
@@ -90,7 +90,7 @@ export function StudentParticipationList({
                   {' '}
                   {student.firstName}
                 </p>
-                <p className="text-xs text-muted-foreground">{student.matricule}</p>
+                <p className="text-muted-foreground text-xs">{student.matricule}</p>
               </div>
 
               <ParticipationGradeInput
@@ -100,7 +100,7 @@ export function StudentParticipationList({
             </div>
 
             {expandedStudent === student.id && (
-              <div className="mt-3 pt-3 border-t">
+              <div className="mt-3 border-t pt-3">
                 <Input
                   placeholder={LL.participation.comment()}
                   value={getComment(student.id)}
@@ -116,7 +116,11 @@ export function StudentParticipationList({
                 setExpandedStudent(
                   expandedStudent === student.id ? null : student.id,
                 )}
-              className="mt-2 w-full text-center text-xs text-muted-foreground hover:text-foreground"
+              className="
+                text-muted-foreground
+                hover:text-foreground
+                mt-2 w-full text-center text-xs
+              "
             >
               {expandedStudent === student.id
                 ? LL.common.cancel()

@@ -70,7 +70,10 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
+      <div className="
+        bg-background flex min-h-screen items-center justify-center p-6
+      "
+      >
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -79,13 +82,20 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         >
           <motion.div
             variants={itemVariants}
-            className="mx-auto size-16 rounded-full bg-green-500/10 flex items-center justify-center"
+            className="
+              mx-auto flex size-16 items-center justify-center rounded-full
+              bg-green-500/10
+            "
           >
             <IconCircleCheck className="size-8 text-green-500" />
           </motion.div>
 
           <motion.div variants={itemVariants} className="space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            <h2 className="
+              text-2xl font-bold tracking-tight
+              sm:text-3xl
+            "
+            >
               {t.auth.resetPassword.successTitle()}
             </h2>
             <p className="text-muted-foreground">
@@ -95,7 +105,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
           <motion.div variants={itemVariants}>
             <Button
-              className="w-full h-12"
+              className="h-12 w-full"
               render={
                 <Link to="/dashboard">{t.auth.resetPassword.goToLogin()}</Link>
               }
@@ -107,7 +117,10 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-background">
+    <div className="
+      bg-background flex min-h-screen items-center justify-center p-6
+    "
+    >
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -115,10 +128,13 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         className="w-full max-w-md space-y-6"
       >
         {/* Logo */}
-        <motion.div variants={itemVariants} className="text-center mb-8">
+        <motion.div variants={itemVariants} className="mb-8 text-center">
           <div className="inline-flex items-center gap-2">
-            <div className="size-10 rounded-xl bg-primary flex items-center justify-center">
-              <span className="text-xl font-bold text-primary-foreground">
+            <div className="
+              bg-primary flex size-10 items-center justify-center rounded-xl
+            "
+            >
+              <span className="text-primary-foreground text-xl font-bold">
                 Y
               </span>
             </div>
@@ -127,7 +143,11 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         </motion.div>
 
         <motion.div variants={itemVariants} className="space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          <h2 className="
+            text-2xl font-bold tracking-tight
+            sm:text-3xl
+          "
+          >
             {t.auth.resetPassword.title()}
           </h2>
           <p className="text-muted-foreground">
@@ -153,7 +173,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               {...form.register('password')}
             />
             {form.formState.errors.password && (
-              <p className="text-sm text-destructive">
+              <p className="text-destructive text-sm">
                 {form.formState.errors.password.message}
               </p>
             )}
@@ -172,7 +192,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
               {...form.register('confirmPassword')}
             />
             {form.formState.errors.confirmPassword && (
-              <p className="text-sm text-destructive">
+              <p className="text-destructive text-sm">
                 {t.auth.resetPassword.passwordMismatch()}
               </p>
             )}
@@ -180,7 +200,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
 
           <Button
             type="submit"
-            className="w-full h-12 text-base"
+            className="h-12 w-full text-base"
             disabled={isPending}
           >
             {isPending

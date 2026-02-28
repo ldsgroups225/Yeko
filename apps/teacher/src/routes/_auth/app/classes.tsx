@@ -37,14 +37,19 @@ function ClassesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{LL.classes.title()}</h1>
         <Button size="sm">
-          <IconPlus className="w-4 h-4 mr-2" />
+          <IconPlus className="mr-2 h-4 w-4" />
           {LL.classes.create()}
         </Button>
       </div>
 
       {isPending
         ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="
+              grid gap-4
+              md:grid-cols-2
+              lg:grid-cols-3
+            "
+            >
               {[1, 2, 3, 4, 5, 6].map(el => (
                 <Skeleton key={el} className="h-32 w-full" />
               ))}
@@ -53,22 +58,36 @@ function ClassesPage() {
         : data?.classes?.length === 0
           ? (
               <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <IconBook className="w-12 h-12 text-muted-foreground mb-4" />
+                <CardContent className="
+                  flex flex-col items-center justify-center py-12
+                "
+                >
+                  <IconBook className="text-muted-foreground mb-4 h-12 w-12" />
                   <p className="text-muted-foreground">
                     {LL.classes.noClasses()}
                   </p>
                   <Button className="mt-4">
-                    <IconPlus className="w-4 h-4 mr-2" />
+                    <IconPlus className="mr-2 h-4 w-4" />
                     {LL.classes.createFirst()}
                   </Button>
                 </CardContent>
               </Card>
             )
           : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="
+                grid gap-4
+                md:grid-cols-2
+                lg:grid-cols-3
+              "
+              >
                 {data?.classes?.map((cls: { id: string, name: string, gradeName: string | null, studentCount: number, subjectCount: number }) => (
-                  <Card key={cls.id} className="hover:shadow-md transition-shadow">
+                  <Card
+                    key={cls.id}
+                    className="
+                      transition-shadow
+                      hover:shadow-md
+                    "
+                  >
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg">{cls.name}</CardTitle>
                       {cls.gradeName && (
@@ -76,9 +95,13 @@ function ClassesPage() {
                       )}
                     </CardHeader>
                     <CardContent>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
+                      <div className="
+                        text-muted-foreground flex items-center justify-between
+                        text-sm
+                      "
+                      >
                         <div className="flex items-center gap-1">
-                          <IconUsers className="w-4 h-4" />
+                          <IconUsers className="h-4 w-4" />
                           <span>
                             {cls.studentCount}
                             {' '}
@@ -86,7 +109,7 @@ function ClassesPage() {
                           </span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <IconBook className="w-4 h-4" />
+                          <IconBook className="h-4 w-4" />
                           <span>
                             {cls.subjectCount}
                             {' '}

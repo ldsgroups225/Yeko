@@ -47,10 +47,13 @@ export function useUsersTableColumns({
         header: t.hr.users.name(),
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-semibold text-foreground">
+            <span className="text-foreground font-semibold">
               {row.original.name}
             </span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+            <div className="
+              text-muted-foreground mt-0.5 flex items-center gap-1.5 text-xs
+            "
+            >
               <IconMail className="h-3 w-3" />
               {row.original.email}
             </div>
@@ -61,7 +64,7 @@ export function useUsersTableColumns({
         accessorKey: 'phone',
         header: t.hr.users.phone(),
         cell: ({ row }) => (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             {row.original.phone
               ? (
                   <>
@@ -79,12 +82,15 @@ export function useUsersTableColumns({
         accessorKey: 'roles',
         header: t.hr.users.roles(),
         cell: ({ row }) => (
-          <div className="flex flex-wrap gap-1.5 max-w-[200px]">
+          <div className="flex max-w-[200px] flex-wrap gap-1.5">
             {row.original.roles.map(role => (
               <Badge
                 key={role}
                 variant="outline"
-                className="bg-primary/5 border-primary/10 text-primary text-[10px] font-medium px-2 py-0"
+                className="
+                  bg-primary/5 border-primary/10 text-primary px-2 py-0
+                  text-[10px] font-medium
+                "
               >
                 {role}
               </Badge>
@@ -106,7 +112,11 @@ export function useUsersTableColumns({
           return (
             <Badge
               variant="outline"
-              className={`rounded-full border ${variants[status]} transition-colors`}
+              className={`
+                rounded-full border
+                ${variants[status]}
+                transition-colors
+              `}
             >
               {{
                 active: t.hr.status.active,
@@ -121,7 +131,7 @@ export function useUsersTableColumns({
         accessorKey: 'lastLoginAt',
         header: t.hr.users.lastLogin(),
         cell: ({ row }) => (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <IconCalendar className="h-3.5 w-3.5" />
             {row.original.lastLoginAt
               ? formatDate(new Date(row.original.lastLoginAt), 'SHORT', 'fr')
@@ -138,7 +148,10 @@ export function useUsersTableColumns({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="hover:bg-primary/10 hover:text-primary transition-colors"
+                  className="
+                    hover:bg-primary/10 hover:text-primary
+                    transition-colors
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     e.preventDefault()
@@ -150,7 +163,9 @@ export function useUsersTableColumns({
             />
             <DropdownMenuContent
               align="end"
-              className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
+              className="
+                bg-popover/90 border-border/40 min-w-[160px] backdrop-blur-2xl
+              "
             >
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
@@ -161,7 +176,11 @@ export function useUsersTableColumns({
                 {t.common.edit()}
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
+                className="
+                  text-destructive
+                  focus:text-destructive focus:bg-destructive/10
+                  cursor-pointer gap-2
+                "
                 onClick={() => setUserToDelete(row.original)}
               >
                 <IconTrash className="h-4 w-4" />

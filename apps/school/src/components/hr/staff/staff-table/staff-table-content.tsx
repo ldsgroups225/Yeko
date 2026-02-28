@@ -53,10 +53,13 @@ export function StaffTableContent() {
         header: t.hr.staff.name(),
         cell: ({ row }) => (
           <div className="flex flex-col">
-            <span className="font-semibold text-foreground">
+            <span className="text-foreground font-semibold">
               {row.original.user.name}
             </span>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+            <div className="
+              text-muted-foreground mt-0.5 flex items-center gap-1.5 text-xs
+            "
+            >
               <IconMail className="h-3 w-3" />
               {row.original.user.email}
             </div>
@@ -76,8 +79,12 @@ export function StaffTableContent() {
             other: t.hr.positions.other,
           }
           return (
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-muted/50 border border-border/40 text-xs font-medium">
-              <IconBriefcase className="h-3 w-3 text-primary" />
+            <div className="
+              bg-muted/50 border-border/40 inline-flex items-center gap-2
+              rounded-full border px-2.5 py-0.5 text-xs font-medium
+            "
+            >
+              <IconBriefcase className="text-primary h-3 w-3" />
               {positionTranslations[
                 row.original.position as keyof typeof positionTranslations
               ]()}
@@ -89,7 +96,7 @@ export function StaffTableContent() {
         accessorKey: 'department',
         header: t.hr.staff.department(),
         cell: ({ row }) => (
-          <span className="text-sm font-medium text-foreground">
+          <span className="text-foreground text-sm font-medium">
             {row.original.department || t.common.none()}
           </span>
         ),
@@ -107,7 +114,11 @@ export function StaffTableContent() {
           return (
             <Badge
               variant="outline"
-              className={`rounded-full border ${variants[status]} transition-colors`}
+              className={`
+                rounded-full border
+                ${variants[status]}
+                transition-colors
+              `}
             >
               {{
                 active: t.hr.status.active,
@@ -122,7 +133,7 @@ export function StaffTableContent() {
         accessorKey: 'hireDate',
         header: t.hr.staff.hireDate(),
         cell: ({ row }) => (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <IconCalendar className="h-3.5 w-3.5" />
             {row.original.hireDate
               ? formatDate(row.original.hireDate, 'MEDIUM')
@@ -139,7 +150,10 @@ export function StaffTableContent() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="hover:bg-primary/10 hover:text-primary transition-colors"
+                  className="
+                    hover:bg-primary/10 hover:text-primary
+                    transition-colors
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     e.preventDefault()
@@ -151,7 +165,9 @@ export function StaffTableContent() {
             />
             <DropdownMenuContent
               align="end"
-              className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
+              className="
+                bg-popover/90 border-border/40 min-w-[160px] backdrop-blur-2xl
+              "
             >
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
@@ -161,7 +177,12 @@ export function StaffTableContent() {
                 <IconEdit className="h-4 w-4" />
                 {t.common.edit()}
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10">
+              <DropdownMenuItem className="
+                text-destructive
+                focus:text-destructive focus:bg-destructive/10
+                cursor-pointer gap-2
+              "
+              >
                 <IconTrash className="h-4 w-4" />
                 {t.common.delete()}
               </DropdownMenuItem>
@@ -213,18 +234,26 @@ export function StaffTableContent() {
   }
 
   return (
-    <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden">
+    <div className="
+      border-border/40 bg-background/30 overflow-hidden rounded-xl border
+    "
+    >
       <Table>
         <TableHeader className="bg-muted/50 backdrop-blur-md">
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow
               key={headerGroup.id}
-              className="hover:bg-transparent border-border/40"
+              className="
+                border-border/40
+                hover:bg-transparent
+              "
             >
               {headerGroup.headers.map(header => (
                 <TableHead
                   key={header.id}
-                  className="text-xs uppercase tracking-wider font-semibold py-4"
+                  className="
+                    py-4 text-xs font-semibold tracking-wider uppercase
+                  "
                 >
                   {header.isPlaceholder
                     ? null
@@ -250,7 +279,11 @@ export function StaffTableContent() {
                   delay: index * 0.03,
                   ease: 'easeOut',
                 }}
-                className="group hover:bg-primary/5 transition-colors border-border/40 cursor-pointer"
+                className="
+                  group
+                  hover:bg-primary/5
+                  border-border/40 cursor-pointer transition-colors
+                "
                 onClick={() =>
                   navigate({ to: `/users/staff/${row.original.id}` })}
               >

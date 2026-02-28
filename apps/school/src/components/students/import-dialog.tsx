@@ -181,7 +181,10 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="
+        bg-card/95 border-border/40 max-w-2xl backdrop-blur-xl
+      "
+      >
         <DialogHeader>
           <DialogTitle>{t.students.importStudents()}</DialogTitle>
           <DialogDescription>{t.students.importStudentsDescriptionExcel()}</DialogDescription>
@@ -202,14 +205,20 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                     {t.students.downloadTemplate()}
                   </Button>
                 </div>
-                <div className="rounded-lg border-2 border-dashed p-6 text-center">
+                <div className="
+                  rounded-lg border-2 border-dashed p-6 text-center
+                "
+                >
                   {file
                     ? (
                         <div className="flex items-center justify-center gap-3">
-                          <IconFileSpreadsheet className="h-8 w-8 text-muted-foreground" />
+                          <IconFileSpreadsheet className="
+                            text-muted-foreground h-8 w-8
+                          "
+                          />
                           <div className="text-left">
                             <p className="font-medium">{file.name}</p>
-                            <p className="text-sm text-muted-foreground">{allParsed.length > 0 && t.students.importPreviewCount({ count: allParsed.length })}</p>
+                            <p className="text-muted-foreground text-sm">{allParsed.length > 0 && t.students.importPreviewCount({ count: allParsed.length })}</p>
                           </div>
                           <Button
                             variant="ghost"
@@ -227,10 +236,18 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                       )
                     : (
                         <label className="cursor-pointer">
-                          <IconUpload className="mx-auto h-10 w-10 text-muted-foreground" />
+                          <IconUpload className="
+                            text-muted-foreground mx-auto h-10 w-10
+                          "
+                          />
                           <p className="mt-2 font-medium">{t.students.importDropFile()}</p>
-                          <p className="text-sm text-muted-foreground">{t.students.importFileTypesExcel()}</p>
-                          <input type="file" accept=".xlsx,.xls,.csv" onChange={handleFileChange} className="hidden" />
+                          <p className="text-muted-foreground text-sm">{t.students.importFileTypesExcel()}</p>
+                          <input
+                            type="file"
+                            accept=".xlsx,.xls,.csv"
+                            onChange={handleFileChange}
+                            className="hidden"
+                          />
                         </label>
                       )}
                 </div>
@@ -244,7 +261,9 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
                 <DialogFooter>
                   <Button variant="outline" onClick={handleClose}>{t.common.cancel()}</Button>
                   <Button onClick={handleImport} disabled={allParsed.length === 0 || importMutation.isPending}>
-                    {importMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {importMutation.isPending && (
+                      <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     {t.students.importStart()}
                   </Button>
                 </DialogFooter>

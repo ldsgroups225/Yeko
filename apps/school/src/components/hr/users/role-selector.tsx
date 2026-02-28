@@ -73,12 +73,15 @@ export function RoleSelector({
 
   if (isPending) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-4 py-16">
         <div className="relative">
-          <IconLoader2 className="h-10 w-10 animate-spin text-primary/60" />
-          <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse rounded-full" />
+          <IconLoader2 className="text-primary/60 h-10 w-10 animate-spin" />
+          <div className="
+            bg-primary/20 absolute inset-0 animate-pulse rounded-full blur-xl
+          "
+          />
         </div>
-        <p className="text-sm font-medium text-muted-foreground animate-pulse">{t.common.loading()}</p>
+        <p className="text-muted-foreground animate-pulse text-sm font-medium">{t.common.loading()}</p>
       </div>
     )
   }
@@ -88,12 +91,19 @@ export function RoleSelector({
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-xl border border-dashed border-border/40 bg-card/30 backdrop-blur-sm p-12 text-center"
+        className="
+          border-border/40 bg-card/30 rounded-xl border border-dashed p-12
+          text-center backdrop-blur-sm
+        "
       >
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted/50 mb-4">
-          <IconShieldExclamation className="h-6 w-6 text-muted-foreground" />
+        <div className="
+          bg-muted/50 mx-auto mb-4 flex h-12 w-12 items-center justify-center
+          rounded-full
+        "
+        >
+          <IconShieldExclamation className="text-muted-foreground h-6 w-6" />
         </div>
-        <p className="text-sm font-medium text-muted-foreground">
+        <p className="text-muted-foreground text-sm font-medium">
           {t.hr.roles.noRoles()}
         </p>
       </motion.div>
@@ -103,12 +113,19 @@ export function RoleSelector({
   return (
     <div className="space-y-6">
       {/* Quick Actions */}
-      <div className="flex items-center justify-between pb-2 border-b border-border/40">
+      <div className="
+        border-border/40 flex items-center justify-between border-b pb-2
+      "
+      >
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconShield className="h-4 w-4" />
           </div>
-          <div className="text-sm font-semibold text-foreground">
+          <div className="text-foreground text-sm font-semibold">
             {selectedRoleIds.length > 0
               ? (
                   <span className="flex items-center gap-1.5">
@@ -126,7 +143,10 @@ export function RoleSelector({
             type="button"
             variant="ghost"
             size="sm"
-            className="rounded-xl h-8 text-xs font-semibold hover:bg-primary/10 hover:text-primary transition-all px-3"
+            className="
+              hover:bg-primary/10 hover:text-primary
+              h-8 rounded-xl px-3 text-xs font-semibold transition-all
+            "
             onClick={handleSelectAll}
             disabled={disabled || filteredRoles.length === selectedRoleIds.length}
           >
@@ -137,7 +157,10 @@ export function RoleSelector({
             type="button"
             variant="ghost"
             size="sm"
-            className="rounded-xl h-8 text-xs font-semibold hover:bg-destructive/10 hover:text-destructive transition-all px-3"
+            className="
+              hover:bg-destructive/10 hover:text-destructive
+              h-8 rounded-xl px-3 text-xs font-semibold transition-all
+            "
             onClick={handleDeselectAll}
             disabled={disabled || selectedRoleIds.length === 0}
           >
@@ -148,23 +171,46 @@ export function RoleSelector({
       </div>
 
       {/* Two Column Layout */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+      "
+      >
         {/* Available Roles */}
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-sm font-bold tracking-tight text-foreground uppercase">{t.hr.roles.available()}</h3>
-            <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-widest bg-muted/50 border-border/40">
+            <h3 className="
+              text-foreground text-sm font-bold tracking-tight uppercase
+            "
+            >
+              {t.hr.roles.available()}
+            </h3>
+            <Badge
+              variant="outline"
+              className="
+                bg-muted/50 border-border/40 text-[10px] font-bold
+                tracking-widest uppercase
+              "
+            >
               {availableRoles.length}
             </Badge>
           </div>
-          <div className="rounded-xl border border-border/40 bg-card/20 backdrop-blur-sm p-3 min-h-[300px] max-h-[500px] overflow-y-auto space-y-3 custom-scrollbar shadow-inner">
+          <div className="
+            border-border/40 bg-card/20 custom-scrollbar max-h-[500px]
+            min-h-[300px] space-y-3 overflow-y-auto rounded-xl border p-3
+            shadow-inner backdrop-blur-sm
+          "
+          >
             <AnimatePresence mode="popLayout">
               {availableRoles.length === 0
                 ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="flex items-center justify-center h-[260px] text-sm text-muted-foreground italic"
+                      className="
+                        text-muted-foreground flex h-[260px] items-center
+                        justify-center text-sm italic
+                      "
                     >
                       {t.hr.roles.allSelected()}
                     </motion.div>
@@ -179,32 +225,61 @@ export function RoleSelector({
                         transition={{ duration: 0.2 }}
                         key={role.id}
                         className={cn(
-                          'group relative rounded-xl border border-border/40 bg-background/50 p-4 cursor-pointer transition-all hover:bg-primary/5 hover:border-primary/30 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] shadow-sm',
-                          disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
+                          `
+                            group border-border/40 bg-background/50
+                            hover:bg-primary/5 hover:border-primary/30
+                            relative cursor-pointer rounded-xl border p-4
+                            shadow-sm transition-all
+                            hover:scale-[1.01] hover:shadow-md
+                            active:scale-[0.99]
+                          `,
+                          disabled && `
+                            pointer-events-none cursor-not-allowed opacity-50
+                          `,
                         )}
                         onClick={() => handleSelect(role.id)}
                         role="button"
                         tabIndex={0}
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1 min-w-0">
+                          <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                              <p className="font-bold text-sm text-foreground truncate">
+                              <p className="
+                                text-foreground truncate text-sm font-bold
+                              "
+                              >
                                 {role.name}
                               </p>
                               {role.scope === 'system' && (
-                                <Badge variant="secondary" className="px-1.5 py-0 text-[10px] uppercase bg-accent/10 text-accent-foreground border-accent/20 font-bold">
+                                <Badge
+                                  variant="secondary"
+                                  className="
+                                    bg-accent/10 text-accent-foreground
+                                    border-accent/20 px-1.5 py-0 text-[10px]
+                                    font-bold uppercase
+                                  "
+                                >
                                   {t.hr.roles.system()}
                                 </Badge>
                               )}
                             </div>
                             {role.description && (
-                              <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
+                              <p className="
+                                text-muted-foreground mt-1.5 line-clamp-2
+                                text-xs leading-relaxed
+                              "
+                              >
                                 {role.description}
                               </p>
                             )}
                           </div>
-                          <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-primary/5 text-primary opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">
+                          <div className="
+                            bg-primary/5 text-primary flex h-8 w-8 translate-x-1
+                            transform items-center justify-center rounded-lg
+                            opacity-0 transition-all
+                            group-hover:translate-x-0 group-hover:opacity-100
+                          "
+                          >
                             <IconCheck className="h-4 w-4" />
                           </div>
                         </div>
@@ -218,19 +293,38 @@ export function RoleSelector({
         {/* Selected Roles */}
         <div className="space-y-3">
           <div className="flex items-center justify-between px-1">
-            <h3 className="text-sm font-bold tracking-tight text-foreground uppercase">{t.hr.roles.selectedRoles()}</h3>
-            <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-widest bg-primary/10 text-primary border-primary/20">
+            <h3 className="
+              text-foreground text-sm font-bold tracking-tight uppercase
+            "
+            >
+              {t.hr.roles.selectedRoles()}
+            </h3>
+            <Badge
+              variant="outline"
+              className="
+                bg-primary/10 text-primary border-primary/20 text-[10px]
+                font-bold tracking-widest uppercase
+              "
+            >
               {selectedRoles.length}
             </Badge>
           </div>
-          <div className="rounded-xl border border-border/40 bg-primary/5 backdrop-blur-sm p-3 min-h-[300px] max-h-[500px] overflow-y-auto space-y-3 custom-scrollbar shadow-inner">
+          <div className="
+            border-border/40 bg-primary/5 custom-scrollbar max-h-[500px]
+            min-h-[300px] space-y-3 overflow-y-auto rounded-xl border p-3
+            shadow-inner backdrop-blur-sm
+          "
+          >
             <AnimatePresence mode="popLayout">
               {selectedRoles.length === 0
                 ? (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="flex items-center justify-center h-[260px] text-sm text-muted-foreground italic"
+                      className="
+                        text-muted-foreground flex h-[260px] items-center
+                        justify-center text-sm italic
+                      "
                     >
                       {t.hr.roles.noRolesSelected()}
                     </motion.div>
@@ -245,32 +339,61 @@ export function RoleSelector({
                         transition={{ duration: 0.2 }}
                         key={role.id}
                         className={cn(
-                          'group relative rounded-xl border border-primary/20 bg-card p-4 cursor-pointer transition-all hover:bg-destructive/5 hover:border-destructive/30 hover:shadow-md hover:scale-[1.01] active:scale-[0.99] shadow-sm',
-                          disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
+                          `
+                            group border-primary/20 bg-card
+                            hover:bg-destructive/5 hover:border-destructive/30
+                            relative cursor-pointer rounded-xl border p-4
+                            shadow-sm transition-all
+                            hover:scale-[1.01] hover:shadow-md
+                            active:scale-[0.99]
+                          `,
+                          disabled && `
+                            pointer-events-none cursor-not-allowed opacity-50
+                          `,
                         )}
                         onClick={() => handleDeselect(role.id)}
                         role="button"
                         tabIndex={0}
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1 min-w-0">
+                          <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
-                              <p className="font-bold text-sm text-foreground truncate">
+                              <p className="
+                                text-foreground truncate text-sm font-bold
+                              "
+                              >
                                 {role.name}
                               </p>
                               {role.scope === 'system' && (
-                                <Badge variant="secondary" className="px-1.5 py-0 text-[10px] uppercase bg-accent/10 text-accent-foreground border-accent/20 font-bold">
+                                <Badge
+                                  variant="secondary"
+                                  className="
+                                    bg-accent/10 text-accent-foreground
+                                    border-accent/20 px-1.5 py-0 text-[10px]
+                                    font-bold uppercase
+                                  "
+                                >
                                   {t.hr.roles.system()}
                                 </Badge>
                               )}
                             </div>
                             {role.description && (
-                              <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
+                              <p className="
+                                text-muted-foreground mt-1.5 line-clamp-2
+                                text-xs leading-relaxed
+                              "
+                              >
                                 {role.description}
                               </p>
                             )}
                           </div>
-                          <div className="h-8 w-8 flex items-center justify-center rounded-lg bg-destructive/5 text-destructive opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">
+                          <div className="
+                            bg-destructive/5 text-destructive flex h-8 w-8
+                            translate-x-1 transform items-center justify-center
+                            rounded-lg opacity-0 transition-all
+                            group-hover:translate-x-0 group-hover:opacity-100
+                          "
+                          >
                             <IconX className="h-4 w-4" />
                           </div>
                         </div>
@@ -284,8 +407,8 @@ export function RoleSelector({
 
       {/* Helper Text */}
       <div className="flex items-center gap-2 px-1">
-        <IconInfoCircle className="h-3 w-3 text-muted-foreground" />
-        <p className="text-[11px] font-medium text-muted-foreground">
+        <IconInfoCircle className="text-muted-foreground h-3 w-3" />
+        <p className="text-muted-foreground text-[11px] font-medium">
           {t.hr.roles.doubleClickHint()}
         </p>
       </div>

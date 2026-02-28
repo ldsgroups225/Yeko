@@ -44,21 +44,33 @@ export function RolesTableContent() {
         header: t.hr.roles.name(),
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <div className="
+              bg-primary/10 text-primary flex h-8 w-8 items-center
+              justify-center rounded-lg
+            "
+            >
               <IconShield className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
-              <span className="font-semibold text-foreground">
+              <span className="text-foreground font-semibold">
                 {row.original.name}
               </span>
-              <span className="font-mono text-[10px] text-muted-foreground uppercase tracking-wider">
+              <span className="
+                text-muted-foreground font-mono text-[10px] tracking-wider
+                uppercase
+              "
+              >
                 {row.original.slug}
               </span>
             </div>
             {row.original.isSystemRole && (
               <Badge
                 variant="secondary"
-                className="bg-primary/5 text-primary border-primary/10 hover:bg-primary/10 transition-colors"
+                className="
+                  bg-primary/5 text-primary border-primary/10
+                  hover:bg-primary/10
+                  transition-colors
+                "
               >
                 {t.hr.roles.system()}
               </Badge>
@@ -70,7 +82,10 @@ export function RolesTableContent() {
         accessorKey: 'description',
         header: t.hr.roles.description(),
         cell: ({ row }) => (
-          <span className="text-sm text-muted-foreground line-clamp-1 max-w-[300px]">
+          <span className="
+            text-muted-foreground line-clamp-1 max-w-[300px] text-sm
+          "
+          >
             {row.original.description || t.common.none()}
           </span>
         ),
@@ -83,7 +98,7 @@ export function RolesTableContent() {
             <Badge variant="outline" className="border-border/40 font-medium">
               {row.original.permissionCount}
             </Badge>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               {t.hr.roles.permissionsCount({
                 count: row.original.permissionCount,
               })}
@@ -96,9 +111,9 @@ export function RolesTableContent() {
         header: t.hr.roles.users(),
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
-            <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <div className="bg-primary h-1.5 w-1.5 rounded-full" />
             <span className="font-medium">{row.original.userCount || 0}</span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               {t.hr.roles.users()}
             </span>
           </div>
@@ -113,7 +128,10 @@ export function RolesTableContent() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="hover:bg-primary/10 hover:text-primary transition-colors"
+                  className="
+                    hover:bg-primary/10 hover:text-primary
+                    transition-colors
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     e.preventDefault()
@@ -125,7 +143,9 @@ export function RolesTableContent() {
             />
             <DropdownMenuContent
               align="end"
-              className="backdrop-blur-2xl bg-popover/90 border-border/40 min-w-[160px]"
+              className="
+                bg-popover/90 border-border/40 min-w-[160px] backdrop-blur-2xl
+              "
             >
               {!row.original.isSystemRole && row.original.slug !== 'school_founder' && (
                 <>
@@ -137,7 +157,12 @@ export function RolesTableContent() {
                     <IconEdit className="h-4 w-4" />
                     {t.common.edit()}
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10">
+                  <DropdownMenuItem className="
+                    text-destructive
+                    focus:text-destructive focus:bg-destructive/10
+                    cursor-pointer gap-2
+                  "
+                  >
                     <IconTrash className="h-4 w-4" />
                     {t.common.delete()}
                   </DropdownMenuItem>
@@ -191,18 +216,26 @@ export function RolesTableContent() {
   }
 
   return (
-    <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden">
+    <div className="
+      border-border/40 bg-background/30 overflow-hidden rounded-xl border
+    "
+    >
       <Table>
         <TableHeader className="bg-muted/50 backdrop-blur-md">
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow
               key={headerGroup.id}
-              className="hover:bg-transparent border-border/40"
+              className="
+                border-border/40
+                hover:bg-transparent
+              "
             >
               {headerGroup.headers.map(header => (
                 <TableHead
                   key={header.id}
-                  className="text-xs uppercase tracking-wider font-semibold py-4"
+                  className="
+                    py-4 text-xs font-semibold tracking-wider uppercase
+                  "
                 >
                   {header.isPlaceholder
                     ? null
@@ -228,7 +261,11 @@ export function RolesTableContent() {
                   delay: index * 0.03,
                   ease: 'easeOut',
                 }}
-                className="group hover:bg-primary/5 transition-colors border-border/40 cursor-pointer"
+                className="
+                  group
+                  hover:bg-primary/5
+                  border-border/40 cursor-pointer transition-colors
+                "
                 onClick={() =>
                   navigate({ to: `/users/roles/${row.original.id}` })}
               >

@@ -62,8 +62,12 @@ export function SchoolProfileForm({
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-      <div className="flex items-center gap-6 p-4 rounded-2xl bg-muted/10 border border-border/40">
-        <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
+      <div className="
+        bg-muted/10 border-border/40 flex items-center gap-6 rounded-2xl border
+        p-4
+      "
+      >
+        <Avatar className="border-background h-24 w-24 border-4 shadow-lg">
           <AvatarImage src={school.logoUrl ?? undefined} alt={school.name} />
           <AvatarFallback className="bg-primary/10 text-primary">
             <IconBuilding className="h-10 w-10" />
@@ -71,8 +75,13 @@ export function SchoolProfileForm({
         </Avatar>
         <div className="space-y-4">
           <div className="space-y-1">
-            <Label htmlFor="logo" className="text-sm font-semibold text-foreground">{t.settings.profile.logo()}</Label>
-            <p className="text-xs text-muted-foreground max-w-[200px]">
+            <Label
+              htmlFor="logo"
+              className="text-foreground text-sm font-semibold"
+            >
+              {t.settings.profile.logo()}
+            </Label>
+            <p className="text-muted-foreground max-w-[200px] text-xs">
               {t.settings.profile.logoHint()}
             </p>
           </div>
@@ -89,7 +98,7 @@ export function SchoolProfileForm({
               variant="outline"
               size="sm"
               onClick={() => document.getElementById('logo')?.click()}
-              className="rounded-xl border-border/40 shadow-sm"
+              className="border-border/40 rounded-xl shadow-sm"
             >
               <IconUpload className="mr-2 h-4 w-4" />
               {t.settings.profile.uploadLogo()}
@@ -100,7 +109,14 @@ export function SchoolProfileForm({
 
       <div className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.profile.schoolName()}</Label>
+          <Label
+            htmlFor="name"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
+            {t.settings.profile.schoolName()}
+          </Label>
           <Input
             id="name"
             {...form.register('name')}
@@ -108,34 +124,70 @@ export function SchoolProfileForm({
             className={inputClass}
           />
           {form.formState.errors.name && (
-            <p className="text-sm text-destructive font-medium">
+            <p className="text-destructive text-sm font-medium">
               {form.formState.errors.name.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="code" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.profile.schoolCode()}</Label>
-          <Input id="code" value={school.code} disabled className={`${inputClass} opacity-70 bg-muted/40 font-mono`} />
-          <p className="text-xs text-muted-foreground/70">
+          <Label
+            htmlFor="code"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
+            {t.settings.profile.schoolCode()}
+          </Label>
+          <Input
+            id="code"
+            value={school.code}
+            disabled
+            className={`
+              ${inputClass}
+              bg-muted/40 font-mono opacity-70
+            `}
+          />
+          <p className="text-muted-foreground/70 text-xs">
             {t.settings.profile.schoolCodeHint()}
           </p>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="address" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.profile.address()}</Label>
+          <Label
+            htmlFor="address"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
+            {t.settings.profile.address()}
+          </Label>
           <Textarea
             id="address"
             {...form.register('address')}
             placeholder={t.settings.profile.addressPlaceholder()}
             rows={3}
-            className={`${inputClass} resize-none`}
+            className={`
+              ${inputClass}
+              resize-none
+            `}
           />
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="
+          grid gap-6
+          sm:grid-cols-2
+        "
+        >
           <div className="space-y-2">
-            <Label htmlFor="phone" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.profile.phone()}</Label>
+            <Label
+              htmlFor="phone"
+              className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+            >
+              {t.settings.profile.phone()}
+            </Label>
             <Controller
               name="phone"
               control={form.control}
@@ -151,7 +203,14 @@ export function SchoolProfileForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.profile.email()}</Label>
+            <Label
+              htmlFor="email"
+              className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+            >
+              {t.settings.profile.email()}
+            </Label>
             <Input
               id="email"
               type="email"
@@ -160,7 +219,7 @@ export function SchoolProfileForm({
               className={inputClass}
             />
             {form.formState.errors.email && (
-              <p className="text-sm text-destructive font-medium">
+              <p className="text-destructive text-sm font-medium">
                 {form.formState.errors.email.message}
               </p>
             )}
@@ -169,7 +228,11 @@ export function SchoolProfileForm({
       </div>
 
       <div className="flex justify-end pt-4">
-        <Button type="submit" disabled={isSubmitting} className="rounded-xl shadow-lg shadow-primary/20 px-8">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="shadow-primary/20 rounded-xl px-8 shadow-lg"
+        >
           {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>
       </div>
