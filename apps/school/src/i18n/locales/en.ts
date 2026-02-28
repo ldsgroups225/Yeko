@@ -621,6 +621,7 @@ export const en = {
       add: 'Add',
       noClassesDescription: 'This teacher has no classes assigned yet.',
       teacherNotFoundDescription: 'This teacher does not exist or you do not have permission to view them.',
+      noSpecialization: 'No specialization set',
     },
     staff: {
       title: 'Staff',

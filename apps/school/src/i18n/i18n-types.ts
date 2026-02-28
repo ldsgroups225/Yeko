@@ -2656,29 +2656,13 @@ type RootTranslation = {
 			 */
 			teacherDetails: string
 			/**
-			 * A​u​c​u​n​e​ ​s​p​é​c​i​a​l​i​s​a​t​i​o​n
-			 */
-			noSpecialization: string
-			/**
-			 * M​a​t​i​è​r​e​ ​a​j​o​u​t​é​e​ ​a​v​e​c​ ​s​u​c​c​è​s
-			 */
-			addSubjectSuccess: string
-			/**
-			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​a​j​o​u​t​ ​d​e​ ​l​a​ ​m​a​t​i​è​r​e
-			 */
-			addSubjectError: string
-			/**
-			 * L​'​e​n​s​e​i​g​n​a​n​t​ ​q​u​e​ ​v​o​u​s​ ​r​e​c​h​e​r​c​h​e​z​ ​n​'​e​x​i​s​t​e​ ​p​a​s​ ​o​u​ ​a​ ​é​t​é​ ​s​u​p​p​r​i​m​é​.
-			 */
-			teacherNotFoundDescription: string
-			/**
 			 * A​j​o​u​t​e​r​ ​u​n​e​ ​c​l​a​s​s​e
 			 */
 			addClass: string
 			/**
-			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​a​ ​a​u​c​u​n​e​ ​c​l​a​s​s​e​ ​a​s​s​i​g​n​é​e​.
+			 * N​o​u​v​e​l​l​e​ ​A​s​s​i​g​n​a​t​i​o​n
 			 */
-			noClassesDescription: string
+			newAssignment: string
 			/**
 			 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​e​ ​c​l​a​s​s​e
 			 */
@@ -2696,9 +2680,33 @@ type RootTranslation = {
 			 */
 			assignError: string
 			/**
-			 * N​o​u​v​e​l​l​e​ ​A​s​s​i​g​n​a​t​i​o​n
+			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​a​ ​a​u​c​u​n​e​ ​c​l​a​s​s​e​ ​a​s​s​i​g​n​é​e​.
 			 */
-			newAssignment: string
+			noClassesDescription: string
+			/**
+			 * M​a​t​i​è​r​e​ ​a​j​o​u​t​é​e​ ​a​v​e​c​ ​s​u​c​c​è​s
+			 */
+			addSubjectSuccess: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​a​j​o​u​t​ ​d​e​ ​l​a​ ​m​a​t​i​è​r​e
+			 */
+			addSubjectError: string
+			/**
+			 * C​h​o​i​s​i​r​ ​u​n​e​ ​m​a​t​i​è​r​e
+			 */
+			chooseSubject: string
+			/**
+			 * A​j​o​u​t​e​r
+			 */
+			add: string
+			/**
+			 * L​'​e​n​s​e​i​g​n​a​n​t​ ​q​u​e​ ​v​o​u​s​ ​r​e​c​h​e​r​c​h​e​z​ ​n​'​e​x​i​s​t​e​ ​p​a​s​ ​o​u​ ​a​ ​é​t​é​ ​s​u​p​p​r​i​m​é​.
+			 */
+			teacherNotFoundDescription: string
+			/**
+			 * A​u​c​u​n​e​ ​s​p​é​c​i​a​l​i​s​a​t​i​o​n
+			 */
+			noSpecialization: string
 		}
 		staff: {
 			/**
@@ -11115,29 +11123,13 @@ export type TranslationFunctions = {
 			 */
 			teacherDetails: () => LocalizedString
 			/**
-			 * Aucune spécialisation
-			 */
-			noSpecialization: () => LocalizedString
-			/**
-			 * Matière ajoutée avec succès
-			 */
-			addSubjectSuccess: () => LocalizedString
-			/**
-			 * Erreur lors de l'ajout de la matière
-			 */
-			addSubjectError: () => LocalizedString
-			/**
-			 * L'enseignant que vous recherchez n'existe pas ou a été supprimé.
-			 */
-			teacherNotFoundDescription: () => LocalizedString
-			/**
 			 * Ajouter une classe
 			 */
 			addClass: () => LocalizedString
 			/**
-			 * Cet enseignant n'a aucune classe assignée.
+			 * Nouvelle Assignation
 			 */
-			noClassesDescription: () => LocalizedString
+			newAssignment: () => LocalizedString
 			/**
 			 * Sélectionner une classe
 			 */
@@ -11155,9 +11147,33 @@ export type TranslationFunctions = {
 			 */
 			assignError: () => LocalizedString
 			/**
-			 * Nouvelle Assignation
+			 * Cet enseignant n'a aucune classe assignée.
 			 */
-			newAssignment: () => LocalizedString
+			noClassesDescription: () => LocalizedString
+			/**
+			 * Matière ajoutée avec succès
+			 */
+			addSubjectSuccess: () => LocalizedString
+			/**
+			 * Erreur lors de l'ajout de la matière
+			 */
+			addSubjectError: () => LocalizedString
+			/**
+			 * Choisir une matière
+			 */
+			chooseSubject: () => LocalizedString
+			/**
+			 * Ajouter
+			 */
+			add: () => LocalizedString
+			/**
+			 * L'enseignant que vous recherchez n'existe pas ou a été supprimé.
+			 */
+			teacherNotFoundDescription: () => LocalizedString
+			/**
+			 * Aucune spécialisation
+			 */
+			noSpecialization: () => LocalizedString
 		}
 		staff: {
 			/**

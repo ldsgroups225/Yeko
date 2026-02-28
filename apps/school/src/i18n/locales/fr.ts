@@ -641,6 +641,7 @@ export const fr: TypedLocale = {
       add: 'Ajouter',
       noClassesDescription: 'Cet enseignant n\'a pas encore de classes assignées.',
       teacherNotFoundDescription: 'Cet enseignant n\'existe pas ou vous n\'avez pas la permission de le voir.',
+      noSpecialization: 'Aucune spécialisation',
     },
     staff: {
       title: 'Personnel',

@@ -128,7 +128,7 @@ function TeacherDetailsPage() {
         <Skeleton className="h-4 w-1/4" />
         <div className="flex items-center gap-6">
           <Skeleton className="size-24 rounded-full" />
-          <div className="flex-1 space-y-3">
+          <div className="space-y-3 flex-1">
             <Skeleton className="h-8 w-1/3" />
             <Skeleton className="h-4 w-1/4" />
           </div>
@@ -141,15 +141,8 @@ function TeacherDetailsPage() {
 
   if (!teacher) {
     return (
-      <div className="
-        flex min-h-[400px] flex-col items-center justify-center text-center
-      "
-      >
-        <div className="
-          mb-4 flex size-16 items-center justify-center rounded-full
-          bg-red-500/10
-        "
-        >
+      <div className="flex min-h-[400px] flex-col items-center justify-center text-center">
+        <div className="size-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
           <IconUserCheck className="size-8 text-red-500" />
         </div>
         <h2 className="text-2xl font-bold">{t.errors.notFound()}</h2>
@@ -174,11 +167,7 @@ function TeacherDetailsPage() {
 
   return (
     <div className="space-y-8 pb-10">
-      <div className="
-        flex flex-col gap-6
-        lg:flex-row lg:items-end lg:justify-between
-      "
-      >
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="space-y-4">
           <Breadcrumbs
             items={[
@@ -188,35 +177,21 @@ function TeacherDetailsPage() {
             ]}
           />
 
-          <div className="
-            flex flex-col gap-6
-            sm:flex-row sm:items-center
-          "
-          >
-            <Avatar className="
-              ring-background border-primary/20 size-24 border-2 shadow-xl
-              ring-4
-            "
-            >
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
+            <Avatar className="size-24 ring-4 ring-background shadow-xl border-2 border-primary/20">
               <AvatarImage src={user?.avatarUrl || undefined} />
-              <AvatarFallback className="
-                bg-primary/5 text-primary text-3xl font-black
-              "
-              >
+              <AvatarFallback className="bg-primary/5 text-primary text-3xl font-black">
                 {user?.name?.charAt(0).toUpperCase() || 'T'}
               </AvatarFallback>
             </Avatar>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="
-                  text-foreground text-4xl font-black tracking-tight
-                "
-                >
+                <h1 className="text-4xl font-black tracking-tight text-foreground">
                   {user?.name}
                 </h1>
                 <Badge
                   className={cn(
-                    'px-2 text-[10px] font-bold tracking-widest uppercase',
+                    'text-[10px] uppercase font-bold tracking-widest px-2',
                     teacher.status === 'active'
                       ? 'bg-success/10 text-success border-success/20'
                       : teacher.status === 'on_leave'
@@ -230,13 +205,9 @@ function TeacherDetailsPage() {
                   ]?.() || teacher.status}
                 </Badge>
               </div>
-              <div className="
-                text-muted-foreground mt-2 flex flex-wrap items-center gap-x-5
-                gap-y-2 text-sm
-              "
-              >
+              <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
                 <div className="flex items-center gap-1.5 font-medium">
-                  <IconBook className="text-primary/60 size-4" />
+                  <IconBook className="size-4 text-primary/60" />
                   {teacher.specialization || t.hr.teachers.noSpecialization()}
                 </div>
                 {user?.email && (
@@ -244,11 +215,7 @@ function TeacherDetailsPage() {
                     <IconMail className="size-4 opacity-70" />
                     <a
                       href={`mailto:${user.email}`}
-                      className="
-                        hover:text-primary
-                        underline-offset-4 transition-colors
-                        hover:underline
-                      "
+                      className="hover:text-primary transition-colors underline-offset-4 hover:underline"
                     >
                       {user.email}
                     </a>
@@ -269,10 +236,7 @@ function TeacherDetailsPage() {
           <Button
             variant="outline"
             size="lg"
-            className="
-              border-border/40 rounded-2xl shadow-sm transition-all
-              hover:border-red-500/20 hover:bg-red-500/5 hover:text-red-500
-            "
+            className="rounded-2xl border-border/40 hover:bg-red-500/5 hover:text-red-500 hover:border-red-500/20 transition-all shadow-sm"
             onClick={() => setShowDeleteDialog(true)}
           >
             <IconTrash className="mr-2 size-4" />
@@ -286,58 +250,34 @@ function TeacherDetailsPage() {
               </Link>
             )}
             size="lg"
-            className="
-              shadow-primary/20 rounded-2xl shadow-lg transition-all
-              hover:-translate-y-0.5
-              active:translate-y-0
-            "
+            className="rounded-2xl shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
           />
         </div>
       </div>
 
       <Tabs defaultValue="info" className="space-y-6">
-        <TabsList className="
-          border-border/40 bg-card/40 h-14 w-full justify-start gap-1
-          rounded-2xl border p-1.5 backdrop-blur-md
-        "
-        >
+        <TabsList className="h-14 w-full justify-start gap-1 rounded-2xl border border-border/40 bg-card/40 p-1.5 backdrop-blur-md">
           <TabsTrigger
             value="info"
-            className="
-              data-[state=active]:bg-background data-[state=active]:text-primary
-              h-full rounded-xl px-6 font-semibold transition-all
-              data-[state=active]:shadow-sm
-            "
+            className="h-full rounded-xl px-6 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm font-semibold transition-all"
           >
             {t.hr.teachers.tabs.info()}
           </TabsTrigger>
           <TabsTrigger
             value="subjects"
-            className="
-              data-[state=active]:bg-background data-[state=active]:text-primary
-              h-full rounded-xl px-6 font-semibold transition-all
-              data-[state=active]:shadow-sm
-            "
+            className="h-full rounded-xl px-6 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm font-semibold transition-all"
           >
             {t.hr.teachers.tabs.subjects()}
           </TabsTrigger>
           <TabsTrigger
             value="classes"
-            className="
-              data-[state=active]:bg-background data-[state=active]:text-primary
-              h-full rounded-xl px-6 font-semibold transition-all
-              data-[state=active]:shadow-sm
-            "
+            className="h-full rounded-xl px-6 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm font-semibold transition-all"
           >
             {t.hr.teachers.tabs.classes()}
           </TabsTrigger>
           <TabsTrigger
             value="schedule"
-            className="
-              data-[state=active]:bg-background data-[state=active]:text-primary
-              h-full rounded-xl px-6 font-semibold transition-all
-              data-[state=active]:shadow-sm
-            "
+            className="h-full rounded-xl px-6 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm font-semibold transition-all"
           >
             {t.hr.teachers.tabs.schedule()}
           </TabsTrigger>
@@ -349,42 +289,21 @@ function TeacherDetailsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <TabsContent value="info" className="m-0 space-y-6">
-            <div className="
-              border-border/40 bg-card/40 rounded-3xl border p-8 shadow-sm
-              backdrop-blur-md
-            "
-            >
-              <h2 className="mb-8 flex items-center gap-2 text-xl font-bold">
-                <IconUser className="text-primary size-5" />
+          <TabsContent value="info" className="space-y-6 m-0">
+            <div className="rounded-3xl border border-border/40 bg-card/40 p-8 backdrop-blur-md shadow-sm">
+              <h2 className="text-xl font-bold mb-8 flex items-center gap-2">
+                <IconUser className="size-5 text-primary" />
                 {t.hr.teachers.personalInfo()}
               </h2>
-              <div className="
-                grid gap-8
-                md:grid-cols-2
-                lg:grid-cols-3
-              "
-              >
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {teacher.hireDate && (
                   <div className="flex flex-col gap-1">
-                    <span className="
-                      text-muted-foreground/60 text-xs font-bold tracking-widest
-                      uppercase
-                    "
-                    >
+                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
                       {t.hr.teachers.hireDate()}
                     </span>
-                    <div className="
-                      text-foreground mt-1 flex items-center gap-2.5
-                      font-semibold
-                    "
-                    >
-                      <div className="
-                        bg-primary/5 border-primary/10 flex size-8 items-center
-                        justify-center rounded-lg border
-                      "
-                      >
-                        <IconCalendar className="text-primary size-4" />
+                    <div className="flex items-center gap-2.5 mt-1 font-semibold text-foreground">
+                      <div className="size-8 rounded-lg bg-primary/5 flex items-center justify-center border border-primary/10">
+                        <IconCalendar className="size-4 text-primary" />
                       </div>
                       {formatDate(teacher.hireDate, 'FULL')}
                     </div>
@@ -392,20 +311,13 @@ function TeacherDetailsPage() {
                 )}
 
                 <div className="flex flex-col gap-1">
-                  <span className="
-                    text-muted-foreground/60 text-xs font-bold tracking-widest
-                    uppercase
-                  "
-                  >
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
                     {t.hr.teachers.status()}
                   </span>
-                  <div className="mt-1 flex items-center gap-2.5">
+                  <div className="flex items-center gap-2.5 mt-1">
                     <div
                       className={cn(
-                        `
-                          flex size-8 items-center justify-center rounded-lg
-                          border
-                        `,
+                        'size-8 rounded-lg flex items-center justify-center border',
                         teacher.status === 'active'
                           ? 'bg-success/10 border-success/20'
                           : teacher.status === 'on_leave'
@@ -433,23 +345,11 @@ function TeacherDetailsPage() {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <span className="
-                    text-muted-foreground/60 text-xs font-bold tracking-widest
-                    uppercase
-                  "
-                  >
+                  <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">
                     {t.hr.teachers.specialization()}
                   </span>
-                  <div className="
-                    text-foreground mt-1 flex items-center gap-2.5 text-lg
-                    font-semibold
-                  "
-                  >
-                    <div className="
-                      flex size-8 items-center justify-center rounded-lg border
-                      border-blue-500/10 bg-blue-500/5
-                    "
-                    >
+                  <div className="flex items-center gap-2.5 mt-1 font-semibold text-foreground text-lg">
+                    <div className="size-8 rounded-lg bg-blue-500/5 flex items-center justify-center border border-blue-500/10">
                       <IconBook className="size-4 text-blue-500" />
                     </div>
                     {teacher.specialization || t.hr.teachers.noSpecialization()}
@@ -460,27 +360,18 @@ function TeacherDetailsPage() {
           </TabsContent>
 
           <TabsContent value="subjects" className="m-0">
-            <div className="
-              border-border/40 bg-card/40 rounded-3xl border p-8 shadow-sm
-              backdrop-blur-md
-            "
-            >
-              <h2 className="mb-8 flex items-center gap-2 text-xl font-bold">
-                <IconBook className="text-primary size-5" />
+            <div className="rounded-3xl border border-border/40 bg-card/40 p-8 backdrop-blur-md shadow-sm">
+              <h2 className="text-xl font-bold mb-8 flex items-center gap-2">
+                <IconBook className="size-5 text-primary" />
                 {t.hr.teachers.assignedSubjects()}
               </h2>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-wrap gap-3 items-center">
                 {teacher.subjects && teacher.subjects.length > 0
                   ? (
                       teacher.subjects.map((sub: TeacherSubject) => (
                         <Badge
                           key={sub.subjectId}
-                          className="
-                            bg-primary/5 text-primary border-primary/20
-                            hover:bg-primary/10
-                            cursor-default rounded-xl px-4 py-2 text-sm
-                            font-semibold transition-colors
-                          "
+                          className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
                           variant="outline"
                         >
                           <IconBook className="mr-2 size-3.5" />
@@ -490,15 +381,8 @@ function TeacherDetailsPage() {
                     )
                   : (
                       !isAddingSubject && (
-                        <div className="
-                          flex w-full flex-col items-center justify-center py-10
-                          text-center
-                        "
-                        >
-                          <IconBook className="
-                            text-muted-foreground/30 mb-4 size-10
-                          "
-                          />
+                        <div className="flex flex-col items-center justify-center py-10 w-full text-center">
+                          <IconBook className="mb-4 size-10 text-muted-foreground/30" />
                           <p className="text-muted-foreground font-medium">
                             {t.hr.teachers.noSubjects()}
                           </p>
@@ -508,21 +392,13 @@ function TeacherDetailsPage() {
 
                 {isAddingSubject
                   ? (
-                      <div className="
-                        animate-in fade-in zoom-in-95 flex items-center gap-2
-                        duration-200
-                      "
-                      >
+                      <div className="flex items-center gap-2 animate-in fade-in zoom-in-95 duration-200">
                         <Select
                           value={selectedSubjectId}
                           onValueChange={v => setSelectedSubjectId(v || '')}
                         >
-                          <SelectTrigger className="
-                            border-primary/20 bg-background/50 h-9 w-[200px]
-                            rounded-xl
-                          "
-                          >
-                            <SelectValue placeholder="Choose subject" />
+                          <SelectTrigger className="h-9 w-[200px] rounded-xl border-primary/20 bg-background/50">
+                            <SelectValue placeholder={t.hr.teachers.chooseSubject()} />
                           </SelectTrigger>
                           <SelectContent>
                             {availableSubjects.map(subject => (
@@ -535,11 +411,7 @@ function TeacherDetailsPage() {
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="
-                            bg-primary/10 text-primary
-                            hover:bg-primary/20
-                            size-9 rounded-full
-                          "
+                          className="size-9 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
                           onClick={handleAddSubject}
                           disabled={!selectedSubjectId || assignSubjectsMutation.isPending}
                         >
@@ -548,10 +420,7 @@ function TeacherDetailsPage() {
                         <Button
                           size="icon"
                           variant="ghost"
-                          className="
-                            hover:bg-destructive/10 hover:text-destructive
-                            size-9 rounded-full
-                          "
+                          className="size-9 rounded-full hover:bg-destructive/10 hover:text-destructive"
                           onClick={() => setIsAddingSubject(false)}
                         >
                           <IconX className="size-4" />
@@ -561,15 +430,11 @@ function TeacherDetailsPage() {
                   : (
                       <Button
                         variant="outline"
-                        className="
-                          border-primary/30 bg-primary/5 text-primary
-                          hover:bg-primary/10 hover:border-primary/50
-                          h-9 rounded-xl border-dashed
-                        "
+                        className="h-9 rounded-xl border-dashed border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/50"
                         onClick={() => setIsAddingSubject(true)}
                       >
                         <IconPlus className="mr-2 size-4" />
-                        Add subject
+                        {t.hr.teachers.add()}
                       </Button>
                     )}
               </div>
