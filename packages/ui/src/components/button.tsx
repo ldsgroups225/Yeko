@@ -42,7 +42,7 @@ const buttonVariants = cva(
   },
 )
 
-function Button({ ref, className, variant = 'default', size = 'default', ...props }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { ref?: React.RefObject<HTMLButtonElement | null> }) {
+function Button({ ref, className, variant = 'default', size = 'default', ...props }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants> & { ref?: React.Ref<HTMLButtonElement> }) {
   return (
     <ButtonPrimitive
       ref={ref}
@@ -54,4 +54,5 @@ function Button({ ref, className, variant = 'default', size = 'default', ...prop
 }
 Button.displayName = 'Button'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { Button, buttonVariants }

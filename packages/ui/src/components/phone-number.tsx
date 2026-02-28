@@ -30,34 +30,33 @@ type PhoneInputProps = Omit<
   value?: any
 }
 
-const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps>
-  = ({ ref, className, onChange, value, ...props }: PhoneInputProps & { ref?: React.RefObject<React.ElementRef<typeof RPNInput.default> | null> }) => {
-    return (
-      <RPNInput.default
-        ref={ref}
-        className={cn('flex', className)}
-        flagComponent={FlagComponent}
-        countrySelectComponent={CountrySelect}
-        inputComponent={InputComponent}
-        smartCaret={false}
-        value={value || undefined}
-        /**
-         * Handles the onChange event.
-         *
-         * react-phone-number-input might trigger the onChange event as undefined
-         * when a valid phone number is not entered. To prevent this,
-         * the value is coerced to an empty string.
-         *
-         * @param {E164Number | undefined} value - The entered value
-         */
-        onChange={value => onChange?.(value || '')}
-        {...props}
-      />
-    )
-  }
+function PhoneInput({ ref, className, onChange, value, ...props }: PhoneInputProps & { ref?: React.Ref<React.ElementRef<typeof RPNInput.default>> }) {
+  return (
+    <RPNInput.default
+      ref={ref}
+      className={cn('flex', className)}
+      flagComponent={FlagComponent}
+      countrySelectComponent={CountrySelect}
+      inputComponent={InputComponent}
+      smartCaret={false}
+      value={value || undefined}
+      /**
+       * Handles the onChange event.
+       *
+       * react-phone-number-input might trigger the onChange event as undefined
+       * when a valid phone number is not entered. To prevent this,
+       * the value is coerced to an empty string.
+       *
+       * @param {E164Number | undefined} value - The entered value
+       */
+      onChange={value => onChange?.(value || '')}
+      {...props}
+    />
+  )
+}
 PhoneInput.displayName = 'PhoneInput'
 
-function InputComponent({ ref, className, ...props }: React.ComponentProps<'input'> & { ref?: React.RefObject<HTMLInputElement | null> }) {
+function InputComponent({ ref, className, ...props }: React.ComponentProps<'input'> & { ref?: React.Ref<HTMLInputElement> }) {
   return (
     <Input
       className={cn('rounded-e-lg rounded-s-none', className)}

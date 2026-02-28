@@ -2660,7 +2660,7 @@ type RootTranslation = {
 			 */
 			addClass: string
 			/**
-			 * N​o​u​v​e​l​l​e​ ​A​s​s​i​g​n​a​t​i​o​n
+			 * N​o​u​v​e​l​l​e​ ​a​f​f​e​c​t​a​t​i​o​n
 			 */
 			newAssignment: string
 			/**
@@ -2680,7 +2680,7 @@ type RootTranslation = {
 			 */
 			assignError: string
 			/**
-			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​a​ ​a​u​c​u​n​e​ ​c​l​a​s​s​e​ ​a​s​s​i​g​n​é​e​.
+			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​a​ ​p​a​s​ ​e​n​c​o​r​e​ ​d​e​ ​c​l​a​s​s​e​s​ ​a​s​s​i​g​n​é​e​s​.
 			 */
 			noClassesDescription: string
 			/**
@@ -11127,7 +11127,7 @@ export type TranslationFunctions = {
 			 */
 			addClass: () => LocalizedString
 			/**
-			 * Nouvelle Assignation
+			 * Nouvelle affectation
 			 */
 			newAssignment: () => LocalizedString
 			/**
@@ -11147,7 +11147,7 @@ export type TranslationFunctions = {
 			 */
 			assignError: () => LocalizedString
 			/**
-			 * Cet enseignant n'a aucune classe assignée.
+			 * Cet enseignant n'a pas encore de classes assignées.
 			 */
 			noClassesDescription: () => LocalizedString
 			/**

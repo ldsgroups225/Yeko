@@ -1,8 +1,8 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { parseServerFnError } from '../error-handlers'
 
 describe('parseServerFnError', () => {
-  describe('Basic Input Handling', () => {
+  describe('basic Input Handling', () => {
     it('should return fallback for null or undefined error', () => {
       expect(parseServerFnError(null)).toBe('Une erreur est survenue')
       expect(parseServerFnError(undefined)).toBe('Une erreur est survenue')
@@ -25,7 +25,7 @@ describe('parseServerFnError', () => {
     })
   })
 
-  describe('Specific Error Keywords (French Translations)', () => {
+  describe('specific Error Keywords (French Translations)', () => {
     it('should translate network errors', () => {
       expect(parseServerFnError('Network connection lost')).toBe('Connexion perdue. Veuillez réessayer une fois la connexion rétablie.')
       expect(parseServerFnError('fetch failed')).toBe('Connexion perdue. Veuillez réessayer une fois la connexion rétablie.')
@@ -43,7 +43,7 @@ describe('parseServerFnError', () => {
     })
   })
 
-  describe('Zod/JSON Error Parsing', () => {
+  describe('zod/JSON Error Parsing', () => {
     it('should parse simple JSON array with messages', () => {
       const errorString = 'Error: [{"message": "Invalid email"}]'
       expect(parseServerFnError(errorString)).toBe('Invalid email')
@@ -76,7 +76,7 @@ describe('parseServerFnError', () => {
     })
   })
 
-  describe('Message Cleaning', () => {
+  describe('message Cleaning', () => {
     it('should remove "Server Fn Error!" prefix', () => {
       expect(parseServerFnError('Server Fn Error! Actual message')).toBe('Actual message')
     })
@@ -102,7 +102,7 @@ describe('parseServerFnError', () => {
     })
   })
 
-  describe('Edge Cases', () => {
+  describe('edge Cases', () => {
     it('should use fallback for very long messages (>200 chars)', () => {
       const longMessage = 'a'.repeat(201)
       expect(parseServerFnError(longMessage)).toBe('Une erreur est survenue')
