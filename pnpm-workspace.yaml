@@ -114,7 +114,7 @@ catalog:
   vite-tsconfig-paths: ^6.1.1
   vitest: ^4.0.18
   web-vitals: ^5.1.0
-  wrangler: ^4.67.0
+  wrangler: ^4.69.0
   xlsx: ^0.18.5
   zod: ^4.3.6
   '@praha/byethrow-docs': ^0.10.0
