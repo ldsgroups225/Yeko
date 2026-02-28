@@ -89,22 +89,49 @@ export function StudentGradeCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className={cn('overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:shadow-primary/5 group', className)}>
-        <CardHeader className="bg-muted/20 border-b border-border/20 pb-6 relative overflow-hidden">
+      <Card className={cn(`
+        border-border/40 bg-card/30
+        hover:shadow-primary/5
+        group overflow-hidden rounded-2xl shadow-xl backdrop-blur-xl
+        transition-all
+      `, className)}
+      >
+        <CardHeader className="
+          bg-muted/20 border-border/20 relative overflow-hidden border-b pb-6
+        "
+        >
           {/* Background Accent */}
-          <div className="absolute top-0 right-0 -mr-8 -mt-8 size-32 rounded-full bg-primary/5 blur-3xl" />
+          <div className="
+            bg-primary/5 absolute top-0 right-0 -mt-8 -mr-8 size-32 rounded-full
+            blur-3xl
+          "
+          />
 
-          <div className="flex flex-col sm:flex-row items-start justify-between gap-6 relative z-10">
+          <div className="
+            relative z-10 flex flex-col items-start justify-between gap-6
+            sm:flex-row
+          "
+          >
             <div className="flex items-center gap-5">
               <div className="relative">
-                <div className="flex size-16 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 text-primary shadow-inner border border-primary/20 group-hover:scale-105 transition-transform duration-500">
+                <div className="
+                  from-primary/20 to-primary/5 text-primary border-primary/20
+                  flex size-16 items-center justify-center rounded-2xl border
+                  bg-linear-to-br shadow-inner transition-transform duration-500
+                  group-hover:scale-105
+                "
+                >
                   <IconUser className="size-8" />
                 </div>
                 {rank !== undefined && rank <= 3 && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 ring-2 ring-background z-20"
+                    className="
+                      bg-accent shadow-accent/30 ring-background absolute -top-2
+                      -right-2 z-20 flex h-7 w-7 items-center justify-center
+                      rounded-full text-white shadow-lg ring-2
+                    "
                   >
                     <IconStar className="size-3.5 fill-current" />
                   </motion.div>
@@ -112,18 +139,33 @@ export function StudentGradeCard({
               </div>
 
               <div className="space-y-1.5">
-                <CardTitle className="text-2xl font-bold tracking-tight text-foreground leading-none">
+                <CardTitle className="
+                  text-foreground text-2xl leading-none font-bold tracking-tight
+                "
+                >
                   {student.lastName}
                   {' '}
                   <span className="text-primary/80">{student.firstName}</span>
                 </CardTitle>
                 <div className="flex items-center gap-3">
-                  <Badge variant="outline" className="font-mono text-[10px] font-bold tracking-widest bg-background/50 border-border/40 py-0.5 px-2 rounded-lg">
-                    <IconHash className="size-3 mr-1 text-muted-foreground" />
+                  <Badge
+                    variant="outline"
+                    className="
+                      bg-background/50 border-border/40 rounded-lg px-2 py-0.5
+                      font-mono text-[10px] font-bold tracking-widest
+                    "
+                  >
+                    <IconHash className="text-muted-foreground mr-1 size-3" />
                     {student.matricule}
                   </Badge>
                   {rank !== undefined && (
-                    <Badge variant="secondary" className="text-[10px] font-bold uppercase bg-primary/10 text-primary border-none">
+                    <Badge
+                      variant="secondary"
+                      className="
+                        bg-primary/10 text-primary border-none text-[10px]
+                        font-bold uppercase
+                      "
+                    >
                       {t.academic.grades.rank({ rank, total: totalStudents || 0 })}
                     </Badge>
                   )}
@@ -132,17 +174,39 @@ export function StudentGradeCard({
             </div>
 
             {average !== undefined && (
-              <div className="flex flex-col items-end self-end sm:self-auto">
+              <div className="
+                flex flex-col items-end self-end
+                sm:self-auto
+              "
+              >
                 <div className="flex flex-col items-end">
                   <div className="flex items-baseline gap-1.5">
-                    <span className={cn('text-4xl font-bold font-mono tracking-tighter drop-shadow-sm', getGradeColor(average))}>
+                    <span className={cn(`
+                      font-mono text-4xl font-bold tracking-tighter
+                      drop-shadow-sm
+                    `, getGradeColor(average))}
+                    >
                       {average.toFixed(2)}
                     </span>
-                    <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">/ 20</span>
+                    <span className="
+                      text-muted-foreground/40 text-xs font-bold tracking-widest
+                      uppercase
+                    "
+                    >
+                      / 20
+                    </span>
                   </div>
-                  <div className="mt-1 flex items-center gap-2 px-3 py-1 rounded-lg bg-background/40 border border-border/10 shadow-inner">
-                    <IconSchool className="size-3 text-muted-foreground" />
-                    <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/80 leading-none">
+                  <div className="
+                    bg-background/40 border-border/10 mt-1 flex items-center
+                    gap-2 rounded-lg border px-3 py-1 shadow-inner
+                  "
+                  >
+                    <IconSchool className="text-muted-foreground size-3" />
+                    <p className="
+                      text-muted-foreground/80 text-[9px] leading-none font-bold
+                      tracking-widest uppercase
+                    "
+                    >
                       {t.academic.grades.averages.average()}
                     </p>
                   </div>
@@ -152,39 +216,72 @@ export function StudentGradeCard({
           </div>
 
           {rank !== undefined && totalStudents !== undefined && (
-            <div className="mt-8 relative h-10 flex items-center">
-              <div className="absolute inset-0 rounded-xl bg-background/20 backdrop-blur-md border border-border/10 shadow-inner" />
-              <div className="relative w-full px-4 flex items-center justify-between gap-6">
-                <div className="flex items-center gap-2 shrink-0">
+            <div className="relative mt-8 flex h-10 items-center">
+              <div className="
+                bg-background/20 border-border/10 absolute inset-0 rounded-xl
+                border shadow-inner backdrop-blur-md
+              "
+              />
+              <div className="
+                relative flex w-full items-center justify-between gap-6 px-4
+              "
+              >
+                <div className="flex shrink-0 items-center gap-2">
                   <div className={cn(
-                    'flex h-6 w-6 items-center justify-center rounded-lg shadow-sm',
+                    `
+                      flex h-6 w-6 items-center justify-center rounded-lg
+                      shadow-sm
+                    `,
                     rank <= 3
                       ? 'bg-emerald-500/10 text-emerald-600'
-                      : rank > totalStudents - 3 ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary',
+                      : rank > totalStudents - 3
+                        ? `bg-destructive/10 text-destructive`
+                        : `bg-primary/10 text-primary`,
                   )}
                   >
                     {rank <= 3
                       ? <IconTrendingUp className="size-3.5" />
-                      : rank > totalStudents - 3 ? <IconTrendingDown className="size-3.5" /> : <IconTrendingUp className="size-3.5 opacity-30" />}
+                      : rank > totalStudents - 3
+                        ? (
+                            <IconTrendingDown className="size-3.5" />
+                          )
+                        : (
+                            <IconTrendingUp className="size-3.5 opacity-30" />
+                          )}
                   </div>
-                  <span className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground/80">
+                  <span className="
+                    text-muted-foreground/80 text-[10px] font-bold
+                    tracking-widest uppercase
+                  "
+                  >
                     Niveau Global
                   </span>
                 </div>
 
-                <div className="flex-1 max-w-[200px] h-1.5 bg-muted/30 rounded-full overflow-hidden border border-border/5">
+                <div className="
+                  bg-muted/30 border-border/5 h-1.5 max-w-[200px] flex-1
+                  overflow-hidden rounded-full border
+                "
+                >
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${(1 - rank / totalStudents) * 100}%` }}
                     transition={{ duration: 1.2, ease: 'easeOut' }}
                     className={cn(
-                      'h-full relative',
-                      rank <= 3 ? 'bg-emerald-500' : rank > totalStudents - 3 ? 'bg-destructive' : 'bg-primary',
+                      'relative h-full',
+                      rank <= 3
+                        ? 'bg-emerald-500'
+                        : rank > totalStudents - 3
+                          ? `bg-destructive`
+                          : `bg-primary`,
                     )}
                   />
                 </div>
 
-                <span className="font-bold tabular-nums text-xs text-foreground shrink-0">
+                <span className="
+                  text-foreground shrink-0 text-xs font-bold tabular-nums
+                "
+                >
                   {Math.round((1 - rank / totalStudents) * 100)}
                   %
                 </span>
@@ -193,19 +290,29 @@ export function StudentGradeCard({
           )}
         </CardHeader>
 
-        <CardContent className="p-6 space-y-8">
+        <CardContent className="space-y-8 p-6">
           <AnimatePresence mode="popLayout">
             {Object.keys(gradesBySubject).length === 0
               ? (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex flex-col items-center justify-center py-12 space-y-4 opacity-50"
+                    className="
+                      flex flex-col items-center justify-center space-y-4 py-12
+                      opacity-50
+                    "
                   >
-                    <div className="p-4 rounded-full bg-muted/20 border border-border/10">
-                      <IconInfoCircle className="size-8 text-muted-foreground" />
+                    <div className="
+                      bg-muted/20 border-border/10 rounded-full border p-4
+                    "
+                    >
+                      <IconInfoCircle className="text-muted-foreground size-8" />
                     </div>
-                    <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+                    <p className="
+                      text-muted-foreground text-sm font-bold tracking-widest
+                      uppercase
+                    "
+                    >
                       {t.academic.grades.noGrades()}
                     </p>
                   </motion.div>
@@ -222,29 +329,66 @@ export function StudentGradeCard({
                       >
                         <div className="flex items-center justify-between px-1">
                           <div className="flex items-center gap-3">
-                            <div className="h-5 w-1 rounded-full bg-primary/40 shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]" />
-                            <span className="font-bold text-xs tracking-[0.2em] text-foreground uppercase">{subjectName}</span>
+                            <div className="
+                              bg-primary/40 h-5 w-1 rounded-full
+                              shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]
+                            "
+                            />
+                            <span className="
+                              text-foreground text-xs font-bold tracking-[0.2em]
+                              uppercase
+                            "
+                            >
+                              {subjectName}
+                            </span>
                           </div>
-                          <Badge variant="outline" className="text-[10px] font-bold bg-muted/40 border-border/20 px-2 rounded-md">
+                          <Badge
+                            variant="outline"
+                            className="
+                              bg-muted/40 border-border/20 rounded-md px-2
+                              text-[10px] font-bold
+                            "
+                          >
                             {subjectGrades.length}
                             {' '}
                             {subjectGrades.length > 1 ? 'notes' : 'note'}
                           </Badge>
                         </div>
 
-                        <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-3">
+                        <div className="
+                          xs:grid-cols-3
+                          grid grid-cols-2 gap-3
+                          sm:grid-cols-4
+                        "
+                        >
                           {subjectGrades.map(grade => (
                             <motion.div
                               key={grade.id}
                               whileHover={{ scale: 1.05 }}
-                              className="group relative flex flex-col items-center gap-1.5 rounded-2xl border border-border/20 bg-background/40 p-3 transition-all hover:bg-white/5 hover:border-primary/30 hover:shadow-lg shadow-sm"
+                              className="
+                                group border-border/20 bg-background/40
+                                hover:border-primary/30
+                                relative flex flex-col items-center gap-1.5
+                                rounded-2xl border p-3 shadow-sm transition-all
+                                hover:bg-white/5 hover:shadow-lg
+                              "
                               title={grade.description ?? undefined}
                             >
-                              <span className={cn('text-xl font-bold font-mono tracking-tighter', getGradeColor(Number(grade.value)))}>
+                              <span className={cn(`
+                                font-mono text-xl font-bold tracking-tighter
+                              `, getGradeColor(Number(grade.value)))}
+                              >
                                 {Number(grade.value).toFixed(1)}
                               </span>
-                              <div className="h-px w-6 bg-border/20" />
-                              <Badge variant="secondary" className="h-5 px-2 text-[9px] font-bold uppercase tracking-wider bg-primary/5 text-primary/70 border-primary/10">
+                              <div className="bg-border/20 h-px w-6" />
+                              <Badge
+                                variant="secondary"
+                                className="
+                                  bg-primary/5 text-primary/70 border-primary/10
+                                  h-5 px-2 text-[9px] font-bold tracking-wider
+                                  uppercase
+                                "
+                              >
                                 {getGradeLabel(grade.type, t)}
                               </Badge>
                             </motion.div>
@@ -260,9 +404,15 @@ export function StudentGradeCard({
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-10 pt-8 border-t border-border/20 relative"
+              className="border-border/20 relative mt-10 border-t pt-8"
             >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 py-1 rounded-full bg-background border border-border/20 text-[10px] font-bold uppercase tracking-[0.2em] text-accent shadow-sm">
+              <div className="
+                bg-background border-border/20 text-accent absolute top-0
+                left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border
+                px-4 py-1 text-[10px] font-bold tracking-[0.2em] uppercase
+                shadow-sm
+              "
+              >
                 En attente
               </div>
 
@@ -273,13 +423,26 @@ export function StudentGradeCard({
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="flex items-center gap-4 rounded-2xl border border-dashed border-border/40 bg-background/40 pl-4 pr-2 py-2 transition-all hover:border-accent/50 hover:bg-accent/5 shadow-sm"
+                    className="
+                      border-border/40 bg-background/40
+                      hover:border-accent/50 hover:bg-accent/5
+                      flex items-center gap-4 rounded-2xl border border-dashed
+                      py-2 pr-2 pl-4 shadow-sm transition-all
+                    "
                   >
                     <div className="flex flex-col">
-                      <span className="font-mono text-sm font-bold tracking-tighter text-foreground decoration-accent/20 underline underline-offset-4">
+                      <span className="
+                        text-foreground decoration-accent/20 font-mono text-sm
+                        font-bold tracking-tighter underline underline-offset-4
+                      "
+                      >
                         {Number(grade.value).toFixed(1)}
                       </span>
-                      <span className="text-[8px] font-bold uppercase text-muted-foreground/60 leading-none mt-0.5">
+                      <span className="
+                        text-muted-foreground/60 mt-0.5 text-[8px] leading-none
+                        font-bold uppercase
+                      "
+                      >
                         {getGradeLabel(grade.type, t)}
                       </span>
                     </div>
@@ -291,7 +454,11 @@ export function StudentGradeCard({
           )}
 
           {grades.length > 0 && (
-            <div className="mt-8 flex items-center justify-center gap-2 text-[9px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40 pt-4">
+            <div className="
+              text-muted-foreground/40 mt-8 flex items-center justify-center
+              gap-2 pt-4 text-[9px] font-bold tracking-[0.2em] uppercase
+            "
+            >
               <IconCalendar className="size-3" />
               {t.academic.grades.lastUpdated({
                 date: formatDate(

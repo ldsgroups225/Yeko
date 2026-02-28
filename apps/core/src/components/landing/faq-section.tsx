@@ -43,13 +43,25 @@ export function FAQSection() {
   }
 
   return (
-    <section className="py-24 sm:py-32 bg-muted/30">
-      <div className="mx-auto max-w-4xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+    <section className="
+      bg-muted/30 py-24
+      sm:py-32
+    "
+    >
+      <div className="
+        mx-auto max-w-4xl px-6
+        lg:px-8
+      "
+      >
+        <div className="mx-auto mb-16 max-w-2xl text-center">
+          <h2 className="
+            text-foreground text-3xl font-bold tracking-tight
+            sm:text-4xl
+          "
+          >
             Frequently Asked Questions
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="text-muted-foreground mt-4 text-lg">
             Everything you need to know about Yeko
           </p>
         </div>
@@ -61,12 +73,25 @@ export function FAQSection() {
               open={openItems.includes(index)}
               onOpenChange={() => toggleItem(index)}
             >
-              <div className="border-2 rounded-lg bg-background hover:shadow-md transition-all duration-300">
-                <CollapsibleTrigger className="flex w-full items-center justify-between p-6 text-left">
-                  <span className="font-semibold text-lg pr-8">{faq.question}</span>
+              <div className="
+                bg-background rounded-lg border-2 transition-all duration-300
+                hover:shadow-md
+              "
+              >
+                <CollapsibleTrigger className="
+                  flex w-full items-center justify-between p-6 text-left
+                "
+                >
+                  <span className="pr-8 text-lg font-semibold">{faq.question}</span>
                   <IconChevronDown
-                    className={`h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 ${openItems.includes(index) ? 'rotate-180' : ''
-                    }`}
+                    className={`
+                      text-muted-foreground h-5 w-5 shrink-0
+                      transition-transform duration-300
+                      ${openItems.includes(index)
+              ? `rotate-180`
+              : ''
+            }
+                    `}
                   />
                 </CollapsibleTrigger>
                 <CollapsibleContent className="px-6 pb-6">
@@ -81,7 +106,13 @@ export function FAQSection() {
           <p className="text-muted-foreground">
             Still have questions?
             {' '}
-            <a href="/contact" className="text-primary font-medium hover:underline">
+            <a
+              href="/contact"
+              className="
+                text-primary font-medium
+                hover:underline
+              "
+            >
               Contact our team
             </a>
           </p>

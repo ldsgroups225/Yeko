@@ -54,7 +54,10 @@ export function ConductSeverityBadge({
       <Badge
         variant="outline"
         className={cn(
-          'rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-widest transition-all',
+          `
+            rounded-full px-2.5 py-0.5 text-[10px] font-black tracking-widest
+            uppercase transition-all
+          `,
           config.colorClass,
           className,
         )}

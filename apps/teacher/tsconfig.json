@@ -1,44 +1,31 @@
 {
+  "extends": "@workspace/typescript-config/vite-react-library.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "jsx": "react-jsx",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo",
     "baseUrl": ".",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@repo/data-ops/*": [
-        "../../packages/data-ops/src/*"
-      ],
-      "@repo/data-ops": [
-        "../../packages/data-ops/src/index.ts"
-      ],
-      "@repo/*": [
-        "../../packages/*"
-      ]
+      "@/*": ["./src/*"],
+      "@repo/data-ops/*": ["../../packages/data-ops/src/*"],
+      "@repo/data-ops": ["../../packages/data-ops/src/index.ts"],
+      "@repo/*": ["../../packages/*"]
     },
-    "types": [
-      "vite/client"
-    ],
-    "allowImportingTsExtensions": true,
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noEmit": true,
-    "verbatimModuleSyntax": false,
-    "skipLibCheck": true
+    "types": ["vite/client"],
+    "declarationMap": false,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "outDir": "dist"
   },
+  "references": [
+    { "path": "../../packages/data-ops" },
+    { "path": "../../packages/logger" },
+    { "path": "../../packages/ui" }
+  ],
   "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "worker-configuration.d.ts",
+    "vite.config.ts",
+    "scripts/**/*.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
 }

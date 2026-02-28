@@ -26,23 +26,32 @@ export function BottomSheet({
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/40" />
         <Drawer.Content
           className={cn(
-            'fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto max-h-[96vh] flex-col rounded-t-2xl bg-background',
+            `
+              bg-background fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto
+              max-h-[96vh] flex-col rounded-t-2xl
+            `,
             className,
           )}
         >
           {/* Handle */}
-          <div className="mx-auto mt-4 h-1.5 w-12 shrink-0 rounded-full bg-muted" />
+          <div className="
+            bg-muted mx-auto mt-4 h-1.5 w-12 shrink-0 rounded-full
+          "
+          />
 
           {/* Header */}
           {(title || description) && (
-            <div className="px-4 pb-2 pt-4">
+            <div className="px-4 pt-4 pb-2">
               {title && (
                 <Drawer.Title className="text-lg font-semibold">
                   {title}
                 </Drawer.Title>
               )}
               {description && (
-                <Drawer.Description className="mt-1 text-sm text-muted-foreground">
+                <Drawer.Description className="
+                  text-muted-foreground mt-1 text-sm
+                "
+                >
                   {description}
                 </Drawer.Description>
               )}
@@ -50,7 +59,7 @@ export function BottomSheet({
           )}
 
           {/* Content */}
-          <div className="flex-1 overflow-auto px-4 pb-8 pt-2">
+          <div className="flex-1 overflow-auto px-4 pt-2 pb-8">
             {children}
           </div>
         </Drawer.Content>

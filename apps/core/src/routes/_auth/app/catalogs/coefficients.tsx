@@ -308,7 +308,7 @@ function CoefficientsCatalog() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 py-8">
+    <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
       <CoefficientsHeader
         onDownloadTemplate={handleDownloadTemplate}
         onImportClick={() => fileInputRef.current?.click()}

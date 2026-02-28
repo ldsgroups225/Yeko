@@ -35,7 +35,12 @@ export function StudentStatusBadge({ status, className }: StudentStatusBadgeProp
   const colorClass = statusColors[status as keyof typeof statusColors] || ''
 
   return (
-    <Badge className={`${colorClass} border-0 shadow-none ${className}`}>
+    <Badge className={`
+      ${colorClass}
+      border-0 shadow-none
+      ${className}
+    `}
+    >
       {getStatusLabel(status)}
     </Badge>
   )

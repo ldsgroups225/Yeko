@@ -1,11 +1,11 @@
-name: '▶️ Gemini Invoke'
+name: ▶️ Gemini Invoke
 
 on:
   workflow_call:
     inputs:
       additional_context:
-        type: 'string'
-        description: 'Any additional context from the request'
+        type: string
+        description: Any additional context from the request
         required: false
 
 concurrency:
@@ -14,35 +14,35 @@ concurrency:
 
 defaults:
   run:
-    shell: 'bash'
+    shell: bash
 
 jobs:
   invoke:
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     permissions:
-      contents: 'read'
-      id-token: 'write'
-      issues: 'write'
-      pull-requests: 'write'
+      contents: read
+      id-token: write
+      issues: write
+      pull-requests: write
     steps:
-      - name: 'Mint identity token'
-        id: 'mint_identity_token'
+      - name: Mint identity token
+        id: mint_identity_token
         if: |-
           ${{ vars.APP_ID }}
-        uses: 'actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf' # ratchet:actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # ratchet:actions/create-github-app-token@v2
         with:
           app-id: '${{ vars.APP_ID }}'
           private-key: '${{ secrets.APP_PRIVATE_KEY }}'
-          permission-contents: 'read'
-          permission-issues: 'write'
-          permission-pull-requests: 'write'
+          permission-contents: read
+          permission-issues: write
+          permission-pull-requests: write
 
-      - name: 'Checkout Code'
-        uses: 'actions/checkout@v4' # ratchet:exclude
+      - name: Checkout Code
+        uses: actions/checkout@v4 # ratchet:exclude
 
-      - name: 'Run Gemini CLI'
-        id: 'run_gemini'
-        uses: 'google-github-actions/run-gemini-cli@v0' # ratchet:exclude
+      - name: Run Gemini CLI
+        id: run_gemini
+        uses: google-github-actions/run-gemini-cli@v0 # ratchet:exclude
         env:
           TITLE: '${{ github.event.pull_request.title || github.event.issue.title }}'
           DESCRIPTION: '${{ github.event.pull_request.body || github.event.issue.body }}'
@@ -65,7 +65,7 @@ jobs:
           use_gemini_code_assist: '${{ vars.GOOGLE_GENAI_USE_GCA }}'
           use_vertex_ai: '${{ vars.GOOGLE_GENAI_USE_VERTEXAI }}'
           upload_artifacts: '${{ vars.UPLOAD_ARTIFACTS }}'
-          workflow_name: 'gemini-invoke'
+          workflow_name: gemini-invoke
           settings: |-
             {
               "model": {
@@ -115,4 +115,4 @@ jobs:
                 ]
               }
             }
-          prompt: '/gemini-invoke'
+          prompt: /gemini-invoke

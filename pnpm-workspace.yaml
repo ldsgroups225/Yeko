@@ -31,10 +31,10 @@ catalog:
   '@tanstack/react-form': ^1.28.3
   '@tanstack/react-query': ^5.90.21
   '@tanstack/react-query-devtools': ^5.91.3
-  '@tanstack/react-router': ^1.162.4
-  '@tanstack/react-router-devtools': ^1.162.4
-  '@tanstack/react-router-ssr-query': ^1.162.4
-  '@tanstack/react-start': ^1.162.4
+  '@tanstack/react-router': ^1.163.2
+  '@tanstack/react-router-devtools': ^1.163.2
+  '@tanstack/react-router-ssr-query': ^1.163.2
+  '@tanstack/react-start': ^1.163.2
   '@tanstack/react-table': ^8.21.3
   '@tanstack/react-virtual': ^3.13.18
   '@tanstack/zod-form-adapter': ^0.42.1
@@ -117,6 +117,14 @@ catalog:
   wrangler: ^4.67.0
   xlsx: ^0.18.5
   zod: ^4.3.6
+  '@praha/byethrow-docs': ^0.10.0
+  '@typescript-eslint/eslint-plugin': ^8.56.1
+  '@typescript-eslint/parser': ^8.56.1
+  eslint-config-prettier: ^10.1.8
+  eslint-plugin-prettier: ^5.5.5
+  lefthook: ^2.1.1
+  prettier: ^3.8.1
+  types-env: ^1.0.1
 
 catalogs:
   conflicts_react-day-picker_h9_13_0:
@@ -131,4 +139,8 @@ onlyBuiltDependencies:
   - sharp
   - workerd
 
-patchedDependencies: null
+patchedDependencies:
+  "@tanstack/start-client-core@1.163.2": patches/@tanstack__start-client-core@1.163.2.patch
+
+overrides:
+  react-hook-form: 7.71.2

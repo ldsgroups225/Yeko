@@ -40,16 +40,20 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   }
 
   return (
-    <div className="min-h-[60vh] flex items-center justify-center p-4">
+    <div className="flex min-h-[60vh] items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader>
           <div className="flex items-center space-x-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
-              <IconAlertTriangle className="h-5 w-5 text-destructive" />
+            <div className="
+              bg-destructive/10 flex h-10 w-10 items-center justify-center
+              rounded-full
+            "
+            >
+              <IconAlertTriangle className="text-destructive h-5 w-5" />
             </div>
             <div>
               <CardTitle className="text-xl">Something went wrong</CardTitle>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 We encountered an unexpected error. Please try again.
               </p>
             </div>
@@ -66,7 +70,11 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           </Alert>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="
+            flex flex-col gap-3
+            sm:flex-row
+          "
+          >
             <Button
               onClick={() => router.invalidate()}
               className="flex items-center gap-2"
@@ -105,22 +113,37 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
                   <button
                     {...triggerProps}
                     type="button"
-                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm font-medium px-3 py-2 rounded-md hover:bg-accent transition-colors"
+                    className="
+                      text-muted-foreground
+                      hover:text-foreground hover:bg-accent
+                      flex items-center gap-2 rounded-md px-3 py-2 text-sm
+                      font-medium transition-colors
+                    "
                   >
                     <IconBug className="h-4 w-4" />
                     Technical Details
                     <IconChevronDown
-                      className={`h-4 w-4 transition-transform duration-200 ${showDetails ? 'rotate-180' : ''}`}
+                      className={`
+                        h-4 w-4 transition-transform duration-200
+                        ${showDetails
+                    ? `rotate-180`
+                    : ''}
+                      `}
                     />
                   </button>
                 )}
               />
               <CollapsibleContent className="space-y-2">
-                <div className="rounded-lg bg-muted p-4">
-                  <h4 className="text-sm font-medium mb-2">
+                <div className="bg-muted rounded-lg p-4">
+                  <h4 className="mb-2 text-sm font-medium">
                     Error Stack Trace:
                   </h4>
-                  <pre className="mt-4 p-4 rounded-lg bg-muted overflow-x-auto text-xs font-mono wrap-break-word whitespace-pre-wrap border border-border/50">
+                  <pre className="
+                    bg-muted border-border/50 mt-4 overflow-x-auto rounded-lg
+                    border p-4 font-mono text-xs wrap-break-word
+                    whitespace-pre-wrap
+                  "
+                  >
                     {errorStack}
                   </pre>
                 </div>
@@ -130,8 +153,12 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 
           {/* Help Section */}
           <div className="border-t pt-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div className="text-sm text-muted-foreground">
+            <div className="
+              flex flex-col items-start justify-between gap-3
+              sm:flex-row sm:items-center
+            "
+            >
+              <div className="text-muted-foreground text-sm">
                 If this error persists, please report it to our support team.
               </div>
               <Button

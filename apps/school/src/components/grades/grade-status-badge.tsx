@@ -49,14 +49,20 @@ export function GradeStatusBadge({ status, className }: GradeStatusBadgeProps) {
         role="status"
         variant="outline"
         className={cn(
-          'rounded-full px-2.5 py-0.5 font-bold uppercase tracking-widest text-[10px] gap-1.5 transition-colors border shadow-sm',
+          `
+            gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-bold
+            tracking-widest uppercase shadow-sm transition-colors
+          `,
           variant.bg,
           variant.text,
           variant.border,
           className,
         )}
       >
-        <div className={cn('h-1.5 w-1.5 rounded-full ring-1 ring-white/20 animate-pulse', variant.dot)} />
+        <div className={cn(`
+          h-1.5 w-1.5 animate-pulse rounded-full ring-1 ring-white/20
+        `, variant.dot)}
+        />
         {gradeStatusLabels[status]}
       </Badge>
     </motion.div>

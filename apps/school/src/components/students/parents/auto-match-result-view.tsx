@@ -14,10 +14,14 @@ export function AutoMatchResultView({ linked, created, onClose }: AutoMatchResul
 
   return (
     <div className="space-y-4 py-4">
-      <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/40 bg-card/50 backdrop-blur-sm p-6">
-        <IconCircleCheck className="h-12 w-12 text-success" />
+      <div className="
+        border-border/40 bg-card/50 flex flex-col items-center justify-center
+        gap-3 rounded-xl border p-6 backdrop-blur-sm
+      "
+      >
+        <IconCircleCheck className="text-success h-12 w-12" />
         <h3 className="text-lg font-semibold">{t.students.autoMatchComplete()}</h3>
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground text-center text-sm">
           <p>{t.students.autoMatchLinked({ count: linked })}</p>
           {created > 0 && <p>{t.students.autoMatchCreated({ count: created })}</p>}
         </div>

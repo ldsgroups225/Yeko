@@ -28,22 +28,38 @@ export function GradingFilters({
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col gap-4 rounded-2xl border border-border/40 bg-card/30 p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between shadow-xl"
+      className="
+        border-border/40 bg-card/30 flex flex-col gap-4 rounded-2xl border p-4
+        shadow-xl backdrop-blur-xl
+        sm:flex-row sm:items-center sm:justify-between
+      "
     >
       <div className="flex flex-1 gap-3">
         <div className="relative max-w-sm flex-1">
-          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+          <IconSearch className="
+            text-muted-foreground/60 absolute top-1/2 left-3 h-4 w-4
+            -translate-y-1/2
+          "
+          />
           <Input
             placeholder={t.common.search()}
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="h-11 border-border/40 bg-background/50 pl-9 transition-all focus:bg-background shadow-none rounded-xl"
+            className="
+              border-border/40 bg-background/50
+              focus:bg-background
+              h-11 rounded-xl pl-9 shadow-none transition-all
+            "
           />
           {search && (
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 text-muted-foreground/40 hover:text-muted-foreground"
+              className="
+                text-muted-foreground/40
+                hover:text-muted-foreground
+                absolute top-1/2 right-1 h-8 w-8 -translate-y-1/2
+              "
               onClick={() => setSearch('')}
             >
               <IconX className="size-4" />
@@ -53,7 +69,11 @@ export function GradingFilters({
 
         <Button
           variant="outline"
-          className="h-11 px-4 border-border/40 bg-background/50 backdrop-blur-sm shadow-none hover:bg-background rounded-xl"
+          className="
+            border-border/40 bg-background/50
+            hover:bg-background
+            h-11 rounded-xl px-4 shadow-none backdrop-blur-sm
+          "
         >
           <IconFilter className="mr-2 h-4 w-4" />
           {t.academic.grades.filters.title()}
@@ -71,7 +91,10 @@ export function GradingFilters({
             >
               <Badge
                 variant="secondary"
-                className="h-11 px-4 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-none font-bold"
+                className="
+                  bg-primary/10 text-primary border-primary/20 h-11 rounded-xl
+                  border px-4 font-bold shadow-none
+                "
               >
                 {selectedRows.length}
                 {' '}
@@ -88,7 +111,12 @@ export function GradingFilters({
                 variant="outline"
                 size="sm"
                 onClick={onBulkReject}
-                className="h-11 rounded-xl font-bold uppercase tracking-widest text-[10px] border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
+                className="
+                  border-destructive/30 text-destructive
+                  hover:bg-destructive hover:text-destructive-foreground
+                  h-11 rounded-xl text-[10px] font-bold tracking-widest
+                  uppercase shadow-sm transition-all
+                "
               >
                 <IconCircleX className="mr-1.5 size-4" />
                 {t.academic.grades.validations.reject()}
@@ -98,7 +126,12 @@ export function GradingFilters({
                 variant="default"
                 size="sm"
                 onClick={onBulkValidate}
-                className="h-11 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-success hover:bg-success/90 shadow-lg shadow-success/20"
+                className="
+                  bg-success
+                  hover:bg-success/90
+                  shadow-success/20 h-11 rounded-xl text-[10px] font-bold
+                  tracking-widest uppercase shadow-lg
+                "
               >
                 <IconCircleCheck className="mr-1.5 size-4" />
                 {t.academic.grades.validations.validate()}

@@ -30,7 +30,10 @@ interface RevenueChartProps {
 function RevenueChart({ data }: RevenueChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex h-[300px] items-center justify-center text-sm text-muted-foreground">
+      <div className="
+        text-muted-foreground flex h-[300px] items-center justify-center text-sm
+      "
+      >
         Aucune donnée disponible
       </div>
     )
@@ -89,7 +92,10 @@ interface EnrollmentBarChartProps {
 function EnrollmentBarChart({ data }: EnrollmentBarChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex h-[300px] items-center justify-center text-sm text-muted-foreground">
+      <div className="
+        text-muted-foreground flex h-[300px] items-center justify-center text-sm
+      "
+      >
         Aucune donnée disponible
       </div>
     )
@@ -136,7 +142,10 @@ interface GenderPieChartProps {
 function GenderPieChart({ data, total }: GenderPieChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex h-[200px] items-center justify-center text-sm text-muted-foreground">
+      <div className="
+        text-muted-foreground flex h-[200px] items-center justify-center text-sm
+      "
+      >
         Aucune donnée disponible
       </div>
     )
@@ -170,7 +179,7 @@ function GenderPieChart({ data, total }: GenderPieChartProps) {
         {data.map(entry => (
           <div key={entry.name} className="flex items-center gap-2">
             <div className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {entry.name}
               {' '}
               (
@@ -195,18 +204,25 @@ interface ChartsSectionProps {
 export function ChartsSection({ revenueData, enrollmentData, genderData, totalGender, t }: ChartsSectionProps) {
   return (
     <>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="
+        grid gap-4
+        lg:grid-cols-2
+      "
+      >
         <motion.div
           variants={item}
-          className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm"
+          className="
+            border-border/40 bg-card/50 rounded-xl border p-6 shadow-sm
+            backdrop-blur-xl
+          "
         >
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <IconTrendingUp className="h-5 w-5 text-primary" />
+              <h2 className="flex items-center gap-2 text-lg font-semibold">
+                <IconTrendingUp className="text-primary h-5 w-5" />
                 {t.dashboard.overview()}
               </h2>
-              <p className="text-sm text-muted-foreground">{t.dashboard.revenueSubtitle()}</p>
+              <p className="text-muted-foreground text-sm">{t.dashboard.revenueSubtitle()}</p>
             </div>
           </div>
           <RevenueChart data={revenueData} />
@@ -214,32 +230,42 @@ export function ChartsSection({ revenueData, enrollmentData, genderData, totalGe
 
         <motion.div
           variants={item}
-          className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm"
+          className="
+            border-border/40 bg-card/50 rounded-xl border p-6 shadow-sm
+            backdrop-blur-xl
+          "
         >
           <div className="mb-6 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold flex items-center gap-2">
-                <IconChartBar className="h-5 w-5 text-secondary" />
+              <h2 className="flex items-center gap-2 text-lg font-semibold">
+                <IconChartBar className="text-secondary h-5 w-5" />
                 {t.dashboard.enrollmentChartTitle()}
               </h2>
-              <p className="text-sm text-muted-foreground">{t.dashboard.enrollmentChartSubtitle()}</p>
+              <p className="text-muted-foreground text-sm">{t.dashboard.enrollmentChartSubtitle()}</p>
             </div>
           </div>
           <EnrollmentBarChart data={enrollmentData} />
         </motion.div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="
+        grid gap-4
+        lg:grid-cols-3
+      "
+      >
         <motion.div
           variants={item}
-          className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-6 shadow-sm"
+          className="
+            border-border/40 bg-card/50 rounded-xl border p-6 shadow-sm
+            backdrop-blur-xl
+          "
         >
           <div className="mb-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
+            <h2 className="flex items-center gap-2 text-lg font-semibold">
               <IconChartPie className="h-5 w-5 text-pink-500" />
               {t.dashboard.genderChartTitle()}
             </h2>
-            <p className="text-sm text-muted-foreground">{t.dashboard.genderChartSubtitle()}</p>
+            <p className="text-muted-foreground text-sm">{t.dashboard.genderChartSubtitle()}</p>
           </div>
           <GenderPieChart data={genderData} total={totalGender} />
         </motion.div>

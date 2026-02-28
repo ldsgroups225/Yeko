@@ -30,25 +30,45 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4 }}
     >
-      <Card className={cn('overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl', className)}>
-        <CardHeader className="pb-4 border-b border-border/20 bg-muted/20">
+      <Card className={cn(`
+        border-border/40 bg-card/30 overflow-hidden rounded-2xl shadow-xl
+        backdrop-blur-xl
+      `, className)}
+      >
+        <CardHeader className="border-border/20 bg-muted/20 border-b pb-4">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+              <div className="
+                bg-primary/10 text-primary flex h-10 w-10 items-center
+                justify-center rounded-xl shadow-inner
+              "
+              >
                 <IconTrendingUp className="size-5" />
               </div>
               <CardTitle className="text-xl font-bold tracking-tight">{t.academic.grades.statistics.title()}</CardTitle>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 text-success border border-success/20">
+            <div className="
+              bg-success/10 text-success border-success/20 flex items-center
+              gap-2 rounded-full border px-3 py-1
+            "
+            >
               <IconPercentage className="size-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
+              <span className="
+                text-[10px] leading-none font-bold tracking-widest uppercase
+              "
+              >
                 {t.academic.grades.statistics.passRate()}
               </span>
             </div>
           </div>
         </CardHeader>
         <CardContent className="pt-6">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 mb-8">
+          <div className="
+            mb-8 grid grid-cols-2 gap-4
+            sm:grid-cols-3
+            lg:grid-cols-6
+          "
+          >
             <StatItem
               label={t.academic.grades.statistics.gradeCount()}
               value={statistics.count}
@@ -92,38 +112,80 @@ export function GradeStatisticsCard({ statistics, className }: GradeStatisticsCa
             />
           </div>
 
-          <div className="relative p-6 rounded-2xl bg-muted/30 border border-border/20 shadow-inner overflow-hidden group">
-            <div className="relative z-10 flex items-center justify-between mb-4">
+          <div className="
+            bg-muted/30 border-border/20 group relative overflow-hidden
+            rounded-2xl border p-6 shadow-inner
+          "
+          >
+            <div className="
+              relative z-10 mb-4 flex items-center justify-between
+            "
+            >
               <div className="space-y-1">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground opacity-70">
+                <span className="
+                  text-muted-foreground text-[10px] font-bold tracking-[0.2em]
+                  uppercase opacity-70
+                "
+                >
                   {t.academic.grades.statistics.passRate()}
                 </span>
-                <p className="text-2xl font-bold tracking-tighter text-foreground">
+                <p className="
+                  text-foreground text-2xl font-bold tracking-tighter
+                "
+                >
                   {passRate}
                   %
-                  <span className="text-xs font-medium text-muted-foreground tracking-normal ml-1">de réussite</span>
+                  <span className="
+                    text-muted-foreground ml-1 text-xs font-medium
+                    tracking-normal
+                  "
+                  >
+                    de réussite
+                  </span>
                 </p>
               </div>
               <div className={cn(
-                'flex h-12 w-12 items-center justify-center rounded-2xl border shadow-lg transition-transform group-hover:scale-110 duration-500',
-                passRate >= 50 ? 'bg-success/10 text-success border-success/20' : 'bg-destructive/10 text-destructive border-destructive/20',
+                `
+                  flex h-12 w-12 items-center justify-center rounded-2xl border
+                  shadow-lg transition-transform duration-500
+                  group-hover:scale-110
+                `,
+                passRate >= 50
+                  ? 'bg-success/10 text-success border-success/20'
+                  : `bg-destructive/10 text-destructive border-destructive/20`,
               )}
               >
-                <IconTrendingUp className={cn('size-6', passRate < 50 && 'rotate-180')} />
+                <IconTrendingUp className={cn('size-6', passRate < 50 && `
+                  rotate-180
+                `)}
+                />
               </div>
             </div>
 
-            <div className="relative h-3 w-full overflow-hidden rounded-full bg-background/50 border border-border/10 shadow-inner">
+            <div className="
+              bg-background/50 border-border/10 relative h-3 w-full
+              overflow-hidden rounded-full border shadow-inner
+            "
+            >
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${passRate}%` }}
                 transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
                 className={cn(
-                  'h-full relative transition-colors duration-1000',
-                  passRate >= 80 ? 'bg-indigo-500' : passRate >= 50 ? 'bg-success' : 'bg-destructive',
+                  'relative h-full transition-colors duration-1000',
+                  passRate >= 80
+                    ? 'bg-indigo-500'
+                    : passRate >= 50
+                      ? `bg-success`
+                      : `bg-destructive`,
                 )}
               >
-                <div className="absolute inset-0 bg-[linear-gradient(110deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)] bg-size-[200%_100%] animate-shimmer" />
+                <div className="
+                  animate-shimmer absolute inset-0
+                  bg-[linear-gradient(110deg,transparent_25%,rgba(255,255,255,0.2)_50%,transparent_75%)]
+                  bg-size-[200%_100%]
+                "
+                />
               </motion.div>
             </div>
           </div>
@@ -147,16 +209,30 @@ function StatItem({
   color?: string
 }) {
   return (
-    <div className="flex flex-col items-center text-center group">
+    <div className="group flex flex-col items-center text-center">
       <div className={cn(
-        'mb-3 p-2.5 rounded-xl border border-border/10 shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md',
+        `
+          border-border/10 mb-3 rounded-xl border p-2.5 shadow-sm transition-all
+          duration-300
+          group-hover:scale-110 group-hover:shadow-md
+        `,
         color || 'bg-background/50 text-muted-foreground',
       )}
       >
         <Icon className="size-4.5" />
       </div>
-      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-1 group-hover:text-muted-foreground transition-colors">{label}</p>
-      <p className={cn('text-xl font-bold tabular-nums tracking-tight', valueClassName || 'text-foreground')}>
+      <p className="
+        text-muted-foreground/60
+        group-hover:text-muted-foreground
+        mb-1 text-[10px] font-bold tracking-widest uppercase transition-colors
+      "
+      >
+        {label}
+      </p>
+      <p className={cn('text-xl font-bold tracking-tight tabular-nums', valueClassName || `
+        text-foreground
+      `)}
+      >
         {value}
       </p>
     </div>

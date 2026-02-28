@@ -166,8 +166,8 @@ export function ParentsList() {
           </Table>
 
           {data && data.totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4">
-              <p className="text-sm text-muted-foreground">
+            <div className="mt-4 flex items-center justify-between">
+              <p className="text-muted-foreground text-sm">
                 {t.common.showing()}
                 {' '}
                 {(page - 1) * 20 + 1}

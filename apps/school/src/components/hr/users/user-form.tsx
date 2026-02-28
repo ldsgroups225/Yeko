@@ -94,19 +94,27 @@ export function UserForm({ user, onSuccess }: UserFormProps) {
       <UserBasicInfoSection form={form} isEditing={isEditing} />
       <UserRolesSection form={form} isPending={isPending} />
 
-      <div className="flex justify-end items-center gap-4">
+      <div className="flex items-center justify-end gap-4">
         <Button
           type="button"
           variant="ghost"
           onClick={() => onSuccess?.()}
-          className="rounded-xl px-6 hover:bg-muted font-medium"
+          className="
+            hover:bg-muted
+            rounded-xl px-6 font-medium
+          "
         >
           {t.common.cancel()}
         </Button>
         <Button
           type="submit"
           disabled={isPending}
-          className="rounded-xl px-8 min-w-[140px] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20"
+          className="
+            shadow-primary/20 min-w-[140px] rounded-xl px-8 font-semibold
+            shadow-lg transition-all
+            hover:scale-[1.02]
+            active:scale-[0.98]
+          "
         >
           {isPending
             ? (

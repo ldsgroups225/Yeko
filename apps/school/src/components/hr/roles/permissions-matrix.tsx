@@ -72,12 +72,20 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
 
   return (
     <div className="space-y-6">
-      <div className="overflow-hidden rounded-xl border border-border/40 bg-background/30 backdrop-blur-sm">
+      <div className="
+        border-border/40 bg-background/30 overflow-hidden rounded-xl border
+        backdrop-blur-sm
+      "
+      >
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-muted/50 backdrop-blur-md">
-                <th className="p-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <th className="
+                  text-muted-foreground p-4 text-left text-xs font-semibold
+                  tracking-wider uppercase
+                "
+                >
                   {t.hr.roles.resource()}
                 </th>
                 {ACTIONS.map((action) => {
@@ -90,26 +98,40 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
                   return (
                     <th
                       key={action}
-                      className="p-4 text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                      className="
+                        text-muted-foreground p-4 text-center text-xs
+                        font-semibold tracking-wider uppercase
+                      "
                     >
                       {actionTranslations[action]()}
                     </th>
                   )
                 })}
-                <th className="p-4 text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap">
+                <th className="
+                  text-muted-foreground p-4 text-center text-xs font-semibold
+                  tracking-wider whitespace-nowrap uppercase
+                "
+                >
                   {t.hr.roles.selectAll()}
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border/40">
+            <tbody className="divide-border/40 divide-y">
               {RESOURCES.map(resource => (
                 <motion.tr
                   key={resource}
-                  className="group hover:bg-primary/5 transition-colors"
+                  className="
+                    group
+                    hover:bg-primary/5
+                    transition-colors
+                  "
                   initial={false}
                 >
                   <td className="p-4">
-                    <Label className="font-semibold text-foreground cursor-pointer">
+                    <Label className="
+                      text-foreground cursor-pointer font-semibold
+                    "
+                    >
                       {{
                         users: t.hr.resources.users,
                         teachers: t.hr.resources.teachers,
@@ -128,7 +150,10 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
                       <Checkbox
                         checked={isChecked(resource, action)}
                         onCheckedChange={() => handleToggle(resource, action)}
-                        className="transition-transform active:scale-90"
+                        className="
+                          transition-transform
+                          active:scale-90
+                        "
                       />
                     </td>
                   ))}
@@ -138,7 +163,10 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSelectAll(resource)}
-                      className="rounded-lg h-8 px-3 text-xs font-medium hover:bg-primary/10 hover:text-primary transition-all"
+                      className="
+                        hover:bg-primary/10 hover:text-primary
+                        h-8 rounded-lg px-3 text-xs font-medium transition-all
+                      "
                     >
                       {isAllSelected(resource)
                         ? t.hr.roles.deselectAll()
@@ -154,15 +182,21 @@ export function PermissionsMatrix({ value, onChange }: PermissionsMatrixProps) {
 
       <motion.div
         layout
-        className="rounded-xl bg-primary/5 border border-primary/10 p-5 backdrop-blur-sm"
+        className="
+          bg-primary/5 border-primary/10 rounded-xl border p-5 backdrop-blur-sm
+        "
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary shadow-inner">
+          <div className="
+            bg-primary/10 text-primary flex h-10 w-10 items-center
+            justify-center rounded-full shadow-inner
+          "
+          >
             <ShieldIcon className="h-5 w-5" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-foreground">{t.hr.roles.selectedPermissions()}</p>
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-foreground text-sm font-semibold">{t.hr.roles.selectedPermissions()}</p>
+            <p className="text-muted-foreground text-sm leading-relaxed">
               {Object.keys(value).length === 0
                 ? t.hr.roles.noPermissionsSelected()
                 : t.hr.roles.permissionsCount({

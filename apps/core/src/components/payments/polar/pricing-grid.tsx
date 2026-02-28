@@ -1,4 +1,4 @@
-import type { Products, Subscription } from './types'
+import type { Product, Products, Subscription } from './types'
 import { PricingCard } from './pricing-card'
 
 interface PricingGridProps {
@@ -23,7 +23,12 @@ export function PricingGrid({
   })
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="
+      grid grid-cols-1 gap-6
+      md:grid-cols-2
+      lg:grid-cols-3
+    "
+    >
       {sortedProducts.map(product => (
         <PricingCard
           key={product.id}

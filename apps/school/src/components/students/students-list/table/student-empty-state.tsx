@@ -8,10 +8,15 @@ export function StudentEmptyState() {
   const navigate = useNavigate()
 
   return (
-    <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-border/20 bg-card/10 p-8 text-center backdrop-blur-sm">
-      <IconUsers className="mx-auto h-12 w-12 text-muted-foreground/50" />
+    <div className="
+      border-border/20 bg-card/10 flex min-h-[300px] flex-col items-center
+      justify-center rounded-xl border border-dashed p-8 text-center
+      backdrop-blur-sm
+    "
+    >
+      <IconUsers className="text-muted-foreground/50 mx-auto h-12 w-12" />
       <h3 className="mt-4 text-lg font-semibold">{t.students.noStudents()}</h3>
-      <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-2 max-w-sm text-sm">
         {t.students.noStudentsDescription()}
       </p>
       <Button onClick={() => navigate({ to: '/students/new' })} className="mt-6">

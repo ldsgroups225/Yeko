@@ -132,7 +132,7 @@ export function CoefficientMatrix({
 
   if (isPending) {
     return (
-      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+      <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
         <CardHeader>
           <Skeleton className="h-8 w-[200px]" />
           <Skeleton className="h-4 w-[300px]" />
@@ -155,7 +155,10 @@ export function CoefficientMatrix({
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between p-4 bg-primary/10 border border-primary/20 rounded-lg"
+          className="
+            bg-primary/10 border-primary/20 flex items-center justify-between
+            rounded-lg border p-4
+          "
         >
           <div className="flex items-center gap-2">
             <Badge variant="secondary">
@@ -163,7 +166,7 @@ export function CoefficientMatrix({
               {' '}
               {t.academic.coefficients.bulk.changes()}
             </Badge>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {t.academic.coefficients.bulk.savePrompt()}
             </span>
           </div>
@@ -188,11 +191,18 @@ export function CoefficientMatrix({
       )}
 
       {/* Matrix Table */}
-      <Card className="border-border/40 bg-card/40 backdrop-blur-xl shadow-sm overflow-hidden">
-        <CardHeader className="border-b border-border/10 pb-4">
+      <Card className="
+        border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+      "
+      >
+        <CardHeader className="border-border/10 border-b pb-4">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <IconLayoutGrid className="h-5 w-5 text-primary" />
+            <div className="
+              bg-primary/10 flex h-10 w-10 items-center justify-center
+              rounded-full
+            "
+            >
+              <IconLayoutGrid className="text-primary h-5 w-5" />
             </div>
             <div>
               <CardTitle>{t.academic.coefficients.matrix.title()}</CardTitle>
@@ -203,23 +213,45 @@ export function CoefficientMatrix({
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-white/10">
+          <div className="
+            scrollbar-thin scrollbar-thumb-white/10 overflow-x-auto
+          "
+          >
             <Table>
               <TableHeader>
-                <TableRow className="border-border/10 hover:bg-transparent">
-                  <TableHead className="w-[200px] sticky left-0 bg-background/80 backdrop-blur-md z-20 border-r border-border/10 py-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70">
+                <TableRow className="
+                  border-border/10
+                  hover:bg-transparent
+                "
+                >
+                  <TableHead className="
+                    bg-background/80 border-border/10 sticky left-0 z-20
+                    w-[200px] border-r py-4 backdrop-blur-md
+                  "
+                  >
+                    <span className="
+                      text-muted-foreground/70 text-xs font-bold tracking-wider
+                      uppercase
+                    "
+                    >
                       {t.academic.coefficients.matrix.subject()}
                     </span>
                   </TableHead>
                   {grades.map(grade => (
                     <TableHead
                       key={grade.id}
-                      className="text-center min-w-[120px] border-b border-border/10 py-4"
+                      className="
+                        border-border/10 min-w-[120px] border-b py-4 text-center
+                      "
                     >
                       <div className="flex flex-col items-center">
-                        <span className="font-semibold text-foreground">{grade.name}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase">{grade.code}</span>
+                        <span className="text-foreground font-semibold">{grade.name}</span>
+                        <span className="
+                          text-muted-foreground text-[10px] uppercase
+                        "
+                        >
+                          {grade.code}
+                        </span>
                       </div>
                     </TableHead>
                   ))}
@@ -227,11 +259,26 @@ export function CoefficientMatrix({
               </TableHeader>
               <TableBody>
                 {subjects.map(subject => (
-                  <TableRow key={subject.id} className="border-border/5 hover:bg-white/5 transition-colors group">
-                    <TableCell className="font-medium sticky left-0 bg-card/60 backdrop-blur-md z-10 border-r border-border/10 py-4 group-hover:bg-primary/5 transition-colors">
+                  <TableRow
+                    key={subject.id}
+                    className="
+                      border-border/5 group transition-colors
+                      hover:bg-white/5
+                    "
+                  >
+                    <TableCell className="
+                      bg-card/60 border-border/10
+                      group-hover:bg-primary/5
+                      sticky left-0 z-10 border-r py-4 font-medium
+                      backdrop-blur-md transition-colors
+                    "
+                    >
                       <div className="flex flex-col">
                         <span className="text-sm font-semibold">{subject.name}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase">
+                        <span className="
+                          text-muted-foreground text-[10px] uppercase
+                        "
+                        >
                           {subject.shortName}
                         </span>
                       </div>
@@ -277,12 +324,22 @@ export function CoefficientMatrix({
 
           {/* Empty State */}
           {subjects.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="h-12 w-12 rounded-full bg-muted/30 flex items-center justify-center mb-4">
-                <IconInfoCircle className="h-6 w-6 text-muted-foreground/50" />
+            <div className="
+              flex flex-col items-center justify-center py-16 text-center
+            "
+            >
+              <div className="
+                bg-muted/30 mb-4 flex h-12 w-12 items-center justify-center
+                rounded-full
+              "
+              >
+                <IconInfoCircle className="text-muted-foreground/50 h-6 w-6" />
               </div>
               <p className="text-foreground font-medium">{t.academic.coefficients.matrix.noData()}</p>
-              <p className="text-sm text-muted-foreground max-w-[250px] mx-auto mt-1">
+              <p className="
+                text-muted-foreground mx-auto mt-1 max-w-[250px] text-sm
+              "
+              >
                 {t.academic.coefficients.matrix.noDataDescription()}
               </p>
             </div>
@@ -291,19 +348,36 @@ export function CoefficientMatrix({
       </Card>
 
       {/* Legend */}
-      <Card className="border-border/40 bg-card/40 backdrop-blur-xl shadow-sm border-t-0 rounded-t-none">
+      <Card className="
+        border-border/40 bg-card/40 rounded-t-none border-t-0 shadow-sm
+        backdrop-blur-xl
+      "
+      >
         <CardContent className="py-4">
           <div className="flex flex-wrap gap-6 text-xs font-medium">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-primary/20 border border-primary/40 ring-1 ring-primary/20 ring-offset-1 ring-offset-background" />
+              <div className="
+                bg-primary/20 border-primary/40 ring-primary/20
+                ring-offset-background h-3 w-3 rounded-sm border ring-1
+                ring-offset-1
+              "
+              />
               <span className="text-muted-foreground">{t.academic.coefficients.legend.override()}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded border border-border/60 bg-white/5" />
+              <div className="
+                border-border/60 h-3 w-3 rounded-sm border bg-white/5
+              "
+              />
               <span className="text-muted-foreground">{t.academic.coefficients.legend.template()}</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded bg-accent/20 border border-accent/40 ring-1 ring-accent/20 ring-offset-1 ring-offset-background" />
+              <div className="
+                bg-accent/20 border-accent/40 ring-accent/20
+                ring-offset-background h-3 w-3 rounded-sm border ring-1
+                ring-offset-1
+              "
+              />
               <span className="text-muted-foreground">{t.academic.coefficients.legend.edited()}</span>
             </div>
           </div>

@@ -127,7 +127,10 @@ export function BulkReEnrollDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="
+        bg-card/95 border-border/40 max-w-lg backdrop-blur-xl
+      "
+      >
         <DialogHeader>
           <DialogTitle>{t.students.bulkReEnroll()}</DialogTitle>
           <DialogDescription>
@@ -169,7 +172,10 @@ export function BulkReEnrollDialog({
                 </Alert>
 
                 {result.errors.length > 0 && (
-                  <div className="max-h-32 overflow-y-auto rounded border p-2 text-sm">
+                  <div className="
+                    max-h-32 overflow-y-auto rounded-sm border p-2 text-sm
+                  "
+                  >
                     {}
                     {result.errors.slice(0, 5).map(err => (
                       <p
@@ -194,7 +200,10 @@ export function BulkReEnrollDialog({
             )
           : (
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                >
                   <FormField
                     control={form.control}
                     name="fromYearId"
@@ -274,7 +283,11 @@ export function BulkReEnrollDialog({
                     control={form.control}
                     name="autoConfirm"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                      <FormItem className="
+                        flex flex-row items-start space-y-0 space-x-3 rounded-md
+                        border p-4
+                      "
+                      >
                         <FormControl>
                           <Checkbox
                             checked={field.value}

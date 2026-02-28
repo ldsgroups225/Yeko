@@ -127,7 +127,11 @@ export function SchoolForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+      "
+      >
         {/* Basic Information */}
         <Card className="md:col-span-2">
           <CardHeader>
@@ -140,7 +144,11 @@ export function SchoolForm({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="
+              grid gap-4
+              md:grid-cols-2
+            "
+            >
               <div className="space-y-2">
                 <Label htmlFor="name">
                   {LL.schools.name()}
@@ -153,7 +161,7 @@ export function SchoolForm({
                   {...register('name')}
                 />
                 {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message as string}</p>
+                  <p className="text-destructive text-sm">{errors.name.message as string}</p>
                 )}
               </div>
               <div className="space-y-2">
@@ -168,7 +176,7 @@ export function SchoolForm({
                   {...register('code')}
                 />
                 {errors.code && (
-                  <p className="text-sm text-destructive">{errors.code.message as string}</p>
+                  <p className="text-destructive text-sm">{errors.code.message as string}</p>
                 )}
               </div>
             </div>
@@ -181,7 +189,7 @@ export function SchoolForm({
                 {...register('address')}
               />
               {errors.address && (
-                <p className="text-sm text-destructive">{errors.address.message as string}</p>
+                <p className="text-destructive text-sm">{errors.address.message as string}</p>
               )}
             </div>
 
@@ -193,7 +201,7 @@ export function SchoolForm({
                 {...register('phone')}
               />
               {errors.phone && (
-                <p className="text-sm text-destructive">{errors.phone.message as string}</p>
+                <p className="text-destructive text-sm">{errors.phone.message as string}</p>
               )}
             </div>
 
@@ -206,7 +214,7 @@ export function SchoolForm({
                 {...register('email')}
               />
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message as string}</p>
+                <p className="text-destructive text-sm">{errors.email.message as string}</p>
               )}
             </div>
 
@@ -217,26 +225,38 @@ export function SchoolForm({
                 <div className="shrink-0">
                   {logoUrl
                     ? (
-                        <div className="relative w-24 h-24 border-2 border-dashed rounded-lg overflow-hidden">
+                        <div className="
+                          relative h-24 w-24 overflow-hidden rounded-lg border-2
+                          border-dashed
+                        "
+                        >
                           <img
                             src={logoUrl}
                             alt={LL.schools.logoPreview()}
-                            className="w-full h-full object-cover"
+                            className="h-full w-full object-cover"
                           />
                           <button
                             type="button"
                             onClick={() => setValue('logoUrl', '')}
-                            className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90"
+                            className="
+                              bg-destructive text-destructive-foreground
+                              hover:bg-destructive/90
+                              absolute top-1 right-1 rounded-full p-1
+                            "
                           >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                           </button>
                         </div>
                       )
                     : (
-                        <div className="w-24 h-24 border-2 border-dashed rounded-lg flex items-center justify-center bg-muted">
-                          <IconSchool className="h-8 w-8 text-muted-foreground" />
+                        <div className="
+                          bg-muted flex h-24 w-24 items-center justify-center
+                          rounded-lg border-2 border-dashed
+                        "
+                        >
+                          <IconSchool className="text-muted-foreground h-8 w-8" />
                         </div>
                       )}
                 </div>
@@ -244,7 +264,10 @@ export function SchoolForm({
                 {/* Upload options */}
                 <div className="flex-1 space-y-3">
                   <div className="space-y-2">
-                    <Label htmlFor="logoFile" className="text-sm text-muted-foreground">
+                    <Label
+                      htmlFor="logoFile"
+                      className="text-muted-foreground text-sm"
+                    >
                       {LL.schools.uploadFile()}
                     </Label>
                     <div className="flex gap-2">
@@ -255,39 +278,50 @@ export function SchoolForm({
                         accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
                         disabled={storageConfigured === false || isUploading}
                         onChange={handleFileSelect}
-                        className={storageConfigured === false ? 'cursor-not-allowed opacity-50' : ''}
+                        className={storageConfigured === false
+                          ? `cursor-not-allowed opacity-50`
+                          : ''}
                       />
                       {isUploading && (
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <div className="
+                          text-muted-foreground flex items-center gap-2 text-sm
+                        "
+                        >
                           <IconLoader2 className="h-4 w-4 animate-spin" />
                           <span>{LL.schools.uploading()}</span>
                         </div>
                       )}
                     </div>
                     {storageConfigured === false && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         {LL.schools.storageNotConfigured()}
                       </p>
                     )}
                     {storageConfigured === null && (
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-muted-foreground text-xs">
                         {LL.schools.checkingConfiguration()}
                       </p>
                     )}
                     {uploadError && (
-                      <p className="text-xs text-destructive">{uploadError}</p>
+                      <p className="text-destructive text-xs">{uploadError}</p>
                     )}
                   </div>
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                       <span className="w-full border-t" />
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">{LL.schools.or()}</span>
+                    <div className="
+                      relative flex justify-center text-xs uppercase
+                    "
+                    >
+                      <span className="bg-background text-muted-foreground px-2">{LL.schools.or()}</span>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="logoUrl" className="text-sm text-muted-foreground">
+                    <Label
+                      htmlFor="logoUrl"
+                      className="text-muted-foreground text-sm"
+                    >
                       {LL.schools.logoUrl()}
                     </Label>
                     <Input
@@ -300,7 +334,7 @@ export function SchoolForm({
                 </div>
               </div>
               {errors.logoUrl && (
-                <p className="text-sm text-destructive">{errors.logoUrl.message as string}</p>
+                <p className="text-destructive text-sm">{errors.logoUrl.message as string}</p>
               )}
             </div>
 
@@ -327,7 +361,7 @@ export function SchoolForm({
                 </SelectContent>
               </Select>
               {errors.status && (
-                <p className="text-sm text-destructive">{errors.status.message as string}</p>
+                <p className="text-destructive text-sm">{errors.status.message as string}</p>
               )}
             </div>
           </CardContent>
@@ -343,7 +377,11 @@ export function SchoolForm({
         >
           {LL.common.cancel()}
         </Button>
-        <Button type="submit" disabled={isSubmitting || isUploading} className="gap-2">
+        <Button
+          type="submit"
+          disabled={isSubmitting || isUploading}
+          className="gap-2"
+        >
           {isSubmitting
             ? (
                 <>

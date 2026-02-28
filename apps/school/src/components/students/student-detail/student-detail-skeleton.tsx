@@ -20,7 +20,11 @@ export function StudentDetailSkeleton() {
         </div>
         <Skeleton className="h-10 w-24" />
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+      "
+      >
         {Array.from({ length: 4 }, () => (
           <Card key={`card-${generateUUID()}`}>
             <CardHeader>

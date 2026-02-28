@@ -46,7 +46,7 @@ export function ConflictIndicator({
           render={(
             <Badge
               variant="destructive"
-              className={cn('gap-1 cursor-help', className)}
+              className={cn('cursor-help gap-1', className)}
             >
               <IconAlertTriangle className="h-3 w-3" />
               {conflicts.length}
@@ -57,12 +57,19 @@ export function ConflictIndicator({
         />
         <TooltipContent
           side="bottom"
-          className="max-w-xs backdrop-blur-xl bg-destructive/95 border-destructive/20 text-destructive-foreground shadow-lg rounded-xl"
+          className="
+            bg-destructive/95 border-destructive/20 text-destructive-foreground
+            max-w-xs rounded-xl shadow-lg backdrop-blur-xl
+          "
         >
           <ul className="space-y-2 text-xs font-medium">
             {conflicts.map(conflict => (
               <li key={generateUUID()} className="flex items-start gap-2">
-                <span className="font-bold uppercase tracking-wider opacity-80 text-[10px] mt-0.5">
+                <span className="
+                  mt-0.5 text-[10px] font-bold tracking-wider uppercase
+                  opacity-80
+                "
+                >
                   {conflictLabels[conflict.type]}
                   :
                 </span>

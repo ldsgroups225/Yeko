@@ -27,29 +27,38 @@ export function WizardStep1() {
             <div
               key={req.code}
               className={cn(
-                'p-4 rounded-xl border flex items-center justify-between transition-colors',
+                `
+                  flex items-center justify-between rounded-xl border p-4
+                  transition-colors
+                `,
                 exists
-                  ? 'bg-green-500/5 border-green-500/20'
+                  ? 'border-green-500/20 bg-green-500/5'
                   : 'bg-destructive/5 border-destructive/20',
               )}
             >
               <div className="flex items-center gap-3">
                 <div className={cn(
-                  'h-8 w-8 rounded-lg flex items-center justify-center',
-                  exists ? 'bg-green-500/10 text-green-600' : 'bg-destructive/10 text-destructive',
+                  'flex h-8 w-8 items-center justify-center rounded-lg',
+                  exists
+                    ? 'bg-green-500/10 text-green-600'
+                    : `bg-destructive/10 text-destructive`,
                 )}
                 >
-                  {exists ? <IconCircleCheck className="h-5 w-5" /> : <IconCircleX className="h-5 w-5" />}
+                  {exists
+                    ? <IconCircleCheck className="h-5 w-5" />
+                    : (
+                        <IconCircleX className="h-5 w-5" />
+                      )}
                 </div>
                 <div>
-                  <p className="font-bold text-sm">
+                  <p className="text-sm font-bold">
                     {req.code}
                     {' '}
                     -
                     {' '}
                     {req.label}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {exists ? t.finance.wizard.steps.step1AccountConfigured() : t.finance.wizard.steps.step1AccountMissing()}
                   </p>
                 </div>
@@ -59,12 +68,15 @@ export function WizardStep1() {
         })}
       </div>
 
-      <div className="p-6 rounded-2xl bg-muted/30 border border-border/40 space-y-4">
+      <div className="
+        bg-muted/30 border-border/40 space-y-4 rounded-2xl border p-6
+      "
+      >
         <div className="flex items-start gap-3">
-          <IconBuilding className="h-5 w-5 text-primary mt-0.5" />
+          <IconBuilding className="text-primary mt-0.5 h-5 w-5" />
           <div className="space-y-1">
             <h4 className="text-sm font-bold">{t.finance.wizard.steps.step1ChartOfAccounts()}</h4>
-            <p className="text-xs text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground text-xs leading-relaxed">
               {t.finance.wizard.steps.step1ChartExplanation()}
             </p>
           </div>
@@ -72,7 +84,9 @@ export function WizardStep1() {
 
         <Link
           to="/accounting/accounts"
-          className={cn(buttonVariants({ variant: 'outline' }), 'w-full rounded-xl gap-2')}
+          className={cn(buttonVariants({ variant: 'outline' }), `
+            w-full gap-2 rounded-xl
+          `)}
           target="_blank"
         >
           {t.finance.wizard.steps.step1ManageAccounts()}

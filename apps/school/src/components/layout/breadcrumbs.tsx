@@ -21,13 +21,19 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex items-center gap-2 text-sm text-muted-foreground"
+      className="text-muted-foreground flex items-center gap-2 text-sm"
     >
       <Link
         to="/dashboard"
         className={cn(
-          'inline-flex items-center gap-1 transition-colors hover:text-foreground',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          `
+            hover:text-foreground
+            inline-flex items-center gap-1 transition-colors
+          `,
+          `
+            focus-visible:ring-ring focus-visible:ring-2
+            focus-visible:ring-offset-2 focus-visible:outline-none
+          `,
           'rounded-sm',
         )}
       >
@@ -52,8 +58,14 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                   <Link
                     to={item.href}
                     className={cn(
-                      'transition-colors hover:text-foreground',
-                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                      `
+                        hover:text-foreground
+                        transition-colors
+                      `,
+                      `
+                        focus-visible:ring-ring focus-visible:ring-2
+                        focus-visible:ring-offset-2 focus-visible:outline-none
+                      `,
                       'rounded-sm',
                     )}
                   >
@@ -61,7 +73,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                   </Link>
                 )
               : (
-                  <span className={cn(isLast && 'font-medium text-foreground')}>{item.label}</span>
+                  <span className={cn(isLast && 'text-foreground font-medium')}>{item.label}</span>
                 )}
           </motion.div>
         )

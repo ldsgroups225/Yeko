@@ -46,7 +46,11 @@ export function SchoolHeader({ school, formatDate, onDelete }: SchoolHeaderProps
   }
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="
+      flex flex-col gap-4
+      md:flex-row md:items-center md:justify-between
+    "
+    >
       <div className="flex items-center gap-4">
         <Link to="/app/schools">
           <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -54,16 +58,27 @@ export function SchoolHeader({ school, formatDate, onDelete }: SchoolHeaderProps
           </Button>
         </Link>
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-            <IconBuilding className="h-6 w-6 text-primary" />
+          <div className="
+            bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg
+          "
+          >
+            <IconBuilding className="text-primary h-6 w-6" />
           </div>
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold tracking-tight">{school.name}</h1>
               {getStatusBadge(school.status)}
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="font-mono bg-muted px-2 py-0.5 rounded text-xs">{school.code}</span>
+            <div className="
+              text-muted-foreground flex items-center gap-2 text-sm
+            "
+            >
+              <span className="
+                bg-muted rounded-sm px-2 py-0.5 font-mono text-xs
+              "
+              >
+                {school.code}
+              </span>
               <span>•</span>
               <span>
                 Rejoint le

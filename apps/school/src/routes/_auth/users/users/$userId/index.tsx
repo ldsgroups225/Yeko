@@ -76,8 +76,12 @@ function UserDetailsPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="mt-4 text-sm text-muted-foreground">
+          <div className="
+            border-primary h-8 w-8 animate-spin rounded-full border-4
+            border-t-transparent
+          "
+          />
+          <p className="text-muted-foreground mt-4 text-sm">
             {t.common.loading()}
           </p>
         </div>
@@ -115,7 +119,11 @@ function UserDetailsPage() {
 
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold text-primary">
+          <div className="
+            bg-primary/10 text-primary flex h-16 w-16 items-center
+            justify-center rounded-full text-2xl font-bold
+          "
+          >
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div>
@@ -153,15 +161,19 @@ function UserDetailsPage() {
         </TabsList>
 
         <TabsContent value="info" className="space-y-4">
-          <div className="rounded-lg border bg-card p-6">
+          <div className="bg-card rounded-lg border p-6">
             <h2 className="mb-4 text-lg font-semibold">
               {t.hr.users.personalInfo()}
             </h2>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="
+              grid gap-4
+              md:grid-cols-2
+            "
+            >
               <div className="flex items-center gap-3">
-                <IconMail className="h-4 w-4 text-muted-foreground" />
+                <IconMail className="text-muted-foreground h-4 w-4" />
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t.hr.common.email()}
                   </p>
                   <p className="font-medium">{user.email}</p>
@@ -169,9 +181,9 @@ function UserDetailsPage() {
               </div>
               {user.phone && (
                 <div className="flex items-center gap-3">
-                  <IconPhone className="h-4 w-4 text-muted-foreground" />
+                  <IconPhone className="text-muted-foreground h-4 w-4" />
                   <div>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t.hr.common.phone()}
                     </p>
                     <p className="font-medium">{user.phone}</p>
@@ -179,9 +191,9 @@ function UserDetailsPage() {
                 </div>
               )}
               <div className="flex items-center gap-3">
-                <IconCalendar className="h-4 w-4 text-muted-foreground" />
+                <IconCalendar className="text-muted-foreground h-4 w-4" />
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t.hr.common.createdAt()}
                   </p>
                   <p className="font-medium">
@@ -191,7 +203,7 @@ function UserDetailsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {t.hr.users.status()}
                   </p>
                   <Badge
@@ -223,7 +235,7 @@ function UserDetailsPage() {
         </TabsContent>
 
         <TabsContent value="roles" className="space-y-4">
-          <div className="rounded-lg border bg-card p-6">
+          <div className="bg-card rounded-lg border p-6">
             <h2 className="mb-4 text-lg font-semibold">
               {t.hr.users.assignedRoles()}
             </h2>
@@ -233,7 +245,10 @@ function UserDetailsPage() {
                     user.roles.map(role => (
                       <div
                         key={role.roleId}
-                        className="flex items-center justify-between rounded-md border p-3"
+                        className="
+                          flex items-center justify-between rounded-md border
+                          p-3
+                        "
                       >
                         <div>
                           <p className="font-medium">{role.roleName}</p>
@@ -243,7 +258,7 @@ function UserDetailsPage() {
                     ))
                   )
                 : (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t.hr.users.noRoles()}
                     </p>
                   )}
@@ -252,7 +267,7 @@ function UserDetailsPage() {
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-4">
-          <div className="rounded-lg border bg-card p-6">
+          <div className="bg-card rounded-lg border p-6">
             <h2 className="mb-4 text-lg font-semibold">
               {t.hr.users.recentActivity()}
             </h2>
@@ -262,12 +277,18 @@ function UserDetailsPage() {
                     activity.map(log => (
                       <div
                         key={log.id}
-                        className="flex gap-3 border-b pb-3 last:border-0"
+                        className="
+                          flex gap-3 border-b pb-3
+                          last:border-0
+                        "
                       >
-                        <div className="mt-1 flex h-2 w-2 shrink-0 rounded-full bg-primary" />
+                        <div className="
+                          bg-primary mt-1 flex h-2 w-2 shrink-0 rounded-full
+                        "
+                        />
                         <div className="flex-1">
                           <p className="text-sm font-medium">{log.action}</p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-muted-foreground text-xs">
                             {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm')}
                           </p>
                         </div>
@@ -275,7 +296,7 @@ function UserDetailsPage() {
                     ))
                   )
                 : (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {t.hr.users.noActivity()}
                     </p>
                   )}

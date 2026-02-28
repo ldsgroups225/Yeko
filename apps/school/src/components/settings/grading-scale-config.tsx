@@ -90,8 +90,14 @@ export function GradingScaleConfig({
 
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-      <div className="space-y-3 p-4 rounded-2xl bg-muted/10 border border-border/40">
-        <Label htmlFor="passingGrade" className="text-sm font-semibold text-foreground">
+      <div className="
+        bg-muted/10 border-border/40 space-y-3 rounded-2xl border p-4
+      "
+      >
+        <Label
+          htmlFor="passingGrade"
+          className="text-foreground text-sm font-semibold"
+        >
           {t.settings.profile.passingGrade()}
         </Label>
         <div className="flex items-center gap-4">
@@ -102,22 +108,48 @@ export function GradingScaleConfig({
             min="0"
             max="20"
             {...form.register('passingGrade')}
-            className={`w-32 font-mono text-lg font-bold ${inputClass}`}
+            className={`
+              w-32 font-mono text-lg font-bold
+              ${inputClass}
+            `}
           />
-          <p className="text-xs text-muted-foreground/80 max-w-[200px] leading-snug">
+          <p className="
+            text-muted-foreground/80 max-w-[200px] text-xs leading-snug
+          "
+          >
             {t.settings.profile.passingGradeHint()}
           </p>
         </div>
       </div>
 
       <div className="space-y-5">
-        <Label className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.settings.profile.gradingThresholds()}</Label>
+        <Label className="
+          text-muted-foreground text-xs font-bold tracking-wider uppercase
+        "
+        >
+          {t.settings.profile.gradingThresholds()}
+        </Label>
 
         <div className="space-y-3">
           {gradeCategories.map(({ key, color, shadow }) => (
-            <div key={key} className="flex flex-col sm:flex-row sm:items-center gap-4 p-3 rounded-2xl bg-muted/10 border border-border/40 hover:bg-muted/20 transition-colors group">
-              <div className="flex items-center gap-3 min-w-[140px]">
-                <div className={`h-3 w-3 rounded-full ${color} shadow-lg ${shadow}`} />
+            <div
+              key={key}
+              className="
+                bg-muted/10 border-border/40
+                hover:bg-muted/20
+                group flex flex-col gap-4 rounded-2xl border p-3
+                transition-colors
+                sm:flex-row sm:items-center
+              "
+            >
+              <div className="flex min-w-[140px] items-center gap-3">
+                <div className={`
+                  h-3 w-3 rounded-full
+                  ${color}
+                  shadow-lg
+                  ${shadow}
+                `}
+                />
                 <Input
                   {...form.register(`${key}.label`)}
                   placeholder={
@@ -128,32 +160,57 @@ export function GradingScaleConfig({
                       fail: t.settings.profile.gradeLabels.fail,
                     }[key]()
                   }
-                  className="h-9 border-transparent bg-transparent font-medium focus:bg-background/50 hover:bg-background/30 transition-colors px-2 rounded-lg"
+                  className="
+                    focus:bg-background/50
+                    hover:bg-background/30
+                    h-9 rounded-lg border-transparent bg-transparent px-2
+                    font-medium transition-colors
+                  "
                 />
               </div>
 
-              <div className="flex items-center gap-2 flex-1">
-                <div className="flex items-center gap-2 bg-background/40 p-1.5 rounded-xl border border-border/20 group-hover:bg-background/60 transition-colors">
-                  <span className="text-xs font-mono text-muted-foreground pl-2">Min</span>
+              <div className="flex flex-1 items-center gap-2">
+                <div className="
+                  bg-background/40 border-border/20
+                  group-hover:bg-background/60
+                  flex items-center gap-2 rounded-xl border p-1.5
+                  transition-colors
+                "
+                >
+                  <span className="text-muted-foreground pl-2 font-mono text-xs">Min</span>
                   <Input
                     type="number"
                     step="0.01"
                     min="0"
                     max="20"
                     {...form.register(`${key}.min`)}
-                    className="w-20 h-8 border-transparent bg-transparent text-center font-mono font-medium focus:bg-background rounded-lg"
+                    className="
+                      focus:bg-background
+                      h-8 w-20 rounded-lg border-transparent bg-transparent
+                      text-center font-mono font-medium
+                    "
                   />
                 </div>
                 <span className="text-muted-foreground/50 font-light">to</span>
-                <div className="flex items-center gap-2 bg-background/40 p-1.5 rounded-xl border border-border/20 group-hover:bg-background/60 transition-colors">
-                  <span className="text-xs font-mono text-muted-foreground pl-2">Max</span>
+                <div className="
+                  bg-background/40 border-border/20
+                  group-hover:bg-background/60
+                  flex items-center gap-2 rounded-xl border p-1.5
+                  transition-colors
+                "
+                >
+                  <span className="text-muted-foreground pl-2 font-mono text-xs">Max</span>
                   <Input
                     type="number"
                     step="0.01"
                     min="0"
                     max="20"
                     {...form.register(`${key}.max`)}
-                    className="w-20 h-8 border-transparent bg-transparent text-center font-mono font-medium focus:bg-background rounded-lg"
+                    className="
+                      focus:bg-background
+                      h-8 w-20 rounded-lg border-transparent bg-transparent
+                      text-center font-mono font-medium
+                    "
                   />
                 </div>
               </div>
@@ -163,7 +220,11 @@ export function GradingScaleConfig({
       </div>
 
       <div className="flex justify-end pt-4">
-        <Button type="submit" disabled={isSubmitting} className="rounded-xl shadow-lg shadow-primary/20 px-8">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="shadow-primary/20 rounded-xl px-8 shadow-lg"
+        >
           {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>
       </div>

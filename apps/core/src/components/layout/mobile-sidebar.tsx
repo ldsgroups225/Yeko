@@ -85,7 +85,7 @@ export function MobileSidebar({ onClose }: MobileSidebarProps) {
           />
           <div>
             <h1 className="text-lg font-semibold">Yeko Core</h1>
-            <p className="text-xs text-muted-foreground">Super Administrateur</p>
+            <p className="text-muted-foreground text-xs">Super Administrateur</p>
           </div>
         </div>
       </SidebarHeader>
@@ -105,11 +105,11 @@ export function MobileSidebar({ onClose }: MobileSidebarProps) {
                       onClick={() => handleNavigation(item.href)}
                       className="h-14 flex-col items-start"
                     >
-                      <div className="flex items-center gap-3 w-full">
+                      <div className="flex w-full items-center gap-3">
                         <item.icon className="h-5 w-5 shrink-0" />
                         <span className="font-medium">{item.name}</span>
                       </div>
-                      <span className="text-xs text-left w-full opacity-70">
+                      <span className="w-full text-left text-xs opacity-70">
                         {item.description}
                       </span>
                     </SidebarMenuButton>
@@ -122,13 +122,17 @@ export function MobileSidebar({ onClose }: MobileSidebarProps) {
       </SidebarContent>
 
       <SidebarFooter className="border-t">
-        <div className="flex items-center gap-3 p-4 rounded-lg bg-muted/50">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-medium">
+        <div className="bg-muted/50 flex items-center gap-3 rounded-lg p-4">
+          <div className="
+            bg-primary text-primary-foreground flex h-10 w-10 items-center
+            justify-center rounded-full text-sm font-medium
+          "
+          >
             A
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-medium text-foreground">Utilisateur Admin</span>
-            <span className="text-xs text-muted-foreground">Super Administrateur</span>
+            <span className="text-foreground text-sm font-medium">Utilisateur Admin</span>
+            <span className="text-muted-foreground text-xs">Super Administrateur</span>
           </div>
         </div>
       </SidebarFooter>

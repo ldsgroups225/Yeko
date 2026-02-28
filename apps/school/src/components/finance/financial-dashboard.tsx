@@ -54,11 +54,18 @@ export function FinancialDashboard({
   if (isPending) {
     return (
       <div className="space-y-6">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="
+          grid gap-6
+          md:grid-cols-2
+          lg:grid-cols-4
+        "
+        >
           {Array.from({ length: 4 }).map(() => (
             <Card
               key={generateUUID()}
-              className="rounded-2xl border-border/40 bg-card/40 backdrop-blur-xl"
+              className="
+                border-border/40 bg-card/40 rounded-2xl backdrop-blur-xl
+              "
             >
               <CardHeader className="pb-2">
                 <Skeleton className="h-4 w-24" />
@@ -69,11 +76,17 @@ export function FinancialDashboard({
             </Card>
           ))}
         </div>
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="
+          grid gap-6
+          md:grid-cols-2
+        "
+        >
           {Array.from({ length: 2 }).map(() => (
             <Card
               key={generateUUID()}
-              className="rounded-3xl border-border/40 bg-card/40 backdrop-blur-xl"
+              className="
+                border-border/40 bg-card/40 rounded-3xl backdrop-blur-xl
+              "
             >
               <CardHeader>
                 <Skeleton className="h-5 w-40" />
@@ -128,7 +141,12 @@ export function FinancialDashboard({
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+        lg:grid-cols-4
+      "
+      >
         {mainStats.map((stat, index) => (
           <motion.div
             key={stat.title}
@@ -136,23 +154,52 @@ export function FinancialDashboard({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-xl hover:bg-card/60 transition-colors shadow-sm overflow-hidden relative">
+            <Card className="
+              border-border/40 bg-card/40
+              hover:bg-card/60
+              relative overflow-hidden rounded-2xl border shadow-sm
+              backdrop-blur-xl transition-colors
+            "
+            >
               <div
-                className={`absolute inset-0 bg-linear-to-br ${stat.gradient} opacity-50`}
+                className={`
+                  absolute inset-0 bg-linear-to-br
+                  ${stat.gradient}
+                  opacity-50
+                `}
               />
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
-                <CardTitle className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
+              <CardHeader className="
+                relative z-10 flex flex-row items-center justify-between
+                space-y-0 pb-2
+              "
+              >
+                <CardTitle className="
+                  text-muted-foreground text-sm font-bold tracking-wide
+                  uppercase
+                "
+                >
                   {stat.title}
                 </CardTitle>
-                <div className={`rounded-xl p-2.5 border ${stat.bgColor}`}>
-                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                <div className={`
+                  rounded-xl border p-2.5
+                  ${stat.bgColor}
+                `}
+                >
+                  <stat.icon className={`
+                    h-4 w-4
+                    ${stat.color}
+                  `}
+                  />
                 </div>
               </CardHeader>
               <CardContent className="relative z-10">
                 <div className="text-2xl font-black tracking-tight">
                   {stat.value}
                   {stat.suffix && (
-                    <span className="ml-1 text-sm font-medium text-muted-foreground/80">
+                    <span className="
+                      text-muted-foreground/80 ml-1 text-sm font-medium
+                    "
+                    >
                       {stat.suffix}
                     </span>
                   )}
@@ -163,28 +210,46 @@ export function FinancialDashboard({
         ))}
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+      "
+      >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="h-full rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-md">
+          <Card className="
+            border-border/40 bg-card/40 h-full rounded-3xl border shadow-md
+            backdrop-blur-xl
+          "
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
-                  <IconCashBanknote className="h-5 w-5 text-primary" />
+                <div className="
+                  bg-primary/10 border-primary/20 rounded-xl border p-2
+                "
+                >
+                  <IconCashBanknote className="text-primary h-5 w-5" />
                 </div>
                 {t.finance.dashboard.collectionRate()}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-end justify-between">
-                <span className="text-5xl font-black tracking-tight text-primary">
+                <span className="
+                  text-primary text-5xl font-black tracking-tight
+                "
+                >
                   {collectionRate.toFixed(1)}
                   %
                 </span>
-                <span className="text-sm font-medium text-muted-foreground bg-muted/30 px-3 py-1 rounded-full border border-border/50">
+                <span className="
+                  text-muted-foreground bg-muted/30 border-border/50
+                  rounded-full border px-3 py-1 text-sm font-medium
+                "
+                >
                   {formatCurrency(totalCollected)}
                   {' '}
                   /
@@ -195,7 +260,7 @@ export function FinancialDashboard({
               </div>
               <div className="space-y-2">
                 <Progress value={collectionRate} className="h-3 rounded-full" />
-                <p className="text-xs text-muted-foreground font-medium pl-1">
+                <p className="text-muted-foreground pl-1 text-xs font-medium">
                   {t.finance.dashboard.collectionRateDescription()}
                 </p>
               </div>
@@ -208,25 +273,47 @@ export function FinancialDashboard({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <Card className="h-full rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-md">
+          <Card className="
+            border-border/40 bg-card/40 h-full rounded-3xl border shadow-md
+            backdrop-blur-xl
+          "
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-3 text-lg font-bold">
-                <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
-                  <IconUsers className="h-5 w-5 text-primary" />
+                <div className="
+                  bg-primary/10 border-primary/20 rounded-xl border p-2
+                "
+                >
+                  <IconUsers className="text-primary h-5 w-5" />
                 </div>
                 {t.finance.dashboard.studentPaymentStatus()}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-1 p-4 rounded-2xl bg-muted/20 border border-border/40">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <div className="
+                  bg-muted/20 border-border/40 space-y-1 rounded-2xl border p-4
+                "
+                >
+                  <p className="
+                    text-muted-foreground text-xs font-bold tracking-wider
+                    uppercase
+                  "
+                  >
                     {t.finance.dashboard.totalStudents()}
                   </p>
                   <p className="text-3xl font-black">{totalStudents}</p>
                 </div>
-                <div className="space-y-1 p-4 rounded-2xl bg-orange-500/5 border border-orange-500/10">
-                  <p className="text-xs font-bold uppercase tracking-wider text-orange-600/80">
+                <div className="
+                  space-y-1 rounded-2xl border border-orange-500/10
+                  bg-orange-500/5 p-4
+                "
+                >
+                  <p className="
+                    text-xs font-bold tracking-wider text-orange-600/80
+                    uppercase
+                  "
+                  >
                     {t.finance.dashboard.withBalance()}
                   </p>
                   <p className="text-3xl font-black text-orange-600">
@@ -235,7 +322,12 @@ export function FinancialDashboard({
                 </div>
               </div>
               {refundsPending > 0 && (
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-accent/10 border border-accent/20 text-accent dark:text-accent">
+                <div className="
+                  bg-accent/10 border-accent/20 text-accent
+                  dark:text-accent
+                  flex items-center gap-3 rounded-xl border p-3
+                "
+                >
                   <IconReceipt className="h-5 w-5" />
                   <span className="text-sm font-semibold">
                     {refundsPending}

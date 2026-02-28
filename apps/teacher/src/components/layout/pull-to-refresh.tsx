@@ -105,22 +105,29 @@ export function PullToRefresh({
       {/* Pull indicator */}
       <div
         className={cn(
-          'absolute left-1/2 z-10 flex -translate-x-1/2 items-center justify-center transition-opacity',
+          `
+            absolute left-1/2 z-10 flex -translate-x-1/2 items-center
+            justify-center transition-opacity
+          `,
           showIndicator
             ? 'opacity-100'
             : 'opacity-0',
         )}
         style={indicatorTopStyle}
       >
-        <div className="flex flex-col items-center gap-1 rounded-full bg-background p-2 shadow-md">
+        <div className="
+          bg-background flex flex-col items-center gap-1 rounded-full p-2
+          shadow-md
+        "
+        >
           <IconLoader2
             className={cn(
-              'h-5 w-5 text-primary',
+              'text-primary h-5 w-5',
               isRefreshing && 'animate-spin',
             )}
             style={iconRotateStyle}
           />
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             {isRefreshing
               ? LL.common.refreshing()
               : LL.common.pullToRefresh()}

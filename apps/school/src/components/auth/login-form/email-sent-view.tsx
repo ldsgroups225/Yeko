@@ -30,13 +30,20 @@ export function EmailSentView({
     >
       <motion.div
         variants={itemVariants}
-        className="mx-auto size-16 rounded-full bg-primary/10 flex items-center justify-center"
+        className="
+          bg-primary/10 mx-auto flex size-16 items-center justify-center
+          rounded-full
+        "
       >
-        <IconMail className="size-8 text-primary" />
+        <IconMail className="text-primary size-8" />
       </motion.div>
 
       <motion.div variants={itemVariants} className="space-y-2">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        <h2 className="
+          text-2xl font-bold tracking-tight
+          sm:text-3xl
+        "
+        >
           {t.auth.forgotPassword.emailSentTitle()}
         </h2>
         <p className="text-muted-foreground">
@@ -49,18 +56,22 @@ export function EmailSentView({
       <motion.div variants={itemVariants} className="space-y-3">
         <Button
           variant="outline"
-          className="w-full h-12"
+          className="h-12 w-full"
           onClick={onBackToLogin}
         >
           {t.auth.forgotPassword.backToLogin()}
         </Button>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {t.auth.forgotPassword.noEmail()}
           {' '}
           <button
             type="button"
             onClick={onTryAgain}
-            className="text-primary hover:text-primary/80 transition-colors"
+            className="
+              text-primary
+              hover:text-primary/80
+              transition-colors
+            "
           >
             {t.auth.forgotPassword.tryAgain()}
           </button>

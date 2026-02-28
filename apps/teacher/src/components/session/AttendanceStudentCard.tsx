@@ -58,39 +58,52 @@ export function AttendanceStudentCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'overflow-hidden rounded-xl border bg-card/80 shadow-sm backdrop-blur-sm transition-all',
+        `
+          bg-card/80 overflow-hidden rounded-xl border shadow-sm
+          backdrop-blur-sm transition-all
+        `,
         config.bg,
       )}
     >
-      <div className="w-full p-4 flex items-center justify-between gap-3">
+      <div className="flex w-full items-center justify-between gap-3 p-4">
         {/* Student Info */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <div className="relative">
-            <Avatar className="h-10 w-10 border border-border/50 shrink-0">
+            <Avatar className="border-border/50 h-10 w-10 shrink-0 border">
               <AvatarImage src={student.photoUrl ?? undefined} alt={`${student.firstName} ${student.lastName}`} />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+              <AvatarFallback className="
+                bg-primary/10 text-primary text-xs font-bold
+              "
+              >
                 {student.firstName[0]}
                 {student.lastName[0]}
               </AvatarFallback>
             </Avatar>
             {/* Status indicator */}
             <div className={cn(
-              'absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center border-2 border-card',
+              `
+                border-card absolute -right-1 -bottom-1 flex h-5 w-5
+                items-center justify-center rounded-full border-2
+              `,
               status === 'present' && 'bg-emerald-500',
               status === 'absent' && 'bg-red-500',
               status === 'late' && 'bg-accent',
             )}
             >
-              <StatusIcon className="w-3 h-3 text-white" />
+              <StatusIcon className="h-3 w-3 text-white" />
             </div>
           </div>
           <div className="min-w-0">
-            <h3 className="truncate font-semibold text-foreground text-sm">
+            <h3 className="text-foreground truncate text-sm font-semibold">
               {student.lastName}
               {' '}
               {student.firstName}
             </h3>
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+            <p className="
+              text-muted-foreground text-[10px] font-medium tracking-tighter
+              uppercase
+            "
+            >
               {student.matricule}
             </p>
           </div>
@@ -105,14 +118,21 @@ export function AttendanceStudentCard({
                   variant="outline"
                   size="sm"
                   className={cn(
-                    'h-9 px-3 rounded-lg font-semibold transition-all',
+                    'h-9 rounded-lg px-3 font-semibold transition-all',
                     status === 'late'
-                      ? 'bg-accent text-white border-accent hover:bg-accent'
-                      : 'bg-muted/50 hover:bg-accent/20 hover:border-accent/50',
+                      ? `
+                        bg-accent border-accent
+                        hover:bg-accent
+                        text-white
+                      `
+                      : `
+                        bg-muted/50
+                        hover:bg-accent/20 hover:border-accent/50
+                      `,
                   )}
                   onClick={() => onUpdateStatus(student.id, status === 'late' ? 'absent' : 'late')}
                 >
-                  <IconClock className="w-4 h-4 mr-1.5" />
+                  <IconClock className="mr-1.5 h-4 w-4" />
                   {LL.session.late()}
                 </Button>
               )
@@ -125,13 +145,19 @@ export function AttendanceStudentCard({
                     className={cn(
                       'h-9 w-9 rounded-lg transition-all',
                       status === 'present'
-                        ? 'bg-emerald-500 text-white hover:bg-emerald-600'
-                        : 'bg-muted/50 hover:bg-emerald-500/20',
+                        ? `
+                          bg-emerald-500 text-white
+                          hover:bg-emerald-600
+                        `
+                        : `
+                          bg-muted/50
+                          hover:bg-emerald-500/20
+                        `,
                     )}
                     onClick={() => onUpdateStatus(student.id, 'present')}
                     title={LL.attendance.status.present()}
                   >
-                    <IconCheck className="w-4 h-4" />
+                    <IconCheck className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -139,13 +165,19 @@ export function AttendanceStudentCard({
                     className={cn(
                       'h-9 w-9 rounded-lg transition-all',
                       status === 'absent'
-                        ? 'bg-red-500 text-white hover:bg-red-600'
-                        : 'bg-muted/50 hover:bg-red-500/20',
+                        ? `
+                          bg-red-500 text-white
+                          hover:bg-red-600
+                        `
+                        : `
+                          bg-muted/50
+                          hover:bg-red-500/20
+                        `,
                     )}
                     onClick={() => onUpdateStatus(student.id, 'absent')}
                     title={LL.attendance.status.absent()}
                   >
-                    <IconX className="w-4 h-4" />
+                    <IconX className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -153,13 +185,20 @@ export function AttendanceStudentCard({
                     className={cn(
                       'h-9 w-9 rounded-lg transition-all',
                       status === 'late'
-                        ? 'bg-accent text-white hover:bg-accent'
-                        : 'bg-muted/50 hover:bg-accent/20',
+                        ? `
+                          bg-accent
+                          hover:bg-accent
+                          text-white
+                        `
+                        : `
+                          bg-muted/50
+                          hover:bg-accent/20
+                        `,
                     )}
                     onClick={() => onUpdateStatus(student.id, 'late')}
                     title={LL.attendance.status.late()}
                   >
-                    <IconClock className="w-4 h-4" />
+                    <IconClock className="h-4 w-4" />
                   </Button>
                 </>
               )}

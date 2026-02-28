@@ -109,7 +109,11 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="
+        bg-card/95 border-border/40 backdrop-blur-xl
+        sm:max-w-[600px]
+      "
+      >
         <DialogHeader>
           <DialogTitle>{t.students.linkParent()}</DialogTitle>
           <DialogDescription>{t.parents.description()}</DialogDescription>
@@ -138,7 +142,9 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             <DialogFooter className="mt-4">
               <Button variant="outline" onClick={() => onOpenChange(false)}>{t.common.cancel()}</Button>
               <Button onClick={() => linkExistingMutation.mutate()} disabled={!selectedParentId || linkExistingMutation.isPending}>
-                {linkExistingMutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {linkExistingMutation.isPending && (
+                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 {t.students.linkParent()}
               </Button>
             </DialogFooter>
@@ -168,7 +174,13 @@ export function ParentLinkDialog({ open, onOpenChange, studentId }: ParentLinkDi
             <DialogFooter className="mt-4">
               <Button variant="outline" onClick={() => onOpenChange(false)}>{t.common.cancel()}</Button>
               <Button onClick={() => createAndLinkMutation.mutate()} disabled={!firstName.trim() || !lastName.trim() || phone.trim().length < 8 || createAndLinkMutation.isPending}>
-                {createAndLinkMutation.isPending ? <IconLoader2 className="mr-2 h-4 w-4 animate-spin" /> : <IconUserPlus className="mr-2 h-4 w-4" />}
+                {createAndLinkMutation.isPending
+                  ? (
+                      <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )
+                  : (
+                      <IconUserPlus className="mr-2 h-4 w-4" />
+                    )}
                 Link parent
               </Button>
             </DialogFooter>

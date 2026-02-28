@@ -45,7 +45,11 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
 
   if (error) {
     return (
-      <Card className="border-destructive/20 bg-destructive/10 dark:border-destructive/40 dark:bg-destructive/20">
+      <Card className="
+        border-destructive/20 bg-destructive/10
+        dark:border-destructive/40 dark:bg-destructive/20
+      "
+      >
         <CardHeader>
           <CardTitle className="text-destructive">Activité récente</CardTitle>
           <CardDescription className="text-destructive">
@@ -66,8 +70,8 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="text-center text-muted-foreground py-8">
-            <IconInfoCircle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+          <div className="text-muted-foreground py-8 text-center">
+            <IconInfoCircle className="mx-auto mb-2 h-8 w-8 opacity-50" />
             <p>Aucune activité récente</p>
           </div>
         </CardContent>
@@ -78,13 +82,13 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
   const getIcon = (type: ActivityItem['type']) => {
     switch (type) {
       case 'success':
-        return <IconCircleCheck className="h-4 w-4 text-primary" />
+        return <IconCircleCheck className="text-primary h-4 w-4" />
       case 'warning':
-        return <IconAlertTriangle className="h-4 w-4 text-secondary" />
+        return <IconAlertTriangle className="text-secondary h-4 w-4" />
       case 'error':
-        return <IconAlertCircle className="h-4 w-4 text-destructive" />
+        return <IconAlertCircle className="text-destructive h-4 w-4" />
       default:
-        return <IconInfoCircle className="h-4 w-4 text-primary" />
+        return <IconInfoCircle className="text-primary h-4 w-4" />
     }
   }
 
@@ -128,22 +132,29 @@ export function ActivityFeed({ activities, isLoading, error, limit = 5 }: Activi
         <div className="space-y-4">
           {displayActivities.map(activity => (
             <div key={activity.id} className="flex items-start space-x-3">
-              <div className="shrink-0 mt-0.5">
+              <div className="mt-0.5 shrink-0">
                 {getIcon(activity.type)}
               </div>
-              <div className="flex-1 min-w-0 space-y-1">
+              <div className="min-w-0 flex-1 space-y-1">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium leading-none">
+                  <p className="text-sm leading-none font-medium">
                     {activity.action}
                   </p>
-                  <Badge variant={getBadgeVariant(activity.type)} className="text-xs">
+                  <Badge
+                    variant={getBadgeVariant(activity.type)}
+                    className="text-xs"
+                  >
                     {getTypeLabel(activity.type)}
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {activity.target}
                 </p>
-                <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
+                <div className="
+                  text-muted-foreground flex items-center justify-between pt-1
+                  text-xs
+                "
+                >
                   <div className="flex items-center gap-2">
                     <Avatar className="h-5 w-5">
                       <AvatarImage src={activity.userAvatar} alt={activity.user} />

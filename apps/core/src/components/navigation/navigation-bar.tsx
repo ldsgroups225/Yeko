@@ -84,14 +84,26 @@ export function NavigationBar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out',
+          'fixed top-0 right-0 left-0 z-50 transition-all duration-500 ease-out',
           isScrolled
-            ? 'bg-background/80 backdrop-blur-xl border-b border-border/50 shadow-lg shadow-primary/5'
+            ? `
+              bg-background/80 border-border/50 shadow-primary/5 border-b
+              shadow-lg backdrop-blur-xl
+            `
             : 'bg-transparent',
         )}
       >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
+        <div className="
+          container mx-auto px-4
+          sm:px-6
+          lg:px-8
+        "
+        >
+          <div className="
+            flex h-16 items-center justify-between
+            lg:h-20
+          "
+          >
             {/* Logo and Brand */}
             <Link
               to="/"
@@ -100,15 +112,28 @@ export function NavigationBar() {
               <m.img
                 src="/icon.png"
                 alt={LL.nav.logoAlt()}
-                className="h-10 w-10 lg:h-12 lg:w-12 object-contain"
+                className="
+                  h-10 w-10 object-contain
+                  lg:h-12 lg:w-12
+                "
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 10 }}
               />
               <div className="flex flex-col">
-                <span className="text-lg lg:text-xl font-bold bg-linear-to-r from-foreground to-foreground/80 bg-clip-text text-transparent group-hover:from-primary group-hover:to-primary/80 transition-all duration-300">
+                <span className="
+                  from-foreground to-foreground/80
+                  group-hover:from-primary group-hover:to-primary/80
+                  bg-linear-to-r bg-clip-text text-lg font-bold text-transparent
+                  transition-all duration-300
+                  lg:text-xl
+                "
+                >
                   {LL.nav.brandName()}
                 </span>
-                <span className="text-xs text-muted-foreground font-medium tracking-wider">
+                <span className="
+                  text-muted-foreground text-xs font-medium tracking-wider
+                "
+                >
                   {LL.nav.tagline()}
                 </span>
               </div>
@@ -116,7 +141,10 @@ export function NavigationBar() {
 
             {/* Desktop Navigation */}
             <m.div
-              className="hidden lg:flex items-center space-x-1"
+              className="
+                hidden items-center space-x-1
+                lg:flex
+              "
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2, staggerChildren: 0.1 }}
@@ -124,7 +152,7 @@ export function NavigationBar() {
               {navigationItems.map((item, index) => (
                 <m.div
                   key={item.label}
-                  className="relative group"
+                  className="group relative"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.05 }}
@@ -136,7 +164,12 @@ export function NavigationBar() {
                           href={item.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 group"
+                          className="
+                            text-muted-foreground
+                            hover:text-foreground hover:bg-accent/50
+                            group flex items-center space-x-2 rounded-lg px-4
+                            py-2 text-sm font-medium transition-all duration-300
+                          "
                         >
                           <span>{item.label}</span>
                           {item.label === 'GitHub'
@@ -152,13 +185,21 @@ export function NavigationBar() {
                         <Link
                           to={item.href}
                           onClick={() => handleNavClick(item)}
-                          className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 block"
+                          className="
+                            text-muted-foreground
+                            hover:text-foreground hover:bg-accent/50
+                            block rounded-lg px-4 py-2 text-sm font-medium
+                            transition-all duration-300
+                          "
                         >
                           {item.label}
                         </Link>
                       )}
                   <m.div
-                    className="absolute bottom-0 left-1/2 transform -translate-x-1/2 h-0.5 bg-linear-to-r from-primary to-primary/80"
+                    className="
+                      from-primary to-primary/80 absolute bottom-0 left-1/2
+                      h-0.5 -translate-x-1/2 transform bg-linear-to-r
+                    "
                     initial={{ width: 0 }}
                     whileHover={{ width: '75%' }}
                     transition={{ duration: 0.3 }}
@@ -167,14 +208,21 @@ export function NavigationBar() {
               ))}
 
               {/* Theme Toggle & Language Switcher */}
-              <div className="ml-2 pl-2 border-l border-border/30 flex items-center gap-1">
+              <div className="
+                border-border/30 ml-2 flex items-center gap-1 border-l pl-2
+              "
+              >
                 <LanguageSwitcher />
                 <ThemeToggle variant="ghost" align="end" />
               </div>
             </m.div>
 
             {/* Action Buttons - Desktop */}
-            <div className="hidden lg:block">
+            <div className="
+              hidden
+              lg:block
+            "
+            >
               {session
                 ? (
                     <div className="flex flex-row items-center gap-4">
@@ -195,7 +243,10 @@ export function NavigationBar() {
                               src={user?.image || undefined}
                               alt={user?.name || LL.nav.userLabel()}
                             />
-                            <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                            <AvatarFallback className="
+                              bg-primary text-primary-foreground text-xs
+                            "
+                            >
                               {fallbackText}
                             </AvatarFallback>
                           </Avatar>
@@ -229,7 +280,11 @@ export function NavigationBar() {
             </div>
 
             {/* Mobile Menu Button + Language + Theme Toggle */}
-            <div className="lg:hidden flex items-center space-x-1">
+            <div className="
+              flex items-center space-x-1
+              lg:hidden
+            "
+            >
               <LanguageSwitcher />
               <ThemeToggle variant="ghost" align="end" />
               <Sheet open={isOpen} onOpenChange={setIsOpen}>

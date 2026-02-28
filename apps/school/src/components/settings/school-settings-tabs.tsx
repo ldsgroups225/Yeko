@@ -19,11 +19,29 @@ export function SchoolSettingsTabs({
 
   return (
     <Tabs defaultValue="grading" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 bg-muted/20 backdrop-blur-md border border-border/40 p-1 rounded-2xl h-auto">
-        <TabsTrigger value="grading" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-lg py-2.5 transition-all duration-300">
+      <TabsList className="
+        bg-muted/20 border-border/40 grid h-auto w-full grid-cols-2 rounded-2xl
+        border p-1 backdrop-blur-md
+      "
+      >
+        <TabsTrigger
+          value="grading"
+          className="
+            data-[state=active]:bg-card
+            rounded-xl py-2.5 transition-all duration-300
+            data-[state=active]:shadow-lg
+          "
+        >
           {t.settings.profile.gradingScale()}
         </TabsTrigger>
-        <TabsTrigger value="notifications" className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-lg py-2.5 transition-all duration-300">
+        <TabsTrigger
+          value="notifications"
+          className="
+            data-[state=active]:bg-card
+            rounded-xl py-2.5 transition-all duration-300
+            data-[state=active]:shadow-lg
+          "
+        >
           {t.settings.notifications()}
         </TabsTrigger>
       </TabsList>

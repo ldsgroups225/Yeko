@@ -46,7 +46,7 @@ export function AttendanceFilters({
               {LL.attendance.class()}
             </label>
             <select
-              className="w-full mt-1 border rounded-md p-2"
+              className="mt-1 w-full rounded-md border p-2"
               value={selectedClassId}
               onChange={e => setSelectedClassId(e.target.value)}
             >
@@ -68,14 +68,16 @@ export function AttendanceFilters({
               <DatePicker
                 date={selectedDate ? new Date(selectedDate) : undefined}
                 onSelect={(date: Date | undefined) => setSelectedDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
-                className="w-full mt-1 border rounded-md p-2 justify-start font-normal"
+                className="
+                  mt-1 w-full justify-start rounded-md border p-2 font-normal
+                "
               />
             </Suspense>
           </div>
         </div>
 
         {counts && (
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex flex-wrap gap-2">
             <Badge variant="secondary">
               {LL.attendance.total()}
               :

@@ -115,7 +115,12 @@ export function PaymentPlanTemplateFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="
+        bg-card/95 border-border/40 max-h-[90vh] overflow-y-auto rounded-3xl p-6
+        shadow-2xl backdrop-blur-xl
+        sm:max-w-[600px]
+      "
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {isEditMode ? 'Modifier le modèle de plan de paiement' : 'Créer un modèle de plan de paiement'}

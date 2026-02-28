@@ -67,12 +67,21 @@ function RefundsPage() {
         className="flex items-center justify-between gap-4"
       >
         <div className="flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconRotate className="size-8 text-primary" />
+          <div className="
+            bg-primary/10 border-primary/20 rounded-2xl border p-3 shadow-lg
+            backdrop-blur-xl
+          "
+          >
+            <IconRotate className="text-primary size-8" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.finance.refunds.title()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">{t.finance.refunds.description()}</p>
+            <p className="
+              text-muted-foreground max-w-lg text-sm font-medium italic
+            "
+            >
+              {t.finance.refunds.description()}
+            </p>
           </div>
         </div>
         <Button
@@ -89,8 +98,11 @@ function RefundsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
-          <CardHeader className="border-b border-border/40 bg-muted/5">
+        <Card className="
+          border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
             <CardTitle className="text-lg font-bold">{t.finance.refunds.title()}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">

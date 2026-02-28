@@ -62,13 +62,13 @@ export function SyncStatusCard({
           {isOnline
             ? (
                 <>
-                  <IconWifi className="h-4 w-4 text-success" />
+                  <IconWifi className="text-success h-4 w-4" />
                   <span className="text-muted-foreground">{LL.sync.online()}</span>
                 </>
               )
             : (
                 <>
-                  <IconWifiOff className="h-4 w-4 text-destructive" />
+                  <IconWifiOff className="text-destructive h-4 w-4" />
                   <span className="text-muted-foreground">{LL.sync.offline()}</span>
                 </>
               )}
@@ -77,7 +77,7 @@ export function SyncStatusCard({
         {/* Pending count */}
         {pendingCount > 0 && (
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {LL.sync.pendingChanges({ count: pendingCount })}
             </p>
             {isPublishing && publishProgress && (

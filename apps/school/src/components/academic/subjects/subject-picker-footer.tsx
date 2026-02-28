@@ -12,28 +12,53 @@ export function SubjectPickerFooter() {
   const { handleSubmit, setOpen } = actions
 
   return (
-    <div className="p-6 bg-white/5 border-t border-border/10">
-      <DialogFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="border-border/10 border-t bg-white/5 p-6">
+      <DialogFooter className="
+        flex flex-col items-center justify-between gap-4
+        sm:flex-row
+      "
+      >
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="font-mono bg-primary/10 text-primary border-primary/20 h-6 px-2">
+          <Badge
+            variant="secondary"
+            className="
+              bg-primary/10 text-primary border-primary/20 h-6 px-2 font-mono
+            "
+          >
             {selectedIds.size}
           </Badge>
-          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-tight">
+          <span className="
+            text-muted-foreground text-xs font-semibold tracking-tight uppercase
+          "
+          >
             {t.academic.subjects.picker.selected()}
           </span>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
+        <div className="
+          flex w-full gap-2
+          sm:w-auto
+        "
+        >
           <Button
             variant="ghost"
             onClick={() => setOpen(false)}
-            className="flex-1 sm:flex-none hover:bg-white/10"
+            className="
+              flex-1
+              hover:bg-white/10
+              sm:flex-none
+            "
           >
             {t.common.cancel()}
           </Button>
           <Button
             onClick={handleSubmit}
             disabled={selectedIds.size === 0 || isAdding}
-            className="flex-1 sm:min-w-[160px] bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+            className="
+              bg-primary
+              hover:bg-primary/90
+              shadow-primary/20 flex-1 shadow-lg
+              sm:min-w-[160px]
+            "
           >
             {isAdding
               ? (

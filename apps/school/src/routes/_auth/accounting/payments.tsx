@@ -54,10 +54,20 @@ function PaymentsPage() {
           className="flex items-center gap-2"
         >
           <Select value={statusFilter} onValueChange={val => setStatusFilter(val ?? '')}>
-            <SelectTrigger className="w-[180px] h-10 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
+            <SelectTrigger className="
+              bg-card/50 border-border/40
+              focus:ring-primary/20
+              hover:bg-card/80
+              h-10 w-[180px] rounded-xl font-bold shadow-sm backdrop-blur-xl
+              transition-all
+            "
+            >
               <SelectValue placeholder={t.common.filter()} />
             </SelectTrigger>
-            <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+            <SelectContent className="
+              bg-popover/90 border-border/40 rounded-xl backdrop-blur-xl
+            "
+            >
               <SelectItem value="all" className="rounded-lg">{t.common.all()}</SelectItem>
               <SelectItem value="completed" className="rounded-lg">{t.finance.payments.status.completed()}</SelectItem>
               <SelectItem value="pending" className="rounded-lg">{t.finance.payments.status.pending()}</SelectItem>
@@ -65,7 +75,10 @@ function PaymentsPage() {
             </SelectContent>
           </Select>
 
-          <Button onClick={() => setShowPaymentDialog(true)} className="h-10 rounded-xl shadow-lg shadow-primary/20">
+          <Button
+            onClick={() => setShowPaymentDialog(true)}
+            className="shadow-primary/20 h-10 rounded-xl shadow-lg"
+          >
             <IconPlus className="mr-2 h-4 w-4" />
             {t.finance.payments.recordPayment()}
           </Button>
@@ -91,8 +104,11 @@ function PaymentsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
-          <CardHeader className="border-b border-border/40 bg-muted/5">
+        <Card className="
+          border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
             <CardTitle className="text-lg font-bold">{t.finance.payments.recentPayments()}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">

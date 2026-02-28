@@ -56,23 +56,33 @@ function SortableGradeItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors bg-background"
+      className="
+        hover:bg-accent/50
+        bg-background flex items-center justify-between rounded-lg border p-4
+        transition-colors
+      "
     >
-      <div className="flex items-center gap-4 flex-1">
+      <div className="flex flex-1 items-center gap-4">
         <button
           type="button"
-          className="cursor-grab active:cursor-grabbing touch-none"
+          className="
+            cursor-grab touch-none
+            active:cursor-grabbing
+          "
           {...attributes}
           {...listeners}
         >
-          <IconGripVertical className="h-5 w-5 text-muted-foreground" />
+          <IconGripVertical className="text-muted-foreground h-5 w-5" />
         </button>
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-          <IconGripVertical className="h-5 w-5 text-primary" />
+        <div className="
+          bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg
+        "
+        >
+          <IconGripVertical className="text-primary h-5 w-5" />
         </div>
         <div>
           <h3 className="font-semibold">{grade.name}</h3>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="mt-1 flex items-center gap-2">
             <Badge variant="outline" className="text-xs">
               {grade.code}
             </Badge>

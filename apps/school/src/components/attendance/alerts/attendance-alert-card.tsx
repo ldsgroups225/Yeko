@@ -36,20 +36,23 @@ export function AttendanceAlertCard({
   const subjectName = alert.teacherName ?? alert.studentName ?? alert.className
 
   return (
-    <Card className="border-l-4 border-l-accent">
-      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+    <Card className="border-l-accent border-l-4">
+      <CardHeader className="
+        flex flex-row items-start justify-between space-y-0 pb-2
+      "
+      >
         <div>
           <div className="font-medium">{alert.title}</div>
           {subjectName && (
-            <div className="text-sm text-muted-foreground">{subjectName}</div>
+            <div className="text-muted-foreground text-sm">{subjectName}</div>
           )}
         </div>
         <AlertSeverityBadge severity={alert.severity} />
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground mb-3">{alert.message}</p>
+        <p className="text-muted-foreground mb-3 text-sm">{alert.message}</p>
         <div className="flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">
+          <span className="text-muted-foreground text-xs">
             {new Date(alert.createdAt).toLocaleDateString('fr-FR', {
               day: 'numeric',
               month: 'short',

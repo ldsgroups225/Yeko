@@ -14,7 +14,10 @@ export function GradeEntryFooter() {
   return (
     <motion.div
       layout
-      className="flex items-center justify-between p-4 rounded-2xl border border-primary/20 bg-primary/5 backdrop-blur-md shadow-inner"
+      className="
+        border-primary/20 bg-primary/5 flex items-center justify-between
+        rounded-2xl border p-4 shadow-inner backdrop-blur-md
+      "
     >
       <div className="flex items-center gap-6">
         <AnimatePresence mode="wait">
@@ -23,10 +26,13 @@ export function GradeEntryFooter() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-accent/10 border border-accent/20 text-accent-foreground"
+              className="
+                bg-accent/10 border-accent/20 text-accent-foreground flex
+                items-center gap-2 rounded-xl border px-3 py-1.5
+              "
             >
               <IconAlertTriangle className="size-4" />
-              <span className="text-xs font-bold uppercase tracking-tight">
+              <span className="text-xs font-bold tracking-tight uppercase">
                 {t.academic.grades.validations.pendingCount({ count: pendingChanges.size })}
               </span>
             </motion.div>
@@ -41,7 +47,10 @@ export function GradeEntryFooter() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
-                className="flex items-center gap-2 text-xs font-semibold text-muted-foreground"
+                className="
+                  text-muted-foreground flex items-center gap-2 text-xs
+                  font-semibold
+                "
               >
                 <IconLoader2 className="size-3.5 animate-spin" />
                 {t.academic.grades.autoSave.saving()}
@@ -53,9 +62,14 @@ export function GradeEntryFooter() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
-                className="flex items-center gap-2 text-xs font-bold text-success"
+                className="
+                  text-success flex items-center gap-2 text-xs font-bold
+                "
               >
-                <div className="p-1 rounded-full bg-success/10 border border-success/20">
+                <div className="
+                  bg-success/10 border-success/20 rounded-full border p-1
+                "
+                >
                   <IconCloud className="size-3" />
                 </div>
                 {t.academic.grades.autoSave.saved()}
@@ -67,9 +81,15 @@ export function GradeEntryFooter() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
-                className="flex items-center gap-2 text-xs font-bold text-destructive"
+                className="
+                  text-destructive flex items-center gap-2 text-xs font-bold
+                "
               >
-                <div className="p-1 rounded-full bg-destructive/10 border border-destructive/20">
+                <div className="
+                  bg-destructive/10 border-destructive/20 rounded-full border
+                  p-1
+                "
+                >
                   <IconCloudOff className="size-3" />
                 </div>
                 {t.academic.grades.autoSave.error()}
@@ -83,7 +103,11 @@ export function GradeEntryFooter() {
         <Button
           onClick={handleNewEvaluation}
           variant="outline"
-          className="rounded-xl font-bold border-primary/20 hover:bg-primary/5 text-primary"
+          className="
+            border-primary/20
+            hover:bg-primary/5
+            text-primary rounded-xl font-bold
+          "
         >
           <IconPlus className="mr-2 size-4" />
           {t.academic.grades.entry.newEvaluation()}
@@ -100,11 +124,25 @@ export function GradeEntryFooter() {
                 onClick={handleSavePending}
                 disabled={isPendingAction || isMissingTeacher}
                 variant="outline"
-                className="rounded-xl border-accent/30 font-bold bg-accent/5 hover:bg-accent/10 text-accent-foreground"
+                className="
+                  border-accent/30 bg-accent/5
+                  hover:bg-accent/10
+                  text-accent-foreground rounded-xl font-bold
+                "
               >
                 {isPendingAction
-                  ? <IconLoader2 className="mr-2 size-4 animate-spin text-accent-foreground" />
-                  : <IconDeviceFloppy className="mr-2 size-4 text-accent-foreground" />}
+                  ? (
+                      <IconLoader2 className="
+                        text-accent-foreground mr-2 size-4 animate-spin
+                      "
+                      />
+                    )
+                  : (
+                      <IconDeviceFloppy className="
+                        text-accent-foreground mr-2 size-4
+                      "
+                      />
+                    )}
                 {t.common.save()}
               </Button>
             </motion.div>
@@ -114,14 +152,20 @@ export function GradeEntryFooter() {
         <Button
           onClick={handleSubmitForValidation}
           disabled={!isComplete || isPendingAction}
-          className="rounded-xl font-bold shadow-lg shadow-primary/20 px-6"
+          className="shadow-primary/20 rounded-xl px-6 font-bold shadow-lg"
         >
           {isPendingAction
             ? <IconLoader2 className="mr-2 size-4 animate-spin" />
             : <IconSend className="mr-2 size-4" />}
           {t.common.submit()}
           {gradesByStudent.size > 0 && (
-            <Badge variant="secondary" className="ml-2 bg-primary-foreground/10 text-primary-foreground border-none px-2 rounded-full font-bold">
+            <Badge
+              variant="secondary"
+              className="
+                bg-primary-foreground/10 text-primary-foreground ml-2
+                rounded-full border-none px-2 font-bold
+              "
+            >
               {gradesByStudent.size}
             </Badge>
           )}

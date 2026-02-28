@@ -115,7 +115,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
 
   if (!schoolYearId && !currentSchoolYear && !isEditing) {
     return (
-      <div className="p-4 text-center text-muted-foreground">
+      <div className="text-muted-foreground p-4 text-center">
         <p>{t.classes.noSchoolYearSelected()}</p>
       </div>
     )
@@ -136,11 +136,15 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
           teachers={teachers}
         />
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-border/10">
+        <div className="border-border/10 flex justify-end gap-3 border-t pt-4">
           <Button
             type="submit"
             disabled={mutation.isPending}
-            className="min-w-[120px] bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+            className="
+              bg-primary
+              hover:bg-primary/90
+              shadow-primary/20 min-w-[120px] shadow-lg
+            "
           >
             {mutation.isPending
               ? (

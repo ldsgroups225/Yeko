@@ -36,16 +36,23 @@ export function DiscountMobileCard({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-3"
+      className="
+        bg-card/50 border-border/40 space-y-3 rounded-2xl border p-4
+        backdrop-blur-md
+      "
     >
-      <div className="flex justify-between items-start">
+      <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <div className="font-mono text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-md">
+          <div className="
+            text-muted-foreground bg-muted/20 rounded-md px-2 py-1 font-mono
+            text-xs font-bold
+          "
+          >
             {discount.code}
           </div>
           <Badge
             variant={discount.status === 'active' ? 'default' : 'secondary'}
-            className="capitalize rounded-md text-[10px]"
+            className="rounded-md text-[10px] capitalize"
           >
             {discount.status === 'active'
               ? t.common.active()
@@ -58,7 +65,7 @@ export function DiscountMobileCard({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-lg -mr-2 -mt-2"
+                className="-mt-2 -mr-2 h-8 w-8 rounded-lg"
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()
@@ -70,19 +77,29 @@ export function DiscountMobileCard({
           />
           <DropdownMenuContent
             align="end"
-            className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+            className="
+              bg-card/95 border-border/40 rounded-xl p-1 shadow-xl
+              backdrop-blur-xl
+            "
           >
             <DropdownMenuItem
               onClick={() => onEdit?.(discount)}
-              className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+              className="
+                focus:bg-primary/10
+                cursor-pointer rounded-lg font-medium
+              "
             >
-              <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
+              <IconEdit className="text-muted-foreground mr-2 h-4 w-4" />
               {t.common.edit()}
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-border/40" />
             <DropdownMenuItem
               onClick={() => onDelete?.(discount)}
-              className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+              className="
+                text-destructive
+                focus:bg-destructive/10 focus:text-destructive
+                cursor-pointer rounded-lg font-medium
+              "
             >
               <IconTrash className="mr-2 h-4 w-4" />
               {t.common.delete()}
@@ -92,15 +109,17 @@ export function DiscountMobileCard({
       </div>
 
       <div>
-        <div className="font-bold text-lg">{discount.name}</div>
-        <div className="flex gap-1 mt-2">
-          <Badge variant="secondary" className="font-medium text-xs">
+        <div className="text-lg font-bold">{discount.name}</div>
+        <div className="mt-2 flex gap-1">
+          <Badge variant="secondary" className="text-xs font-medium">
             {getTypeLabel(discount.type)}
           </Badge>
           {discount.autoApply && (
             <Badge
               variant="outline"
-              className="text-[10px] bg-secondary/10 text-secondary border-secondary/20"
+              className="
+                bg-secondary/10 text-secondary border-secondary/20 text-[10px]
+              "
             >
               Auto
             </Badge>
@@ -108,7 +127,7 @@ export function DiscountMobileCard({
           {discount.requiresApproval && (
             <Badge
               variant="outline"
-              className="text-[10px] bg-accent/10 text-accent border-accent/20"
+              className="bg-accent/10 text-accent border-accent/20 text-[10px]"
             >
               Approbation
             </Badge>
@@ -116,11 +135,15 @@ export function DiscountMobileCard({
         </div>
       </div>
 
-      <div className="p-3 rounded-xl bg-muted/20 border border-border/20 flex items-center justify-between">
-        <span className="text-sm font-medium text-muted-foreground">
+      <div className="
+        bg-muted/20 border-border/20 flex items-center justify-between
+        rounded-xl border p-3
+      "
+      >
+        <span className="text-muted-foreground text-sm font-medium">
           {t.finance.discounts.value()}
         </span>
-        <span className="font-bold text-lg text-primary">
+        <span className="text-primary text-lg font-bold">
           {formatValue(discount)}
         </span>
       </div>

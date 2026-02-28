@@ -63,32 +63,63 @@ export function CoefficientCell({
             whileTap={{ scale: 0.98 }}
             type="button"
             className={cn(
-              'w-full h-9 rounded-lg border font-medium transition-all relative overflow-hidden group',
-              'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-1 focus:ring-offset-background',
+              `
+                group relative h-9 w-full overflow-hidden rounded-lg border
+                font-medium transition-all
+              `,
+              `
+                focus:ring-primary/20 focus:ring-offset-background focus:ring-2
+                focus:ring-offset-1 focus:outline-none
+              `,
               isEdited
-                ? 'border-accent/50 bg-accent/10 text-accent hover:bg-accent/20'
+                ? `
+                  border-accent/50 bg-accent/10 text-accent
+                  hover:bg-accent/20
+                `
                 : isOverride
-                  ? 'border-primary/50 bg-primary/10 text-primary hover:bg-primary/20'
-                  : 'border-border/60 bg-white/5 hover:border-primary/40 hover:bg-white/10 text-muted-foreground hover:text-foreground',
+                  ? `
+                    border-primary/50 bg-primary/10 text-primary
+                    hover:bg-primary/20
+                  `
+                  : `
+                    border-border/60
+                    hover:border-primary/40
+                    text-muted-foreground
+                    hover:text-foreground
+                    bg-white/5
+                    hover:bg-white/10
+                  `,
             )}
           >
             {effectiveWeight}
-            <div className="absolute inset-0 bg-linear-to-br from-background/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="
+              from-background/10 absolute inset-0 bg-linear-to-br to-transparent
+              opacity-0 transition-opacity
+              group-hover:opacity-100
+            "
+            />
           </motion.button>
         )}
       />
       <PopoverContent
-        className="w-72 p-0 overflow-hidden border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl"
+        className="
+          border-border/40 bg-card/95 w-72 overflow-hidden p-0 shadow-2xl
+          backdrop-blur-xl
+        "
         align="center"
         sideOffset={8}
       >
-        <div className="p-4 space-y-4">
+        <div className="space-y-4 p-4">
           <div className="space-y-3">
-            <h4 className="font-semibold text-sm flex items-center gap-2">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <h4 className="flex items-center gap-2 text-sm font-semibold">
+              <span className="bg-primary h-1.5 w-1.5 rounded-full" />
               {t.academic.coefficients.cell.edit()}
             </h4>
-            <div className="grid gap-2 p-3 rounded-lg bg-white/5 border border-border/5 text-[11px]">
+            <div className="
+              border-border/5 grid gap-2 rounded-lg border bg-white/5 p-3
+              text-[11px]
+            "
+            >
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">
                   {t.academic.coefficients.cell.template()}
@@ -96,11 +127,15 @@ export function CoefficientCell({
                 <span className="font-mono font-bold">{templateWeight}</span>
               </div>
               {isOverride && (
-                <div className="flex items-center justify-between border-t border-border/5 pt-2">
+                <div className="
+                  border-border/5 flex items-center justify-between border-t
+                  pt-2
+                "
+                >
                   <span className="text-muted-foreground">
                     {t.academic.coefficients.cell.currentOverride()}
                   </span>
-                  <span className="font-mono font-bold text-primary">
+                  <span className="text-primary font-mono font-bold">
                     {effectiveWeight}
                   </span>
                 </div>
@@ -111,7 +146,7 @@ export function CoefficientCell({
           <div className="space-y-2">
             <label
               htmlFor="coefficient-input"
-              className="text-xs font-medium text-muted-foreground pl-1"
+              className="text-muted-foreground pl-1 text-xs font-medium"
             >
               {t.academic.coefficients.cell.newValue()}
             </label>
@@ -122,7 +157,11 @@ export function CoefficientCell({
               max="20"
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
-              className="h-10 bg-white/5 border-border/10 focus:ring-primary/40 text-center font-mono text-lg font-bold"
+              className="
+                border-border/10
+                focus:ring-primary/40
+                h-10 bg-white/5 text-center font-mono text-lg font-bold
+              "
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   handleSave()
@@ -138,18 +177,21 @@ export function CoefficientCell({
             <Button
               size="sm"
               variant="ghost"
-              className="flex-1 h-9 hover:bg-white/10"
+              className="
+                h-9 flex-1
+                hover:bg-white/10
+              "
               onClick={handleCancel}
             >
               <IconX className="mr-1.5 h-3.5 w-3.5" />
               {t.academic.coefficients.cell.cancel()}
             </Button>
-            <div className="flex gap-1 flex-1">
+            <div className="flex flex-1 gap-1">
               {isOverride && overrideId && (
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-9 px-2 border-border/40"
+                  className="border-border/40 h-9 px-2"
                   onClick={handleReset}
                   title={t.academic.coefficients.cell.reset()}
                 >
@@ -158,7 +200,11 @@ export function CoefficientCell({
               )}
               <Button
                 size="sm"
-                className="flex-1 h-9 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+                className="
+                  bg-primary
+                  hover:bg-primary/90
+                  shadow-primary/20 h-9 flex-1 shadow-lg
+                "
                 onClick={handleSave}
               >
                 <IconCheck className="mr-1.5 h-3.5 w-3.5" />

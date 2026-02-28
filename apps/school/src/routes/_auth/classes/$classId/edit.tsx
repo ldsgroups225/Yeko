@@ -32,7 +32,11 @@ function EditClassPage() {
   if (isPending) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="
+          border-primary h-8 w-8 animate-spin rounded-full border-4
+          border-t-transparent
+        "
+        />
       </div>
     )
   }
@@ -73,7 +77,7 @@ function EditClassPage() {
         </p>
       </div>
 
-      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+      <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
         <CardHeader>
           <CardTitle>{t.classes.classInfo()}</CardTitle>
         </CardHeader>

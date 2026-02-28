@@ -71,35 +71,65 @@ export function GradeEntryControls({
           className="mb-4"
         >
           <Collapsible open={isMetaExpanded} onOpenChange={setIsMetaExpanded}>
-            <div className="rounded-2xl bg-muted/20 border border-border/50 overflow-hidden shadow-sm">
+            <div className="
+              bg-muted/20 border-border/50 overflow-hidden rounded-2xl border
+              shadow-sm
+            "
+            >
               <CollapsibleTrigger
-                className="w-full flex items-center justify-between p-4 h-auto hover:bg-muted/30 transition-colors group cursor-pointer"
+                className="
+                  hover:bg-muted/30
+                  group flex h-auto w-full cursor-pointer items-center
+                  justify-between p-4 transition-colors
+                "
               >
                 <div className="flex flex-col items-start gap-1">
-                  <span className="text-[10px] uppercase tracking-widest font-black text-muted-foreground text-left">
+                  <span className="
+                    text-muted-foreground text-left text-[10px] font-black
+                    tracking-widest uppercase
+                  "
+                  >
                     {teacherSubjects.length > 0 && selectedSubjectId && (
                       <div className="flex items-center gap-2">
-                        <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
-                        <span className="text-xs font-bold text-muted-foreground">
+                        <div className="
+                          bg-muted-foreground/30 h-1 w-1 rounded-full
+                        "
+                        />
+                        <span className="
+                          text-muted-foreground text-xs font-bold
+                        "
+                        >
                           {teacherSubjects.find(s => s.id === selectedSubjectId)?.name}
                         </span>
                       </div>
                     )}
                   </span>
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="h-5 text-[10px] font-bold uppercase bg-primary/5 border-primary/20 text-primary">
+                    <Badge
+                      variant="outline"
+                      className="
+                        bg-primary/5 border-primary/20 text-primary h-5
+                        text-[10px] font-bold uppercase
+                      "
+                    >
                       {LL.grades[noteType]()}
                     </Badge>
-                    <span className="text-sm font-black text-foreground">
+                    <span className="text-foreground text-sm font-black">
                       {noteTitle || LL.grades.noDescription()}
                     </span>
-                    <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
-                    <span className="text-xs font-bold text-muted-foreground uppercase">
+                    <div className="bg-muted-foreground/30 h-1 w-1 rounded-full" />
+                    <span className="
+                      text-muted-foreground text-xs font-bold uppercase
+                    "
+                    >
                       C.
                       {weight}
                     </span>
-                    <div className="w-1 h-1 rounded-full bg-muted-foreground/30" />
-                    <span className="text-xs font-bold text-muted-foreground uppercase">
+                    <div className="bg-muted-foreground/30 h-1 w-1 rounded-full" />
+                    <span className="
+                      text-muted-foreground text-xs font-bold uppercase
+                    "
+                    >
                       /
                       {gradeOutOf}
                     </span>
@@ -107,18 +137,32 @@ export function GradeEntryControls({
                 </div>
                 <IconChevronDown
                   className={cn(
-                    'w-5 h-5 text-muted-foreground transition-transform duration-300',
+                    `
+                      text-muted-foreground h-5 w-5 transition-transform
+                      duration-300
+                    `,
                     isMetaExpanded && 'rotate-180',
                   )}
                 />
               </CollapsibleTrigger>
 
               <CollapsibleContent>
-                <div className="p-4 pt-0 space-y-4 border-t border-border/40 bg-muted/10">
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 mt-4">
+                <div className="
+                  border-border/40 bg-muted/10 space-y-4 border-t p-4 pt-0
+                "
+                >
+                  <div className="
+                    mt-4 flex flex-col items-stretch gap-3
+                    sm:flex-row sm:items-end
+                  "
+                  >
                     {/* Evaluation Type */}
-                    <div className="flex-1 min-w-0 space-y-1.5">
-                      <label className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1 truncate block">
+                    <div className="min-w-0 flex-1 space-y-1.5">
+                      <label className="
+                        text-muted-foreground ml-1 block truncate text-[10px]
+                        font-black tracking-widest uppercase
+                      "
+                      >
                         {LL.grades.nature()}
                       </label>
                       <Suspense fallback={<Skeleton className="h-11 w-full" />}>
@@ -126,11 +170,22 @@ export function GradeEntryControls({
                           value={noteType}
                           onValueChange={val => setNoteType(val as 'quizzes' | 'tests' | 'level_tests')}
                         >
-                          <SelectTrigger className="w-full h-11! rounded-xl bg-background border-border/50 font-semibold px-3 overflow-hidden">
+                          <SelectTrigger className="
+                            bg-background border-border/50 h-11! w-full
+                            overflow-hidden rounded-xl px-3 font-semibold
+                          "
+                          >
                             <SelectValue placeholder={LL.grades.selectType()}>
                               {noteType && (
                                 <div className="flex items-center gap-2">
-                                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-2 h-5">
+                                  <Badge
+                                    variant="outline"
+                                    className="
+                                      bg-primary/10 text-primary
+                                      border-primary/20 h-5 px-2 text-[10px]
+                                      font-black tracking-widest uppercase
+                                    "
+                                  >
                                     {noteType === 'quizzes'
                                       ? LL.grades.quizzes()
                                       : noteType === 'tests'
@@ -151,11 +206,14 @@ export function GradeEntryControls({
                     </div>
 
                     {/* Weight, Barème & Subject Group */}
-                    <div className="flex-[2] flex flex-row items-end gap-2">
+                    <div className="flex flex-[2] flex-row items-end gap-2">
                       <div className="w-20 shrink-0 space-y-1.5">
                         <label
                           htmlFor="note-weight-input"
-                          className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1"
+                          className="
+                            text-muted-foreground ml-1 text-[10px] font-black
+                            tracking-widest uppercase
+                          "
                         >
                           Coef.
                         </label>
@@ -166,10 +224,30 @@ export function GradeEntryControls({
                           value={weight}
                           onValueChange={val => setWeight(val || 1)}
                         >
-                          <NumberFieldGroup className="h-11! rounded-xl bg-background border border-border/50 overflow-hidden">
-                            <NumberFieldDecrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none cursor-pointer" />
-                            <NumberFieldInput className="border-none h-full bg-transparent font-bold ring-0! shadow-none! text-center p-0" title={LL.grades.coeff()} />
-                            <NumberFieldIncrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none cursor-pointer" />
+                          <NumberFieldGroup className="
+                            bg-background border-border/50 h-11! overflow-hidden
+                            rounded-xl border
+                          "
+                          >
+                            <NumberFieldDecrement className="
+                              hover:bg-muted/50
+                              h-full w-8 cursor-pointer rounded-none border-none
+                              bg-transparent
+                            "
+                            />
+                            <NumberFieldInput
+                              className="
+                                h-full border-none bg-transparent p-0
+                                text-center font-bold shadow-none! ring-0!
+                              "
+                              title={LL.grades.coeff()}
+                            />
+                            <NumberFieldIncrement className="
+                              hover:bg-muted/50
+                              h-full w-8 cursor-pointer rounded-none border-none
+                              bg-transparent
+                            "
+                            />
                           </NumberFieldGroup>
                         </NumberField>
                       </div>
@@ -177,7 +255,10 @@ export function GradeEntryControls({
                       <div className="w-20 shrink-0 space-y-1.5">
                         <label
                           htmlFor="note-outof-input"
-                          className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1"
+                          className="
+                            text-muted-foreground ml-1 text-[10px] font-black
+                            tracking-widest uppercase
+                          "
                         >
                           {LL.grades.grading()}
                         </label>
@@ -188,17 +269,41 @@ export function GradeEntryControls({
                           value={gradeOutOf}
                           onValueChange={val => setGradeOutOf(val || 20)}
                         >
-                          <NumberFieldGroup className="h-11! rounded-xl bg-background border border-border/50 overflow-hidden">
-                            <NumberFieldDecrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none cursor-pointer" />
-                            <NumberFieldInput className="border-none h-full bg-transparent font-bold ring-0! shadow-none! text-center p-0" title={LL.grades.grading()} />
-                            <NumberFieldIncrement className="border-none h-full w-8 bg-transparent hover:bg-muted/50 rounded-none cursor-pointer" />
+                          <NumberFieldGroup className="
+                            bg-background border-border/50 h-11! overflow-hidden
+                            rounded-xl border
+                          "
+                          >
+                            <NumberFieldDecrement className="
+                              hover:bg-muted/50
+                              h-full w-8 cursor-pointer rounded-none border-none
+                              bg-transparent
+                            "
+                            />
+                            <NumberFieldInput
+                              className="
+                                h-full border-none bg-transparent p-0
+                                text-center font-bold shadow-none! ring-0!
+                              "
+                              title={LL.grades.grading()}
+                            />
+                            <NumberFieldIncrement className="
+                              hover:bg-muted/50
+                              h-full w-8 cursor-pointer rounded-none border-none
+                              bg-transparent
+                            "
+                            />
                           </NumberFieldGroup>
                         </NumberField>
                       </div>
 
                       {teacherSubjects.length > 1 && (
-                        <div className="flex-1 min-w-0 space-y-1.5">
-                          <label className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1 truncate block">
+                        <div className="min-w-0 flex-1 space-y-1.5">
+                          <label className="
+                            text-muted-foreground ml-1 block truncate
+                            text-[10px] font-black tracking-widest uppercase
+                          "
+                          >
                             {LL.grades.subject()}
                           </label>
                           <Suspense fallback={<Skeleton className="h-11 w-full" />}>
@@ -206,11 +311,22 @@ export function GradeEntryControls({
                               value={selectedSubjectId || ''}
                               onValueChange={val => val && setSelectedSubjectId(val)}
                             >
-                              <SelectTrigger className="w-full h-11! rounded-xl bg-background border-border/50 font-semibold px-3 overflow-hidden">
+                              <SelectTrigger className="
+                                bg-background border-border/50 h-11! w-full
+                                overflow-hidden rounded-xl px-3 font-semibold
+                              "
+                              >
                                 <SelectValue placeholder={LL.grades.selectSubject()}>
                                   {selectedSubjectId && (
                                     <div className="flex items-center gap-2">
-                                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-black uppercase tracking-widest px-2 h-5">
+                                      <Badge
+                                        variant="outline"
+                                        className="
+                                          bg-primary/10 text-primary
+                                          border-primary/20 h-5 px-2 text-[10px]
+                                          font-black tracking-widest uppercase
+                                        "
+                                      >
                                         {teacherSubjects.find(s => s.id === selectedSubjectId)?.name}
                                       </Badge>
                                     </div>
@@ -234,7 +350,10 @@ export function GradeEntryControls({
                   <div className="space-y-1.5">
                     <label
                       htmlFor="note-description-input"
-                      className="text-[10px] uppercase tracking-widest font-black text-muted-foreground ml-1"
+                      className="
+                        text-muted-foreground ml-1 text-[10px] font-black
+                        tracking-widest uppercase
+                      "
                     >
                       {LL.grades.description()}
                     </label>
@@ -243,7 +362,9 @@ export function GradeEntryControls({
                       value={noteTitle}
                       onChange={e => setNoteTitle(e.target.value)}
                       placeholder={LL.grades.egInterro1()}
-                      className="h-11 rounded-xl bg-background border-border/50 text-sm"
+                      className="
+                        bg-background border-border/50 h-11 rounded-xl text-sm
+                      "
                     />
                   </div>
                 </div>

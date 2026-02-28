@@ -65,19 +65,41 @@ function GradeStatisticsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <Card className="overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl">
-          <CardHeader className="bg-muted/20 border-b border-border/20 pb-4">
+        <Card className="
+          border-border/40 bg-card/30 overflow-hidden rounded-3xl shadow-xl
+          backdrop-blur-xl
+        "
+        >
+          <CardHeader className="bg-muted/20 border-border/20 border-b pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
+              <div className="
+                bg-background/50 text-muted-foreground rounded-xl p-2 shadow-sm
+              "
+              >
                 <IconSettings className="size-4" />
               </div>
-              <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{t.academic.grades.filters.title()}</CardTitle>
+              <CardTitle className="
+                text-sm font-black tracking-[0.2em] uppercase
+              "
+              >
+                {t.academic.grades.filters.title()}
+              </CardTitle>
             </div>
           </CardHeader>
           <CardContent className="pt-8">
-            <div className="grid gap-6 sm:grid-cols-2">
+            <div className="
+              grid gap-6
+              sm:grid-cols-2
+            "
+            >
               <div className="space-y-2.5">
-                <Label htmlFor="class-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <Label
+                  htmlFor="class-select"
+                  className="
+                    text-muted-foreground ml-1 text-xs font-black
+                    tracking-widest uppercase
+                  "
+                >
                   {t.academic.grades.entry.class()}
                 </Label>
                 {classesPending || contextPending
@@ -86,7 +108,14 @@ function GradeStatisticsPage() {
                     )
                   : (
                       <Select value={selectedClassId} onValueChange={val => setSelectedClassId(val ?? '')}>
-                        <SelectTrigger id="class-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                        <SelectTrigger
+                          id="class-select"
+                          className="
+                            bg-background/50 border-border/40
+                            focus:bg-background
+                            h-11 rounded-xl transition-all
+                          "
+                        >
                           <SelectValue placeholder={t.academic.grades.entry.selectClass()}>
                             {selectedClassId
                               ? (() => {
@@ -94,7 +123,10 @@ function GradeStatisticsPage() {
                                   return selectedItem
                                     ? (
                                         <div className="flex items-center gap-2">
-                                          <IconLayoutGrid className="size-3.5 text-primary/60" />
+                                          <IconLayoutGrid className="
+                                            text-primary/60 size-3.5
+                                          "
+                                          />
                                           <span className="font-semibold">
                                             {selectedItem.grade.name}
                                             {' '}
@@ -107,11 +139,22 @@ function GradeStatisticsPage() {
                               : null}
                           </SelectValue>
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                        <SelectContent className="
+                          bg-popover/90 border-border/40 rounded-xl
+                          backdrop-blur-2xl
+                        "
+                        >
                           {classesData?.map(item => (
-                            <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg font-semibold">
+                            <SelectItem
+                              key={item.class.id}
+                              value={item.class.id}
+                              className="rounded-lg font-semibold"
+                            >
                               <div className="flex items-center gap-2">
-                                <IconLayoutGrid className="size-3.5 text-primary/60" />
+                                <IconLayoutGrid className="
+                                  text-primary/60 size-3.5
+                                "
+                                />
                                 {item.grade.name}
                                 {' '}
                                 {item.class.section}
@@ -124,7 +167,13 @@ function GradeStatisticsPage() {
               </div>
 
               <div className="space-y-2.5">
-                <Label htmlFor="term-select" className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+                <Label
+                  htmlFor="term-select"
+                  className="
+                    text-muted-foreground ml-1 text-xs font-black
+                    tracking-widest uppercase
+                  "
+                >
                   {t.academic.grades.entry.term()}
                 </Label>
                 {termsPending || contextPending
@@ -133,7 +182,14 @@ function GradeStatisticsPage() {
                     )
                   : (
                       <Select value={selectedTermId} onValueChange={val => setSelectedTermId(val ?? '')}>
-                        <SelectTrigger id="term-select" className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                        <SelectTrigger
+                          id="term-select"
+                          className="
+                            bg-background/50 border-border/40
+                            focus:bg-background
+                            h-11 rounded-xl transition-all
+                          "
+                        >
                           <SelectValue placeholder={t.academic.grades.entry.selectTerm()}>
                             {selectedTermId
                               ? (() => {
@@ -141,7 +197,10 @@ function GradeStatisticsPage() {
                                   return selectedItem
                                     ? (
                                         <div className="flex items-center gap-2">
-                                          <IconCalendar className="size-3.5 text-primary/60" />
+                                          <IconCalendar className="
+                                            text-primary/60 size-3.5
+                                          "
+                                          />
                                           <span className="font-semibold">{selectedItem.template.name}</span>
                                         </div>
                                       )
@@ -150,9 +209,17 @@ function GradeStatisticsPage() {
                               : null}
                           </SelectValue>
                         </SelectTrigger>
-                        <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                        <SelectContent className="
+                          bg-popover/90 border-border/40 rounded-xl
+                          backdrop-blur-2xl
+                        "
+                        >
                           {termsData?.map(term => (
-                            <SelectItem key={term.id} value={term.id} className="rounded-lg font-semibold">
+                            <SelectItem
+                              key={term.id}
+                              value={term.id}
+                              className="rounded-lg font-semibold"
+                            >
                               {term.template.name}
                             </SelectItem>
                           ))}
@@ -169,7 +236,11 @@ function GradeStatisticsPage() {
         <div className="space-y-8">
           {statsPending
             ? (
-                <div className="grid gap-6 md:grid-cols-3">
+                <div className="
+                  grid gap-6
+                  md:grid-cols-3
+                "
+                >
                   <Skeleton className="h-32 w-full rounded-2xl" />
                   <Skeleton className="h-32 w-full rounded-2xl" />
                   <Skeleton className="h-32 w-full rounded-2xl" />

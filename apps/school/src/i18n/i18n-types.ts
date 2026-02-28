@@ -2660,15 +2660,15 @@ type RootTranslation = {
 			 */
 			addClass: string
 			/**
-			 * N​o​u​v​e​l​l​e​ ​a​f​f​e​c​t​a​t​i​o​n
+			 * N​o​u​v​e​l​l​e​ ​A​s​s​i​g​n​a​t​i​o​n
 			 */
 			newAssignment: string
 			/**
-			 * C​l​a​s​s​e​.​.​.
+			 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​e​ ​c​l​a​s​s​e
 			 */
 			classPlaceholder: string
 			/**
-			 * M​a​t​i​è​r​e​.​.​.
+			 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​e​ ​m​a​t​i​è​r​e
 			 */
 			subjectPlaceholder: string
 			/**
@@ -2676,11 +2676,11 @@ type RootTranslation = {
 			 */
 			assignSuccess: string
 			/**
-			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​a​s​s​i​g​n​a​t​i​o​n
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​a​s​s​i​g​n​a​t​i​o​n​ ​d​e​ ​l​a​ ​c​l​a​s​s​e
 			 */
 			assignError: string
 			/**
-			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​a​ ​p​a​s​ ​e​n​c​o​r​e​ ​d​e​ ​c​l​a​s​s​e​s​ ​a​s​s​i​g​n​é​e​s​.
+			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​a​ ​a​u​c​u​n​e​ ​c​l​a​s​s​e​ ​a​s​s​i​g​n​é​e​.
 			 */
 			noClassesDescription: string
 			/**
@@ -2700,7 +2700,7 @@ type RootTranslation = {
 			 */
 			add: string
 			/**
-			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​e​x​i​s​t​e​ ​p​a​s​ ​o​u​ ​v​o​u​s​ ​n​'​a​v​e​z​ ​p​a​s​ ​l​a​ ​p​e​r​m​i​s​s​i​o​n​ ​d​e​ ​l​e​ ​v​o​i​r​.
+			 * L​'​e​n​s​e​i​g​n​a​n​t​ ​q​u​e​ ​v​o​u​s​ ​r​e​c​h​e​r​c​h​e​z​ ​n​'​e​x​i​s​t​e​ ​p​a​s​ ​o​u​ ​a​ ​é​t​é​ ​s​u​p​p​r​i​m​é​.
 			 */
 			teacherNotFoundDescription: string
 			/**
@@ -11127,15 +11127,15 @@ export type TranslationFunctions = {
 			 */
 			addClass: () => LocalizedString
 			/**
-			 * Nouvelle affectation
+			 * Nouvelle Assignation
 			 */
 			newAssignment: () => LocalizedString
 			/**
-			 * Classe...
+			 * Sélectionner une classe
 			 */
 			classPlaceholder: () => LocalizedString
 			/**
-			 * Matière...
+			 * Sélectionner une matière
 			 */
 			subjectPlaceholder: () => LocalizedString
 			/**
@@ -11143,11 +11143,11 @@ export type TranslationFunctions = {
 			 */
 			assignSuccess: () => LocalizedString
 			/**
-			 * Erreur lors de l'assignation
+			 * Erreur lors de l'assignation de la classe
 			 */
 			assignError: () => LocalizedString
 			/**
-			 * Cet enseignant n'a pas encore de classes assignées.
+			 * Cet enseignant n'a aucune classe assignée.
 			 */
 			noClassesDescription: () => LocalizedString
 			/**
@@ -11167,7 +11167,7 @@ export type TranslationFunctions = {
 			 */
 			add: () => LocalizedString
 			/**
-			 * Cet enseignant n'existe pas ou vous n'avez pas la permission de le voir.
+			 * L'enseignant que vous recherchez n'existe pas ou a été supprimé.
 			 */
 			teacherNotFoundDescription: () => LocalizedString
 			/**

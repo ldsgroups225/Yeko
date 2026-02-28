@@ -40,8 +40,15 @@ export function BehindScheduleAlert({
     <Alert
       variant="destructive"
       className={cn(
-        'border-accent bg-accent/5 text-accent-foreground dark:border-accent/80 dark:bg-accent/10 dark:text-accent-foreground/90',
-        significantlyBehind.length > 0 && 'border-destructive bg-destructive/5 text-destructive-foreground dark:border-destructive/80 dark:bg-destructive/10 dark:text-destructive-foreground/90',
+        `
+          border-accent bg-accent/5 text-accent-foreground
+          dark:border-accent/80 dark:bg-accent/10 dark:text-accent-foreground/90
+        `,
+        significantlyBehind.length > 0 && `
+          border-destructive bg-destructive/5 text-destructive-foreground
+          dark:border-destructive/80 dark:bg-destructive/10
+          dark:text-destructive-foreground/90
+        `,
         className,
       )}
     >
@@ -54,16 +61,19 @@ export function BehindScheduleAlert({
         <div className="space-y-2">
           {significantlyBehind.length > 0 && (
             <div>
-              <p className="font-medium text-sm mb-1">
+              <p className="mb-1 text-sm font-medium">
                 {t.curriculum.significantlyBehind()}
                 {' '}
                 (
                 {significantlyBehind.length}
                 )
               </p>
-              <ul className="text-sm space-y-1">
+              <ul className="space-y-1 text-sm">
                 {significantlyBehind.slice(0, 3).map(c => (
-                  <li key={`${c.classId}-${c.subjectName}`} className="flex items-center justify-between">
+                  <li
+                    key={`${c.classId}-${c.subjectName}`}
+                    className="flex items-center justify-between"
+                  >
                     <span>
                       {c.className}
                       {' '}
@@ -83,16 +93,19 @@ export function BehindScheduleAlert({
 
           {slightlyBehind.length > 0 && (
             <div>
-              <p className="font-medium text-sm mb-1">
+              <p className="mb-1 text-sm font-medium">
                 {t.curriculum.slightlyBehind()}
                 {' '}
                 (
                 {slightlyBehind.length}
                 )
               </p>
-              <ul className="text-sm space-y-1">
+              <ul className="space-y-1 text-sm">
                 {slightlyBehind.slice(0, 3).map(c => (
-                  <li key={`${c.classId}-${c.subjectName}`} className="flex items-center justify-between">
+                  <li
+                    key={`${c.classId}-${c.subjectName}`}
+                    className="flex items-center justify-between"
+                  >
                     <span>
                       {c.className}
                       {' '}

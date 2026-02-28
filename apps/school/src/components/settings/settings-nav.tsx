@@ -50,7 +50,11 @@ export function SettingsNav() {
   ]
 
   return (
-    <nav className="flex gap-1 p-1 bg-muted/20 backdrop-blur-md border border-border/40 rounded-xl w-fit">
+    <nav className="
+      bg-muted/20 border-border/40 flex w-fit gap-1 rounded-xl border p-1
+      backdrop-blur-md
+    "
+    >
       {navItems.map((item) => {
         const isActive = pathname === item.href
         return (
@@ -58,17 +62,23 @@ export function SettingsNav() {
             key={item.href}
             to={item.href}
             className={cn(
-              'relative flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 outline-none',
+              `
+                relative flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm
+                font-medium transition-all duration-300 outline-none
+              `,
               'hover:text-foreground',
               isActive
                 ? 'text-foreground shadow-sm'
-                : 'text-muted-foreground hover:bg-muted/30',
+                : `
+                  text-muted-foreground
+                  hover:bg-muted/30
+                `,
             )}
           >
             {isActive && (
               <motion.div
                 layoutId="activeSettingsTab"
-                className="absolute inset-0 bg-background rounded-lg"
+                className="bg-background absolute inset-0 rounded-lg"
                 initial={false}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
               />
@@ -101,15 +111,24 @@ export function SettingsHeader({
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      className="flex items-start gap-4 mb-4"
+      className="mb-4 flex items-start gap-4"
     >
-      <div className="flex items-center justify-center p-3 size-12 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg text-primary backdrop-blur-xl">
+      <div className="
+        bg-primary/10 border-primary/20 text-primary flex size-12 items-center
+        justify-center rounded-2xl border p-3 shadow-lg backdrop-blur-xl
+      "
+      >
         <Icon className="size-6" />
       </div>
       <div>
         <h1 className="text-3xl font-black tracking-tight uppercase italic">{title}</h1>
         {description && (
-          <p className="text-sm font-medium text-muted-foreground italic max-w-lg mt-1">{description}</p>
+          <p className="
+            text-muted-foreground mt-1 max-w-lg text-sm font-medium italic
+          "
+          >
+            {description}
+          </p>
         )}
       </div>
     </motion.div>

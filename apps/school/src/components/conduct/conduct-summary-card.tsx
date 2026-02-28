@@ -34,13 +34,20 @@ export function ConductSummaryCard({ studentName, summary, className }: ConductS
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className={cn('overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl', className)}>
-        <CardHeader className="bg-muted/20 border-b border-border/20 pb-4">
+      <Card className={cn(`
+        border-border/40 bg-card/30 overflow-hidden rounded-3xl shadow-xl
+        backdrop-blur-xl
+      `, className)}
+      >
+        <CardHeader className="bg-muted/20 border-border/20 border-b pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-background/50 text-muted-foreground shadow-sm">
+            <div className="
+              bg-background/50 text-muted-foreground rounded-xl p-2 shadow-sm
+            "
+            >
               <IconUserCircle className="size-4" />
             </div>
-            <CardTitle className="text-sm font-black uppercase tracking-[0.2em]">{studentName}</CardTitle>
+            <CardTitle className="text-sm font-black tracking-[0.2em] uppercase">{studentName}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="pt-6">
@@ -51,14 +58,33 @@ export function ConductSummaryCard({ studentName, summary, className }: ConductS
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center gap-4 transition-transform hover:scale-105"
+                className="
+                  flex items-center gap-4 transition-transform
+                  hover:scale-105
+                "
               >
-                <div className={cn('flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-inner border border-white/10 transition-transform duration-500', stat.bg, stat.color)}>
+                <div className={cn(`
+                  flex h-12 w-12 shrink-0 items-center justify-center
+                  rounded-2xl border border-white/10 shadow-inner
+                  transition-transform duration-500
+                `, stat.bg, stat.color)}
+                >
                   <stat.icon className="size-6" />
                 </div>
                 <div>
-                  <div className="text-2xl font-black tracking-tight leading-none">{stat.value}</div>
-                  <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mt-1">{stat.label}</div>
+                  <div className="
+                    text-2xl leading-none font-black tracking-tight
+                  "
+                  >
+                    {stat.value}
+                  </div>
+                  <div className="
+                    text-muted-foreground/60 mt-1 text-[10px] font-black
+                    tracking-widest uppercase
+                  "
+                  >
+                    {stat.label}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -68,11 +94,25 @@ export function ConductSummaryCard({ studentName, summary, className }: ConductS
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="mt-6 pt-6 border-t border-border/20"
+              className="border-border/20 mt-6 border-t pt-6"
             >
-              <div className="flex justify-between items-center rounded-2xl bg-primary/5 p-4 border border-primary/10">
-                <span className="text-xs font-black uppercase tracking-widest text-primary/70">{t.conduct.totalPoints()}</span>
-                <span className="text-2xl font-black text-primary tracking-tighter">{summary.totalPoints}</span>
+              <div className="
+                bg-primary/5 border-primary/10 flex items-center justify-between
+                rounded-2xl border p-4
+              "
+              >
+                <span className="
+                  text-primary/70 text-xs font-black tracking-widest uppercase
+                "
+                >
+                  {t.conduct.totalPoints()}
+                </span>
+                <span className="
+                  text-primary text-2xl font-black tracking-tighter
+                "
+                >
+                  {summary.totalPoints}
+                </span>
               </div>
             </motion.div>
           )}

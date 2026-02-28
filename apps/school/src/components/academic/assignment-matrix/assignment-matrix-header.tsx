@@ -10,11 +10,15 @@ export function AssignmentMatrixHeader() {
   const { classes, subjects, matrixData } = state
 
   return (
-    <CardHeader className="border-b border-border/10 pb-4">
+    <CardHeader className="border-border/10 border-b pb-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <IconSchool className="h-5 w-5 text-primary" />
+          <div className="
+            bg-primary/10 flex h-10 w-10 items-center justify-center
+            rounded-full
+          "
+          >
+            <IconSchool className="text-primary h-5 w-5" />
           </div>
           <div>
             <CardTitle>{t.assignmentMatrix.title()}</CardTitle>

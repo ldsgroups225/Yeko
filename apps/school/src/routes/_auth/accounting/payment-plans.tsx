@@ -46,8 +46,11 @@ function PaymentPlansPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
-          <CardHeader className="border-b border-border/40 bg-muted/5">
+        <Card className="
+          border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
             <CardTitle className="text-lg font-bold">{t.finance.paymentPlans.title()}</CardTitle>
           </CardHeader>
           <CardContent className="p-0">

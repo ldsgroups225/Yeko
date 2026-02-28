@@ -98,7 +98,7 @@ export function PublishButton({
       {/* Progress overlay */}
       {isPublishing && (
         <motion.div
-          className="absolute bottom-0 left-0 h-1 bg-white/30 rounded-b-md"
+          className="absolute bottom-0 left-0 h-1 rounded-b-md bg-white/30"
           initial={{ width: 0 }}
           animate={{ width: `${progressPercentage}%` }}
           transition={{ ease: 'easeOut' }}
@@ -152,7 +152,11 @@ export function SyncStatusBadge({
 
   return (
     <Badge variant={status.variant} className="gap-1.5">
-      <Icon className={`h-3.5 w-3.5 ${status.iconClass ?? ''}`} />
+      <Icon className={`
+        h-3.5 w-3.5
+        ${status.iconClass ?? ''}
+      `}
+      />
       {status.label}
     </Badge>
   )
@@ -175,19 +179,22 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
         exit={{ opacity: 0, y: -20 }}
         className="space-y-2"
       >
-        <Card className={result.success ? 'border-success' : 'border-destructive'}>
+        <Card className={result.success
+          ? 'border-success'
+          : `border-destructive`}
+        >
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               {result.success
                 ? (
                     <>
-                      <IconCheck className="h-5 w-5 text-success" />
+                      <IconCheck className="text-success h-5 w-5" />
                       {LL.sync.success()}
                     </>
                   )
                 : (
                     <>
-                      <IconAlertTriangle className="h-5 w-5 text-destructive" />
+                      <IconAlertTriangle className="text-destructive h-5 w-5" />
                       {LL.sync.error()}
                     </>
                   )}
@@ -195,14 +202,22 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             {result.syncedNotes.length > 0 && (
-              <p className="text-success dark:text-success/80">
+              <p className="
+                text-success
+                dark:text-success/80
+              "
+              >
                 ✓
                 {' '}
                 {LL.sync.notesPublished({ count: result.syncedNotes.length })}
               </p>
             )}
             {result.failedNotes.length > 0 && (
-              <p className="text-destructive dark:text-destructive/80">
+              <p className="
+                text-destructive
+                dark:text-destructive/80
+              "
+              >
                 ✗
                 {' '}
                 {LL.sync.notesFailed({ count: result.failedNotes.length })}
@@ -211,7 +226,10 @@ export function PublishResult({ result, onDismiss }: PublishResultProps) {
             {result.errors.length > 0 && (
               <div className="mt-2 space-y-1">
                 {result.errors.slice(0, 3).map(error => (
-                  <p key={error.noteId + crypto.randomUUID()} className="text-muted-foreground text-xs">
+                  <p
+                    key={error.noteId + crypto.randomUUID()}
+                    className="text-muted-foreground text-xs"
+                  >
                     {error.error}
                   </p>
                 ))}

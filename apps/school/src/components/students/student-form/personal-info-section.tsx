@@ -38,12 +38,16 @@ export function PersonalInfoSection() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20"
+      className="
+        border-border/20
+        dark:bg-card/20
+        rounded-xl border bg-white/50 backdrop-blur-xl
+      "
     >
-      <div className="border-b border-border/10 bg-white/30 px-6 py-4">
+      <div className="border-border/10 border-b bg-white/30 px-6 py-4">
         <h3 className="text-lg font-semibold">{t.students.personalInfo()}</h3>
       </div>
-      <div className="p-6 space-y-8">
+      <div className="space-y-8 p-6">
         {/* Photo Upload */}
         <div className="flex items-center gap-4">
           <Avatar className="h-24 w-24">
@@ -66,8 +70,25 @@ export function PersonalInfoSection() {
                   </Button>
                 )
               : (
-                  <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-                    {isUploadingPhoto ? <IconLoader2 className="h-4 w-4 animate-spin" /> : <IconUpload className="h-4 w-4" />}
+                  <label className="
+                    border-input bg-background ring-offset-background
+                    hover:bg-accent hover:text-accent-foreground
+                    focus-visible:ring-ring
+                    inline-flex cursor-pointer items-center justify-center gap-2
+                    rounded-md border px-4 py-2 text-sm font-medium
+                    transition-colors
+                    focus-visible:ring-2 focus-visible:ring-offset-2
+                    focus-visible:outline-none
+                    disabled:pointer-events-none disabled:opacity-50
+                  "
+                  >
+                    {isUploadingPhoto
+                      ? (
+                          <IconLoader2 className="h-4 w-4 animate-spin" />
+                        )
+                      : (
+                          <IconUpload className="h-4 w-4" />
+                        )}
                     {isUploadingPhoto ? t.common.uploading() : t.students.uploadPhoto()}
                     <input
                       ref={fileInputRef}
@@ -85,13 +106,17 @@ export function PersonalInfoSection() {
                     />
                   </label>
                 )}
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {t.students.photoRequirements()}
             </p>
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="
+          grid gap-4
+          sm:grid-cols-2
+        "
+        >
           <FormField
             control={form.control}
             name="lastName"
@@ -159,9 +184,16 @@ export function PersonalInfoSection() {
                       <SelectValue placeholder={t.students.selectGender()}>
                         {field.value && (
                           <div className="flex items-center gap-2">
-                            <div className={`h-2 w-2 rounded-full ${
-                              field.value === 'M' ? 'bg-blue-500' : field.value === 'F' ? 'bg-pink-500' : 'bg-gray-500'
-                            }`}
+                            <div className={`
+                              h-2 w-2 rounded-full
+                              ${
+                          field.value === 'M'
+                            ? 'bg-blue-500'
+                            : field.value === 'F'
+                              ? `bg-pink-500`
+                              : `bg-gray-500`
+                          }
+                            `}
                             />
                             <span className="ml-2">
                               {field.value === 'M' ? t.students.male() : field.value === 'F' ? t.students.female() : t.students.other()}
@@ -207,7 +239,11 @@ export function PersonalInfoSection() {
           />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="
+          grid gap-4
+          sm:grid-cols-2
+        "
+        >
           <FormField
             control={form.control}
             name="matricule"

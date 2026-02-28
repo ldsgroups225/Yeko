@@ -62,7 +62,6 @@ export const remotePublishHandler: RemotePublishHandler = async (note: NoteWithD
           data: {
             studentId: detail.studentId,
             classId: note.classId,
-            teacherId: note.teacherId,
             title: note.title,
             content: note.description || 'N/A',
             type: note.type as 'behavior' | 'general' | 'other',

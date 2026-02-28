@@ -69,14 +69,19 @@ export function StudentFeesTable({
 
   if (studentFees.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconUsers className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconUsers className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">
           {t.finance.studentFees.noStudentFees()}
         </p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+        <p className="text-muted-foreground/70 mt-1 max-w-sm text-sm">
           {t.finance.studentFees.description()}
         </p>
       </div>
@@ -85,10 +90,18 @@ export function StudentFeesTable({
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">
                 {t.students.matricule()}
               </TableHead>
@@ -120,12 +133,19 @@ export function StudentFeesTable({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-muted/30 border-border/40 transition-colors"
+                  className="
+                    group
+                    hover:bg-muted/30
+                    border-border/40 transition-colors
+                  "
                 >
-                  <TableCell className="font-mono text-sm text-muted-foreground font-medium">
+                  <TableCell className="
+                    text-muted-foreground font-mono text-sm font-medium
+                  "
+                  >
                     {fee.matricule || '-'}
                   </TableCell>
-                  <TableCell className="font-bold text-foreground">
+                  <TableCell className="text-foreground font-bold">
                     {fee.studentName}
                   </TableCell>
                   <TableCell>
@@ -136,7 +156,7 @@ export function StudentFeesTable({
                           </Badge>
                         )
                       : (
-                          <span className="text-muted-foreground italic text-sm">
+                          <span className="text-muted-foreground text-sm italic">
                             -
                           </span>
                         )}
@@ -144,24 +164,32 @@ export function StudentFeesTable({
                   <TableCell className="text-right font-medium">
                     {formatCurrency(fee.totalFees)}
                     {' '}
-                    <span className="text-xs text-muted-foreground ml-1">
+                    <span className="text-muted-foreground ml-1 text-xs">
                       FCFA
                     </span>
                   </TableCell>
-                  <TableCell className="text-right font-bold text-green-600 dark:text-green-500">
+                  <TableCell className="
+                    text-right font-bold text-green-600
+                    dark:text-green-500
+                  "
+                  >
                     {formatCurrency(fee.paidAmount)}
                     {' '}
-                    <span className="text-xs ml-1 opacity-70">FCFA</span>
+                    <span className="ml-1 text-xs opacity-70">FCFA</span>
                   </TableCell>
-                  <TableCell className="text-right font-bold text-orange-600 dark:text-orange-500">
+                  <TableCell className="
+                    text-right font-bold text-orange-600
+                    dark:text-orange-500
+                  "
+                  >
                     {formatCurrency(fee.balance)}
                     {' '}
-                    <span className="text-xs ml-1 opacity-70">FCFA</span>
+                    <span className="ml-1 text-xs opacity-70">FCFA</span>
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant={getStatusVariant(fee.status)}
-                      className="capitalize rounded-md"
+                      className="rounded-md capitalize"
                     >
                       {{
                         pending: t.finance.payments.status.pending,
@@ -190,7 +218,11 @@ export function StudentFeesTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {studentFees.map((fee, index) => (
             <motion.div
@@ -198,12 +230,18 @@ export function StudentFeesTable({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-4"
+              className="
+                bg-card/50 border-border/40 space-y-4 rounded-2xl border p-4
+                backdrop-blur-md
+              "
             >
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div>
-                  <div className="font-bold text-lg">{fee.studentName}</div>
-                  <div className="text-xs font-mono text-muted-foreground mt-0.5">
+                  <div className="text-lg font-bold">{fee.studentName}</div>
+                  <div className="
+                    text-muted-foreground mt-0.5 font-mono text-xs
+                  "
+                  >
                     {fee.matricule || 'N/A'}
                   </div>
                 </div>
@@ -215,25 +253,50 @@ export function StudentFeesTable({
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 rounded-xl bg-green-500/5 border border-green-500/20">
-                  <div className="text-xs text-green-700 dark:text-green-400 uppercase tracking-wider mb-1">
+                <div className="
+                  rounded-xl border border-green-500/20 bg-green-500/5 p-3
+                "
+                >
+                  <div className="
+                    mb-1 text-xs tracking-wider text-green-700 uppercase
+                    dark:text-green-400
+                  "
+                  >
                     {t.finance.studentFees.paidAmount()}
                   </div>
-                  <div className="font-bold text-lg text-green-700 dark:text-green-400">
+                  <div className="
+                    text-lg font-bold text-green-700
+                    dark:text-green-400
+                  "
+                  >
                     {formatCurrency(fee.paidAmount)}
                   </div>
                 </div>
-                <div className="p-3 rounded-xl bg-orange-500/5 border border-orange-500/20">
-                  <div className="text-xs text-orange-700 dark:text-orange-400 uppercase tracking-wider mb-1">
+                <div className="
+                  rounded-xl border border-orange-500/20 bg-orange-500/5 p-3
+                "
+                >
+                  <div className="
+                    mb-1 text-xs tracking-wider text-orange-700 uppercase
+                    dark:text-orange-400
+                  "
+                  >
                     {t.finance.studentFees.balance()}
                   </div>
-                  <div className="font-bold text-lg text-orange-700 dark:text-orange-400">
+                  <div className="
+                    text-lg font-bold text-orange-700
+                    dark:text-orange-400
+                  "
+                  >
                     {formatCurrency(fee.balance)}
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-border/30">
+              <div className="
+                border-border/30 flex items-center justify-between border-t pt-2
+              "
+              >
                 <div className="text-sm">
                   <span className="text-muted-foreground mr-2">
                     {t.finance.studentFees.totalFees()}
@@ -247,7 +310,7 @@ export function StudentFeesTable({
                 </div>
                 <Badge
                   variant={getStatusVariant(fee.status)}
-                  className="capitalize rounded-md"
+                  className="rounded-md capitalize"
                 >
                   {{
                     pending: t.finance.payments.status.pending,

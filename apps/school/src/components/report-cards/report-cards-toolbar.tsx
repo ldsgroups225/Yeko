@@ -26,18 +26,33 @@ export function ReportCardsToolbar({
   const t = useTranslations()
 
   return (
-    <div className="pt-4 border-t border-border/10 flex flex-col sm:flex-row items-center gap-4">
-      <div className="relative flex-1 w-full">
-        <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+    <div className="
+      border-border/10 flex flex-col items-center gap-4 border-t pt-4
+      sm:flex-row
+    "
+    >
+      <div className="relative w-full flex-1">
+        <IconSearch className="
+          text-muted-foreground/60 absolute top-1/2 left-3 h-4 w-4
+          -translate-y-1/2
+        "
+        />
         <Input
           placeholder={t.students.searchPlaceholder()}
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="h-11 border-border/40 bg-background/40 pl-9 transition-all focus:bg-background shadow-none rounded-xl"
+          className="
+            border-border/40 bg-background/40
+            focus:bg-background
+            h-11 rounded-xl pl-9 shadow-none transition-all
+          "
         />
       </div>
       <div className="flex gap-2">
-        <div className="flex bg-muted/20 p-1 rounded-xl border border-border/20 mr-2">
+        <div className="
+          bg-muted/20 border-border/20 mr-2 flex rounded-xl border p-1
+        "
+        >
           <Button
             variant={viewMode === 'cards' ? 'secondary' : 'ghost'}
             size="sm"
@@ -60,7 +75,11 @@ export function ReportCardsToolbar({
 
         <Button
           variant="outline"
-          className="h-11 px-6 border-border/40 bg-background/40 hover:bg-background rounded-xl font-bold uppercase tracking-widest text-[10px]"
+          className="
+            border-border/40 bg-background/40
+            hover:bg-background
+            h-11 rounded-xl px-6 text-[10px] font-bold tracking-widest uppercase
+          "
         >
           <IconFilter className="mr-2 h-4 w-4" />
           {t.common.filters()}
@@ -68,8 +87,21 @@ export function ReportCardsToolbar({
         <Button
           variant={viewMode === 'averages' ? 'secondary' : 'default'}
           className={cn(
-            'h-11 px-6 rounded-xl font-bold uppercase tracking-widest text-[10px]',
-            viewMode === 'averages' ? 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20' : 'bg-primary hover:bg-primary/90 text-primary-foreground',
+            `
+              h-11 rounded-xl px-6 text-[10px] font-bold tracking-widest
+              uppercase
+            `,
+            viewMode === 'averages'
+              ? `
+                bg-primary/10 text-primary
+                hover:bg-primary/20
+                border-primary/20 border
+              `
+              : `
+                bg-primary
+                hover:bg-primary/90
+                text-primary-foreground
+              `,
           )}
           onClick={() => {
             if (viewMode === 'averages')
@@ -79,7 +111,11 @@ export function ReportCardsToolbar({
           }}
           disabled={isRecalculating}
         >
-          {isRecalculating ? <IconSchool className="mr-2 h-4 w-4 animate-spin" /> : <IconFileText className="mr-2 h-4 w-4" />}
+          {isRecalculating
+            ? <IconSchool className="mr-2 h-4 w-4 animate-spin" />
+            : (
+                <IconFileText className="mr-2 h-4 w-4" />
+              )}
           {viewMode === 'averages' ? t.academic.grades.averages.recalculate() : t.reportCards.generate()}
         </Button>
       </div>

@@ -35,7 +35,9 @@ export function ThemeToggle({
     if (theme === 'system') {
       return (
         <IconDeviceDesktop
-          className="h-4 w-4 transition-all duration-300 ease-in-out rotate-0 scale-100"
+          className="
+            h-4 w-4 scale-100 rotate-0 transition-all duration-300 ease-in-out
+          "
           aria-hidden="true"
         />
       )
@@ -44,7 +46,9 @@ export function ThemeToggle({
     if (resolvedTheme === 'dark') {
       return (
         <IconMoon
-          className="h-4 w-4 transition-all duration-500 ease-in-out rotate-0 scale-100"
+          className="
+            h-4 w-4 scale-100 rotate-0 transition-all duration-500 ease-in-out
+          "
           aria-hidden="true"
         />
       )
@@ -52,7 +56,9 @@ export function ThemeToggle({
 
     return (
       <IconSun
-        className="h-4 w-4 transition-all duration-500 ease-in-out rotate-0 scale-100"
+        className="
+          h-4 w-4 scale-100 rotate-0 transition-all duration-500 ease-in-out
+        "
         aria-hidden="true"
       />
     )
@@ -91,9 +97,11 @@ export function ThemeToggle({
             variant={variant}
             size={size}
             className={`
+              focus:ring-ring
               relative overflow-hidden transition-all duration-200 ease-in-out
-              hover:scale-105 active:scale-95
-              focus:ring-2 focus:ring-ring focus:ring-offset-2
+              hover:scale-105
+              focus:ring-2 focus:ring-offset-2
+              active:scale-95
               ${showLabel ? 'gap-2' : 'aspect-square'}
             `}
             aria-label={t.ui.toggleTheme()}
@@ -117,7 +125,10 @@ export function ThemeToggle({
 
       <DropdownMenuContent
         align={align}
-        className="w-56 p-2 bg-popover/95 backdrop-blur-sm border border-border/50 shadow-lg"
+        className="
+          bg-popover/95 border-border/50 w-56 border p-2 shadow-lg
+          backdrop-blur-sm
+        "
       >
         <div className="grid gap-1">
           {themeOptions.map((option) => {
@@ -129,39 +140,50 @@ export function ThemeToggle({
                 key={option.value}
                 onClick={() => handleThemeSelect(option.value)}
                 className={`
-                  flex items-center gap-3 px-3 py-2.5 cursor-pointer
-                  transition-all duration-200 ease-in-out
-                  hover:bg-accent/80 focus:bg-accent/80
-                  rounded-md group
+                  hover:bg-accent/80
+                  focus:bg-accent/80
+                  group flex cursor-pointer items-center gap-3 rounded-md px-3
+                  py-2.5 transition-all duration-200 ease-in-out
                   ${isSelected ? 'bg-accent/60 text-accent-foreground' : ''}
                 `}
               >
-                <div className="flex items-center justify-center w-5 h-5">
+                <div className="flex h-5 w-5 items-center justify-center">
                   <Icon
                     className={`
                       h-4 w-4 transition-all duration-200
-                      ${isSelected ? 'text-accent-foreground scale-110' : 'text-muted-foreground'}
+                      ${isSelected
+                ? 'text-accent-foreground scale-110'
+                : `text-muted-foreground`}
                       group-hover:scale-105
                     `}
                   />
                 </div>
 
-                <div className="flex flex-col flex-1 min-w-0">
+                <div className="flex min-w-0 flex-1 flex-col">
                   <span
                     className={`
-                    text-sm font-medium leading-none
-                    ${isSelected ? 'text-accent-foreground' : 'text-foreground'}
-                  `}
+                      text-sm leading-none font-medium
+                      ${isSelected
+                ? 'text-accent-foreground'
+                : `text-foreground`}
+                    `}
                   >
                     {option.label}
                   </span>
-                  <span className="text-xs text-muted-foreground mt-0.5 leading-none">
+                  <span className="
+                    text-muted-foreground mt-0.5 text-xs leading-none
+                  "
+                  >
                     {option.description}
                   </span>
                 </div>
 
                 {isSelected && (
-                  <IconCheck className="h-4 w-4 text-accent-foreground animate-in fade-in-0 zoom-in-75 duration-150" />
+                  <IconCheck className="
+                    text-accent-foreground animate-in fade-in-0 zoom-in-75 h-4
+                    w-4 duration-150
+                  "
+                  />
                 )}
               </DropdownMenuItem>
             )
@@ -169,13 +191,16 @@ export function ThemeToggle({
         </div>
 
         {resolvedTheme && (
-          <div className="border-t border-border/50 mt-2 pt-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-muted-foreground">
+          <div className="border-border/50 mt-2 border-t pt-2">
+            <div className="
+              text-muted-foreground flex items-center gap-2 px-3 py-1.5 text-xs
+            "
+            >
               <div
                 className={`
-                w-2 h-2 rounded-full transition-colors duration-200
-                ${resolvedTheme === 'dark' ? 'bg-primary' : 'bg-secondary'}
-              `}
+                  h-2 w-2 rounded-full transition-colors duration-200
+                  ${resolvedTheme === 'dark' ? 'bg-primary' : 'bg-secondary'}
+                `}
               />
               Currently using
               {' '}

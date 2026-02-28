@@ -61,7 +61,11 @@ function Analytics() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="
+        flex flex-col gap-4
+        md:flex-row md:items-center md:justify-between
+      "
+      >
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             Analytiques du Système
@@ -76,7 +80,7 @@ function Analytics() {
             onValueChange={v => setTimeRange(v as TimeRange)}
           >
             <SelectTrigger className="w-[180px]">
-              <IconCalendar className="h-4 w-4 mr-2" />
+              <IconCalendar className="mr-2 h-4 w-4" />
               <SelectValue placeholder="Période">
                 {timeRange === '7d' && '7 derniers jours'}
                 {timeRange === '30d' && '30 derniers jours'}
@@ -99,17 +103,25 @@ function Analytics() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-4
+      "
+      >
         {overviewPending
           ? (
               [1, 2, 3, 4].map(i => (
                 <Card key={i}>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardHeader className="
+                    flex flex-row items-center justify-between space-y-0 pb-2
+                  "
+                  >
                     <Skeleton className="h-4 w-24" />
                     <Skeleton className="h-4 w-4" />
                   </CardHeader>
                   <CardContent>
-                    <Skeleton className="h-8 w-16 mb-2" />
+                    <Skeleton className="mb-2 h-8 w-16" />
                     <Skeleton className="h-3 w-20" />
                   </CardContent>
                 </Card>
@@ -150,7 +162,11 @@ function Analytics() {
       </div>
 
       {/* Platform Usage */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="
+        grid gap-6
+        lg:grid-cols-2
+      "
+      >
         {/* DAU/WAU/MAU */}
         <Card>
           <CardHeader>
@@ -216,20 +232,29 @@ function Analytics() {
               : (
                   <div className="space-y-3">
                     {platformUsage?.featureUsage?.slice(0, 5).map(feature => (
-                      <div key={feature.name} className="flex items-center gap-3">
+                      <div
+                        key={feature.name}
+                        className="flex items-center gap-3"
+                      >
                         <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
+                          <div className="
+                            mb-1 flex items-center justify-between
+                          "
+                          >
                             <span className="text-sm font-medium">
                               {feature.name}
                             </span>
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-muted-foreground text-sm">
                               {feature.usage}
                               %
                             </span>
                           </div>
-                          <div className="w-full bg-secondary rounded-full h-2">
+                          <div className="bg-secondary h-2 w-full rounded-full">
                             <div
-                              className="bg-primary h-2 rounded-full transition-all duration-500"
+                              className="
+                                bg-primary h-2 rounded-full transition-all
+                                duration-500
+                              "
                               style={{ width: `${feature.usage}%` }}
                             />
                           </div>
@@ -243,7 +268,11 @@ function Analytics() {
       </div>
 
       {/* Schools Performance */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="
+        grid gap-6
+        lg:grid-cols-2
+      "
+      >
         {/* Schools by Status */}
         <Card>
           <CardHeader>
@@ -311,16 +340,24 @@ function Analytics() {
                     {schoolsPerf?.topSchools?.slice(0, 5).map((school, index) => (
                       <div
                         key={school.id}
-                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors"
+                        className="
+                          hover:bg-accent/50
+                          flex items-center gap-3 rounded-lg p-2
+                          transition-colors
+                        "
                       >
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-sm font-medium">
+                        <div className="
+                          bg-primary/10 flex h-8 w-8 items-center justify-center
+                          rounded-full text-sm font-medium
+                        "
+                        >
                           {index + 1}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium">
                             {school.name}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-muted-foreground text-xs">
                             {school.code}
                           </p>
                         </div>
@@ -329,7 +366,7 @@ function Analytics() {
                             {school.engagementScore}
                             %
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-muted-foreground text-xs">
                             engagement
                           </p>
                         </div>
@@ -355,14 +392,24 @@ function Analytics() {
         <CardContent>
           {usagePending
             ? (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="
+                  grid gap-4
+                  md:grid-cols-2
+                  lg:grid-cols-4
+                "
+                >
                   {[1, 2, 3, 4].map(i => (
                     <Skeleton key={i} className="h-20 w-full" />
                   ))}
                 </div>
               )
             : (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="
+                  grid gap-4
+                  md:grid-cols-2
+                  lg:grid-cols-4
+                "
+                >
                   <PerformanceMetric
                     label="Requêtes API"
                     value={`${platformUsage?.apiEndpoints?.reduce((sum, e) => sum + e.requests, 0)?.toLocaleString() || 0}`}
@@ -407,14 +454,20 @@ function KpiCard({
 }) {
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="
+        flex flex-row items-center justify-between space-y-0 pb-2
+      "
+      >
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <Icon className="text-muted-foreground h-4 w-4" />
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         <p
-          className={`text-xs ${positive ? 'text-success' : 'text-destructive'}`}
+          className={`
+            text-xs
+            ${positive ? 'text-success' : 'text-destructive'}
+          `}
         >
           {change}
           {' '}
@@ -439,13 +492,13 @@ function UsageBar({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
+      <div className="mb-1 flex items-center justify-between">
         <span className="text-sm font-medium">{label}</span>
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {value.toLocaleString()}
         </span>
       </div>
-      <div className="w-full bg-secondary rounded-full h-2">
+      <div className="bg-secondary h-2 w-full rounded-full">
         <div
           className="bg-primary h-2 rounded-full transition-all duration-500"
           style={{ width: `${percentage}%` }}
@@ -470,13 +523,16 @@ function StatusBar({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
+      <div className="mb-1 flex items-center justify-between">
         <span className="text-sm font-medium">{label}</span>
-        <span className="text-sm text-muted-foreground">{count}</span>
+        <span className="text-muted-foreground text-sm">{count}</span>
       </div>
-      <div className="w-full bg-secondary rounded-full h-2">
+      <div className="bg-secondary h-2 w-full rounded-full">
         <div
-          className={`${color} h-2 rounded-full`}
+          className={`
+            ${color}
+            h-2 rounded-full
+          `}
           style={{ width: `${percentage}%` }}
         />
       </div>
@@ -495,10 +551,10 @@ function PerformanceMetric({
   sublabel: string
 }) {
   return (
-    <div className="space-y-2 p-4 rounded-lg border bg-muted/30">
+    <div className="bg-muted/30 space-y-2 rounded-lg border p-4">
       <p className="text-sm font-medium">{label}</p>
       <p className="text-2xl font-bold">{value}</p>
-      <p className="text-xs text-muted-foreground">{sublabel}</p>
+      <p className="text-muted-foreground text-xs">{sublabel}</p>
     </div>
   )
 }

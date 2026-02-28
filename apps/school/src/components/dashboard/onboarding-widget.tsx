@@ -72,10 +72,14 @@ export function OnboardingWidget() {
   const activeStepIndex = steps.findIndex(s => !s.isCompleted)
 
   return (
-    <Card className="border border-primary/20 bg-primary/5 shadow-sm mb-6">
+    <Card className="border-primary/20 bg-primary/5 mb-6 border shadow-sm">
       <CardHeader>
-        <CardTitle className="text-lg font-bold flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+        <CardTitle className="flex items-center gap-2 text-lg font-bold">
+          <span className="
+            bg-primary text-primary-foreground flex h-6 w-6 items-center
+            justify-center rounded-full text-xs
+          "
+          >
             {activeStepIndex + 1}
           </span>
           Configuration Initiale
@@ -93,18 +97,24 @@ export function OnboardingWidget() {
             <div
               key={step.id}
               className={cn(
-                'flex items-center justify-between p-3 rounded-xl border transition-all',
+                `
+                  flex items-center justify-between rounded-xl border p-3
+                  transition-all
+                `,
                 step.isCompleted
                   ? 'bg-card/50 border-border/40 opacity-70'
                   : isActive
                     ? 'bg-card border-primary/40 shadow-sm'
-                    : 'bg-transparent border-transparent opacity-50',
+                    : 'border-transparent bg-transparent opacity-50',
               )}
             >
               <div className="flex items-center gap-4">
                 <div
                   className={cn(
-                    'h-10 w-10 rounded-full flex items-center justify-center transition-colors',
+                    `
+                      flex h-10 w-10 items-center justify-center rounded-full
+                      transition-colors
+                    `,
                     step.isCompleted
                       ? 'bg-success/10 text-success'
                       : isActive
@@ -124,12 +134,12 @@ export function OnboardingWidget() {
                   <h4
                     className={cn(
                       'font-medium',
-                      step.isCompleted && 'line-through text-muted-foreground',
+                      step.isCompleted && 'text-muted-foreground line-through',
                     )}
                   >
                     {step.title}
                   </h4>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {step.description}
                   </p>
                 </div>

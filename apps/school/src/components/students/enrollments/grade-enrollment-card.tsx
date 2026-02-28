@@ -18,7 +18,7 @@ export function GradeEnrollmentCard({ data }: GradeEnrollmentCardProps) {
   const t = useTranslations()
 
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+    <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
       <CardHeader>
         <CardTitle>{t.students.enrollmentByGrade()}</CardTitle>
         <CardDescription>{t.students.enrollmentByGradeDescription()}</CardDescription>
@@ -27,7 +27,7 @@ export function GradeEnrollmentCard({ data }: GradeEnrollmentCardProps) {
         <div className="space-y-4">
           {data.length === 0
             ? (
-                <p className="text-center text-sm text-muted-foreground">{t.students.noEnrollmentData()}</p>
+                <p className="text-muted-foreground text-center text-sm">{t.students.noEnrollmentData()}</p>
               )
             : (
                 data.map(grade => (

@@ -54,9 +54,12 @@ function EditRolePage() {
             { label: role.name },
           ]}
         />
-        <div className="rounded-lg border border-destructive bg-destructive/10 p-6">
-          <h2 className="text-lg font-semibold text-destructive">{t.hr.roles.cannotEditSystem()}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">{t.hr.roles.systemRoleDescription()}</p>
+        <div className="
+          border-destructive bg-destructive/10 rounded-lg border p-6
+        "
+        >
+          <h2 className="text-destructive text-lg font-semibold">{t.hr.roles.cannotEditSystem()}</h2>
+          <p className="text-muted-foreground mt-2 text-sm">{t.hr.roles.systemRoleDescription()}</p>
         </div>
       </div>
     )

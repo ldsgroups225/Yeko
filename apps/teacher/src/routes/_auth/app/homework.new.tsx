@@ -172,12 +172,16 @@ function NewHomeworkPage() {
                 <div className="space-y-2">
                   <Label>{LL.homework.dueDate()}</Label>
                   <div className="relative">
-                    <IconCalendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <IconCalendar className="
+                      text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                      -translate-y-1/2
+                    "
+                    />
                     <Suspense fallback={<Skeleton className="h-10 w-full" />}>
                       <DatePicker
                         date={dueDate ? new Date(dueDate) : undefined}
                         onSelect={(date: Date | undefined) => setDueDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
-                        className="pl-9 justify-start font-normal"
+                        className="justify-start pl-9 font-normal"
                       />
                     </Suspense>
                   </div>
@@ -195,7 +199,7 @@ function NewHomeworkPage() {
           )}
 
       {/* Action buttons */}
-      <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
+      <div className="bg-background fixed inset-x-0 bottom-16 border-t p-4">
         <div className="flex gap-2">
           <Button
             variant="outline"

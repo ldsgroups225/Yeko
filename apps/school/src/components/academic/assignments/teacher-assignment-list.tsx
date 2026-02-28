@@ -59,16 +59,28 @@ export function TeacherAssignmentList() {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between"
+        className="
+          border-border/40 bg-card/50 flex flex-col gap-4 rounded-xl border p-4
+          backdrop-blur-xl
+          sm:flex-row sm:items-center sm:justify-between
+        "
       >
         <div className="flex flex-1 gap-3">
           <div className="relative max-w-sm flex-1">
-            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="
+              text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+              -translate-y-1/2
+            "
+            />
             <Input
               placeholder={t.academic.assignments.searchPlaceholder()}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="border-border/40 bg-card/50 pl-9 transition-all focus:bg-card/80 shadow-none"
+              className="
+                border-border/40 bg-card/50
+                focus:bg-card/80
+                pl-9 shadow-none transition-all
+              "
             />
           </div>
 
@@ -77,7 +89,11 @@ export function TeacherAssignmentList() {
               render={(
                 <Button
                   variant="outline"
-                  className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80"
+                  className="
+                    border-border/40 bg-card/50
+                    hover:bg-card/80
+                    shadow-none backdrop-blur-sm
+                  "
                 >
                   <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
                   {t.common.actions()}
@@ -85,11 +101,18 @@ export function TeacherAssignmentList() {
               )}
             />
             <PopoverContent
-              className="w-80 p-4 space-y-4 backdrop-blur-2xl bg-popover/90 border border-border/40"
+              className="
+                bg-popover/90 border-border/40 w-80 space-y-4 border p-4
+                backdrop-blur-2xl
+              "
               align="start"
             >
-              <div className="pt-2 space-y-2">
-                <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">
+              <div className="space-y-2 pt-2">
+                <h4 className="
+                  text-muted-foreground mb-3 text-xs leading-none font-medium
+                  tracking-wider uppercase
+                "
+                >
                   {t.common.quickActions()}
                 </h4>
                 <Button
@@ -106,17 +129,27 @@ export function TeacherAssignmentList() {
         </div>
       </motion.div>
 
-      <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden">
+      <div className="
+        border-border/40 bg-card/40 overflow-hidden rounded-xl border
+        backdrop-blur-xl
+      "
+      >
         {hasNoData
           ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
-                  <IconBook className="h-12 w-12 text-muted-foreground/50" />
+              <div className="
+                flex flex-col items-center justify-center py-24 text-center
+              "
+              >
+                <div className="
+                  mb-4 rounded-full bg-white/10 p-6 backdrop-blur-xl
+                "
+                >
+                  <IconBook className="text-muted-foreground/50 h-12 w-12" />
                 </div>
                 <h3 className="text-lg font-semibold">
                   {t.academic.assignments.noTeachers()}
                 </h3>
-                <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                <p className="text-muted-foreground mt-2 max-w-sm text-sm">
                   {search
                     ? t.academic.assignments.adjustSearch()
                     : t.academic.assignments.noTeachersForAssignment()}
@@ -126,7 +159,11 @@ export function TeacherAssignmentList() {
           : (
               <Table>
                 <TableHeader className="bg-card/20">
-                  <TableRow className="hover:bg-transparent border-border/40">
+                  <TableRow className="
+                    border-border/40
+                    hover:bg-transparent
+                  "
+                  >
                     <TableHead className="text-foreground font-semibold">
                       {t.academic.assignments.teacher()}
                     </TableHead>
@@ -148,11 +185,18 @@ export function TeacherAssignmentList() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ delay: index * 0.02 }}
-                        className="border-border/10 group hover:bg-card/30 transition-colors"
+                        className="
+                          border-border/10 group
+                          hover:bg-card/30
+                          transition-colors
+                        "
                       >
                         <TableCell className="py-4">
                           <div className="flex items-center gap-3">
-                            <Avatar className="h-10 w-10 border border-border/20">
+                            <Avatar className="
+                              border-border/20 h-10 w-10 border
+                            "
+                            >
                               <AvatarImage
                                 src={teacher.user.avatarUrl || undefined}
                               />
@@ -161,10 +205,10 @@ export function TeacherAssignmentList() {
                               </AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col">
-                              <span className="font-medium text-foreground">
+                              <span className="text-foreground font-medium">
                                 {teacher.user.name}
                               </span>
-                              <span className="text-xs text-muted-foreground">
+                              <span className="text-muted-foreground text-xs">
                                 {teacher.user.email}
                               </span>
                             </div>
@@ -175,7 +219,11 @@ export function TeacherAssignmentList() {
                             ? (
                                 <Badge
                                   variant="outline"
-                                  className="bg-primary/5 border-primary/20 text-foreground font-semibold text-[10px] uppercase tracking-wider"
+                                  className="
+                                    bg-primary/5 border-primary/20
+                                    text-foreground text-[10px] font-semibold
+                                    tracking-wider uppercase
+                                  "
                                 >
                                   {teacher.specialization}
                                 </Badge>
@@ -192,21 +240,36 @@ export function TeacherAssignmentList() {
                                     <Badge
                                       key={`${teacher.id}-${sub}`}
                                       variant="secondary"
-                                      className="text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary border-primary/20 shadow-none hover:bg-primary/20 transition-colors"
+                                      className="
+                                        bg-primary/10 text-primary
+                                        border-primary/20
+                                        hover:bg-primary/20
+                                        text-[10px] font-bold tracking-wider
+                                        uppercase shadow-none transition-colors
+                                      "
                                     >
                                       {sub}
                                     </Badge>
                                   ))
                                 )
                               : (
-                                  <span className="text-muted-foreground text-[10px] italic uppercase tracking-wider font-medium opacity-60">
+                                  <span className="
+                                    text-muted-foreground text-[10px]
+                                    font-medium tracking-wider uppercase italic
+                                    opacity-60
+                                  "
+                                  >
                                     {t.academic.assignments.noSubjectsAssigned()}
                                   </span>
                                 )}
                             {teacher.subjects?.length > 3 && (
                               <Badge
                                 variant="outline"
-                                className="text-[10px] font-bold bg-muted/20 border-border/40 hover:bg-muted/30 transition-colors"
+                                className="
+                                  bg-muted/20 border-border/40
+                                  hover:bg-muted/30
+                                  text-[10px] font-bold transition-colors
+                                "
                               >
                                 +
                                 {teacher.subjects.length - 3}
@@ -218,7 +281,10 @@ export function TeacherAssignmentList() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="hover:bg-primary/10 hover:text-primary transition-colors"
+                            className="
+                              hover:bg-primary/10 hover:text-primary
+                              transition-colors
+                            "
                             onClick={() =>
                               setSelectedTeacher({
                                 id: teacher.id,

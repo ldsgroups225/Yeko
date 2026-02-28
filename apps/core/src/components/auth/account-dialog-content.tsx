@@ -31,7 +31,7 @@ export default function AccountDialogContent() {
 
   return (
     <DialogContent className="sm:max-w-md">
-      <DialogHeader className="text-center pb-4">
+      <DialogHeader className="pb-4 text-center">
         <DialogTitle>Account</DialogTitle>
       </DialogHeader>
       <div className="flex flex-col items-center space-y-6 py-6">
@@ -44,24 +44,32 @@ export default function AccountDialogContent() {
             {fallbackText}
           </AvatarFallback>
         </Avatar>
-        <div className="text-center space-y-1">
+        <div className="space-y-1 text-center">
           {user.name && (
             <div className="text-lg font-semibold">{user.name}</div>
           )}
           {user.email && (
-            <div className="text-sm text-muted-foreground">{user.email}</div>
+            <div className="text-muted-foreground text-sm">{user.email}</div>
           )}
         </div>
-        <div className="flex flex-col gap-4 w-full mt-6">
-          <div className="flex items-center justify-between w-full py-3 px-4 rounded-lg border bg-card">
-            <span className="text-sm font-medium flex items-center gap-2">
+        <div className="mt-6 flex w-full flex-col gap-4">
+          <div className="
+            bg-card flex w-full items-center justify-between rounded-lg border
+            px-4 py-3
+          "
+          >
+            <span className="flex items-center gap-2 text-sm font-medium">
               <IconPalette className="h-4 w-4" />
               Theme
             </span>
             <ThemeToggle />
           </div>
-          <div className="flex items-center justify-between w-full py-3 px-4 rounded-lg border bg-card">
-            <span className="text-sm font-medium flex items-center gap-2">
+          <div className="
+            bg-card flex w-full items-center justify-between rounded-lg border
+            px-4 py-3
+          "
+          >
+            <span className="flex items-center gap-2 text-sm font-medium">
               <IconLanguage className="h-4 w-4" />
               Language
             </span>
