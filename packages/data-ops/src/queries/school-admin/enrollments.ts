@@ -81,7 +81,7 @@ export async function enrollStudent(data: {
 
   const db = getDb()
 
-  // 1. Parallelize verification queries
+  // Parallelize verification queries to reduce network latency (3 sequential → 1 round trip)
   const [student, classInfo, existing] = await Promise.all([
     // Verify student exists and belongs to school
     db.query.students.findFirst({

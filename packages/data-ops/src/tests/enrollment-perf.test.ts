@@ -1,8 +1,9 @@
+import { eq } from 'drizzle-orm'
 import { Result as R } from '@praha/byethrow'
-import { beforeAll, describe, expect, test } from 'vitest'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { getDb, initDatabase } from '../database/setup'
 import { educationLevels, grades, tracks } from '../drizzle/core-schema'
-import { classes as schoolClasses } from '../drizzle/school-schema'
+import { classes as schoolClasses, enrollments, schoolYears, schools, students } from '../drizzle/school-schema'
 import { createSchoolYearTemplate } from '../queries/programs'
 import { enrollStudent } from '../queries/school-admin/enrollments'
 import { createSchoolYear } from '../queries/school-admin/school-years'
@@ -12,11 +13,11 @@ import { nanoid } from 'nanoid'
 import './setup'
 
 // Helper to measure execution time
-async function measureTime(fn: () => Promise<any>): Promise<{ result: any, duration: number }> {
+async function measureTime<T>(fn: () => Promise<T>): Promise<{ result: T, duration: number }> {
   const start = performance.now()
-  await fn()
+  const result = await fn()
   const duration = performance.now() - start
-  return { result: null, duration }
+  return { result, duration }
 }
 
 describe('enrollment performance benchmark', () => {
@@ -144,5 +145,15 @@ describe('enrollment performance benchmark', () => {
 
     console.log(`⚡ Benchmark: Enrolled ${BATCH_SIZE} students in ${duration.toFixed(2)}ms (${(duration/BATCH_SIZE).toFixed(2)}ms/student)`)
     expect(duration).toBeGreaterThan(0)
+  })
+
+  afterAll(async () => {
+    const db = getDb()
+    // Cleanup: delete test data
+    await db.delete(enrollments).where(eq(enrollments.schoolYearId, testSchoolYearId))
+    await db.delete(schoolClasses).where(eq(schoolClasses.id, testClassId))
+    await db.delete(students).where(eq(students.schoolId, testSchoolId))
+    await db.delete(schoolYears).where(eq(schoolYears.id, testSchoolYearId))
+    await db.delete(schools).where(eq(schools.id, testSchoolId))
   })
 })
