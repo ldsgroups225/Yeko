@@ -93,7 +93,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
-    "@praha/byethrow": "catalog:",
     "@types/better-sqlite3": "catalog:",
     "@types/scrypt-js": "catalog:",
     "@vitest/coverage-v8": "catalog:",

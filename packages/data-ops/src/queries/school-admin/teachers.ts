@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ilike, or, sql, inArray } from 'drizzle-orm'
+import { and, count, desc, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
 import { auth_user } from '../../drizzle/auth-schema'
 import { grades, series, subjects } from '../../drizzle/core-schema'
@@ -74,7 +74,6 @@ export async function getTeachersBySchool(
     const allSubjects = await db
       .select({
         teacherId: teacherSubjects.teacherId,
-        subjectName: subjects.name,
         subjectShortName: subjects.shortName,
       })
       .from(teacherSubjects)
