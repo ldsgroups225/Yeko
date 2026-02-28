@@ -2707,6 +2707,10 @@ type RootTranslation = {
 			 * A​u​c​u​n​e​ ​s​p​é​c​i​a​l​i​s​a​t​i​o​n
 			 */
 			noSpecialization: string
+			/**
+			 * L​'​e​n​s​e​i​g​n​a​n​t​ ​d​o​i​t​ ​ê​t​r​e​ ​q​u​a​l​i​f​i​é​ ​p​o​u​r​ ​u​n​e​ ​m​a​t​i​è​r​e​ ​d​e​ ​c​e​t​t​e​ ​c​l​a​s​s​e​ ​(​v​o​i​r​ ​l​'​o​n​g​l​e​t​ ​M​a​t​i​è​r​e​s​)​.
+			 */
+			needQualification: string
 		}
 		staff: {
 			/**
@@ -11174,6 +11178,10 @@ export type TranslationFunctions = {
 			 * Aucune spécialisation
 			 */
 			noSpecialization: () => LocalizedString
+			/**
+			 * L'enseignant doit être qualifié pour une matière de cette classe (voir l'onglet Matières).
+			 */
+			needQualification: () => LocalizedString
 		}
 		staff: {
 			/**

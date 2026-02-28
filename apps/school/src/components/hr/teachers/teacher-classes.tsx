@@ -15,9 +15,9 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 
 import { useTranslations } from '@/i18n'
-import { classSubjectsMutations, classSubjectsOptions } from '@/lib/queries/class-subjects'
+import { classSubjectsMutations } from '@/lib/queries/class-subjects'
 import { classesOptions } from '@/lib/queries/classes'
-import { teacherKeys } from '@/lib/queries/teachers'
+import { teacherKeys, teacherOptions } from '@/lib/queries/teachers'
 import { cn } from '@/lib/utils'
 
 export interface TeacherClass {
@@ -36,19 +36,6 @@ interface TeacherClassesProps {
   teacherId?: string
 }
 
-interface ClassItem {
-  class: {
-    id: string
-    gradeName: string
-    section: string
-  }
-}
-
-interface ClassSubjectItem {
-  subjectId: string
-  subjectName: string
-}
-
 export function TeacherClasses({ classes, isPending, teacherId }: TeacherClassesProps) {
   const t = useTranslations()
   const queryClient = useQueryClient()
@@ -57,10 +44,12 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
   const [selectedSubjectId, setSelectedSubjectId] = useState<string>('')
 
   const { data: allClasses } = useQuery(classesOptions.list({ status: 'active' }))
-  const { data: classSubjects } = useQuery({
-    ...classSubjectsOptions.list({ classId: selectedClassId }),
-    enabled: !!selectedClassId,
+  const { data: teacher } = useQuery({
+    ...teacherOptions.detail(teacherId || ''),
+    enabled: !!teacherId,
   })
+
+  const teacherSubjects = teacher?.subjects || []
 
   const assignClassMutation = useMutation({
     ...classSubjectsMutations.assignTeacher,
@@ -120,13 +109,31 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
                   <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">{t.hr.teachers.newAssignment()}</h3>
                   <div className="space-y-3 flex-1 flex flex-col justify-center">
                     <Select value={selectedClassId} onValueChange={v => setSelectedClassId(v || '')}>
-                      <SelectTrigger className="w-full bg-background/50 border-primary/20 h-9">
-                        <SelectValue placeholder={t.hr.teachers.classPlaceholder()} />
+                      <SelectTrigger className="w-full bg-background/50 border-primary/20 h-9 font-bold">
+                        <SelectValue placeholder={t.hr.teachers.classPlaceholder()}>
+                          {selectedClassId
+                            ? (() => {
+                                const item = allClasses?.find(c => c.class.id === selectedClassId)
+                                return item
+                                  ? (
+                                      <div className="flex items-center gap-2">
+                                        <div className="size-2 rounded-full bg-primary" />
+                                        <span>
+                                          {item.grade.name}
+                                          {' '}
+                                          {item.class.section}
+                                        </span>
+                                      </div>
+                                    )
+                                  : undefined
+                              })()
+                            : undefined}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        {(allClasses as unknown as ClassItem[] | undefined)?.map(item => (
+                        {allClasses?.map(item => (
                           <SelectItem key={item.class.id} value={item.class.id}>
-                            {item.class.gradeName}
+                            {item.grade.name}
                             {' '}
                             {item.class.section}
                           </SelectItem>
@@ -134,22 +141,44 @@ export function TeacherClasses({ classes, isPending, teacherId }: TeacherClasses
                       </SelectContent>
                     </Select>
 
-                    <Select
-                      value={selectedSubjectId}
-                      onValueChange={v => setSelectedSubjectId(v || '')}
-                      disabled={!selectedClassId}
-                    >
-                      <SelectTrigger className="w-full bg-background/50 border-primary/20 h-9">
-                        <SelectValue placeholder={t.hr.teachers.subjectPlaceholder()} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {(classSubjects as unknown as ClassSubjectItem[] | undefined)?.map(sub => (
-                          <SelectItem key={sub.subjectId} value={sub.subjectId}>
-                            {sub.subjectName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="space-y-1">
+                      <Select
+                        value={selectedSubjectId}
+                        onValueChange={v => setSelectedSubjectId(v || '')}
+                        disabled={!selectedClassId}
+                      >
+                        <SelectTrigger className="w-full bg-background/50 border-primary/20 h-9 font-bold">
+                          <SelectValue placeholder={t.hr.teachers.subjectPlaceholder()}>
+                            {selectedSubjectId
+                              ? (() => {
+                                  const subject = teacherSubjects.find(s => s.subjectId === selectedSubjectId)
+                                  return subject
+                                    ? (
+                                        <div className="flex items-center gap-2">
+                                          <IconBook className="size-3.5 text-primary/60" />
+                                          <span>{subject.subjectName}</span>
+                                        </div>
+                                      )
+                                    : undefined
+                                })()
+                              : undefined}
+                          </SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teacherSubjects.map(sub => (
+                            <SelectItem key={sub.subjectId} value={sub.subjectId}>
+                              {sub.subjectName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {selectedClassId && teacherSubjects.length === 0 && (
+                        <p className="text-[10px] text-destructive/80 font-medium px-1 flex items-center gap-1">
+                          <IconX className="size-3" />
+                          {t.hr.teachers.needQualification()}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex gap-2 pt-1">

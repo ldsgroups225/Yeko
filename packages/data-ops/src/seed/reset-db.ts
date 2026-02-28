@@ -1,5 +1,4 @@
 import fs from 'node:fs'
-import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 
 // Load env vars if needed

@@ -13,6 +13,7 @@ import {
   updateTeacher,
 } from '@repo/data-ops/queries/school-admin/teachers'
 import { getTimetableByTeacher } from '@repo/data-ops/queries/timetables'
+import { databaseLogger } from '@repo/logger'
 import { z } from 'zod'
 import { teacherCreateSchema, teacherUpdateSchema } from '@/schemas/teacher'
 import { authServerFn } from '../lib/server-fn'
@@ -231,6 +232,10 @@ export const assignSubjects = authServerFn
     await requirePermission('teachers', 'edit')
 
     try {
+      if (!subjectIds || !Array.isArray(subjectIds)) {
+        return { success: false as const, error: 'Liste de matières invalide' }
+      }
+
       const result = await assignSubjectsToTeacher(teacherId, schoolId, subjectIds)
 
       await createAuditLog({
@@ -244,8 +249,17 @@ export const assignSubjects = authServerFn
 
       return { success: true as const, data: result }
     }
-    catch {
-      return { success: false as const, error: 'Erreur lors de l\'assignation des matières' }
+    catch (error) {
+      const errObj = error instanceof Error ? error : new Error(String(error as any))
+      databaseLogger.error('Teacher subject assignment failed', errObj, {
+        schoolId,
+        teacherId,
+        subjectIds,
+      })
+      return {
+        success: false as const,
+        error: 'Impossible d\'assigner les matières à ce professeur. Veuillez réessayer ou contacter le support.',
+      }
     }
   })
 

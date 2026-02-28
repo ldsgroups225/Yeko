@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { Translation } from '../i18n-types'
 
 const en: Translation = {
@@ -720,6 +721,7 @@ const en: Translation = {
       add: 'Add',
       teacherNotFoundDescription: 'The teacher you are looking for does not exist or has been deleted.',
       noSpecialization: 'No specialization',
+      needQualification: 'The teacher must be qualified for a subject in this class (see Subjects tab).',
     },
     staff: {
       title: 'Staff',

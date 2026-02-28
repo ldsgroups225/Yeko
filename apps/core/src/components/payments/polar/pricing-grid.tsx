@@ -1,4 +1,4 @@
-import type { Product, Products, Subscription } from './types'
+import type { Products, Subscription } from './types'
 import { PricingCard } from './pricing-card'
 
 interface PricingGridProps {

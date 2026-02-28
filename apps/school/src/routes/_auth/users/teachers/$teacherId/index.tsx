@@ -38,26 +38,14 @@ import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
 import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
-import { schoolMutationKeys } from '@/lib/queries/keys'
 import { schoolSubjectsOptions } from '@/lib/queries/school-subjects'
 import { teacherKeys, teacherMutations, teacherOptions } from '@/lib/queries/teachers'
 
 import { cn } from '@/lib/utils'
-import { deleteExistingTeacher } from '@/school/functions/teachers'
 
 export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
   component: TeacherDetailsPage,
 })
-
-interface TeacherSubject {
-  subjectId: string
-  subjectName: string
-}
-
-interface SchoolSubject {
-  id: string
-  name: string
-}
 
 function TeacherDetailsPage() {
   const { teacherId } = Route.useParams()
@@ -75,10 +63,7 @@ function TeacherDetailsPage() {
   })
 
   const deleteMutation = useMutation({
-    mutationKey: schoolMutationKeys.teachers.delete,
-    mutationFn: async () => {
-      return await deleteExistingTeacher({ data: teacherId })
-    },
+    ...teacherMutations.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teachers'] })
       toast.success(t.hr.teachers.deleteSuccess())
@@ -110,16 +95,26 @@ function TeacherDetailsPage() {
   const handleAddSubject = () => {
     if (!selectedSubjectId || !teacher)
       return
-    const currentSubjectIds = teacher.subjects?.map((s: TeacherSubject) => s.subjectId) || []
+    const currentSubjectIds = teacher.subjects?.map(s => s.subjectId) || []
     assignSubjectsMutation.mutate({
       teacherId,
       subjectIds: [...currentSubjectIds, selectedSubjectId],
     })
   }
 
+  const handleRemoveSubject = (subjectId: string) => {
+    if (!teacher)
+      return
+    const currentSubjectIds = teacher.subjects?.map(s => s.subjectId) || []
+    assignSubjectsMutation.mutate({
+      teacherId,
+      subjectIds: currentSubjectIds.filter((id: string) => id !== subjectId),
+    })
+  }
+
   const availableSubjects = useMemo(() => {
-    return (allSubjects?.subjects as SchoolSubject[] | undefined)?.filter(
-      s => !teacher?.subjects?.some((ts: TeacherSubject) => ts.subjectId === s.id),
+    return allSubjects?.subjects?.filter(
+      s => !teacher?.subjects?.some(ts => ts.subjectId === s.subject.id),
     ) || []
   }, [allSubjects?.subjects, teacher?.subjects])
   if (isPending) {
@@ -360,84 +355,132 @@ function TeacherDetailsPage() {
           </TabsContent>
 
           <TabsContent value="subjects" className="m-0">
-            <div className="rounded-3xl border border-border/40 bg-card/40 p-8 backdrop-blur-md shadow-sm">
-              <h2 className="text-xl font-bold mb-8 flex items-center gap-2">
-                <IconBook className="size-5 text-primary" />
-                {t.hr.teachers.assignedSubjects()}
-              </h2>
-              <div className="flex flex-wrap gap-3 items-center">
-                {teacher.subjects && teacher.subjects.length > 0
-                  ? (
-                      teacher.subjects.map((sub: TeacherSubject) => (
-                        <Badge
-                          key={sub.subjectId}
-                          className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
-                          variant="outline"
-                        >
-                          <IconBook className="mr-2 size-3.5" />
-                          {sub.subjectName}
-                        </Badge>
-                      ))
-                    )
-                  : (
-                      !isAddingSubject && (
-                        <div className="flex flex-col items-center justify-center py-10 w-full text-center">
-                          <IconBook className="mb-4 size-10 text-muted-foreground/30" />
-                          <p className="text-muted-foreground font-medium">
-                            {t.hr.teachers.noSubjects()}
-                          </p>
-                        </div>
-                      )
-                    )}
-
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {/* Add Subject Card */}
+              <motion.div
+                layout
+                className={cn(
+                  'relative overflow-hidden rounded-2xl border backdrop-blur-md transition-all',
+                  isAddingSubject
+                    ? 'border-primary/40 bg-primary/5 p-5 shadow-sm'
+                    : 'border-dashed border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 cursor-pointer flex flex-col items-center justify-center min-h-[160px]',
+                )}
+                onClick={!isAddingSubject ? () => setIsAddingSubject(true) : undefined}
+              >
                 {isAddingSubject
                   ? (
-                      <div className="flex items-center gap-2 animate-in fade-in zoom-in-95 duration-200">
-                        <Select
-                          value={selectedSubjectId}
-                          onValueChange={v => setSelectedSubjectId(v || '')}
-                        >
-                          <SelectTrigger className="h-9 w-[200px] rounded-xl border-primary/20 bg-background/50">
-                            <SelectValue placeholder={t.hr.teachers.chooseSubject()} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {availableSubjects.map(subject => (
-                              <SelectItem key={subject.id} value={subject.id}>
-                                {subject.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="size-9 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
-                          onClick={handleAddSubject}
-                          disabled={!selectedSubjectId || assignSubjectsMutation.isPending}
-                        >
-                          <IconCheck className="size-4" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="size-9 rounded-full hover:bg-destructive/10 hover:text-destructive"
-                          onClick={() => setIsAddingSubject(false)}
-                        >
-                          <IconX className="size-4" />
-                        </Button>
+                      <div className="flex flex-col gap-3 h-full">
+                        <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">{t.hr.teachers.newAssignment()}</h3>
+                        <div className="space-y-3 flex-1 flex flex-col justify-center">
+                          <Select
+                            value={selectedSubjectId}
+                            onValueChange={v => setSelectedSubjectId(v || '')}
+                          >
+                            <SelectTrigger className="w-full bg-background/50 border-primary/20 h-9 font-bold">
+                              <SelectValue placeholder={t.hr.teachers.chooseSubject()}>
+                                {selectedSubjectId
+                                  ? (() => {
+                                      const item = availableSubjects.find(s => s.subject.id === selectedSubjectId)
+                                      return item
+                                        ? (
+                                            <div className="flex items-center gap-2">
+                                              <IconBook className="size-3.5 text-primary/60" />
+                                              <span>{item.subject.name}</span>
+                                            </div>
+                                          )
+                                        : undefined
+                                    })()
+                                  : undefined}
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                              {availableSubjects.map(item => (
+                                <SelectItem key={item.subject.id} value={item.subject.id} className="rounded-lg focus:bg-primary/10">
+                                  <p className="font-semibold">{item.subject.name}</p>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="flex gap-2 pt-1">
+                          <Button
+                            size="sm"
+                            className="flex-1 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 h-8 text-xs font-bold"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleAddSubject()
+                            }}
+                            disabled={!selectedSubjectId || assignSubjectsMutation.isPending}
+                          >
+                            <IconCheck className="mr-2 size-3.5" />
+                            {t.common.confirm()}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="flex-1 rounded-xl hover:bg-destructive/10 hover:text-destructive h-8 text-xs font-bold"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setIsAddingSubject(false)
+                            }}
+                          >
+                            <IconX className="mr-2 size-3.5" />
+                            {t.common.cancel()}
+                          </Button>
+                        </div>
                       </div>
                     )
                   : (
-                      <Button
-                        variant="outline"
-                        className="h-9 rounded-xl border-dashed border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/50"
-                        onClick={() => setIsAddingSubject(true)}
-                      >
-                        <IconPlus className="mr-2 size-4" />
-                        {t.hr.teachers.add()}
-                      </Button>
+                      <>
+                        <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                          <IconPlus className="size-5 text-primary" />
+                        </div>
+                        <span className="font-semibold text-primary text-sm">{t.hr.teachers.add()}</span>
+                      </>
                     )}
-              </div>
+              </motion.div>
+
+              {/* Existing Subjects Cards */}
+              {teacher.subjects && teacher.subjects.length > 0
+                ? (
+                    teacher.subjects.map((sub, index) => (
+                      <motion.div
+                        key={sub.subjectId}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/40 p-5 shadow-sm backdrop-blur-md transition-all hover:shadow-md hover:border-primary/20"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                              <IconBook className="size-5 text-primary" />
+                            </div>
+                            <div className="space-y-0.5">
+                              <h4 className="font-bold text-base tracking-tight">{sub.subjectName}</h4>
+                              <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{t.hr.teachers.assignedSubjects()}</p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSubject(sub.subjectId)}
+                            className="size-8 flex items-center justify-center rounded-xl bg-destructive/5 text-destructive opacity-0 group-hover:opacity-100 hover:bg-destructive hover:text-white transition-all"
+                          >
+                            <IconTrash className="size-4" />
+                          </button>
+                        </div>
+                      </motion.div>
+                    ))
+                  )
+                : (
+                    !isAddingSubject && (
+                      <div className="col-span-full flex flex-col items-center justify-center py-12 text-center bg-card/40 rounded-2xl border border-dashed border-border/40 backdrop-blur-sm">
+                        <IconBook className="mb-4 size-12 text-muted-foreground/40" />
+                        <h3 className="text-lg font-semibold">{t.hr.teachers.noSubjects()}</h3>
+                      </div>
+                    )
+                  )}
             </div>
           </TabsContent>
 
@@ -460,7 +503,7 @@ function TeacherDetailsPage() {
         onOpenChange={setShowDeleteDialog}
         title={t.hr.teachers.deleteTeacher()}
         description={t.hr.teachers.deleteConfirm()}
-        onConfirm={() => deleteMutation.mutate()}
+        onConfirm={() => deleteMutation.mutate(teacherId)}
         isPending={deleteMutation.isPending}
       />
     </div>

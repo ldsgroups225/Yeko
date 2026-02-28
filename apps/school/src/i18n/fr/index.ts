@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { BaseTranslation } from '../i18n-types'
 
 const fr = {
@@ -741,6 +742,7 @@ const fr = {
       add: 'Ajouter',
       teacherNotFoundDescription: 'L\'enseignant que vous recherchez n\'existe pas ou a été supprimé.',
       noSpecialization: 'Aucune spécialisation',
+      needQualification: "L'enseignant doit être qualifié pour une matière de cette classe (voir l'onglet Matières).",
     },
     staff: {
       title: 'Personnel',

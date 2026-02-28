@@ -35,4 +35,4 @@ const authenticatedMiddleware = createMiddleware().server(async ({ next }) => {
   })
 })
 
-export const authServerFn = createServerFn().middleware([authenticatedMiddleware])
+export const authServerFn = createServerFn().middleware([authenticatedMiddleware]) as any
