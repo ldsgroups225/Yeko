@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { CreateSchoolInput, SchoolStatus } from '@/schemas/school'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconDeviceFloppy, IconLoader2, IconSchool } from '@tabler/icons-react'

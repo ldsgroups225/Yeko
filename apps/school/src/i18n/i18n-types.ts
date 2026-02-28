@@ -2656,6 +2656,54 @@ type RootTranslation = {
 			 */
 			teacherDetails: string
 			/**
+			 * A​j​o​u​t​e​r​ ​u​n​e​ ​c​l​a​s​s​e
+			 */
+			addClass: string
+			/**
+			 * N​o​u​v​e​l​l​e​ ​a​f​f​e​c​t​a​t​i​o​n
+			 */
+			newAssignment: string
+			/**
+			 * C​l​a​s​s​e​.​.​.
+			 */
+			classPlaceholder: string
+			/**
+			 * M​a​t​i​è​r​e​.​.​.
+			 */
+			subjectPlaceholder: string
+			/**
+			 * C​l​a​s​s​e​ ​a​s​s​i​g​n​é​e​ ​a​v​e​c​ ​s​u​c​c​è​s
+			 */
+			assignSuccess: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​a​s​s​i​g​n​a​t​i​o​n
+			 */
+			assignError: string
+			/**
+			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​a​ ​p​a​s​ ​e​n​c​o​r​e​ ​d​e​ ​c​l​a​s​s​e​s​ ​a​s​s​i​g​n​é​e​s​.
+			 */
+			noClassesDescription: string
+			/**
+			 * M​a​t​i​è​r​e​ ​a​j​o​u​t​é​e​ ​a​v​e​c​ ​s​u​c​c​è​s
+			 */
+			addSubjectSuccess: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​a​j​o​u​t​ ​d​e​ ​l​a​ ​m​a​t​i​è​r​e
+			 */
+			addSubjectError: string
+			/**
+			 * C​h​o​i​s​i​r​ ​u​n​e​ ​m​a​t​i​è​r​e
+			 */
+			chooseSubject: string
+			/**
+			 * A​j​o​u​t​e​r
+			 */
+			add: string
+			/**
+			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​e​x​i​s​t​e​ ​p​a​s​ ​o​u​ ​v​o​u​s​ ​n​'​a​v​e​z​ ​p​a​s​ ​l​a​ ​p​e​r​m​i​s​s​i​o​n​ ​d​e​ ​l​e​ ​v​o​i​r​.
+			 */
+			teacherNotFoundDescription: string
+			/**
 			 * A​u​c​u​n​e​ ​s​p​é​c​i​a​l​i​s​a​t​i​o​n
 			 */
 			noSpecialization: string
@@ -11074,6 +11122,54 @@ export type TranslationFunctions = {
 			 * Détails de l'enseignant
 			 */
 			teacherDetails: () => LocalizedString
+			/**
+			 * Ajouter une classe
+			 */
+			addClass: () => LocalizedString
+			/**
+			 * Nouvelle affectation
+			 */
+			newAssignment: () => LocalizedString
+			/**
+			 * Classe...
+			 */
+			classPlaceholder: () => LocalizedString
+			/**
+			 * Matière...
+			 */
+			subjectPlaceholder: () => LocalizedString
+			/**
+			 * Classe assignée avec succès
+			 */
+			assignSuccess: () => LocalizedString
+			/**
+			 * Erreur lors de l'assignation
+			 */
+			assignError: () => LocalizedString
+			/**
+			 * Cet enseignant n'a pas encore de classes assignées.
+			 */
+			noClassesDescription: () => LocalizedString
+			/**
+			 * Matière ajoutée avec succès
+			 */
+			addSubjectSuccess: () => LocalizedString
+			/**
+			 * Erreur lors de l'ajout de la matière
+			 */
+			addSubjectError: () => LocalizedString
+			/**
+			 * Choisir une matière
+			 */
+			chooseSubject: () => LocalizedString
+			/**
+			 * Ajouter
+			 */
+			add: () => LocalizedString
+			/**
+			 * Cet enseignant n'existe pas ou vous n'avez pas la permission de le voir.
+			 */
+			teacherNotFoundDescription: () => LocalizedString
 			/**
 			 * Aucune spécialisation
 			 */

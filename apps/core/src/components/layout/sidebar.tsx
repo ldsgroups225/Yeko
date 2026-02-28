@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { SystemAction } from '@repo/data-ops'
 import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
