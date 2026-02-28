@@ -81,36 +81,41 @@ export async function enrollStudent(data: {
 
   const db = getDb()
 
-  // 1. Verify student exists and belongs to school
-  const student = await db.query.students.findFirst({
-    where: and(
-      eq(students.id, data.studentId),
-      eq(students.schoolId, data.schoolId),
-    ),
-  })
+  // Parallelize verification queries to reduce network latency (3 sequential → 1 round trip)
+  const [student, classInfo, existing] = await Promise.all([
+    // Verify student exists and belongs to school
+    db.query.students.findFirst({
+      where: and(
+        eq(students.id, data.studentId),
+        eq(students.schoolId, data.schoolId),
+      ),
+    }),
+    // Verify class exists and belongs to school
+    db.query.classes.findFirst({
+      where: and(
+        eq(classes.id, data.classId),
+        eq(classes.schoolId, data.schoolId),
+      ),
+    }),
+    // Check for duplicate enrollment
+    db.query.enrollments.findFirst({
+      where: and(
+        eq(enrollments.studentId, data.studentId),
+        eq(enrollments.schoolYearId, data.schoolYearId),
+        ne(enrollments.status, 'cancelled'),
+      ),
+    }),
+  ])
+
+  // Validation checks in order
   if (!student) {
     throw new Error(SCHOOL_ERRORS.STUDENT_NOT_FOUND)
   }
 
-  // 2. Verify class exists and belongs to school
-  const classInfo = await db.query.classes.findFirst({
-    where: and(
-      eq(classes.id, data.classId),
-      eq(classes.schoolId, data.schoolId),
-    ),
-  })
   if (!classInfo) {
     throw new Error(SCHOOL_ERRORS.CLASS_NOT_FOUND)
   }
 
-  // 3. Check for duplicate enrollment
-  const existing = await db.query.enrollments.findFirst({
-    where: and(
-      eq(enrollments.studentId, data.studentId),
-      eq(enrollments.schoolYearId, data.schoolYearId),
-      ne(enrollments.status, 'cancelled'),
-    ),
-  })
   if (existing) {
     throw new Error(SCHOOL_ERRORS.ALREADY_ENROLLED)
   }
