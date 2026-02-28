@@ -29,6 +29,13 @@ help: ## Show this help message
 	@echo "  data-up        Start only data-service"
 	@echo "  worker-up      Start only queue-worker"
 	@echo ""
+	@echo "Tunnel Commands (ngrok):"
+	@echo "  tunnel         Start all ngrok tunnels"
+	@echo "  tunnel-core    Start ngrok tunnel for yeko-core"
+	@echo "  tunnel-school  Start ngrok tunnel for yeko-school"
+	@echo "  tunnel-teacher Start ngrok tunnel for yeko-teacher"
+	@echo "  tunnel-data    Start ngrok tunnel for data-service"
+	@echo ""
 	@echo "Utility Commands:"
 	@echo "  shell-core     Open shell in yeko-core container"
 	@echo "  shell-school   Open shell in yeko-school container"
@@ -104,6 +111,22 @@ data-up: ## Start only data-service
 worker-up: ## Start only queue-worker
 	docker compose up -d queue-worker
 	@echo "✅ queue-worker started"
+
+# Tunnel Commands
+tunnel: ## Start all ngrok tunnels
+	ngrok start --config ngrok.yml --all
+
+tunnel-core: ## Start ngrok tunnel for yeko-core
+	ngrok start --config ngrok.yml yeko-core
+
+tunnel-school: ## Start ngrok tunnel for yeko-school
+	ngrok start --config ngrok.yml yeko-school
+
+tunnel-teacher: ## Start ngrok tunnel for yeko-teacher
+	ngrok start --config ngrok.yml yeko-teacher
+
+tunnel-data: ## Start ngrok tunnel for data-service
+	ngrok start --config ngrok.yml data-service
 
 # Utility Commands
 shell-core: ## Open shell in yeko-core container

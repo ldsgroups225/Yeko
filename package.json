@@ -24,7 +24,12 @@
     "typecheck": "pnpm run --filter \"*\" typecheck || echo \"No typecheck script found\"",
     "lint": "pnpm run --filter \"*\" lint:fix || echo \"No lint script found\"",
     "lint:check": "pnpm run --filter \"*\" lint || echo \"No lint script found\"",
-    "test": "pnpm run --filter \"*\" test || echo \"No test script found\""
+    "test": "pnpm run --filter \"*\" test || echo \"No test script found\"",
+    "tunnel": "ngrok start --config ngrok.yml --all",
+    "tunnel:core": "ngrok start --config ngrok.yml yeko-core",
+    "tunnel:school": "ngrok start --config ngrok.yml yeko-school",
+    "tunnel:teacher": "ngrok start --config ngrok.yml yeko-teacher",
+    "tunnel:data": "ngrok start --config ngrok.yml data-service"
   },
   "keywords": [],
   "author": "",

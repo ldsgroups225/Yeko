@@ -18,6 +18,9 @@ make docker-up
 # yeko-teacher: http://localhost:3002
 # data-service: http://localhost:8787
 
+# Tunneling (ngrok):
+# See [NGROK.md](./NGROK.md) for tunnel configuration.
+
 # Stop all services
 make docker-down
 

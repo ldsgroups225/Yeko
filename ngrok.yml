@@ -1,0 +1,23 @@
+version: "3"
+
+tunnels:
+  yeko-core:
+    proto: http
+    addr: 3000
+    schemes:
+      - https
+  yeko-school:
+    proto: http
+    addr: 3001
+    schemes:
+      - https
+  yeko-teacher:
+    proto: http
+    addr: 3002
+    schemes:
+      - https
+  data-service:
+    proto: http
+    addr: 8787
+    schemes:
+      - https
