@@ -2,13 +2,16 @@ import { formatDate } from '@repo/data-ops'
 import {
   IconBook,
   IconCalendar,
+  IconCheck,
   IconChevronLeft,
   IconEdit,
   IconMail,
   IconPhone,
+  IconPlus,
   IconTrash,
   IconUser,
   IconUserCheck,
+  IconX,
 } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
@@ -20,6 +23,7 @@ import {
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import {
   Tabs,
@@ -35,14 +39,12 @@ import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
-import { teacherOptions } from '@/lib/queries/teachers'
+import { schoolSubjectsOptions } from '@/lib/queries/school-subjects'
+import { teacherKeys, teacherMutations, teacherOptions } from '@/lib/queries/teachers'
+
 import { cn } from '@/lib/utils'
 import { deleteExistingTeacher } from '@/school/functions/teachers'
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
-import { IconCheck, IconPlus, IconX } from '@tabler/icons-react'
-import { schoolSubjectsOptions } from '@/lib/queries/school-subjects'
-import { teacherKeys, teacherMutations } from '@/lib/queries/teachers'
 export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
   component: TeacherDetailsPage,
 })
@@ -106,7 +108,8 @@ function TeacherDetailsPage() {
   })
 
   const handleAddSubject = () => {
-    if (!selectedSubjectId || !teacher) return
+    if (!selectedSubjectId || !teacher)
+      return
     const currentSubjectIds = teacher.subjects?.map((s: TeacherSubject) => s.subjectId) || []
     assignSubjectsMutation.mutate({
       teacherId,
@@ -116,7 +119,7 @@ function TeacherDetailsPage() {
 
   const availableSubjects = useMemo(() => {
     return (allSubjects?.subjects as SchoolSubject[] | undefined)?.filter(
-      (s) => !teacher?.subjects?.some((ts: TeacherSubject) => ts.subjectId === s.id)
+      s => !teacher?.subjects?.some((ts: TeacherSubject) => ts.subjectId === s.id),
     ) || []
   }, [allSubjects?.subjects, teacher?.subjects])
   if (isPending) {
@@ -363,73 +366,77 @@ function TeacherDetailsPage() {
                 {t.hr.teachers.assignedSubjects()}
               </h2>
               <div className="flex flex-wrap gap-3 items-center">
-                {teacher.subjects && teacher.subjects.length > 0 ? (
-                  teacher.subjects.map((sub: TeacherSubject) => (
-                    <Badge
-                      key={sub.subjectId}
-                      className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
-                      variant="outline"
-                    >
-                      <IconBook className="mr-2 size-3.5" />
-                      {sub.subjectName}
-                    </Badge>
-                  ))
-                ) : (
-                  !isAddingSubject && (
-                    <div className="flex flex-col items-center justify-center py-10 w-full text-center">
-                      <IconBook className="mb-4 size-10 text-muted-foreground/30" />
-                      <p className="text-muted-foreground font-medium">
-                        {t.hr.teachers.noSubjects()}
-                      </p>
-                    </div>
-                  )
-                )}
+                {teacher.subjects && teacher.subjects.length > 0
+                  ? (
+                      teacher.subjects.map((sub: TeacherSubject) => (
+                        <Badge
+                          key={sub.subjectId}
+                          className="bg-primary/5 text-primary border-primary/20 px-4 py-2 text-sm font-semibold rounded-xl hover:bg-primary/10 transition-colors cursor-default"
+                          variant="outline"
+                        >
+                          <IconBook className="mr-2 size-3.5" />
+                          {sub.subjectName}
+                        </Badge>
+                      ))
+                    )
+                  : (
+                      !isAddingSubject && (
+                        <div className="flex flex-col items-center justify-center py-10 w-full text-center">
+                          <IconBook className="mb-4 size-10 text-muted-foreground/30" />
+                          <p className="text-muted-foreground font-medium">
+                            {t.hr.teachers.noSubjects()}
+                          </p>
+                        </div>
+                      )
+                    )}
 
-                {isAddingSubject ? (
-                  <div className="flex items-center gap-2 animate-in fade-in zoom-in-95 duration-200">
-                    <Select
-                      value={selectedSubjectId}
-                      onValueChange={(v) => setSelectedSubjectId(v || "")}
-                    >
-                      <SelectTrigger className="h-9 w-[200px] rounded-xl border-primary/20 bg-background/50">
-                        <SelectValue placeholder={t.hr.teachers.chooseSubject()} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableSubjects.map((subject) => (
-                          <SelectItem key={subject.id} value={subject.id}>
-                            {subject.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="size-9 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
-                      onClick={handleAddSubject}
-                      disabled={!selectedSubjectId || assignSubjectsMutation.isPending}
-                    >
-                      <IconCheck className="size-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="size-9 rounded-full hover:bg-destructive/10 hover:text-destructive"
-                      onClick={() => setIsAddingSubject(false)}
-                    >
-                      <IconX className="size-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="h-9 rounded-xl border-dashed border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/50"
-                    onClick={() => setIsAddingSubject(true)}
-                  >
-                    <IconPlus className="mr-2 size-4" />
-                    {t.hr.teachers.add()}
-                  </Button>
-                )}
+                {isAddingSubject
+                  ? (
+                      <div className="flex items-center gap-2 animate-in fade-in zoom-in-95 duration-200">
+                        <Select
+                          value={selectedSubjectId}
+                          onValueChange={v => setSelectedSubjectId(v || '')}
+                        >
+                          <SelectTrigger className="h-9 w-[200px] rounded-xl border-primary/20 bg-background/50">
+                            <SelectValue placeholder={t.hr.teachers.chooseSubject()} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {availableSubjects.map(subject => (
+                              <SelectItem key={subject.id} value={subject.id}>
+                                {subject.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-9 rounded-full bg-primary/10 text-primary hover:bg-primary/20"
+                          onClick={handleAddSubject}
+                          disabled={!selectedSubjectId || assignSubjectsMutation.isPending}
+                        >
+                          <IconCheck className="size-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="size-9 rounded-full hover:bg-destructive/10 hover:text-destructive"
+                          onClick={() => setIsAddingSubject(false)}
+                        >
+                          <IconX className="size-4" />
+                        </Button>
+                      </div>
+                    )
+                  : (
+                      <Button
+                        variant="outline"
+                        className="h-9 rounded-xl border-dashed border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/50"
+                        onClick={() => setIsAddingSubject(true)}
+                      >
+                        <IconPlus className="mr-2 size-4" />
+                        {t.hr.teachers.add()}
+                      </Button>
+                    )}
               </div>
             </div>
           </TabsContent>
