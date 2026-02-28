@@ -3,7 +3,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "rm:vite": "rm -rf ./node_modules/.vite",
+    "dev": "pnpm run rm:vite && vite dev --port 3000",
     "build": "vite build",
     "deploy": "pnpm run build && wrangler deploy --config dist/server/wrangler.json",
     "serve": "vite preview",

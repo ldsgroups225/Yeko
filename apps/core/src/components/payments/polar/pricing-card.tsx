@@ -51,9 +51,6 @@ export function PricingCard({
     if (!price) {
       return 'Price unavailable'
     }
-    if (price.type !== 'recurring') {
-      return 'Currency not specified'
-    }
 
     if (price.amountType === 'fixed' && price.priceAmount) {
       return new Intl.NumberFormat('en-US', {
@@ -157,11 +154,11 @@ export function PricingCard({
       <CardContent>
         <div className="mb-6">
           <div className="text-3xl font-bold">{formatPrice(price)}</div>
-          {price.type === 'recurring' && (
+          {product.isRecurring && (
             <div className="text-muted-foreground text-sm">
               per
               {' '}
-              {price.recurringInterval}
+              {product.recurringInterval}
             </div>
           )}
         </div>
