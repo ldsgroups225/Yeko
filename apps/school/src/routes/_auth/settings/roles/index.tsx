@@ -11,7 +11,7 @@ const rolesSearchSchema = z.object({
   scope: z.enum(['school', 'system']).optional(),
 })
 
-export const Route = createFileRoute('/_auth/users/roles/')({
+export const Route = createFileRoute('/_auth/settings/roles/')({
   component: RolesListPage,
   validateSearch: rolesSearchSchema,
 })
@@ -26,7 +26,7 @@ function RolesListPage() {
         <div className="flex gap-2">
           <Button
             render={(
-              <Link to="/users/roles/new">
+              <Link to="/settings/roles/new">
                 <IconPlus className="mr-2 h-4 w-4" />
                 {t.hr.roles.addRole()}
               </Link>

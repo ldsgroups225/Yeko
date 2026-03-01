@@ -152,7 +152,7 @@ export function RolesTableContent() {
                   <DropdownMenuItem
                     className="cursor-pointer gap-2"
                     onClick={() =>
-                      navigate({ to: `/users/roles/${row.original.id}/edit` })}
+                      navigate({ to: `/settings/roles/${row.original.id}/edit` })}
                   >
                     <IconEdit className="h-4 w-4" />
                     {t.common.edit()}
@@ -196,7 +196,7 @@ export function RolesTableContent() {
           description={t.hr.roles.noRolesDescription()}
           action={{
             label: t.hr.roles.addRole(),
-            onClick: () => navigate({ to: '/users/roles/new' }),
+            onClick: () => navigate({ to: '/settings/roles/new' }),
           }}
         />
       </div>
@@ -267,7 +267,7 @@ export function RolesTableContent() {
                   border-border/40 cursor-pointer transition-colors
                 "
                 onClick={() =>
-                  navigate({ to: `/users/roles/${row.original.id}` })}
+                  navigate({ to: `/settings/roles/${row.original.id}` })}
               >
                 {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id} className="py-4">

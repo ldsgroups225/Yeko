@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getTeacher } from '@/school/functions/teachers'
 
-export const Route = createFileRoute('/_auth/users/teachers/$teacherId/edit')({
+export const Route = createFileRoute('/_auth/teachers/$teacherId/edit')({
   component: EditTeacherPage,
 })
 
@@ -25,7 +25,7 @@ function EditTeacherPage() {
   const teacher = teacherResult?.success ? teacherResult.data : null
 
   const handleSuccess = () => {
-    navigate({ to: `/users/teachers/${teacherId}` })
+    navigate({ to: `/teachers/${teacherId}` })
   }
 
   if (isPending) {
@@ -47,11 +47,11 @@ function EditTeacherPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.teachers.title(), href: '/users/teachers' },
+          { label: t.nav.teachers(), href: '/teachers' },
+          { label: t.hr.teachers.title(), href: '/teachers' },
           {
             label: teacher?.specialization || teacherId,
-            href: `/users/teachers/${teacherId}`,
+            href: `/teachers/${teacherId}`,
           },
           { label: t.hr.teachers.editTeacher() },
         ]}

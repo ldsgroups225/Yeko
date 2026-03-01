@@ -43,7 +43,7 @@ import { teacherKeys, teacherMutations, teacherOptions } from '@/lib/queries/tea
 
 import { cn } from '@/lib/utils'
 
-export const Route = createFileRoute('/_auth/users/teachers/$teacherId/')({
+export const Route = createFileRoute('/_auth/teachers/$teacherId/')({
   component: TeacherDetailsPage,
 })
 
@@ -67,7 +67,7 @@ function TeacherDetailsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teachers'] })
       toast.success(t.hr.teachers.deleteSuccess())
-      navigate({ to: '/users/teachers', search: { page: 1 } })
+      navigate({ to: '/teachers', search: { page: 1 } })
     },
     onError: () => {
       toast.error(t.hr.teachers.deleteError())
@@ -146,7 +146,7 @@ function TeacherDetailsPage() {
         </p>
         <Button
           render={(
-            <Link to="/users/teachers" search={{ page: 1 }}>
+            <Link to="/teachers" search={{ page: 1 }}>
               <IconChevronLeft className="mr-2 size-4" />
               {t.common.back()}
             </Link>
@@ -166,8 +166,7 @@ function TeacherDetailsPage() {
         <div className="space-y-4">
           <Breadcrumbs
             items={[
-              { label: t.hr.title(), href: '/users' },
-              { label: t.hr.teachers.title(), href: '/users/teachers' },
+              { label: t.nav.teachers(), href: '/teachers' },
               { label: user?.name || teacherId },
             ]}
           />
@@ -239,7 +238,7 @@ function TeacherDetailsPage() {
           </Button>
           <Button
             render={(
-              <Link to="/users/teachers/$teacherId/edit" params={{ teacherId }}>
+              <Link to="/teachers/$teacherId/edit" params={{ teacherId }}>
                 <IconEdit className="mr-2 size-4" />
                 {t.common.edit()}
               </Link>

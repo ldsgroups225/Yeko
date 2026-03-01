@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getRole, updateExistingRole } from '@/school/functions/roles'
 
-export const Route = createFileRoute('/_auth/users/roles/$roleId/edit')({
+export const Route = createFileRoute('/_auth/settings/roles/$roleId/edit')({
   component: EditRolePage,
   loader: async ({ params }) => {
     return await getRole({ data: params.roleId })
@@ -32,7 +32,7 @@ function EditRolePage() {
     try {
       await updateExistingRole({ data: { roleId, data } })
       toast.success(t.hr.roles.updateSuccess())
-      navigate({ to: '/users/roles/$roleId', params: { roleId } })
+      navigate({ to: '/settings/roles/$roleId', params: { roleId } })
     }
     catch (error) {
       toast.error(t.hr.roles.updateError())
@@ -49,8 +49,8 @@ function EditRolePage() {
       <div className="space-y-6">
         <Breadcrumbs
           items={[
-            { label: t.hr.title(), href: '/users' },
-            { label: t.hr.roles.title(), href: '/users/roles' },
+            { label: t.nav.settings(), href: '/settings' },
+            { label: t.hr.roles.title(), href: '/settings/roles' },
             { label: role.name },
           ]}
         />
@@ -69,9 +69,9 @@ function EditRolePage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.roles.title(), href: '/users/roles' },
-          { label: role.name, href: `/users/roles/${roleId}` },
+          { label: t.nav.settings(), href: '/settings' },
+          { label: t.hr.roles.title(), href: '/settings/roles' },
+          { label: role.name, href: `/settings/roles/${roleId}` },
           { label: t.common.edit() },
         ]}
       />

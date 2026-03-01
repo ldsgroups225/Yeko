@@ -1,14 +1,16 @@
 import type { ColumnDef } from '@tanstack/react-table'
-import { formatDate, formatPhone } from '@repo/data-ops'
+import type { Teacher } from './types'
+import { formatDate } from '@repo/data-ops'
 import {
+  IconBook,
   IconCalendar,
   IconDots,
   IconEdit,
   IconMail,
-  IconPhone,
   IconTrash,
 } from '@tabler/icons-react'
 import { useNavigate } from '@tanstack/react-router'
+
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import {
@@ -20,94 +22,84 @@ import {
 import { useMemo } from 'react'
 import { useTranslations } from '@/i18n'
 
-export interface IconUser {
-  id: string
-  name: string
-  email: string
-  phone: string | null
-  status: 'active' | 'inactive' | 'suspended'
-  lastLoginAt: Date | null
-  roles: string[]
-}
-
-interface UseUsersTableColumnsProps {
-  setUserToDelete: (user: IconUser) => void
-}
-
-export function useUsersTableColumns({
-  setUserToDelete,
-}: UseUsersTableColumnsProps) {
+export function useTeacherColumns() {
   const t = useTranslations()
   const navigate = useNavigate()
 
-  return useMemo<ColumnDef<IconUser>[]>(
+  return useMemo<ColumnDef<Teacher>[]>(
     () => [
       {
-        accessorKey: 'name',
-        header: t.hr.users.name(),
+        accessorKey: 'user.name',
+        header: t.hr.teachers.name(),
         cell: ({ row }) => (
           <div className="flex flex-col">
             <span className="text-foreground font-semibold">
-              {row.original.name}
+              {row.original.user.name}
             </span>
             <div className="
               text-muted-foreground mt-0.5 flex items-center gap-1.5 text-xs
             "
             >
               <IconMail className="h-3 w-3" />
-              {row.original.email}
+              {row.original.user.email}
             </div>
           </div>
         ),
       },
       {
-        accessorKey: 'phone',
-        header: t.hr.users.phone(),
+        accessorKey: 'subjects',
+        header: t.hr.teachers.subjects(),
         cell: ({ row }) => (
-          <div className="text-muted-foreground flex items-center gap-2 text-sm">
-            {row.original.phone
+          <div className="flex max-w-[240px] flex-wrap gap-1.5">
+            {row.original.subjects && row.original.subjects.length > 0
               ? (
-                  <>
-                    <IconPhone className="h-3.5 w-3.5" />
-                    {formatPhone(row.original.phone)}
-                  </>
+                  row.original.subjects.slice(0, 3).map((subject: string) => (
+                    <Badge
+                      key={subject}
+                      variant="outline"
+                      className="
+                        bg-primary/5 border-primary/10 text-primary px-2 py-0
+                        text-[10px] font-medium
+                      "
+                    >
+                      {subject}
+                    </Badge>
+                  ))
                 )
               : (
-                  '-'
+                  <span className="text-muted-foreground text-sm">-</span>
                 )}
+            {row.original.subjects && row.original.subjects.length > 3 && (
+              <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
+                +
+                {' '}
+                {row.original.subjects.length - 3}
+              </Badge>
+            )}
           </div>
         ),
       },
       {
-        accessorKey: 'roles',
-        header: t.hr.users.roles(),
+        accessorKey: 'specialization',
+        header: t.hr.teachers.specialization(),
         cell: ({ row }) => (
-          <div className="flex max-w-[200px] flex-wrap gap-1.5">
-            {row.original.roles.map(role => (
-              <Badge
-                key={role}
-                variant="outline"
-                className="
-                  bg-primary/5 border-primary/10 text-primary px-2 py-0
-                  text-[10px] font-medium
-                "
-              >
-                {role}
-              </Badge>
-            ))}
+          <div className="flex items-center gap-2 text-sm">
+            <IconBook className="text-muted-foreground h-3.5 w-3.5" />
+            <span className="font-medium">
+              {row.original.specialization || '-'}
+            </span>
           </div>
         ),
       },
       {
         accessorKey: 'status',
-        header: t.hr.users.status(),
+        header: t.hr.teachers.status(),
         cell: ({ row }) => {
           const status = row.original.status
           const variants = {
-            active: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
-            inactive: 'bg-slate-500/10 text-slate-600 border-slate-500/20',
-            suspended:
-              'bg-destructive/10 text-destructive border-destructive/20',
+            active: 'bg-success/10 text-success border-success/20',
+            inactive: 'bg-muted text-muted-foreground border-muted',
+            on_leave: 'bg-accent/10 text-accent-foreground border-accent/20',
           } as const
           return (
             <Badge
@@ -121,21 +113,21 @@ export function useUsersTableColumns({
               {{
                 active: t.hr.status.active,
                 inactive: t.hr.status.inactive,
-                suspended: t.hr.status.suspended,
+                on_leave: t.hr.status.on_leave,
               }[status]()}
             </Badge>
           )
         },
       },
       {
-        accessorKey: 'lastLoginAt',
-        header: t.hr.users.lastLogin(),
+        accessorKey: 'hireDate',
+        header: t.hr.teachers.hireDate(),
         cell: ({ row }) => (
           <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <IconCalendar className="h-3.5 w-3.5" />
-            {row.original.lastLoginAt
-              ? formatDate(new Date(row.original.lastLoginAt), 'SHORT', 'fr')
-              : t.hr.users.neverLoggedIn()}
+            {row.original.hireDate
+              ? formatDate(row.original.hireDate, 'MEDIUM')
+              : '-'}
           </div>
         ),
       },
@@ -170,18 +162,16 @@ export function useUsersTableColumns({
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
                 onClick={() =>
-                  navigate({ to: `/settings/personnel/users/${row.original.id}/edit` })}
+                  navigate({ to: `/teachers/${row.original.id}/edit` })}
               >
                 <IconEdit className="h-4 w-4" />
                 {t.common.edit()}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="
-                  text-destructive
-                  focus:text-destructive focus:bg-destructive/10
-                  cursor-pointer gap-2
-                "
-                onClick={() => setUserToDelete(row.original)}
+              <DropdownMenuItem className="
+                text-destructive
+                focus:text-destructive focus:bg-destructive/10
+                cursor-pointer gap-2
+              "
               >
                 <IconTrash className="h-4 w-4" />
                 {t.common.delete()}
@@ -191,6 +181,6 @@ export function useUsersTableColumns({
         ),
       },
     ],
-    [t, navigate, setUserToDelete],
+    [t, navigate],
   )
 }

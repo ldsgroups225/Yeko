@@ -50,7 +50,7 @@ export function RolesTableProvider({ children, filters }: RolesTableProviderProp
           setSearchInput,
           handlePageChange: (page: number) => {
             navigate({
-              to: '/users/roles',
+              to: '/settings/roles',
               search: { ...filters, page },
             })
           },

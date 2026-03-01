@@ -88,7 +88,7 @@ function EmptyState() {
           </div>
           <Button
             render={(
-              <Link to="/users/teachers" search={{ page: 1 }}>
+              <Link to="/teachers" search={{ page: 1 }}>
                 <IconPlus className="mr-2 h-4 w-4" />
                 {t.teachers.add()}
               </Link>

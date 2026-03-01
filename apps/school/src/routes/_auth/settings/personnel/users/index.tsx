@@ -1,9 +1,11 @@
 import { IconPlus } from '@tabler/icons-react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { Button } from '@workspace/ui/components/button'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { buttonVariants } from '@workspace/ui/components/button'
 import { z } from 'zod'
+import { FinanceSubpageToolbar } from '@/components/finance/finance-subpage-toolbar'
 import { UsersTable } from '@/components/hr/users/users-table'
 import { useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
 
 const usersSearchSchema = z.object({
   page: z.number().min(1).catch(1),
@@ -12,26 +14,29 @@ const usersSearchSchema = z.object({
   status: z.enum(['active', 'inactive', 'suspended']).optional(),
 })
 
-export const Route = createFileRoute('/_auth/users/users/')({
+export const Route = createFileRoute('/_auth/settings/personnel/users/')({
   component: UsersListPage,
   validateSearch: usersSearchSchema,
 })
 
 function UsersListPage() {
   const t = useTranslations()
-  const navigate = useNavigate()
   const search = Route.useSearch()
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <div className="flex gap-2">
-          <Button onClick={() => navigate({ to: '/users/users/new' })}>
+      <FinanceSubpageToolbar
+        backTo="/settings/personnel"
+        actions={(
+          <Link
+            to="/settings/personnel/users/new"
+            className={cn(buttonVariants({ size: 'sm' }), 'rounded-xl')}
+          >
             <IconPlus className="mr-2 h-4 w-4" />
             {t.hr.users.addUser()}
-          </Button>
-        </div>
-      </div>
+          </Link>
+        )}
+      />
 
       <UsersTable filters={search} />
     </div>

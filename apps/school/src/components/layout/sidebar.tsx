@@ -64,14 +64,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             permission: { resource: 'classes', action: 'view' },
           },
           {
-            title: t.sidebar.personnel(),
-            href: '/users',
-            icon: IconUsers,
-            permission: { resource: 'users', action: 'view' },
-          },
-          {
             title: t.nav.teachers(),
-            href: '/users/teachers',
+            href: '/teachers',
             icon: IconUserCheck,
             permission: { resource: 'teachers', action: 'view' },
           },

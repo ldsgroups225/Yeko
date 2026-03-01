@@ -36,7 +36,7 @@ export function NavigationExample() {
     { key: '/dashboard', icon: '📊' },
     { key: '/users', icon: '👥' },
     { key: '/students', icon: '🎓' },
-    { key: '/users/teachers', icon: '👨‍🏫' },
+    { key: '/teachers', icon: '👨‍🏫' },
     { key: '/accounting', icon: '💰' },
   ]
 

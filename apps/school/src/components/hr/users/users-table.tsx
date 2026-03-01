@@ -11,7 +11,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Button } from '@workspace/ui/components/button'
-
 import {
   Card,
   CardContent,
@@ -19,15 +18,7 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card'
 import { Input } from '@workspace/ui/components/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@workspace/ui/components/table'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { EmptyState } from '@/components/hr/empty-state'
@@ -38,6 +29,7 @@ import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingUser, getUsers } from '@/school/functions/users'
 import { useUsersTableColumns } from './users-table-columns'
 import { UsersTableDeleteDialog } from './users-table-delete-dialog'
+import { UsersTableRenderer } from './users-table-renderer'
 
 interface UsersTableProps {
   filters: {
@@ -158,7 +150,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                 description={t.hr.users.noUsersDescription()}
                 action={{
                   label: t.hr.users.addUser(),
-                  onClick: () => navigate({ to: '/users/users/new' }),
+                  onClick: () => navigate({ to: '/settings/personnel/users/new' }),
                 }}
               />
             </div>
@@ -177,74 +169,7 @@ export function UsersTable({ filters }: UsersTableProps) {
 
           {/* Table */}
           {!hasNoData && (
-            <div className="
-              border-border/40 bg-background/30 overflow-hidden rounded-xl
-              border
-            "
-            >
-              <Table>
-                <TableHeader className="bg-muted/50 backdrop-blur-md">
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow
-                      key={headerGroup.id}
-                      className="
-                        border-border/40
-                        hover:bg-transparent
-                      "
-                    >
-                      {headerGroup.headers.map(header => (
-                        <TableHead
-                          key={header.id}
-                          className="
-                            py-4 text-xs font-semibold tracking-wider uppercase
-                          "
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  <AnimatePresence mode="popLayout">
-                    {table.getRowModel().rows.map((row, index) => (
-                      <motion.tr
-                        key={row.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{
-                          duration: 0.2,
-                          delay: index * 0.03,
-                          ease: 'easeOut',
-                        }}
-                        className="
-                          group
-                          hover:bg-primary/5
-                          border-border/40 cursor-pointer transition-colors
-                        "
-                        onClick={() =>
-                          navigate({ to: `/users/users/${row.original.id}` })}
-                      >
-                        {row.getVisibleCells().map(cell => (
-                          <TableCell key={cell.id} className="py-4">
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </TableCell>
-                        ))}
-                      </motion.tr>
-                    ))}
-                  </AnimatePresence>
-                </TableBody>
-              </Table>
-            </div>
+            <UsersTableRenderer table={table} />
           )}
 
           {/* Pagination */}
@@ -283,7 +208,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                   onClick={(e) => {
                     e.stopPropagation()
                     navigate({
-                      to: '/users/users',
+                      to: '/settings/personnel/users',
                       search: { ...filters, page: usersData.page - 1 },
                     })
                   }}
@@ -302,7 +227,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                   onClick={(e) => {
                     e.stopPropagation()
                     navigate({
-                      to: '/users/users',
+                      to: '/settings/personnel/users',
                       search: { ...filters, page: usersData.page + 1 },
                     })
                   }}

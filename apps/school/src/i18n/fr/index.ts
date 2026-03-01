@@ -2137,10 +2137,10 @@ const fr = {
     saved: 'Paramètres enregistrés',
     saveFailed: 'Échec de l\'enregistrement',
     tabs: {
-      pedagogicalAndReportCards: 'Pédagogie & Bulletins',
-      attendanceAndConduct: 'Assiduité & Conduite',
-      accountingAndFinance: 'Comptabilité & Finances',
-      systemAndNotifications: 'Système & Notifications',
+      pedagogicalAndReportCards: 'Bulletins',
+      attendanceAndConduct: 'Conduite',
+      accountingAndFinance: 'Comptabilité',
+      systemAndNotifications: 'Notifications',
     },
     profile: {
       title: 'Profil de l\'école',

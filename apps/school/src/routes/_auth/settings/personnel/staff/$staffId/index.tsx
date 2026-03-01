@@ -20,7 +20,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getStaffMember } from '@/school/functions/staff'
 
-export const Route = createFileRoute('/_auth/users/staff/$staffId/')({
+export const Route = createFileRoute('/_auth/settings/personnel/staff/$staffId/')({
   component: StaffDetailPage,
   loader: async ({ params }) => {
     return await getStaffMember({ data: params.staffId })
@@ -60,8 +60,9 @@ function StaffDetailPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.staff.title(), href: '/users/staff' },
+          { label: t.nav.settings(), href: '/settings' },
+          { label: t.sidebar.personnel(), href: '/settings/personnel' },
+          { label: t.hr.staff.title(), href: '/settings/personnel/staff' },
           { label: staff.position },
         ]}
       />
@@ -87,7 +88,7 @@ function StaffDetailPage() {
           <Button
             variant="outline"
             render={(
-              <Link to="/users/staff/$staffId/edit" params={{ staffId }}>
+              <Link to="/settings/personnel/staff/$staffId/edit" params={{ staffId }}>
                 <IconEdit className="mr-2 h-4 w-4" />
                 {t.common.edit()}
               </Link>

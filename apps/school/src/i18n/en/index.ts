@@ -2093,10 +2093,10 @@ const en: Translation = {
     saved: 'IconSettings saved',
     saveFailed: 'Failed to save settings',
     tabs: {
-      pedagogicalAndReportCards: 'Pedagogy & Report Cards',
-      attendanceAndConduct: 'Attendance & Conduct',
-      accountingAndFinance: 'Accounting & Finance',
-      systemAndNotifications: 'System & Notifications',
+      pedagogicalAndReportCards: 'Report Cards',
+      attendanceAndConduct: 'Conduct',
+      accountingAndFinance: 'Accounting',
+      systemAndNotifications: 'Notifications',
     },
     profile: {
       title: 'School Profile',

@@ -28,7 +28,7 @@ import {
   getUserActivity,
 } from '@/school/functions/users'
 
-export const Route = createFileRoute('/_auth/users/users/$userId/')({
+export const Route = createFileRoute('/_auth/settings/personnel/users/$userId/')({
   component: UserDetailsPage,
 })
 
@@ -65,7 +65,7 @@ function UserDetailsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
       toast.success(t.hr.users.deleteSuccess())
-      navigate({ to: '/users/users', search: { page: 1 } })
+      navigate({ to: '/settings/personnel/users', search: { page: 1 } })
     },
     onError: () => {
       toast.error(t.hr.users.deleteError())
@@ -96,7 +96,7 @@ function UserDetailsPage() {
           <p className="text-lg font-medium">{t.errors.notFound()}</p>
           <Button
             render={(
-              <Link to="/users/users" search={{ page: 1 }}>
+              <Link to="/settings/personnel/users" search={{ page: 1 }}>
                 {t.common.back()}
               </Link>
             )}
@@ -111,8 +111,9 @@ function UserDetailsPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.users.title(), href: '/users/users' },
+          { label: t.nav.settings(), href: '/settings' },
+          { label: t.sidebar.personnel(), href: '/settings/personnel' },
+          { label: t.hr.users.title(), href: '/settings/personnel/users' },
           { label: user.name },
         ]}
       />
@@ -143,7 +144,7 @@ function UserDetailsPage() {
           <Button
             size="sm"
             onClick={() =>
-              navigate({ to: '/users/users/$userId/edit', params: { userId } })}
+              navigate({ to: '/settings/personnel/users/$userId/edit', params: { userId } })}
           >
             <IconEdit className="mr-2 h-4 w-4" />
             {t.common.edit()}

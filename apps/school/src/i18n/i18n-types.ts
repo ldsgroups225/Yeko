@@ -15877,7 +15877,7 @@ export type TranslationFunctions = {
 			 */
 			attendanceAndConduct: () => LocalizedString
 			/**
-			 * Comptabilité & Finances
+			 * Comptabilité.
 			 */
 			accountingAndFinance: () => LocalizedString
 			/**

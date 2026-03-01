@@ -172,7 +172,7 @@ export function StaffTableContent() {
               <DropdownMenuItem
                 className="cursor-pointer gap-2"
                 onClick={() =>
-                  navigate({ to: `/users/staff/${row.original.id}/edit` })}
+                  navigate({ to: `/settings/personnel/staff/${row.original.id}/edit` })}
               >
                 <IconEdit className="h-4 w-4" />
                 {t.common.edit()}
@@ -214,7 +214,7 @@ export function StaffTableContent() {
           description={t.hr.staff.noStaffDescription()}
           action={{
             label: t.hr.staff.addStaff(),
-            onClick: () => navigate({ to: '/users/staff/new' }),
+            onClick: () => navigate({ to: '/settings/personnel/staff/new' }),
           }}
         />
       </div>
@@ -285,7 +285,7 @@ export function StaffTableContent() {
                   border-border/40 cursor-pointer transition-colors
                 "
                 onClick={() =>
-                  navigate({ to: `/users/staff/${row.original.id}` })}
+                  navigate({ to: `/settings/personnel/staff/${row.original.id}` })}
               >
                 {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id} className="py-4">

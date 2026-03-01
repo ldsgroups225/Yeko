@@ -3,7 +3,7 @@ import { BulkImportUsers } from '@/components/hr/users/bulk-import-users'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 
-export const Route = createFileRoute('/_auth/users/users/import')({
+export const Route = createFileRoute('/_auth/settings/personnel/users/import')({
   component: ImportUsersPage,
 })
 
@@ -14,8 +14,9 @@ function ImportUsersPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.users.title(), href: '/users/users' },
+          { label: t.nav.settings(), href: '/settings' },
+          { label: t.sidebar.personnel(), href: '/settings/personnel' },
+          { label: t.hr.users.title(), href: '/settings/personnel/users' },
           { label: t.hr.users.bulkImport() },
         ]}
       />

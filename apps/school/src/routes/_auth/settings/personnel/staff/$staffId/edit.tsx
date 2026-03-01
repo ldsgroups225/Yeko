@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getStaffMember, updateExistingStaff } from '@/school/functions/staff'
 
-export const Route = createFileRoute('/_auth/users/staff/$staffId/edit')({
+export const Route = createFileRoute('/_auth/settings/personnel/staff/$staffId/edit')({
   component: EditStaffPage,
   loader: async ({ params }) => {
     return await getStaffMember({ data: params.staffId })
@@ -32,7 +32,7 @@ function EditStaffPage() {
     try {
       await updateExistingStaff({ data: { staffId, data } })
       toast.success(t.hr.staff.updateSuccess())
-      navigate({ to: '/users/staff/$staffId', params: { staffId } })
+      navigate({ to: '/settings/personnel/staff/$staffId', params: { staffId } })
     }
     catch (error) {
       toast.error(t.hr.staff.updateError())
@@ -48,9 +48,10 @@ function EditStaffPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.staff.title(), href: '/users/staff' },
-          { label: staff.position, href: `/users/staff/${staffId}` },
+          { label: t.nav.settings(), href: '/settings' },
+          { label: t.sidebar.personnel(), href: '/settings/personnel' },
+          { label: t.hr.staff.title(), href: '/settings/personnel/staff' },
+          { label: staff.position, href: `/settings/personnel/staff/${staffId}` },
           { label: t.common.edit() },
         ]}
       />

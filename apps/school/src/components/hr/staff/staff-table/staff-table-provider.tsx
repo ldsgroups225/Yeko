@@ -51,7 +51,7 @@ export function StaffTableProvider({ children, filters }: StaffTableProviderProp
           setSearchInput,
           handlePageChange: (page: number) => {
             navigate({
-              to: '/users/staff',
+              to: '/settings/personnel/staff',
               search: { ...filters, page },
             })
           },

@@ -13,7 +13,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getRole } from '@/school/functions/roles'
 
-export const Route = createFileRoute('/_auth/users/roles/$roleId/')({
+export const Route = createFileRoute('/_auth/settings/roles/$roleId/')({
   component: RoleDetailPage,
   loader: async ({ params }) => {
     return await getRole({ data: params.roleId })
@@ -43,8 +43,8 @@ function RoleDetailPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.roles.title(), href: '/users/roles' },
+          { label: t.nav.settings(), href: '/settings' },
+          { label: t.hr.roles.title(), href: '/settings/roles' },
           { label: role.name },
         ]}
       />
@@ -75,7 +75,7 @@ function RoleDetailPage() {
               <Button
                 variant="outline"
                 render={(
-                  <Link to="/users/roles/$roleId/edit" params={{ roleId }}>
+                  <Link to="/settings/roles/$roleId/edit" params={{ roleId }}>
                     <IconEdit className="mr-2 h-4 w-4" />
                     {t.common.edit()}
                   </Link>

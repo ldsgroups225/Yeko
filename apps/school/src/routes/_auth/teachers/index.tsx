@@ -14,7 +14,7 @@ const teachersSearchSchema = z.object({
   status: z.enum(['active', 'inactive', 'on_leave']).optional(),
 })
 
-export const Route = createFileRoute('/_auth/users/teachers/')({
+export const Route = createFileRoute('/_auth/teachers/')({
   component: TeachersListPage,
   validateSearch: teachersSearchSchema,
 })
@@ -30,7 +30,7 @@ function TeachersListPage() {
           <LinkTeacherDialog />
           <Button
             render={(
-              <Link to="/users/teachers/new">
+              <Link to="/teachers/new">
                 <IconPlus className="mr-2 h-4 w-4" />
                 {t.hr.teachers.addTeacher()}
               </Link>

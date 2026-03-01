@@ -157,7 +157,7 @@ export function NavigationExample() {
   const { can } = usePermissions()
 
   const navItems = [
-    { label: 'Users', href: '/users/users', permission: { action: 'view', resource: 'users' } },
+    { label: 'Users', href: '/settings/personnel/users', permission: { action: 'view', resource: 'users' } },
     { label: 'Students', href: '/students', permission: { action: 'view', resource: 'students' } },
     { label: 'Finance', href: '/accounting', permission: { action: 'view', resource: 'finance' } },
     { label: 'Settings', href: '/settings', permission: { action: 'view', resource: 'settings' } },

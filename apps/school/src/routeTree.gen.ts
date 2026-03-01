@@ -25,6 +25,7 @@ import { Route as AuthClassesRouteImport } from './routes/_auth/classes'
 import { Route as AuthApprobationsRouteImport } from './routes/_auth/approbations'
 import { Route as AuthAccountingRouteImport } from './routes/_auth/accounting'
 import { Route as AuthUsersIndexRouteImport } from './routes/_auth/users/index'
+import { Route as AuthTeachersIndexRouteImport } from './routes/_auth/teachers/index'
 import { Route as AuthStudentsIndexRouteImport } from './routes/_auth/students/index'
 import { Route as AuthSpacesIndexRouteImport } from './routes/_auth/spaces/index'
 import { Route as AuthSettingsIndexRouteImport } from './routes/_auth/settings/index'
@@ -34,6 +35,7 @@ import { Route as AuthConductsIndexRouteImport } from './routes/_auth/conducts/i
 import { Route as AuthClassesIndexRouteImport } from './routes/_auth/classes/index'
 import { Route as AuthAccountingIndexRouteImport } from './routes/_auth/accounting/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
+import { Route as AuthTeachersNewRouteImport } from './routes/_auth/teachers/new'
 import { Route as AuthStudentsParentsRouteImport } from './routes/_auth/students/parents'
 import { Route as AuthStudentsNewRouteImport } from './routes/_auth/students/new'
 import { Route as AuthStudentsBulkOperationsRouteImport } from './routes/_auth/students/bulk-operations'
@@ -41,6 +43,7 @@ import { Route as AuthSpacesAvailabilityRouteImport } from './routes/_auth/space
 import { Route as AuthSettingsSchoolYearsRouteImport } from './routes/_auth/settings/school-years'
 import { Route as AuthSettingsReportCardsRouteImport } from './routes/_auth/settings/report-cards'
 import { Route as AuthSettingsProfileRouteImport } from './routes/_auth/settings/profile'
+import { Route as AuthSettingsPersonnelRouteImport } from './routes/_auth/settings/personnel'
 import { Route as AuthSettingsPedagogicalStructureRouteImport } from './routes/_auth/settings/pedagogical-structure'
 import { Route as AuthSettingsNotificationsRouteImport } from './routes/_auth/settings/notifications'
 import { Route as AuthSettingsFinanceRouteImport } from './routes/_auth/settings/finance'
@@ -64,24 +67,20 @@ import { Route as AuthAccountingFeeStructuresRouteImport } from './routes/_auth/
 import { Route as AuthAccountingDiscountsRouteImport } from './routes/_auth/accounting/discounts'
 import { Route as AuthAccountingDashboardRouteImport } from './routes/_auth/accounting/dashboard'
 import { Route as AuthAccountingAccountsRouteImport } from './routes/_auth/accounting/accounts'
-import { Route as AuthUsersUsersIndexRouteImport } from './routes/_auth/users/users/index'
-import { Route as AuthUsersTeachersIndexRouteImport } from './routes/_auth/users/teachers/index'
-import { Route as AuthUsersStaffIndexRouteImport } from './routes/_auth/users/staff/index'
-import { Route as AuthUsersRolesIndexRouteImport } from './routes/_auth/users/roles/index'
+import { Route as AuthTeachersTeacherIdIndexRouteImport } from './routes/_auth/teachers/$teacherId/index'
 import { Route as AuthStudentsStudentIdIndexRouteImport } from './routes/_auth/students/$studentId/index'
 import { Route as AuthSpacesClassroomsIndexRouteImport } from './routes/_auth/spaces/classrooms/index'
+import { Route as AuthSettingsRolesIndexRouteImport } from './routes/_auth/settings/roles/index'
+import { Route as AuthSettingsPersonnelIndexRouteImport } from './routes/_auth/settings/personnel/index'
 import { Route as AuthSettingsFinanceIndexRouteImport } from './routes/_auth/settings/finance/index'
 import { Route as AuthConductsTeacherAttendanceIndexRouteImport } from './routes/_auth/conducts/teacher-attendance/index'
 import { Route as AuthConductsStudentAttendanceIndexRouteImport } from './routes/_auth/conducts/student-attendance/index'
 import { Route as AuthConductsConductIndexRouteImport } from './routes/_auth/conducts/conduct/index'
 import { Route as AuthConductsAlertsIndexRouteImport } from './routes/_auth/conducts/alerts/index'
 import { Route as AuthClassesClassIdIndexRouteImport } from './routes/_auth/classes/$classId/index'
-import { Route as AuthUsersUsersNewRouteImport } from './routes/_auth/users/users/new'
-import { Route as AuthUsersUsersImportRouteImport } from './routes/_auth/users/users/import'
-import { Route as AuthUsersTeachersNewRouteImport } from './routes/_auth/users/teachers/new'
-import { Route as AuthUsersStaffNewRouteImport } from './routes/_auth/users/staff/new'
-import { Route as AuthUsersRolesNewRouteImport } from './routes/_auth/users/roles/new'
+import { Route as AuthTeachersTeacherIdEditRouteImport } from './routes/_auth/teachers/$teacherId/edit'
 import { Route as AuthStudentsStudentIdEditRouteImport } from './routes/_auth/students/$studentId/edit'
+import { Route as AuthSettingsRolesNewRouteImport } from './routes/_auth/settings/roles/new'
 import { Route as AuthSettingsFinanceStudentFeesRouteImport } from './routes/_auth/settings/finance/student-fees'
 import { Route as AuthSettingsFinanceSetupRouteImport } from './routes/_auth/settings/finance/setup'
 import { Route as AuthSettingsFinanceRefundsRouteImport } from './routes/_auth/settings/finance/refunds'
@@ -100,16 +99,19 @@ import { Route as AuthConductsConductReportsRouteImport } from './routes/_auth/c
 import { Route as AuthConductsConductNewRouteImport } from './routes/_auth/conducts/conduct/new'
 import { Route as AuthConductsConductRecordIdRouteImport } from './routes/_auth/conducts/conduct/$recordId'
 import { Route as AuthClassesClassIdEditRouteImport } from './routes/_auth/classes/$classId/edit'
-import { Route as AuthUsersUsersUserIdIndexRouteImport } from './routes/_auth/users/users/$userId/index'
-import { Route as AuthUsersTeachersTeacherIdIndexRouteImport } from './routes/_auth/users/teachers/$teacherId/index'
-import { Route as AuthUsersStaffStaffIdIndexRouteImport } from './routes/_auth/users/staff/$staffId/index'
-import { Route as AuthUsersRolesRoleIdIndexRouteImport } from './routes/_auth/users/roles/$roleId/index'
 import { Route as AuthSpacesClassroomsClassroomIdIndexRouteImport } from './routes/_auth/spaces/classrooms/$classroomId/index'
-import { Route as AuthUsersUsersUserIdEditRouteImport } from './routes/_auth/users/users/$userId/edit'
-import { Route as AuthUsersTeachersTeacherIdEditRouteImport } from './routes/_auth/users/teachers/$teacherId/edit'
-import { Route as AuthUsersStaffStaffIdEditRouteImport } from './routes/_auth/users/staff/$staffId/edit'
-import { Route as AuthUsersRolesRoleIdEditRouteImport } from './routes/_auth/users/roles/$roleId/edit'
+import { Route as AuthSettingsRolesRoleIdIndexRouteImport } from './routes/_auth/settings/roles/$roleId/index'
+import { Route as AuthSettingsPersonnelUsersIndexRouteImport } from './routes/_auth/settings/personnel/users/index'
+import { Route as AuthSettingsPersonnelStaffIndexRouteImport } from './routes/_auth/settings/personnel/staff/index'
 import { Route as AuthSpacesClassroomsClassroomIdEditRouteImport } from './routes/_auth/spaces/classrooms/$classroomId/edit'
+import { Route as AuthSettingsRolesRoleIdEditRouteImport } from './routes/_auth/settings/roles/$roleId/edit'
+import { Route as AuthSettingsPersonnelUsersNewRouteImport } from './routes/_auth/settings/personnel/users/new'
+import { Route as AuthSettingsPersonnelUsersImportRouteImport } from './routes/_auth/settings/personnel/users/import'
+import { Route as AuthSettingsPersonnelStaffNewRouteImport } from './routes/_auth/settings/personnel/staff/new'
+import { Route as AuthSettingsPersonnelUsersUserIdIndexRouteImport } from './routes/_auth/settings/personnel/users/$userId/index'
+import { Route as AuthSettingsPersonnelStaffStaffIdIndexRouteImport } from './routes/_auth/settings/personnel/staff/$staffId/index'
+import { Route as AuthSettingsPersonnelUsersUserIdEditRouteImport } from './routes/_auth/settings/personnel/users/$userId/edit'
+import { Route as AuthSettingsPersonnelStaffStaffIdEditRouteImport } from './routes/_auth/settings/personnel/staff/$staffId/edit'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -190,6 +192,11 @@ const AuthUsersIndexRoute = AuthUsersIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthUsersRoute,
 } as any)
+const AuthTeachersIndexRoute = AuthTeachersIndexRouteImport.update({
+  id: '/teachers/',
+  path: '/teachers/',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthStudentsIndexRoute = AuthStudentsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -235,6 +242,11 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthTeachersNewRoute = AuthTeachersNewRouteImport.update({
+  id: '/teachers/new',
+  path: '/teachers/new',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthStudentsParentsRoute = AuthStudentsParentsRouteImport.update({
   id: '/parents',
   path: '/parents',
@@ -269,6 +281,11 @@ const AuthSettingsReportCardsRoute = AuthSettingsReportCardsRouteImport.update({
 const AuthSettingsProfileRoute = AuthSettingsProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => AuthSettingsRoute,
+} as any)
+const AuthSettingsPersonnelRoute = AuthSettingsPersonnelRouteImport.update({
+  id: '/personnel',
+  path: '/personnel',
   getParentRoute: () => AuthSettingsRoute,
 } as any)
 const AuthSettingsPedagogicalStructureRoute =
@@ -395,26 +412,12 @@ const AuthAccountingAccountsRoute = AuthAccountingAccountsRouteImport.update({
   path: '/accounts',
   getParentRoute: () => AuthAccountingRoute,
 } as any)
-const AuthUsersUsersIndexRoute = AuthUsersUsersIndexRouteImport.update({
-  id: '/users/',
-  path: '/users/',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
-const AuthUsersTeachersIndexRoute = AuthUsersTeachersIndexRouteImport.update({
-  id: '/teachers/',
-  path: '/teachers/',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
-const AuthUsersStaffIndexRoute = AuthUsersStaffIndexRouteImport.update({
-  id: '/staff/',
-  path: '/staff/',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
-const AuthUsersRolesIndexRoute = AuthUsersRolesIndexRouteImport.update({
-  id: '/roles/',
-  path: '/roles/',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
+const AuthTeachersTeacherIdIndexRoute =
+  AuthTeachersTeacherIdIndexRouteImport.update({
+    id: '/teachers/$teacherId/',
+    path: '/teachers/$teacherId/',
+    getParentRoute: () => AuthRoute,
+  } as any)
 const AuthStudentsStudentIdIndexRoute =
   AuthStudentsStudentIdIndexRouteImport.update({
     id: '/$studentId/',
@@ -426,6 +429,17 @@ const AuthSpacesClassroomsIndexRoute =
     id: '/classrooms/',
     path: '/classrooms/',
     getParentRoute: () => AuthSpacesRoute,
+  } as any)
+const AuthSettingsRolesIndexRoute = AuthSettingsRolesIndexRouteImport.update({
+  id: '/roles/',
+  path: '/roles/',
+  getParentRoute: () => AuthSettingsRoute,
+} as any)
+const AuthSettingsPersonnelIndexRoute =
+  AuthSettingsPersonnelIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
   } as any)
 const AuthSettingsFinanceIndexRoute =
   AuthSettingsFinanceIndexRouteImport.update({
@@ -461,37 +475,23 @@ const AuthClassesClassIdIndexRoute = AuthClassesClassIdIndexRouteImport.update({
   path: '/$classId/',
   getParentRoute: () => AuthClassesRoute,
 } as any)
-const AuthUsersUsersNewRoute = AuthUsersUsersNewRouteImport.update({
-  id: '/users/new',
-  path: '/users/new',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
-const AuthUsersUsersImportRoute = AuthUsersUsersImportRouteImport.update({
-  id: '/users/import',
-  path: '/users/import',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
-const AuthUsersTeachersNewRoute = AuthUsersTeachersNewRouteImport.update({
-  id: '/teachers/new',
-  path: '/teachers/new',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
-const AuthUsersStaffNewRoute = AuthUsersStaffNewRouteImport.update({
-  id: '/staff/new',
-  path: '/staff/new',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
-const AuthUsersRolesNewRoute = AuthUsersRolesNewRouteImport.update({
-  id: '/roles/new',
-  path: '/roles/new',
-  getParentRoute: () => AuthUsersRoute,
-} as any)
+const AuthTeachersTeacherIdEditRoute =
+  AuthTeachersTeacherIdEditRouteImport.update({
+    id: '/teachers/$teacherId/edit',
+    path: '/teachers/$teacherId/edit',
+    getParentRoute: () => AuthRoute,
+  } as any)
 const AuthStudentsStudentIdEditRoute =
   AuthStudentsStudentIdEditRouteImport.update({
     id: '/$studentId/edit',
     path: '/$studentId/edit',
     getParentRoute: () => AuthStudentsRoute,
   } as any)
+const AuthSettingsRolesNewRoute = AuthSettingsRolesNewRouteImport.update({
+  id: '/roles/new',
+  path: '/roles/new',
+  getParentRoute: () => AuthSettingsRoute,
+} as any)
 const AuthSettingsFinanceStudentFeesRoute =
   AuthSettingsFinanceStudentFeesRouteImport.update({
     id: '/student-fees',
@@ -598,65 +598,83 @@ const AuthClassesClassIdEditRoute = AuthClassesClassIdEditRouteImport.update({
   path: '/$classId/edit',
   getParentRoute: () => AuthClassesRoute,
 } as any)
-const AuthUsersUsersUserIdIndexRoute =
-  AuthUsersUsersUserIdIndexRouteImport.update({
-    id: '/users/$userId/',
-    path: '/users/$userId/',
-    getParentRoute: () => AuthUsersRoute,
-  } as any)
-const AuthUsersTeachersTeacherIdIndexRoute =
-  AuthUsersTeachersTeacherIdIndexRouteImport.update({
-    id: '/teachers/$teacherId/',
-    path: '/teachers/$teacherId/',
-    getParentRoute: () => AuthUsersRoute,
-  } as any)
-const AuthUsersStaffStaffIdIndexRoute =
-  AuthUsersStaffStaffIdIndexRouteImport.update({
-    id: '/staff/$staffId/',
-    path: '/staff/$staffId/',
-    getParentRoute: () => AuthUsersRoute,
-  } as any)
-const AuthUsersRolesRoleIdIndexRoute =
-  AuthUsersRolesRoleIdIndexRouteImport.update({
-    id: '/roles/$roleId/',
-    path: '/roles/$roleId/',
-    getParentRoute: () => AuthUsersRoute,
-  } as any)
 const AuthSpacesClassroomsClassroomIdIndexRoute =
   AuthSpacesClassroomsClassroomIdIndexRouteImport.update({
     id: '/classrooms/$classroomId/',
     path: '/classrooms/$classroomId/',
     getParentRoute: () => AuthSpacesRoute,
   } as any)
-const AuthUsersUsersUserIdEditRoute =
-  AuthUsersUsersUserIdEditRouteImport.update({
-    id: '/users/$userId/edit',
-    path: '/users/$userId/edit',
-    getParentRoute: () => AuthUsersRoute,
+const AuthSettingsRolesRoleIdIndexRoute =
+  AuthSettingsRolesRoleIdIndexRouteImport.update({
+    id: '/roles/$roleId/',
+    path: '/roles/$roleId/',
+    getParentRoute: () => AuthSettingsRoute,
   } as any)
-const AuthUsersTeachersTeacherIdEditRoute =
-  AuthUsersTeachersTeacherIdEditRouteImport.update({
-    id: '/teachers/$teacherId/edit',
-    path: '/teachers/$teacherId/edit',
-    getParentRoute: () => AuthUsersRoute,
+const AuthSettingsPersonnelUsersIndexRoute =
+  AuthSettingsPersonnelUsersIndexRouteImport.update({
+    id: '/users/',
+    path: '/users/',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
   } as any)
-const AuthUsersStaffStaffIdEditRoute =
-  AuthUsersStaffStaffIdEditRouteImport.update({
-    id: '/staff/$staffId/edit',
-    path: '/staff/$staffId/edit',
-    getParentRoute: () => AuthUsersRoute,
-  } as any)
-const AuthUsersRolesRoleIdEditRoute =
-  AuthUsersRolesRoleIdEditRouteImport.update({
-    id: '/roles/$roleId/edit',
-    path: '/roles/$roleId/edit',
-    getParentRoute: () => AuthUsersRoute,
+const AuthSettingsPersonnelStaffIndexRoute =
+  AuthSettingsPersonnelStaffIndexRouteImport.update({
+    id: '/staff/',
+    path: '/staff/',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
   } as any)
 const AuthSpacesClassroomsClassroomIdEditRoute =
   AuthSpacesClassroomsClassroomIdEditRouteImport.update({
     id: '/classrooms/$classroomId/edit',
     path: '/classrooms/$classroomId/edit',
     getParentRoute: () => AuthSpacesRoute,
+  } as any)
+const AuthSettingsRolesRoleIdEditRoute =
+  AuthSettingsRolesRoleIdEditRouteImport.update({
+    id: '/roles/$roleId/edit',
+    path: '/roles/$roleId/edit',
+    getParentRoute: () => AuthSettingsRoute,
+  } as any)
+const AuthSettingsPersonnelUsersNewRoute =
+  AuthSettingsPersonnelUsersNewRouteImport.update({
+    id: '/users/new',
+    path: '/users/new',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
+  } as any)
+const AuthSettingsPersonnelUsersImportRoute =
+  AuthSettingsPersonnelUsersImportRouteImport.update({
+    id: '/users/import',
+    path: '/users/import',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
+  } as any)
+const AuthSettingsPersonnelStaffNewRoute =
+  AuthSettingsPersonnelStaffNewRouteImport.update({
+    id: '/staff/new',
+    path: '/staff/new',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
+  } as any)
+const AuthSettingsPersonnelUsersUserIdIndexRoute =
+  AuthSettingsPersonnelUsersUserIdIndexRouteImport.update({
+    id: '/users/$userId/',
+    path: '/users/$userId/',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
+  } as any)
+const AuthSettingsPersonnelStaffStaffIdIndexRoute =
+  AuthSettingsPersonnelStaffStaffIdIndexRouteImport.update({
+    id: '/staff/$staffId/',
+    path: '/staff/$staffId/',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
+  } as any)
+const AuthSettingsPersonnelUsersUserIdEditRoute =
+  AuthSettingsPersonnelUsersUserIdEditRouteImport.update({
+    id: '/users/$userId/edit',
+    path: '/users/$userId/edit',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
+  } as any)
+const AuthSettingsPersonnelStaffStaffIdEditRoute =
+  AuthSettingsPersonnelStaffStaffIdEditRouteImport.update({
+    id: '/staff/$staffId/edit',
+    path: '/staff/$staffId/edit',
+    getParentRoute: () => AuthSettingsPersonnelRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -697,6 +715,7 @@ export interface FileRoutesByFullPath {
   '/settings/finance': typeof AuthSettingsFinanceRouteWithChildren
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
+  '/settings/personnel': typeof AuthSettingsPersonnelRouteWithChildren
   '/settings/profile': typeof AuthSettingsProfileRoute
   '/settings/report-cards': typeof AuthSettingsReportCardsRoute
   '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
@@ -704,6 +723,7 @@ export interface FileRoutesByFullPath {
   '/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
   '/students/new': typeof AuthStudentsNewRoute
   '/students/parents': typeof AuthStudentsParentsRoute
+  '/teachers/new': typeof AuthTeachersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/accounting/': typeof AuthAccountingIndexRoute
   '/classes/': typeof AuthClassesIndexRoute
@@ -713,6 +733,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthSettingsIndexRoute
   '/spaces/': typeof AuthSpacesIndexRoute
   '/students/': typeof AuthStudentsIndexRoute
+  '/teachers/': typeof AuthTeachersIndexRoute
   '/users/': typeof AuthUsersIndexRoute
   '/classes/$classId/edit': typeof AuthClassesClassIdEditRoute
   '/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
@@ -732,34 +753,33 @@ export interface FileRoutesByFullPath {
   '/settings/finance/refunds': typeof AuthSettingsFinanceRefundsRoute
   '/settings/finance/setup': typeof AuthSettingsFinanceSetupRoute
   '/settings/finance/student-fees': typeof AuthSettingsFinanceStudentFeesRoute
+  '/settings/roles/new': typeof AuthSettingsRolesNewRoute
   '/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
-  '/users/roles/new': typeof AuthUsersRolesNewRoute
-  '/users/staff/new': typeof AuthUsersStaffNewRoute
-  '/users/teachers/new': typeof AuthUsersTeachersNewRoute
-  '/users/users/import': typeof AuthUsersUsersImportRoute
-  '/users/users/new': typeof AuthUsersUsersNewRoute
+  '/teachers/$teacherId/edit': typeof AuthTeachersTeacherIdEditRoute
   '/classes/$classId/': typeof AuthClassesClassIdIndexRoute
   '/conducts/alerts/': typeof AuthConductsAlertsIndexRoute
   '/conducts/conduct/': typeof AuthConductsConductIndexRoute
   '/conducts/student-attendance/': typeof AuthConductsStudentAttendanceIndexRoute
   '/conducts/teacher-attendance/': typeof AuthConductsTeacherAttendanceIndexRoute
   '/settings/finance/': typeof AuthSettingsFinanceIndexRoute
+  '/settings/personnel/': typeof AuthSettingsPersonnelIndexRoute
+  '/settings/roles/': typeof AuthSettingsRolesIndexRoute
   '/spaces/classrooms/': typeof AuthSpacesClassroomsIndexRoute
   '/students/$studentId/': typeof AuthStudentsStudentIdIndexRoute
-  '/users/roles/': typeof AuthUsersRolesIndexRoute
-  '/users/staff/': typeof AuthUsersStaffIndexRoute
-  '/users/teachers/': typeof AuthUsersTeachersIndexRoute
-  '/users/users/': typeof AuthUsersUsersIndexRoute
+  '/teachers/$teacherId/': typeof AuthTeachersTeacherIdIndexRoute
+  '/settings/personnel/staff/new': typeof AuthSettingsPersonnelStaffNewRoute
+  '/settings/personnel/users/import': typeof AuthSettingsPersonnelUsersImportRoute
+  '/settings/personnel/users/new': typeof AuthSettingsPersonnelUsersNewRoute
+  '/settings/roles/$roleId/edit': typeof AuthSettingsRolesRoleIdEditRoute
   '/spaces/classrooms/$classroomId/edit': typeof AuthSpacesClassroomsClassroomIdEditRoute
-  '/users/roles/$roleId/edit': typeof AuthUsersRolesRoleIdEditRoute
-  '/users/staff/$staffId/edit': typeof AuthUsersStaffStaffIdEditRoute
-  '/users/teachers/$teacherId/edit': typeof AuthUsersTeachersTeacherIdEditRoute
-  '/users/users/$userId/edit': typeof AuthUsersUsersUserIdEditRoute
+  '/settings/personnel/staff/': typeof AuthSettingsPersonnelStaffIndexRoute
+  '/settings/personnel/users/': typeof AuthSettingsPersonnelUsersIndexRoute
+  '/settings/roles/$roleId/': typeof AuthSettingsRolesRoleIdIndexRoute
   '/spaces/classrooms/$classroomId/': typeof AuthSpacesClassroomsClassroomIdIndexRoute
-  '/users/roles/$roleId/': typeof AuthUsersRolesRoleIdIndexRoute
-  '/users/staff/$staffId/': typeof AuthUsersStaffStaffIdIndexRoute
-  '/users/teachers/$teacherId/': typeof AuthUsersTeachersTeacherIdIndexRoute
-  '/users/users/$userId/': typeof AuthUsersUsersUserIdIndexRoute
+  '/settings/personnel/staff/$staffId/edit': typeof AuthSettingsPersonnelStaffStaffIdEditRoute
+  '/settings/personnel/users/$userId/edit': typeof AuthSettingsPersonnelUsersUserIdEditRoute
+  '/settings/personnel/staff/$staffId/': typeof AuthSettingsPersonnelStaffStaffIdIndexRoute
+  '/settings/personnel/users/$userId/': typeof AuthSettingsPersonnelUsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -796,6 +816,7 @@ export interface FileRoutesByTo {
   '/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
   '/students/new': typeof AuthStudentsNewRoute
   '/students/parents': typeof AuthStudentsParentsRoute
+  '/teachers/new': typeof AuthTeachersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/accounting': typeof AuthAccountingIndexRoute
   '/classes': typeof AuthClassesIndexRoute
@@ -805,6 +826,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthSettingsIndexRoute
   '/spaces': typeof AuthSpacesIndexRoute
   '/students': typeof AuthStudentsIndexRoute
+  '/teachers': typeof AuthTeachersIndexRoute
   '/users': typeof AuthUsersIndexRoute
   '/classes/$classId/edit': typeof AuthClassesClassIdEditRoute
   '/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
@@ -824,34 +846,33 @@ export interface FileRoutesByTo {
   '/settings/finance/refunds': typeof AuthSettingsFinanceRefundsRoute
   '/settings/finance/setup': typeof AuthSettingsFinanceSetupRoute
   '/settings/finance/student-fees': typeof AuthSettingsFinanceStudentFeesRoute
+  '/settings/roles/new': typeof AuthSettingsRolesNewRoute
   '/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
-  '/users/roles/new': typeof AuthUsersRolesNewRoute
-  '/users/staff/new': typeof AuthUsersStaffNewRoute
-  '/users/teachers/new': typeof AuthUsersTeachersNewRoute
-  '/users/users/import': typeof AuthUsersUsersImportRoute
-  '/users/users/new': typeof AuthUsersUsersNewRoute
+  '/teachers/$teacherId/edit': typeof AuthTeachersTeacherIdEditRoute
   '/classes/$classId': typeof AuthClassesClassIdIndexRoute
   '/conducts/alerts': typeof AuthConductsAlertsIndexRoute
   '/conducts/conduct': typeof AuthConductsConductIndexRoute
   '/conducts/student-attendance': typeof AuthConductsStudentAttendanceIndexRoute
   '/conducts/teacher-attendance': typeof AuthConductsTeacherAttendanceIndexRoute
   '/settings/finance': typeof AuthSettingsFinanceIndexRoute
+  '/settings/personnel': typeof AuthSettingsPersonnelIndexRoute
+  '/settings/roles': typeof AuthSettingsRolesIndexRoute
   '/spaces/classrooms': typeof AuthSpacesClassroomsIndexRoute
   '/students/$studentId': typeof AuthStudentsStudentIdIndexRoute
-  '/users/roles': typeof AuthUsersRolesIndexRoute
-  '/users/staff': typeof AuthUsersStaffIndexRoute
-  '/users/teachers': typeof AuthUsersTeachersIndexRoute
-  '/users/users': typeof AuthUsersUsersIndexRoute
+  '/teachers/$teacherId': typeof AuthTeachersTeacherIdIndexRoute
+  '/settings/personnel/staff/new': typeof AuthSettingsPersonnelStaffNewRoute
+  '/settings/personnel/users/import': typeof AuthSettingsPersonnelUsersImportRoute
+  '/settings/personnel/users/new': typeof AuthSettingsPersonnelUsersNewRoute
+  '/settings/roles/$roleId/edit': typeof AuthSettingsRolesRoleIdEditRoute
   '/spaces/classrooms/$classroomId/edit': typeof AuthSpacesClassroomsClassroomIdEditRoute
-  '/users/roles/$roleId/edit': typeof AuthUsersRolesRoleIdEditRoute
-  '/users/staff/$staffId/edit': typeof AuthUsersStaffStaffIdEditRoute
-  '/users/teachers/$teacherId/edit': typeof AuthUsersTeachersTeacherIdEditRoute
-  '/users/users/$userId/edit': typeof AuthUsersUsersUserIdEditRoute
+  '/settings/personnel/staff': typeof AuthSettingsPersonnelStaffIndexRoute
+  '/settings/personnel/users': typeof AuthSettingsPersonnelUsersIndexRoute
+  '/settings/roles/$roleId': typeof AuthSettingsRolesRoleIdIndexRoute
   '/spaces/classrooms/$classroomId': typeof AuthSpacesClassroomsClassroomIdIndexRoute
-  '/users/roles/$roleId': typeof AuthUsersRolesRoleIdIndexRoute
-  '/users/staff/$staffId': typeof AuthUsersStaffStaffIdIndexRoute
-  '/users/teachers/$teacherId': typeof AuthUsersTeachersTeacherIdIndexRoute
-  '/users/users/$userId': typeof AuthUsersUsersUserIdIndexRoute
+  '/settings/personnel/staff/$staffId/edit': typeof AuthSettingsPersonnelStaffStaffIdEditRoute
+  '/settings/personnel/users/$userId/edit': typeof AuthSettingsPersonnelUsersUserIdEditRoute
+  '/settings/personnel/staff/$staffId': typeof AuthSettingsPersonnelStaffStaffIdIndexRoute
+  '/settings/personnel/users/$userId': typeof AuthSettingsPersonnelUsersUserIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -893,6 +914,7 @@ export interface FileRoutesById {
   '/_auth/settings/finance': typeof AuthSettingsFinanceRouteWithChildren
   '/_auth/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/_auth/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
+  '/_auth/settings/personnel': typeof AuthSettingsPersonnelRouteWithChildren
   '/_auth/settings/profile': typeof AuthSettingsProfileRoute
   '/_auth/settings/report-cards': typeof AuthSettingsReportCardsRoute
   '/_auth/settings/school-years': typeof AuthSettingsSchoolYearsRoute
@@ -900,6 +922,7 @@ export interface FileRoutesById {
   '/_auth/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
   '/_auth/students/new': typeof AuthStudentsNewRoute
   '/_auth/students/parents': typeof AuthStudentsParentsRoute
+  '/_auth/teachers/new': typeof AuthTeachersNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/_auth/accounting/': typeof AuthAccountingIndexRoute
   '/_auth/classes/': typeof AuthClassesIndexRoute
@@ -909,6 +932,7 @@ export interface FileRoutesById {
   '/_auth/settings/': typeof AuthSettingsIndexRoute
   '/_auth/spaces/': typeof AuthSpacesIndexRoute
   '/_auth/students/': typeof AuthStudentsIndexRoute
+  '/_auth/teachers/': typeof AuthTeachersIndexRoute
   '/_auth/users/': typeof AuthUsersIndexRoute
   '/_auth/classes/$classId/edit': typeof AuthClassesClassIdEditRoute
   '/_auth/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
@@ -928,34 +952,33 @@ export interface FileRoutesById {
   '/_auth/settings/finance/refunds': typeof AuthSettingsFinanceRefundsRoute
   '/_auth/settings/finance/setup': typeof AuthSettingsFinanceSetupRoute
   '/_auth/settings/finance/student-fees': typeof AuthSettingsFinanceStudentFeesRoute
+  '/_auth/settings/roles/new': typeof AuthSettingsRolesNewRoute
   '/_auth/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
-  '/_auth/users/roles/new': typeof AuthUsersRolesNewRoute
-  '/_auth/users/staff/new': typeof AuthUsersStaffNewRoute
-  '/_auth/users/teachers/new': typeof AuthUsersTeachersNewRoute
-  '/_auth/users/users/import': typeof AuthUsersUsersImportRoute
-  '/_auth/users/users/new': typeof AuthUsersUsersNewRoute
+  '/_auth/teachers/$teacherId/edit': typeof AuthTeachersTeacherIdEditRoute
   '/_auth/classes/$classId/': typeof AuthClassesClassIdIndexRoute
   '/_auth/conducts/alerts/': typeof AuthConductsAlertsIndexRoute
   '/_auth/conducts/conduct/': typeof AuthConductsConductIndexRoute
   '/_auth/conducts/student-attendance/': typeof AuthConductsStudentAttendanceIndexRoute
   '/_auth/conducts/teacher-attendance/': typeof AuthConductsTeacherAttendanceIndexRoute
   '/_auth/settings/finance/': typeof AuthSettingsFinanceIndexRoute
+  '/_auth/settings/personnel/': typeof AuthSettingsPersonnelIndexRoute
+  '/_auth/settings/roles/': typeof AuthSettingsRolesIndexRoute
   '/_auth/spaces/classrooms/': typeof AuthSpacesClassroomsIndexRoute
   '/_auth/students/$studentId/': typeof AuthStudentsStudentIdIndexRoute
-  '/_auth/users/roles/': typeof AuthUsersRolesIndexRoute
-  '/_auth/users/staff/': typeof AuthUsersStaffIndexRoute
-  '/_auth/users/teachers/': typeof AuthUsersTeachersIndexRoute
-  '/_auth/users/users/': typeof AuthUsersUsersIndexRoute
+  '/_auth/teachers/$teacherId/': typeof AuthTeachersTeacherIdIndexRoute
+  '/_auth/settings/personnel/staff/new': typeof AuthSettingsPersonnelStaffNewRoute
+  '/_auth/settings/personnel/users/import': typeof AuthSettingsPersonnelUsersImportRoute
+  '/_auth/settings/personnel/users/new': typeof AuthSettingsPersonnelUsersNewRoute
+  '/_auth/settings/roles/$roleId/edit': typeof AuthSettingsRolesRoleIdEditRoute
   '/_auth/spaces/classrooms/$classroomId/edit': typeof AuthSpacesClassroomsClassroomIdEditRoute
-  '/_auth/users/roles/$roleId/edit': typeof AuthUsersRolesRoleIdEditRoute
-  '/_auth/users/staff/$staffId/edit': typeof AuthUsersStaffStaffIdEditRoute
-  '/_auth/users/teachers/$teacherId/edit': typeof AuthUsersTeachersTeacherIdEditRoute
-  '/_auth/users/users/$userId/edit': typeof AuthUsersUsersUserIdEditRoute
+  '/_auth/settings/personnel/staff/': typeof AuthSettingsPersonnelStaffIndexRoute
+  '/_auth/settings/personnel/users/': typeof AuthSettingsPersonnelUsersIndexRoute
+  '/_auth/settings/roles/$roleId/': typeof AuthSettingsRolesRoleIdIndexRoute
   '/_auth/spaces/classrooms/$classroomId/': typeof AuthSpacesClassroomsClassroomIdIndexRoute
-  '/_auth/users/roles/$roleId/': typeof AuthUsersRolesRoleIdIndexRoute
-  '/_auth/users/staff/$staffId/': typeof AuthUsersStaffStaffIdIndexRoute
-  '/_auth/users/teachers/$teacherId/': typeof AuthUsersTeachersTeacherIdIndexRoute
-  '/_auth/users/users/$userId/': typeof AuthUsersUsersUserIdIndexRoute
+  '/_auth/settings/personnel/staff/$staffId/edit': typeof AuthSettingsPersonnelStaffStaffIdEditRoute
+  '/_auth/settings/personnel/users/$userId/edit': typeof AuthSettingsPersonnelUsersUserIdEditRoute
+  '/_auth/settings/personnel/staff/$staffId/': typeof AuthSettingsPersonnelStaffStaffIdIndexRoute
+  '/_auth/settings/personnel/users/$userId/': typeof AuthSettingsPersonnelUsersUserIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -997,6 +1020,7 @@ export interface FileRouteTypes {
     | '/settings/finance'
     | '/settings/notifications'
     | '/settings/pedagogical-structure'
+    | '/settings/personnel'
     | '/settings/profile'
     | '/settings/report-cards'
     | '/settings/school-years'
@@ -1004,6 +1028,7 @@ export interface FileRouteTypes {
     | '/students/bulk-operations'
     | '/students/new'
     | '/students/parents'
+    | '/teachers/new'
     | '/api/auth/$'
     | '/accounting/'
     | '/classes/'
@@ -1013,6 +1038,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/spaces/'
     | '/students/'
+    | '/teachers/'
     | '/users/'
     | '/classes/$classId/edit'
     | '/conducts/conduct/$recordId'
@@ -1032,34 +1058,33 @@ export interface FileRouteTypes {
     | '/settings/finance/refunds'
     | '/settings/finance/setup'
     | '/settings/finance/student-fees'
+    | '/settings/roles/new'
     | '/students/$studentId/edit'
-    | '/users/roles/new'
-    | '/users/staff/new'
-    | '/users/teachers/new'
-    | '/users/users/import'
-    | '/users/users/new'
+    | '/teachers/$teacherId/edit'
     | '/classes/$classId/'
     | '/conducts/alerts/'
     | '/conducts/conduct/'
     | '/conducts/student-attendance/'
     | '/conducts/teacher-attendance/'
     | '/settings/finance/'
+    | '/settings/personnel/'
+    | '/settings/roles/'
     | '/spaces/classrooms/'
     | '/students/$studentId/'
-    | '/users/roles/'
-    | '/users/staff/'
-    | '/users/teachers/'
-    | '/users/users/'
+    | '/teachers/$teacherId/'
+    | '/settings/personnel/staff/new'
+    | '/settings/personnel/users/import'
+    | '/settings/personnel/users/new'
+    | '/settings/roles/$roleId/edit'
     | '/spaces/classrooms/$classroomId/edit'
-    | '/users/roles/$roleId/edit'
-    | '/users/staff/$staffId/edit'
-    | '/users/teachers/$teacherId/edit'
-    | '/users/users/$userId/edit'
+    | '/settings/personnel/staff/'
+    | '/settings/personnel/users/'
+    | '/settings/roles/$roleId/'
     | '/spaces/classrooms/$classroomId/'
-    | '/users/roles/$roleId/'
-    | '/users/staff/$staffId/'
-    | '/users/teachers/$teacherId/'
-    | '/users/users/$userId/'
+    | '/settings/personnel/staff/$staffId/edit'
+    | '/settings/personnel/users/$userId/edit'
+    | '/settings/personnel/staff/$staffId/'
+    | '/settings/personnel/users/$userId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1096,6 +1121,7 @@ export interface FileRouteTypes {
     | '/students/bulk-operations'
     | '/students/new'
     | '/students/parents'
+    | '/teachers/new'
     | '/api/auth/$'
     | '/accounting'
     | '/classes'
@@ -1105,6 +1131,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/spaces'
     | '/students'
+    | '/teachers'
     | '/users'
     | '/classes/$classId/edit'
     | '/conducts/conduct/$recordId'
@@ -1124,34 +1151,33 @@ export interface FileRouteTypes {
     | '/settings/finance/refunds'
     | '/settings/finance/setup'
     | '/settings/finance/student-fees'
+    | '/settings/roles/new'
     | '/students/$studentId/edit'
-    | '/users/roles/new'
-    | '/users/staff/new'
-    | '/users/teachers/new'
-    | '/users/users/import'
-    | '/users/users/new'
+    | '/teachers/$teacherId/edit'
     | '/classes/$classId'
     | '/conducts/alerts'
     | '/conducts/conduct'
     | '/conducts/student-attendance'
     | '/conducts/teacher-attendance'
     | '/settings/finance'
+    | '/settings/personnel'
+    | '/settings/roles'
     | '/spaces/classrooms'
     | '/students/$studentId'
-    | '/users/roles'
-    | '/users/staff'
-    | '/users/teachers'
-    | '/users/users'
+    | '/teachers/$teacherId'
+    | '/settings/personnel/staff/new'
+    | '/settings/personnel/users/import'
+    | '/settings/personnel/users/new'
+    | '/settings/roles/$roleId/edit'
     | '/spaces/classrooms/$classroomId/edit'
-    | '/users/roles/$roleId/edit'
-    | '/users/staff/$staffId/edit'
-    | '/users/teachers/$teacherId/edit'
-    | '/users/users/$userId/edit'
+    | '/settings/personnel/staff'
+    | '/settings/personnel/users'
+    | '/settings/roles/$roleId'
     | '/spaces/classrooms/$classroomId'
-    | '/users/roles/$roleId'
-    | '/users/staff/$staffId'
-    | '/users/teachers/$teacherId'
-    | '/users/users/$userId'
+    | '/settings/personnel/staff/$staffId/edit'
+    | '/settings/personnel/users/$userId/edit'
+    | '/settings/personnel/staff/$staffId'
+    | '/settings/personnel/users/$userId'
   id:
     | '__root__'
     | '/'
@@ -1192,6 +1218,7 @@ export interface FileRouteTypes {
     | '/_auth/settings/finance'
     | '/_auth/settings/notifications'
     | '/_auth/settings/pedagogical-structure'
+    | '/_auth/settings/personnel'
     | '/_auth/settings/profile'
     | '/_auth/settings/report-cards'
     | '/_auth/settings/school-years'
@@ -1199,6 +1226,7 @@ export interface FileRouteTypes {
     | '/_auth/students/bulk-operations'
     | '/_auth/students/new'
     | '/_auth/students/parents'
+    | '/_auth/teachers/new'
     | '/api/auth/$'
     | '/_auth/accounting/'
     | '/_auth/classes/'
@@ -1208,6 +1236,7 @@ export interface FileRouteTypes {
     | '/_auth/settings/'
     | '/_auth/spaces/'
     | '/_auth/students/'
+    | '/_auth/teachers/'
     | '/_auth/users/'
     | '/_auth/classes/$classId/edit'
     | '/_auth/conducts/conduct/$recordId'
@@ -1227,34 +1256,33 @@ export interface FileRouteTypes {
     | '/_auth/settings/finance/refunds'
     | '/_auth/settings/finance/setup'
     | '/_auth/settings/finance/student-fees'
+    | '/_auth/settings/roles/new'
     | '/_auth/students/$studentId/edit'
-    | '/_auth/users/roles/new'
-    | '/_auth/users/staff/new'
-    | '/_auth/users/teachers/new'
-    | '/_auth/users/users/import'
-    | '/_auth/users/users/new'
+    | '/_auth/teachers/$teacherId/edit'
     | '/_auth/classes/$classId/'
     | '/_auth/conducts/alerts/'
     | '/_auth/conducts/conduct/'
     | '/_auth/conducts/student-attendance/'
     | '/_auth/conducts/teacher-attendance/'
     | '/_auth/settings/finance/'
+    | '/_auth/settings/personnel/'
+    | '/_auth/settings/roles/'
     | '/_auth/spaces/classrooms/'
     | '/_auth/students/$studentId/'
-    | '/_auth/users/roles/'
-    | '/_auth/users/staff/'
-    | '/_auth/users/teachers/'
-    | '/_auth/users/users/'
+    | '/_auth/teachers/$teacherId/'
+    | '/_auth/settings/personnel/staff/new'
+    | '/_auth/settings/personnel/users/import'
+    | '/_auth/settings/personnel/users/new'
+    | '/_auth/settings/roles/$roleId/edit'
     | '/_auth/spaces/classrooms/$classroomId/edit'
-    | '/_auth/users/roles/$roleId/edit'
-    | '/_auth/users/staff/$staffId/edit'
-    | '/_auth/users/teachers/$teacherId/edit'
-    | '/_auth/users/users/$userId/edit'
+    | '/_auth/settings/personnel/staff/'
+    | '/_auth/settings/personnel/users/'
+    | '/_auth/settings/roles/$roleId/'
     | '/_auth/spaces/classrooms/$classroomId/'
-    | '/_auth/users/roles/$roleId/'
-    | '/_auth/users/staff/$staffId/'
-    | '/_auth/users/teachers/$teacherId/'
-    | '/_auth/users/users/$userId/'
+    | '/_auth/settings/personnel/staff/$staffId/edit'
+    | '/_auth/settings/personnel/users/$userId/edit'
+    | '/_auth/settings/personnel/staff/$staffId/'
+    | '/_auth/settings/personnel/users/$userId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1378,6 +1406,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthUsersIndexRouteImport
       parentRoute: typeof AuthUsersRoute
     }
+    '/_auth/teachers/': {
+      id: '/_auth/teachers/'
+      path: '/teachers'
+      fullPath: '/teachers/'
+      preLoaderRoute: typeof AuthTeachersIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/students/': {
       id: '/_auth/students/'
       path: '/'
@@ -1441,6 +1476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_auth/teachers/new': {
+      id: '/_auth/teachers/new'
+      path: '/teachers/new'
+      fullPath: '/teachers/new'
+      preLoaderRoute: typeof AuthTeachersNewRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/students/parents': {
       id: '/_auth/students/parents'
       path: '/parents'
@@ -1488,6 +1530,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/settings/profile'
       preLoaderRoute: typeof AuthSettingsProfileRouteImport
+      parentRoute: typeof AuthSettingsRoute
+    }
+    '/_auth/settings/personnel': {
+      id: '/_auth/settings/personnel'
+      path: '/personnel'
+      fullPath: '/settings/personnel'
+      preLoaderRoute: typeof AuthSettingsPersonnelRouteImport
       parentRoute: typeof AuthSettingsRoute
     }
     '/_auth/settings/pedagogical-structure': {
@@ -1651,33 +1700,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAccountingAccountsRouteImport
       parentRoute: typeof AuthAccountingRoute
     }
-    '/_auth/users/users/': {
-      id: '/_auth/users/users/'
-      path: '/users'
-      fullPath: '/users/users/'
-      preLoaderRoute: typeof AuthUsersUsersIndexRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/teachers/': {
-      id: '/_auth/users/teachers/'
-      path: '/teachers'
-      fullPath: '/users/teachers/'
-      preLoaderRoute: typeof AuthUsersTeachersIndexRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/staff/': {
-      id: '/_auth/users/staff/'
-      path: '/staff'
-      fullPath: '/users/staff/'
-      preLoaderRoute: typeof AuthUsersStaffIndexRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/roles/': {
-      id: '/_auth/users/roles/'
-      path: '/roles'
-      fullPath: '/users/roles/'
-      preLoaderRoute: typeof AuthUsersRolesIndexRouteImport
-      parentRoute: typeof AuthUsersRoute
+    '/_auth/teachers/$teacherId/': {
+      id: '/_auth/teachers/$teacherId/'
+      path: '/teachers/$teacherId'
+      fullPath: '/teachers/$teacherId/'
+      preLoaderRoute: typeof AuthTeachersTeacherIdIndexRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_auth/students/$studentId/': {
       id: '/_auth/students/$studentId/'
@@ -1692,6 +1720,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/spaces/classrooms/'
       preLoaderRoute: typeof AuthSpacesClassroomsIndexRouteImport
       parentRoute: typeof AuthSpacesRoute
+    }
+    '/_auth/settings/roles/': {
+      id: '/_auth/settings/roles/'
+      path: '/roles'
+      fullPath: '/settings/roles/'
+      preLoaderRoute: typeof AuthSettingsRolesIndexRouteImport
+      parentRoute: typeof AuthSettingsRoute
+    }
+    '/_auth/settings/personnel/': {
+      id: '/_auth/settings/personnel/'
+      path: '/'
+      fullPath: '/settings/personnel/'
+      preLoaderRoute: typeof AuthSettingsPersonnelIndexRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
     }
     '/_auth/settings/finance/': {
       id: '/_auth/settings/finance/'
@@ -1735,40 +1777,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthClassesClassIdIndexRouteImport
       parentRoute: typeof AuthClassesRoute
     }
-    '/_auth/users/users/new': {
-      id: '/_auth/users/users/new'
-      path: '/users/new'
-      fullPath: '/users/users/new'
-      preLoaderRoute: typeof AuthUsersUsersNewRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/users/import': {
-      id: '/_auth/users/users/import'
-      path: '/users/import'
-      fullPath: '/users/users/import'
-      preLoaderRoute: typeof AuthUsersUsersImportRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/teachers/new': {
-      id: '/_auth/users/teachers/new'
-      path: '/teachers/new'
-      fullPath: '/users/teachers/new'
-      preLoaderRoute: typeof AuthUsersTeachersNewRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/staff/new': {
-      id: '/_auth/users/staff/new'
-      path: '/staff/new'
-      fullPath: '/users/staff/new'
-      preLoaderRoute: typeof AuthUsersStaffNewRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/roles/new': {
-      id: '/_auth/users/roles/new'
-      path: '/roles/new'
-      fullPath: '/users/roles/new'
-      preLoaderRoute: typeof AuthUsersRolesNewRouteImport
-      parentRoute: typeof AuthUsersRoute
+    '/_auth/teachers/$teacherId/edit': {
+      id: '/_auth/teachers/$teacherId/edit'
+      path: '/teachers/$teacherId/edit'
+      fullPath: '/teachers/$teacherId/edit'
+      preLoaderRoute: typeof AuthTeachersTeacherIdEditRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_auth/students/$studentId/edit': {
       id: '/_auth/students/$studentId/edit'
@@ -1776,6 +1790,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/students/$studentId/edit'
       preLoaderRoute: typeof AuthStudentsStudentIdEditRouteImport
       parentRoute: typeof AuthStudentsRoute
+    }
+    '/_auth/settings/roles/new': {
+      id: '/_auth/settings/roles/new'
+      path: '/roles/new'
+      fullPath: '/settings/roles/new'
+      preLoaderRoute: typeof AuthSettingsRolesNewRouteImport
+      parentRoute: typeof AuthSettingsRoute
     }
     '/_auth/settings/finance/student-fees': {
       id: '/_auth/settings/finance/student-fees'
@@ -1903,34 +1924,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthClassesClassIdEditRouteImport
       parentRoute: typeof AuthClassesRoute
     }
-    '/_auth/users/users/$userId/': {
-      id: '/_auth/users/users/$userId/'
-      path: '/users/$userId'
-      fullPath: '/users/users/$userId/'
-      preLoaderRoute: typeof AuthUsersUsersUserIdIndexRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/teachers/$teacherId/': {
-      id: '/_auth/users/teachers/$teacherId/'
-      path: '/teachers/$teacherId'
-      fullPath: '/users/teachers/$teacherId/'
-      preLoaderRoute: typeof AuthUsersTeachersTeacherIdIndexRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/staff/$staffId/': {
-      id: '/_auth/users/staff/$staffId/'
-      path: '/staff/$staffId'
-      fullPath: '/users/staff/$staffId/'
-      preLoaderRoute: typeof AuthUsersStaffStaffIdIndexRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/roles/$roleId/': {
-      id: '/_auth/users/roles/$roleId/'
-      path: '/roles/$roleId'
-      fullPath: '/users/roles/$roleId/'
-      preLoaderRoute: typeof AuthUsersRolesRoleIdIndexRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
     '/_auth/spaces/classrooms/$classroomId/': {
       id: '/_auth/spaces/classrooms/$classroomId/'
       path: '/classrooms/$classroomId'
@@ -1938,33 +1931,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSpacesClassroomsClassroomIdIndexRouteImport
       parentRoute: typeof AuthSpacesRoute
     }
-    '/_auth/users/users/$userId/edit': {
-      id: '/_auth/users/users/$userId/edit'
-      path: '/users/$userId/edit'
-      fullPath: '/users/users/$userId/edit'
-      preLoaderRoute: typeof AuthUsersUsersUserIdEditRouteImport
-      parentRoute: typeof AuthUsersRoute
+    '/_auth/settings/roles/$roleId/': {
+      id: '/_auth/settings/roles/$roleId/'
+      path: '/roles/$roleId'
+      fullPath: '/settings/roles/$roleId/'
+      preLoaderRoute: typeof AuthSettingsRolesRoleIdIndexRouteImport
+      parentRoute: typeof AuthSettingsRoute
     }
-    '/_auth/users/teachers/$teacherId/edit': {
-      id: '/_auth/users/teachers/$teacherId/edit'
-      path: '/teachers/$teacherId/edit'
-      fullPath: '/users/teachers/$teacherId/edit'
-      preLoaderRoute: typeof AuthUsersTeachersTeacherIdEditRouteImport
-      parentRoute: typeof AuthUsersRoute
+    '/_auth/settings/personnel/users/': {
+      id: '/_auth/settings/personnel/users/'
+      path: '/users'
+      fullPath: '/settings/personnel/users/'
+      preLoaderRoute: typeof AuthSettingsPersonnelUsersIndexRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
     }
-    '/_auth/users/staff/$staffId/edit': {
-      id: '/_auth/users/staff/$staffId/edit'
-      path: '/staff/$staffId/edit'
-      fullPath: '/users/staff/$staffId/edit'
-      preLoaderRoute: typeof AuthUsersStaffStaffIdEditRouteImport
-      parentRoute: typeof AuthUsersRoute
-    }
-    '/_auth/users/roles/$roleId/edit': {
-      id: '/_auth/users/roles/$roleId/edit'
-      path: '/roles/$roleId/edit'
-      fullPath: '/users/roles/$roleId/edit'
-      preLoaderRoute: typeof AuthUsersRolesRoleIdEditRouteImport
-      parentRoute: typeof AuthUsersRoute
+    '/_auth/settings/personnel/staff/': {
+      id: '/_auth/settings/personnel/staff/'
+      path: '/staff'
+      fullPath: '/settings/personnel/staff/'
+      preLoaderRoute: typeof AuthSettingsPersonnelStaffIndexRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
     }
     '/_auth/spaces/classrooms/$classroomId/edit': {
       id: '/_auth/spaces/classrooms/$classroomId/edit'
@@ -1972,6 +1958,62 @@ declare module '@tanstack/react-router' {
       fullPath: '/spaces/classrooms/$classroomId/edit'
       preLoaderRoute: typeof AuthSpacesClassroomsClassroomIdEditRouteImport
       parentRoute: typeof AuthSpacesRoute
+    }
+    '/_auth/settings/roles/$roleId/edit': {
+      id: '/_auth/settings/roles/$roleId/edit'
+      path: '/roles/$roleId/edit'
+      fullPath: '/settings/roles/$roleId/edit'
+      preLoaderRoute: typeof AuthSettingsRolesRoleIdEditRouteImport
+      parentRoute: typeof AuthSettingsRoute
+    }
+    '/_auth/settings/personnel/users/new': {
+      id: '/_auth/settings/personnel/users/new'
+      path: '/users/new'
+      fullPath: '/settings/personnel/users/new'
+      preLoaderRoute: typeof AuthSettingsPersonnelUsersNewRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
+    }
+    '/_auth/settings/personnel/users/import': {
+      id: '/_auth/settings/personnel/users/import'
+      path: '/users/import'
+      fullPath: '/settings/personnel/users/import'
+      preLoaderRoute: typeof AuthSettingsPersonnelUsersImportRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
+    }
+    '/_auth/settings/personnel/staff/new': {
+      id: '/_auth/settings/personnel/staff/new'
+      path: '/staff/new'
+      fullPath: '/settings/personnel/staff/new'
+      preLoaderRoute: typeof AuthSettingsPersonnelStaffNewRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
+    }
+    '/_auth/settings/personnel/users/$userId/': {
+      id: '/_auth/settings/personnel/users/$userId/'
+      path: '/users/$userId'
+      fullPath: '/settings/personnel/users/$userId/'
+      preLoaderRoute: typeof AuthSettingsPersonnelUsersUserIdIndexRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
+    }
+    '/_auth/settings/personnel/staff/$staffId/': {
+      id: '/_auth/settings/personnel/staff/$staffId/'
+      path: '/staff/$staffId'
+      fullPath: '/settings/personnel/staff/$staffId/'
+      preLoaderRoute: typeof AuthSettingsPersonnelStaffStaffIdIndexRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
+    }
+    '/_auth/settings/personnel/users/$userId/edit': {
+      id: '/_auth/settings/personnel/users/$userId/edit'
+      path: '/users/$userId/edit'
+      fullPath: '/settings/personnel/users/$userId/edit'
+      preLoaderRoute: typeof AuthSettingsPersonnelUsersUserIdEditRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
+    }
+    '/_auth/settings/personnel/staff/$staffId/edit': {
+      id: '/_auth/settings/personnel/staff/$staffId/edit'
+      path: '/staff/$staffId/edit'
+      fullPath: '/settings/personnel/staff/$staffId/edit'
+      preLoaderRoute: typeof AuthSettingsPersonnelStaffStaffIdEditRouteImport
+      parentRoute: typeof AuthSettingsPersonnelRoute
     }
   }
 }
@@ -2140,24 +2182,69 @@ const AuthSettingsFinanceRouteChildren: AuthSettingsFinanceRouteChildren = {
 const AuthSettingsFinanceRouteWithChildren =
   AuthSettingsFinanceRoute._addFileChildren(AuthSettingsFinanceRouteChildren)
 
+interface AuthSettingsPersonnelRouteChildren {
+  AuthSettingsPersonnelIndexRoute: typeof AuthSettingsPersonnelIndexRoute
+  AuthSettingsPersonnelStaffNewRoute: typeof AuthSettingsPersonnelStaffNewRoute
+  AuthSettingsPersonnelUsersImportRoute: typeof AuthSettingsPersonnelUsersImportRoute
+  AuthSettingsPersonnelUsersNewRoute: typeof AuthSettingsPersonnelUsersNewRoute
+  AuthSettingsPersonnelStaffIndexRoute: typeof AuthSettingsPersonnelStaffIndexRoute
+  AuthSettingsPersonnelUsersIndexRoute: typeof AuthSettingsPersonnelUsersIndexRoute
+  AuthSettingsPersonnelStaffStaffIdEditRoute: typeof AuthSettingsPersonnelStaffStaffIdEditRoute
+  AuthSettingsPersonnelUsersUserIdEditRoute: typeof AuthSettingsPersonnelUsersUserIdEditRoute
+  AuthSettingsPersonnelStaffStaffIdIndexRoute: typeof AuthSettingsPersonnelStaffStaffIdIndexRoute
+  AuthSettingsPersonnelUsersUserIdIndexRoute: typeof AuthSettingsPersonnelUsersUserIdIndexRoute
+}
+
+const AuthSettingsPersonnelRouteChildren: AuthSettingsPersonnelRouteChildren = {
+  AuthSettingsPersonnelIndexRoute: AuthSettingsPersonnelIndexRoute,
+  AuthSettingsPersonnelStaffNewRoute: AuthSettingsPersonnelStaffNewRoute,
+  AuthSettingsPersonnelUsersImportRoute: AuthSettingsPersonnelUsersImportRoute,
+  AuthSettingsPersonnelUsersNewRoute: AuthSettingsPersonnelUsersNewRoute,
+  AuthSettingsPersonnelStaffIndexRoute: AuthSettingsPersonnelStaffIndexRoute,
+  AuthSettingsPersonnelUsersIndexRoute: AuthSettingsPersonnelUsersIndexRoute,
+  AuthSettingsPersonnelStaffStaffIdEditRoute:
+    AuthSettingsPersonnelStaffStaffIdEditRoute,
+  AuthSettingsPersonnelUsersUserIdEditRoute:
+    AuthSettingsPersonnelUsersUserIdEditRoute,
+  AuthSettingsPersonnelStaffStaffIdIndexRoute:
+    AuthSettingsPersonnelStaffStaffIdIndexRoute,
+  AuthSettingsPersonnelUsersUserIdIndexRoute:
+    AuthSettingsPersonnelUsersUserIdIndexRoute,
+}
+
+const AuthSettingsPersonnelRouteWithChildren =
+  AuthSettingsPersonnelRoute._addFileChildren(
+    AuthSettingsPersonnelRouteChildren,
+  )
+
 interface AuthSettingsRouteChildren {
   AuthSettingsFinanceRoute: typeof AuthSettingsFinanceRouteWithChildren
   AuthSettingsNotificationsRoute: typeof AuthSettingsNotificationsRoute
   AuthSettingsPedagogicalStructureRoute: typeof AuthSettingsPedagogicalStructureRoute
+  AuthSettingsPersonnelRoute: typeof AuthSettingsPersonnelRouteWithChildren
   AuthSettingsProfileRoute: typeof AuthSettingsProfileRoute
   AuthSettingsReportCardsRoute: typeof AuthSettingsReportCardsRoute
   AuthSettingsSchoolYearsRoute: typeof AuthSettingsSchoolYearsRoute
   AuthSettingsIndexRoute: typeof AuthSettingsIndexRoute
+  AuthSettingsRolesNewRoute: typeof AuthSettingsRolesNewRoute
+  AuthSettingsRolesIndexRoute: typeof AuthSettingsRolesIndexRoute
+  AuthSettingsRolesRoleIdEditRoute: typeof AuthSettingsRolesRoleIdEditRoute
+  AuthSettingsRolesRoleIdIndexRoute: typeof AuthSettingsRolesRoleIdIndexRoute
 }
 
 const AuthSettingsRouteChildren: AuthSettingsRouteChildren = {
   AuthSettingsFinanceRoute: AuthSettingsFinanceRouteWithChildren,
   AuthSettingsNotificationsRoute: AuthSettingsNotificationsRoute,
   AuthSettingsPedagogicalStructureRoute: AuthSettingsPedagogicalStructureRoute,
+  AuthSettingsPersonnelRoute: AuthSettingsPersonnelRouteWithChildren,
   AuthSettingsProfileRoute: AuthSettingsProfileRoute,
   AuthSettingsReportCardsRoute: AuthSettingsReportCardsRoute,
   AuthSettingsSchoolYearsRoute: AuthSettingsSchoolYearsRoute,
   AuthSettingsIndexRoute: AuthSettingsIndexRoute,
+  AuthSettingsRolesNewRoute: AuthSettingsRolesNewRoute,
+  AuthSettingsRolesIndexRoute: AuthSettingsRolesIndexRoute,
+  AuthSettingsRolesRoleIdEditRoute: AuthSettingsRolesRoleIdEditRoute,
+  AuthSettingsRolesRoleIdIndexRoute: AuthSettingsRolesRoleIdIndexRoute,
 }
 
 const AuthSettingsRouteWithChildren = AuthSettingsRoute._addFileChildren(
@@ -2210,44 +2297,10 @@ const AuthStudentsRouteWithChildren = AuthStudentsRoute._addFileChildren(
 
 interface AuthUsersRouteChildren {
   AuthUsersIndexRoute: typeof AuthUsersIndexRoute
-  AuthUsersRolesNewRoute: typeof AuthUsersRolesNewRoute
-  AuthUsersStaffNewRoute: typeof AuthUsersStaffNewRoute
-  AuthUsersTeachersNewRoute: typeof AuthUsersTeachersNewRoute
-  AuthUsersUsersImportRoute: typeof AuthUsersUsersImportRoute
-  AuthUsersUsersNewRoute: typeof AuthUsersUsersNewRoute
-  AuthUsersRolesIndexRoute: typeof AuthUsersRolesIndexRoute
-  AuthUsersStaffIndexRoute: typeof AuthUsersStaffIndexRoute
-  AuthUsersTeachersIndexRoute: typeof AuthUsersTeachersIndexRoute
-  AuthUsersUsersIndexRoute: typeof AuthUsersUsersIndexRoute
-  AuthUsersRolesRoleIdEditRoute: typeof AuthUsersRolesRoleIdEditRoute
-  AuthUsersStaffStaffIdEditRoute: typeof AuthUsersStaffStaffIdEditRoute
-  AuthUsersTeachersTeacherIdEditRoute: typeof AuthUsersTeachersTeacherIdEditRoute
-  AuthUsersUsersUserIdEditRoute: typeof AuthUsersUsersUserIdEditRoute
-  AuthUsersRolesRoleIdIndexRoute: typeof AuthUsersRolesRoleIdIndexRoute
-  AuthUsersStaffStaffIdIndexRoute: typeof AuthUsersStaffStaffIdIndexRoute
-  AuthUsersTeachersTeacherIdIndexRoute: typeof AuthUsersTeachersTeacherIdIndexRoute
-  AuthUsersUsersUserIdIndexRoute: typeof AuthUsersUsersUserIdIndexRoute
 }
 
 const AuthUsersRouteChildren: AuthUsersRouteChildren = {
   AuthUsersIndexRoute: AuthUsersIndexRoute,
-  AuthUsersRolesNewRoute: AuthUsersRolesNewRoute,
-  AuthUsersStaffNewRoute: AuthUsersStaffNewRoute,
-  AuthUsersTeachersNewRoute: AuthUsersTeachersNewRoute,
-  AuthUsersUsersImportRoute: AuthUsersUsersImportRoute,
-  AuthUsersUsersNewRoute: AuthUsersUsersNewRoute,
-  AuthUsersRolesIndexRoute: AuthUsersRolesIndexRoute,
-  AuthUsersStaffIndexRoute: AuthUsersStaffIndexRoute,
-  AuthUsersTeachersIndexRoute: AuthUsersTeachersIndexRoute,
-  AuthUsersUsersIndexRoute: AuthUsersUsersIndexRoute,
-  AuthUsersRolesRoleIdEditRoute: AuthUsersRolesRoleIdEditRoute,
-  AuthUsersStaffStaffIdEditRoute: AuthUsersStaffStaffIdEditRoute,
-  AuthUsersTeachersTeacherIdEditRoute: AuthUsersTeachersTeacherIdEditRoute,
-  AuthUsersUsersUserIdEditRoute: AuthUsersUsersUserIdEditRoute,
-  AuthUsersRolesRoleIdIndexRoute: AuthUsersRolesRoleIdIndexRoute,
-  AuthUsersStaffStaffIdIndexRoute: AuthUsersStaffStaffIdIndexRoute,
-  AuthUsersTeachersTeacherIdIndexRoute: AuthUsersTeachersTeacherIdIndexRoute,
-  AuthUsersUsersUserIdIndexRoute: AuthUsersUsersUserIdIndexRoute,
 }
 
 const AuthUsersRouteWithChildren = AuthUsersRoute._addFileChildren(
@@ -2267,6 +2320,10 @@ interface AuthRouteChildren {
   AuthSpacesRoute: typeof AuthSpacesRouteWithChildren
   AuthStudentsRoute: typeof AuthStudentsRouteWithChildren
   AuthUsersRoute: typeof AuthUsersRouteWithChildren
+  AuthTeachersNewRoute: typeof AuthTeachersNewRoute
+  AuthTeachersIndexRoute: typeof AuthTeachersIndexRoute
+  AuthTeachersTeacherIdEditRoute: typeof AuthTeachersTeacherIdEditRoute
+  AuthTeachersTeacherIdIndexRoute: typeof AuthTeachersTeacherIdIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -2282,6 +2339,10 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthSpacesRoute: AuthSpacesRouteWithChildren,
   AuthStudentsRoute: AuthStudentsRouteWithChildren,
   AuthUsersRoute: AuthUsersRouteWithChildren,
+  AuthTeachersNewRoute: AuthTeachersNewRoute,
+  AuthTeachersIndexRoute: AuthTeachersIndexRoute,
+  AuthTeachersTeacherIdEditRoute: AuthTeachersTeacherIdEditRoute,
+  AuthTeachersTeacherIdIndexRoute: AuthTeachersTeacherIdIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

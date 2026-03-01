@@ -5,7 +5,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 import { getUser } from '@/school/functions/users'
 
-export const Route = createFileRoute('/_auth/users/users/$userId/edit')({
+export const Route = createFileRoute('/_auth/settings/personnel/users/$userId/edit')({
   component: EditUserPage,
 })
 
@@ -24,7 +24,7 @@ function EditUserPage() {
   const user = userResult?.success ? userResult.data : undefined
 
   const handleSuccess = () => {
-    navigate({ to: '/users/users/$userId', params: { userId } })
+    navigate({ to: '/settings/personnel/users/$userId', params: { userId } })
   }
 
   if (isPending) {
@@ -46,9 +46,10 @@ function EditUserPage() {
     <div className="space-y-6">
       <Breadcrumbs
         items={[
-          { label: t.hr.title(), href: '/users' },
-          { label: t.hr.users.title(), href: '/users/users' },
-          { label: user?.name || userId, href: `/users/users/${userId}` },
+          { label: t.nav.settings(), href: '/settings' },
+          { label: t.sidebar.personnel(), href: '/settings/personnel' },
+          { label: t.hr.users.title(), href: '/settings/personnel/users' },
+          { label: user?.name || userId, href: `/settings/personnel/users/${userId}` },
           { label: t.hr.users.editUser() },
         ]}
       />
