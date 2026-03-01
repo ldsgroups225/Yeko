@@ -51,9 +51,6 @@ export function PricingCard({
     if (!price) {
       return 'Price unavailable'
     }
-    if (price.type !== 'recurring') {
-      return 'Currency not specified'
-    }
 
     if (price.amountType === 'fixed' && price.priceAmount) {
       return new Intl.NumberFormat('en-US', {
@@ -96,7 +93,7 @@ export function PricingCard({
               <Badge variant="default" className="mb-2">
                 Current Plan
               </Badge>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Status:
                 {' '}
                 {subscription.status}
@@ -114,7 +111,7 @@ export function PricingCard({
       else {
         return (
           <div className="text-center">
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-muted-foreground mb-4 text-sm">
               Manage your subscription in the portal
             </p>
             <Link
@@ -157,17 +154,17 @@ export function PricingCard({
       <CardContent>
         <div className="mb-6">
           <div className="text-3xl font-bold">{formatPrice(price)}</div>
-          {price.type === 'recurring' && (
-            <div className="text-sm text-muted-foreground">
+          {product.isRecurring && (
+            <div className="text-muted-foreground text-sm">
               per
               {' '}
-              {price.recurringInterval}
+              {product.recurringInterval}
             </div>
           )}
         </div>
 
         {features.length > 0 && (
-          <div className="space-y-3 mb-6">
+          <div className="mb-6 space-y-3">
             {features.map(feature => (
               <div
                 key={`feature-${feature
@@ -177,7 +174,7 @@ export function PricingCard({
                   .replace(/[^a-z0-9-]/g, '')}`}
                 className="flex items-start gap-2"
               >
-                <IconCheck className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <IconCheck className="text-primary mt-0.5 h-4 w-4 shrink-0" />
                 <span className="text-sm">{feature}</span>
               </div>
             ))}

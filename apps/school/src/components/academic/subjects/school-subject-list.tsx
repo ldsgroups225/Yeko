@@ -29,7 +29,7 @@ function SchoolSubjectListContent() {
   if (isPending) {
     return (
       <div className="space-y-6">
-        <div className="h-20 w-full rounded-2xl bg-white/5 animate-pulse" />
+        <div className="h-20 w-full animate-pulse rounded-2xl bg-white/5" />
         <TableSkeleton columns={3} rows={5} />
       </div>
     )

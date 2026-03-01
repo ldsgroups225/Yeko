@@ -279,26 +279,37 @@ function Schools() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-4
+      "
+      >
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Total des écoles</CardTitle>
-            <IconSchool className="h-4 w-4 text-muted-foreground" />
+            <IconSchool className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {isPending ? <Skeleton className="h-8 w-16" /> : allSchools.length}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Toutes les écoles partenaires
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Écoles Actives</CardTitle>
-            <IconCircleCheck className="h-4 w-4 text-muted-foreground" />
+            <IconCircleCheck className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -306,16 +317,19 @@ function Schools() {
                 ? <Skeleton className="h-8 w-16" />
                 : (statusCounts?.active ?? allSchools.filter(s => s.status === 'active').length)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Actuellement actives
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Écoles Inactives</CardTitle>
-            <IconClock className="h-4 w-4 text-muted-foreground" />
+            <IconClock className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -323,16 +337,19 @@ function Schools() {
                 ? <Skeleton className="h-8 w-16" />
                 : (statusCounts?.inactive ?? allSchools.filter(s => s.status === 'inactive').length)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Non actives
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Écoles Suspendues</CardTitle>
-            <IconCircleX className="h-4 w-4 text-muted-foreground" />
+            <IconCircleX className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -340,7 +357,7 @@ function Schools() {
                 ? <Skeleton className="h-8 w-16" />
                 : (statusCounts?.suspended ?? allSchools.filter(s => s.status === 'suspended').length)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Temporairement suspendues
             </p>
           </CardContent>
@@ -356,9 +373,13 @@ function Schools() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 items-center flex-wrap">
-            <div className="relative flex-1 min-w-[300px]">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="relative min-w-[300px] flex-1">
+              <IconSearch className="
+                text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                -translate-y-1/2
+              "
+              />
               <Input
                 placeholder="Rechercher des écoles..."
                 className="pl-9"
@@ -431,9 +452,12 @@ function Schools() {
             : (
                 error
                   ? (
-                      <div className="text-center py-8">
-                        <IconCircleX className="h-8 w-8 text-destructive mx-auto mb-2" />
-                        <h3 className="text-lg font-medium text-destructive">Erreur de chargement</h3>
+                      <div className="py-8 text-center">
+                        <IconCircleX className="
+                          text-destructive mx-auto mb-2 h-8 w-8
+                        "
+                        />
+                        <h3 className="text-destructive text-lg font-medium">Erreur de chargement</h3>
                         <p className="text-muted-foreground">{error.message}</p>
                         <Button
                           variant="outline"
@@ -447,8 +471,11 @@ function Schools() {
                   : (
                       schools.length === 0
                         ? (
-                            <div className="text-center py-8">
-                              <IconSchool className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                            <div className="py-8 text-center">
+                              <IconSchool className="
+                                text-muted-foreground mx-auto mb-4 h-12 w-12
+                              "
+                              />
                               <h3 className="text-lg font-medium">Aucune école trouvée</h3>
                               <p className="text-muted-foreground">
                                 {search || status !== 'all'
@@ -458,7 +485,7 @@ function Schools() {
                               {(!search && status === 'all') && (
                                 <Link to="/app/schools/create">
                                   <Button className="mt-4">
-                                    <IconPlus className="h-4 w-4 mr-2" />
+                                    <IconPlus className="mr-2 h-4 w-4" />
                                     Ajouter une école
                                   </Button>
                                 </Link>
@@ -475,42 +502,92 @@ function Schools() {
                                     params={{ schoolId: school.id }}
                                     className="block"
                                   >
-                                    <div className="flex items-center justify-between p-6 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
-                                      <div className="flex items-center space-x-4">
+                                    <div className="
+                                      hover:bg-accent/50
+                                      flex cursor-pointer items-center
+                                      justify-between rounded-lg border p-6
+                                      transition-colors
+                                    "
+                                    >
+                                      <div className="
+                                        flex items-center space-x-4
+                                      "
+                                      >
                                         {/* School Logo/Avatar */}
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                                          <IconSchool className="h-6 w-6 text-primary" />
+                                        <div className="
+                                          bg-primary/10 flex h-12 w-12
+                                          items-center justify-center rounded-lg
+                                        "
+                                        >
+                                          <IconSchool className="
+                                            text-primary h-6 w-6
+                                          "
+                                          />
                                         </div>
 
                                         {/* School Info */}
                                         <div>
-                                          <div className="flex items-center gap-3">
-                                            <h3 className="text-lg font-semibold">{school.name}</h3>
+                                          <div className="
+                                            flex items-center gap-3
+                                          "
+                                          >
+                                            <h3 className="
+                                              text-lg font-semibold
+                                            "
+                                            >
+                                              {school.name}
+                                            </h3>
                                             {getStatusBadge(school.status)}
                                           </div>
-                                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
-                                            <span className="font-mono bg-muted px-2 py-1 rounded">{school.code}</span>
+                                          <div className="
+                                            text-muted-foreground mt-1 flex
+                                            items-center gap-4 text-sm
+                                          "
+                                          >
+                                            <span className="
+                                              bg-muted rounded-sm px-2 py-1
+                                              font-mono
+                                            "
+                                            >
+                                              {school.code}
+                                            </span>
                                             {school.address && (
-                                              <div className="flex items-center gap-1">
+                                              <div className="
+                                                flex items-center gap-1
+                                              "
+                                              >
                                                 <IconMapPin className="h-3 w-3" />
                                                 {school.address}
                                               </div>
                                             )}
                                           </div>
-                                          <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                                          <div className="
+                                            text-muted-foreground mt-1 flex
+                                            items-center gap-4 text-sm
+                                          "
+                                          >
                                             {school.email && (
-                                              <div className="flex items-center gap-1">
+                                              <div className="
+                                                flex items-center gap-1
+                                              "
+                                              >
                                                 <IconMail className="h-3 w-3" />
                                                 {school.email}
                                               </div>
                                             )}
                                             {school.phone && (
-                                              <div className="flex items-center gap-1">
+                                              <div className="
+                                                flex items-center gap-1
+                                              "
+                                              >
                                                 <IconPhone className="h-3 w-3" />
                                                 {school.phone}
                                               </div>
                                             )}
-                                            <div className="flex items-center gap-1">
+                                            <div className="
+                                              flex items-center gap-1
+                                            "
+                                            >
                                               <IconCalendar className="h-3 w-3" />
                                               Rejoint
                                               {' '}
@@ -521,7 +598,10 @@ function Schools() {
                                       </div>
 
                                       {/* Actions */}
-                                      <div className="flex items-center space-x-2">
+                                      <div className="
+                                        flex items-center space-x-2
+                                      "
+                                      >
                                         <Button variant="ghost" size="icon">
                                           <IconDots className="h-4 w-4" />
                                         </Button>
@@ -533,8 +613,11 @@ function Schools() {
 
                               {/* Pagination */}
                               {pagination && pagination.totalPages > 1 && (
-                                <div className="flex items-center justify-between mt-6">
-                                  <div className="text-sm text-muted-foreground">
+                                <div className="
+                                  mt-6 flex items-center justify-between
+                                "
+                                >
+                                  <div className="text-muted-foreground text-sm">
                                     Affichage de
                                     {' '}
                                     {(page - 1) * limit + 1}

@@ -19,14 +19,23 @@ function RouteComponent() {
     <>
       {session.isPending
         ? (
-            <div className="min-h-screen flex items-center justify-center bg-background">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            <div className="
+              bg-background flex min-h-screen items-center justify-center
+            "
+            >
+              <div className="
+                border-primary h-8 w-8 animate-spin rounded-full border-b-2
+              "
+              />
             </div>
           )
         : session.data
           ? (
               <SidebarProvider>
-                <div className="flex h-screen w-full bg-background overflow-hidden">
+                <div className="
+                  bg-background flex h-screen w-full overflow-hidden
+                "
+                >
                   <Sidebar />
                   <MobileSidebar
                     isOpen={isMobileMenuOpen}
@@ -38,7 +47,7 @@ function RouteComponent() {
                       onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                     />
 
-                    <main className="flex-1 overflow-y-auto bg-muted/20 p-6">
+                    <main className="bg-muted/20 flex-1 overflow-y-auto p-6">
                       <div className="mx-auto max-w-7xl">
                         <Outlet />
                       </div>

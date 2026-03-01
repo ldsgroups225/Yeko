@@ -341,7 +341,11 @@ function TimetablesPage() {
         <div className="flex gap-3">
           <Button
             variant="outline"
-            className="rounded-xl border-dashed border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+            className="
+              border-primary/30
+              hover:border-primary/60 hover:bg-primary/5
+              rounded-xl border-dashed
+            "
             onClick={() => setIsImportDialogOpen(true)}
             disabled={!effectiveYearId}
           >
@@ -350,7 +354,11 @@ function TimetablesPage() {
           </Button>
           <Button
             variant="outline"
-            className="rounded-xl border-dashed border-primary/30 hover:border-primary/60 hover:bg-primary/5"
+            className="
+              border-primary/30
+              hover:border-primary/60 hover:bg-primary/5
+              rounded-xl border-dashed
+            "
             onClick={handleExport}
             disabled={!canShowTimetable}
           >
@@ -363,7 +371,10 @@ function TimetablesPage() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl space-y-6"
+        className="
+          bg-card/20 border-border/40 space-y-6 rounded-3xl border p-6
+          backdrop-blur-xl
+        "
       >
         <TimetableFilters
           viewMode={viewMode}
@@ -393,10 +404,16 @@ function TimetablesPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="bg-card/40 backdrop-blur-xl border border-border/40 p-1 rounded-3xl overflow-hidden shadow-xl"
+                  className="
+                    bg-card/40 border-border/40 overflow-hidden rounded-3xl
+                    border p-1 shadow-xl backdrop-blur-xl
+                  "
                 >
                   <div className="p-4">
-                    <Suspense fallback={<Skeleton className="h-[400px] w-full rounded-xl" />}>
+                    <Suspense fallback={(
+                      <Skeleton className="h-[400px] w-full rounded-xl" />
+                    )}
+                    >
                       <TimetableGrid
                         sessions={transformedTimetable}
                         isPending={timetablePending}
@@ -414,13 +431,20 @@ function TimetablesPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="flex flex-col items-center justify-center h-[400px] text-muted-foreground/60 bg-card/20 border-2 border-dashed border-border/40 rounded-3xl"
+                  className="
+                    text-muted-foreground/60 bg-card/20 border-border/40 flex
+                    h-[400px] flex-col items-center justify-center rounded-3xl
+                    border-2 border-dashed
+                  "
                 >
-                  <div className="p-4 rounded-full bg-primary/5 mb-4">
-                    <IconCalendarSearch className="size-8 text-primary/40" />
+                  <div className="bg-primary/5 mb-4 rounded-full p-4">
+                    <IconCalendarSearch className="text-primary/40 size-8" />
                   </div>
-                  <p className="font-bold text-lg">{t.timetables.selectFiltersPrompt()}</p>
-                  <p className="text-sm font-medium opacity-70 max-w-sm text-center mt-2">
+                  <p className="text-lg font-bold">{t.timetables.selectFiltersPrompt()}</p>
+                  <p className="
+                    mt-2 max-w-sm text-center text-sm font-medium opacity-70
+                  "
+                  >
                     {t.timetables.description()}
                   </p>
                 </motion.div>

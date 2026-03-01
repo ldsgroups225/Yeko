@@ -74,7 +74,7 @@ export function BulkFeeAssignmentCard() {
   }
 
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+    <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <IconWallet className="h-5 w-5" />

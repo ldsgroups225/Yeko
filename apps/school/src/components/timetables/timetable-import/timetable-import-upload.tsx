@@ -23,14 +23,17 @@ export function TimetableImportUpload() {
         </Button>
       </div>
 
-      <div className="rounded-lg border-2 border-dashed p-6 text-center border-muted">
+      <div className="
+        border-muted rounded-lg border-2 border-dashed p-6 text-center
+      "
+      >
         {file
           ? (
               <div className="flex items-center justify-center gap-4">
-                <IconFileSpreadsheet className="h-8 w-8 text-primary" />
+                <IconFileSpreadsheet className="text-primary h-8 w-8" />
                 <div className="text-left">
                   <p className="font-bold">{file.name}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {allParsed.length}
                     {' '}
                     {t.timetables.preview.totalLines()}
@@ -42,9 +45,16 @@ export function TimetableImportUpload() {
               </div>
             )
           : (
-              <label className="cursor-pointer block">
-                <IconUpload className="mx-auto h-10 w-10 text-muted-foreground mb-2" />
-                <span className="font-medium text-primary hover:underline">
+              <label className="block cursor-pointer">
+                <IconUpload className="
+                  text-muted-foreground mx-auto mb-2 h-10 w-10
+                "
+                />
+                <span className="
+                  text-primary font-medium
+                  hover:underline
+                "
+                >
                   {t.timetables.importDescription()}
                 </span>
                 <input

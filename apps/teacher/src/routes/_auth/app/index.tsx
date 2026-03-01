@@ -84,13 +84,13 @@ function SchedulePage() {
       <h1 className="text-xl font-semibold">{LL.schedule.title()}</h1>
 
       <Card>
-        <CardContent className="p-4 flex items-center justify-between">
+        <CardContent className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-full">
-              <IconClipboardCheck className="w-6 h-6 text-primary" />
+            <div className="bg-primary/10 rounded-full p-2">
+              <IconClipboardCheck className="text-primary h-6 w-6" />
             </div>
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{LL.dashboard.pendingGrades()}</p>
+              <p className="text-muted-foreground text-sm font-medium">{LL.dashboard.pendingGrades()}</p>
               <p className="text-2xl font-bold">{dashboardData?.pendingGrades ?? 0}</p>
             </div>
           </div>
@@ -132,12 +132,18 @@ function SchedulePage() {
             key={day.key}
             type="button"
             onClick={() => setSelectedDay(day.key)}
-            className={`flex flex-1 flex-col items-center rounded-lg p-2 transition-colors ${selectedDay === day.key
-              ? 'bg-primary text-primary-foreground'
-              : day.isToday
-                ? 'bg-primary/10 text-primary'
-                : 'bg-muted/50 hover:bg-muted'
-            }`}
+            className={`
+              flex flex-1 flex-col items-center rounded-lg p-2 transition-colors
+              ${selectedDay === day.key
+            ? 'bg-primary text-primary-foreground'
+            : day.isToday
+              ? 'bg-primary/10 text-primary'
+              : `
+                bg-muted/50
+                hover:bg-muted
+              `
+          }
+            `}
           >
             <span className="text-xs font-medium">{day.label}</span>
             <span className="text-lg font-semibold">
@@ -163,9 +169,12 @@ function SchedulePage() {
             )
           : (
               <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <IconCalendar className="h-12 w-12 text-muted-foreground/50" />
-                  <p className="mt-4 text-sm text-muted-foreground">
+                <CardContent className="
+                  flex flex-col items-center justify-center py-12
+                "
+                >
+                  <IconCalendar className="text-muted-foreground/50 h-12 w-12" />
+                  <p className="text-muted-foreground mt-4 text-sm">
                     {LL.schedule.noSessions()}
                   </p>
                 </CardContent>
@@ -211,7 +220,7 @@ function ScheduleCard({ session, schoolId }: ScheduleCardProps) {
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">
+              <span className="text-muted-foreground text-sm font-medium">
                 {session.startTime}
                 {' '}
                 -
@@ -219,7 +228,7 @@ function ScheduleCard({ session, schoolId }: ScheduleCardProps) {
               </span>
             </div>
             <h3 className="font-semibold">{session.subject.name}</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {session.class.name}
               {session.classroom && ` • ${session.classroom.name}`}
             </p>

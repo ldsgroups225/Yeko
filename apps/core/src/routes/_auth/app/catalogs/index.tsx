@@ -101,54 +101,95 @@ function Catalogs() {
       </div>
 
       {/* Overview Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-4
+      "
+      >
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Niveaux d'Éducation</CardTitle>
-            <IconSchool className="h-4 w-4 text-muted-foreground" />
+            <IconSchool className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            {isPending ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.educationLevels || 0}</div>}
-            <p className="text-xs text-muted-foreground">
+            {isPending
+              ? <Skeleton className="h-8 w-16" />
+              : (
+                  <div className="text-2xl font-bold">
+                    {catalogStats?.educationLevels || 0}
+                  </div>
+                )}
+            <p className="text-muted-foreground text-xs">
               Niveaux disponibles
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Total des Filières</CardTitle>
-            <IconAward className="h-4 w-4 text-muted-foreground" />
+            <IconAward className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            {isPending ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.tracks || 0}</div>}
-            <p className="text-xs text-muted-foreground">
+            {isPending
+              ? <Skeleton className="h-8 w-16" />
+              : (
+                  <div className="text-2xl font-bold">
+                    {catalogStats?.tracks || 0}
+                  </div>
+                )}
+            <p className="text-muted-foreground text-xs">
               Filières académiques
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Matières</CardTitle>
-            <IconBook className="h-4 w-4 text-muted-foreground" />
+            <IconBook className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            {isPending ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{catalogStats?.subjects || 0}</div>}
-            <p className="text-xs text-muted-foreground">
+            {isPending
+              ? <Skeleton className="h-8 w-16" />
+              : (
+                  <div className="text-2xl font-bold">
+                    {catalogStats?.subjects || 0}
+                  </div>
+                )}
+            <p className="text-muted-foreground text-xs">
               Catalogue global
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Classes & Séries</CardTitle>
-            <IconDatabase className="h-4 w-4 text-muted-foreground" />
+            <IconDatabase className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            {isPending ? <Skeleton className="h-8 w-16" /> : <div className="text-2xl font-bold">{(catalogStats?.grades || 0) + (catalogStats?.series || 0)}</div>}
-            <p className="text-xs text-muted-foreground">
+            {isPending
+              ? <Skeleton className="h-8 w-16" />
+              : (
+                  <div className="text-2xl font-bold">
+                    {(catalogStats?.grades || 0) + (catalogStats?.series || 0)}
+                  </div>
+                )}
+            <p className="text-muted-foreground text-xs">
               Niveaux et séries
             </p>
           </CardContent>
@@ -165,7 +206,11 @@ function Catalogs() {
         </CardHeader>
         <CardContent>
           <div className="relative max-w-md">
-            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <IconSearch className="
+              text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+              -translate-y-1/2
+            "
+            />
             <Input
               placeholder="Rechercher des matières, programmes, classes..."
               className="pl-9"
@@ -175,13 +220,21 @@ function Catalogs() {
       </Card>
 
       {/* Catalog Sections */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+      "
+      >
         {catalogSections.map(section => (
-          <Card key={section.title} className="border-l-4 border-primary">
+          <Card key={section.title} className="border-primary border-l-4">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <section.icon className="h-6 w-6 text-primary" />
+                <div className="
+                  bg-primary/10 flex h-12 w-12 items-center justify-center
+                  rounded-lg
+                "
+                >
+                  <section.icon className="text-primary h-6 w-6" />
                 </div>
                 <Badge variant={section.variant} className="text-xs">
                   {section.stats}
@@ -208,7 +261,11 @@ function Catalogs() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="
+        grid gap-6
+        lg:grid-cols-2
+      "
+      >
         <Card>
           <CardHeader>
             <CardTitle>Mises à Jour Récentes</CardTitle>
@@ -219,16 +276,19 @@ function Catalogs() {
           <CardContent>
             <div className="space-y-4">
               {recentUpdates.map(update => (
-                <div key={update.id} className="flex items-center justify-between">
+                <div
+                  key={update.id}
+                  className="flex items-center justify-between"
+                >
                   <div>
                     <p className="text-sm font-medium">{update.action}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-muted-foreground text-xs">
                       par
                       {update.user}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-muted-foreground">{update.date}</p>
+                    <p className="text-muted-foreground text-xs">{update.date}</p>
                   </div>
                 </div>
               ))}

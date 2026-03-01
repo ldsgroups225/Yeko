@@ -107,7 +107,7 @@ function ChapterForm({ onSubmit, onCancel }: ChapterFormProps) {
           />
         </div>
       </div>
-      <div className="flex gap-2 mt-4">
+      <div className="mt-4 flex gap-2">
         <button
           type="button"
           onClick={onCancel}
@@ -278,7 +278,7 @@ function ProgramForm({
 
         {/* Chapters Section */}
         <div>
-          <div className="flex justify-between items-center mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <h3>Chapitres</h3>
             <button
               type="button"
@@ -292,7 +292,7 @@ function ProgramForm({
 
           {showChapterForm && (
             <div
-              className="mb-4 p-4 border rounded-lg"
+              className="mb-4 rounded-lg border p-4"
               data-testid="chapter-form-container"
             >
               <h4 className="mb-2">Nouveau Chapitre</h4>
@@ -317,17 +317,19 @@ function ProgramForm({
                   chapters.map((chapter: Chapter, index: number) => (
                     <div
                       key={chapter.id}
-                      className="flex items-center justify-between p-3 border rounded"
+                      className="
+                        flex items-center justify-between rounded-sm border p-3
+                      "
                       data-testid={`chapter-item-${chapter.id}`}
                     >
                       <div>
                         <h5 className="font-medium">{chapter.title}</h5>
                         {chapter.description && (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-muted-foreground text-sm">
                             {chapter.description}
                           </p>
                         )}
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-muted-foreground text-xs">
                           Ordre:
                           {chapter.order}
                         </span>
@@ -364,7 +366,7 @@ function ProgramForm({
         </div>
       </div>
 
-      <div className="flex gap-2 mt-6">
+      <div className="mt-6 flex gap-2">
         <button type="button" onClick={onCancel} data-testid="cancel-button">
           Annuler
         </button>

@@ -31,7 +31,11 @@ export function LanguageSwitcher() {
             type="button"
             className={buttonVariants({ variant: 'ghost', size: 'sm' })}
           >
-            <span className="hidden sm:inline">
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
               {currentLanguage?.flag}
               {' '}
               {currentLanguage?.name}

@@ -116,16 +116,27 @@ export function SubjectCopyDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md backdrop-blur-xl bg-card/95 border-border/40 p-0 overflow-hidden">
-        <div className="p-6 pb-4 border-b border-border/10">
+      <DialogContent className="
+        bg-card/95 border-border/40 overflow-hidden p-0 backdrop-blur-xl
+        sm:max-w-md
+      "
+      >
+        <div className="border-border/10 border-b p-6 pb-4">
           <DialogHeader>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <IconCopy className="h-5 w-5 text-primary" />
+            <div className="mb-1 flex items-center gap-3">
+              <div className="
+                bg-primary/10 flex h-10 w-10 items-center justify-center
+                rounded-xl
+              "
+              >
+                <IconCopy className="text-primary h-5 w-5" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.classes.copySubjectsTitle()}</DialogTitle>
-                <DialogDescription className="text-xs font-semibold opacity-70 uppercase tracking-wider">
+                <DialogDescription className="
+                  text-xs font-semibold tracking-wider uppercase opacity-70
+                "
+                >
                   {targetClassName}
                 </DialogDescription>
               </div>
@@ -138,14 +149,18 @@ export function SubjectCopyDialog({
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             onSubmit={form.handleSubmit(onSubmit)}
-            className="p-6 space-y-6"
+            className="space-y-6 p-6"
           >
             <FormField
               control={form.control}
               name="sourceClassId"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground">
+                  <FormLabel className="
+                    text-muted-foreground flex items-center gap-2 text-[10px]
+                    font-bold tracking-[0.1em] uppercase
+                  "
+                  >
                     <IconCopy className="h-3 w-3" />
                     {t.academic.classes.sourceClass()}
                   </FormLabel>
@@ -156,23 +171,35 @@ export function SubjectCopyDialog({
                     <FormControl>
                       <SelectTrigger
                         disabled={isPendingClasses}
-                        className="h-11 bg-white/5 border-border/10 focus:ring-primary/40"
+                        className="
+                          border-border/10
+                          focus:ring-primary/40
+                          h-11 bg-white/5
+                        "
                       >
                         <SelectValue
                           placeholder={t.academic.classes.selectSourceClassError()}
                         />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="backdrop-blur-xl bg-card/95 border-border/10">
+                    <SelectContent className="
+                      bg-card/95 border-border/10 backdrop-blur-xl
+                    "
+                    >
                       {sourceClasses.map(cls => (
                         <SelectItem key={cls.class.id} value={cls.class.id}>
                           <div className="flex flex-col">
-                            <span className="font-semibold text-sm">
+                            <span className="text-sm font-semibold">
                               {cls.grade.name}
                               {' '}
                               {cls.class.section}
                             </span>
-                            <span className="text-[10px] text-muted-foreground uppercase">{cls.series?.name || ''}</span>
+                            <span className="
+                              text-muted-foreground text-[10px] uppercase
+                            "
+                            >
+                              {cls.series?.name || ''}
+                            </span>
                           </div>
                         </SelectItem>
                       ))}
@@ -190,13 +217,24 @@ export function SubjectCopyDialog({
               control={form.control}
               name="overwrite"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-xl border border-border/5 bg-white/5 p-4 transition-colors hover:bg-white/10">
+                <FormItem className="
+                  border-border/5 flex flex-row items-center justify-between
+                  rounded-xl border bg-white/5 p-4 transition-colors
+                  hover:bg-white/10
+                "
+                >
                   <div className="space-y-1">
-                    <FormLabel className="text-sm font-bold flex items-center gap-2">
-                      <IconAlertCircle className="h-3.5 w-3.5 text-accent" />
+                    <FormLabel className="
+                      flex items-center gap-2 text-sm font-bold
+                    "
+                    >
+                      <IconAlertCircle className="text-accent h-3.5 w-3.5" />
                       {t.academic.classes.overwriteExisting()}
                     </FormLabel>
-                    <FormDescription className="text-[11px] leading-relaxed max-w-[200px]">
+                    <FormDescription className="
+                      max-w-[200px] text-[11px] leading-relaxed
+                    "
+                    >
                       {t.academic.classes.overwriteDescription()}
                     </FormDescription>
                   </div>
@@ -212,19 +250,32 @@ export function SubjectCopyDialog({
             />
 
             <div className="pt-2">
-              <DialogFooter className="gap-3 sm:gap-0">
+              <DialogFooter className="
+                gap-3
+                sm:gap-0
+              "
+              >
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={() => onOpenChange(false)}
-                  className="flex-1 sm:flex-none hover:bg-white/10"
+                  className="
+                    flex-1
+                    hover:bg-white/10
+                    sm:flex-none
+                  "
                 >
                   {t.common.cancel()}
                 </Button>
                 <Button
                   type="submit"
                   disabled={copyMutation.isPending}
-                  className="flex-1 sm:min-w-[140px] bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+                  className="
+                    bg-primary
+                    hover:bg-primary/90
+                    shadow-primary/20 flex-1 shadow-lg
+                    sm:min-w-[140px]
+                  "
                 >
                   {copyMutation.isPending
                     ? (

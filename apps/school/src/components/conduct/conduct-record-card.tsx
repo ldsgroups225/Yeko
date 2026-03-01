@@ -78,27 +78,48 @@ export function ConductRecordCard({
     >
       <Card
         className={cn(
-          'group overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all hover:bg-card/50 hover:shadow-primary/5',
+          `
+            group border-border/40 bg-card/30
+            hover:bg-card/50 hover:shadow-primary/5
+            overflow-hidden rounded-3xl shadow-xl backdrop-blur-xl
+            transition-all
+          `,
           className,
         )}
       >
 
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader className="
+          flex flex-row items-center justify-between space-y-0 pb-4
+        "
+        >
           <div className="flex items-center gap-4">
             <div className="relative">
-              <Avatar className="h-12 w-12 border-2 border-primary/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+              <Avatar className="
+                border-primary/20 h-12 w-12 border-2 shadow-inner
+                transition-transform duration-500
+                group-hover:scale-110
+              "
+              >
                 <AvatarImage
                   src={record.studentPhoto ?? undefined}
                   alt={record.studentName}
                 />
-                <AvatarFallback className="bg-primary/5 text-primary font-black uppercase tracking-widest text-[10px]">
+                <AvatarFallback className="
+                  bg-primary/5 text-primary text-[10px] font-black
+                  tracking-widest uppercase
+                "
+                >
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-card bg-background flex items-center justify-center">
+              <div className="
+                border-card bg-background absolute -right-1 -bottom-1 flex h-4
+                w-4 items-center justify-center rounded-full border-2
+              "
+              >
                 <div
                   className={cn(
-                    'h-1.5 w-1.5 rounded-full animate-pulse',
+                    'h-1.5 w-1.5 animate-pulse rounded-full',
                     record.type === 'reward'
                       ? 'bg-success'
                       : record.type === 'incident'
@@ -111,10 +132,17 @@ export function ConductRecordCard({
               </div>
             </div>
             <div>
-              <div className="font-black tracking-tight text-lg leading-none mb-1">
+              <div className="
+                mb-1 text-lg leading-none font-black tracking-tight
+              "
+              >
                 {record.studentName}
               </div>
-              <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+              <div className="
+                text-muted-foreground/60 text-[10px] font-black tracking-widest
+                uppercase
+              "
+              >
                 {record.title}
               </div>
             </div>
@@ -125,7 +153,10 @@ export function ConductRecordCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-xl hover:bg-primary/10 hover:text-primary transition-colors"
+                  className="
+                    hover:bg-primary/10 hover:text-primary
+                    rounded-xl transition-colors
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     e.preventDefault()
@@ -137,12 +168,16 @@ export function ConductRecordCard({
             />
             <DropdownMenuContent
               align="end"
-              className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40"
+              className="
+                bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+              "
             >
               {onView && (
                 <DropdownMenuItem
                   onClick={() => onView(record.id)}
-                  className="rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                  className="
+                    rounded-xl text-[10px] font-bold tracking-widest uppercase
+                  "
                 >
                   {t.common.view()}
                 </DropdownMenuItem>
@@ -150,7 +185,9 @@ export function ConductRecordCard({
               {onEdit && (
                 <DropdownMenuItem
                   onClick={() => onEdit(record.id)}
-                  className="rounded-xl font-bold uppercase tracking-widest text-[10px]"
+                  className="
+                    rounded-xl text-[10px] font-bold tracking-widest uppercase
+                  "
                 >
                   {t.common.edit()}
                 </DropdownMenuItem>
@@ -158,7 +195,11 @@ export function ConductRecordCard({
               {onDelete && (
                 <DropdownMenuItem
                   onClick={() => onDelete(record.id)}
-                  className="rounded-xl text-destructive focus:text-destructive font-bold uppercase tracking-widest text-[10px]"
+                  className="
+                    text-destructive
+                    focus:text-destructive
+                    rounded-xl text-[10px] font-bold tracking-widest uppercase
+                  "
                 >
                   {t.common.delete()}
                 </DropdownMenuItem>
@@ -167,7 +208,11 @@ export function ConductRecordCard({
           </DropdownMenu>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm font-medium text-muted-foreground/70 leading-relaxed italic line-clamp-2">
+          <p className="
+            text-muted-foreground/70 line-clamp-2 text-sm leading-relaxed
+            font-medium italic
+          "
+          >
             "
             {record.description}
             "
@@ -181,10 +226,14 @@ export function ConductRecordCard({
             <ConductStatusBadge status={record.status} />
           </div>
 
-          <div className="flex items-center gap-6 pt-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 border-t border-border/10 mt-auto">
+          <div className="
+            text-muted-foreground/40 border-border/10 mt-auto flex items-center
+            gap-6 border-t pt-2 text-[10px] font-black tracking-widest uppercase
+          "
+          >
             {record.incidentDate && (
               <div className="flex items-center gap-2">
-                <IconCalendar className="h-3.5 w-3.5 text-primary/40" />
+                <IconCalendar className="text-primary/40 h-3.5 w-3.5" />
                 {new Date(record.incidentDate).toLocaleDateString(undefined, {
                   day: 'numeric',
                   month: 'short',
@@ -194,7 +243,7 @@ export function ConductRecordCard({
             )}
             {record.location && (
               <div className="flex items-center gap-2">
-                <IconMapPin className="h-3.5 w-3.5 text-primary/40" />
+                <IconMapPin className="text-primary/40 h-3.5 w-3.5" />
                 {record.location}
               </div>
             )}

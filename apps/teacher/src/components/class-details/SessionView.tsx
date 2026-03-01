@@ -57,9 +57,14 @@ export function SessionView({
     return null
 
   return (
-    <div className="flex flex-col gap-4 animate-in fade-in duration-300">
+    <div className="animate-in fade-in flex flex-col gap-4 duration-300">
       {/* Session Stats Panel */}
-      <div className="sticky top-0 z-30 -mx-4 px-4 pb-2 bg-background/95 backdrop-blur-md border-b border-border/50 lg:static lg:mx-0 lg:px-0 lg:pb-0 lg:bg-transparent lg:border-none">
+      <div className="
+        bg-background/95 border-border/50 sticky top-0 z-30 -mx-4 border-b px-4
+        pb-2 backdrop-blur-md
+        lg:static lg:mx-0 lg:border-none lg:bg-transparent lg:px-0 lg:pb-0
+      "
+      >
         <Suspense fallback={<Skeleton className="h-12 w-full" />}>
           <SessionStatsPanel
             mode={
@@ -99,8 +104,14 @@ export function SessionView({
       </div>
 
       {/* Session List View */}
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <Suspense fallback={<div className="col-span-full text-center p-4">Loading students...</div>}>
+      <div className="
+        grid gap-3
+        sm:grid-cols-2
+        lg:grid-cols-3
+        xl:grid-cols-4
+      "
+      >
+        <Suspense fallback={<div className="col-span-full p-4 text-center">Loading students...</div>}>
           {students.map((student) => {
             // Attendance Mode Card
             if (isAttendanceMode) {

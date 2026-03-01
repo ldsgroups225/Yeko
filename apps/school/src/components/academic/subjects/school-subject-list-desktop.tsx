@@ -21,14 +21,19 @@ export function SchoolSubjectListDesktop() {
 
   if (hasNoData) {
     return (
-      <div className="hidden rounded-xl border border-border/40 md:flex flex-col items-center justify-center py-24 text-center bg-card/40 backdrop-blur-xl">
-        <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
-          <IconBook className="h-12 w-12 text-muted-foreground/50" />
+      <div className="
+        border-border/40 bg-card/40 hidden flex-col items-center justify-center
+        rounded-xl border py-24 text-center backdrop-blur-xl
+        md:flex
+      "
+      >
+        <div className="mb-4 rounded-full bg-white/10 p-6 backdrop-blur-xl">
+          <IconBook className="text-muted-foreground/50 h-12 w-12" />
         </div>
         <h3 className="text-lg font-semibold">
           {t.academic.subjects.noSubjects()}
         </h3>
-        <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-2 max-w-sm text-sm">
           {isFiltered
             ? t.academic.subjects.messages.adjustFilters()
             : t.academic.subjects.noSubjectsDescription()}
@@ -38,18 +43,29 @@ export function SchoolSubjectListDesktop() {
   }
 
   return (
-    <div className="hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl md:block overflow-hidden">
+    <div className="
+      border-border/40 bg-card/40 hidden overflow-hidden rounded-xl border
+      backdrop-blur-xl
+      md:block
+    "
+    >
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow
               key={headerGroup.id}
-              className="hover:bg-transparent border-border/10"
+              className="
+                border-border/10
+                hover:bg-transparent
+              "
             >
               {headerGroup.headers.map(header => (
                 <TableHead
                   key={header.id}
-                  className="h-14 text-[11px] font-bold uppercase tracking-widest text-muted-foreground/70"
+                  className="
+                    text-muted-foreground/70 h-14 text-[11px] font-bold
+                    tracking-widest uppercase
+                  "
                 >
                   {header.isPlaceholder
                     ? null
@@ -71,7 +87,11 @@ export function SchoolSubjectListDesktop() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
                 transition={{ delay: index * 0.03 }}
-                className="group border-border/5 hover:bg-primary/2 transition-colors"
+                className="
+                  group border-border/5
+                  hover:bg-primary/2
+                  transition-colors
+                "
               >
                 {row.getVisibleCells().map(cell => (
                   <TableCell key={cell.id} className="py-4">

@@ -18,7 +18,7 @@ export function SchoolSettingsTab({ settings }: SchoolSettingsTabProps) {
             <CardDescription>Paramètres spécifiques et fonctionnalités activées.</CardDescription>
           </div>
           <Button variant="outline">
-            <IconEdit className="h-4 w-4 mr-2" />
+            <IconEdit className="mr-2 h-4 w-4" />
             Modifier
           </Button>
         </div>
@@ -27,21 +27,37 @@ export function SchoolSettingsTab({ settings }: SchoolSettingsTabProps) {
         <div className="space-y-6">
           <div className="space-y-4">
             <div>
-              <h3 className="text-sm font-medium mb-3">Modules Activés</h3>
-              <div className="grid gap-3 md:grid-cols-2">
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+              <h3 className="mb-3 text-sm font-medium">Modules Activés</h3>
+              <div className="
+                grid gap-3
+                md:grid-cols-2
+              "
+              >
+                <div className="
+                  flex items-center justify-between rounded-lg border p-3
+                "
+                >
                   <span className="text-sm">Gestion des notes</span>
                   <Badge variant="outline">Activé</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="
+                  flex items-center justify-between rounded-lg border p-3
+                "
+                >
                   <span className="text-sm">Gestion des absences</span>
                   <Badge variant="outline">Activé</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="
+                  flex items-center justify-between rounded-lg border p-3
+                "
+                >
                   <span className="text-sm">Paiements en ligne</span>
                   <Badge variant="secondary">Désactivé</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 border rounded-lg">
+                <div className="
+                  flex items-center justify-between rounded-lg border p-3
+                "
+                >
                   <span className="text-sm">Messagerie</span>
                   <Badge variant="outline">Activé</Badge>
                 </div>
@@ -49,11 +65,11 @@ export function SchoolSettingsTab({ settings }: SchoolSettingsTabProps) {
             </div>
             <Separator />
             <div>
-              <h3 className="text-sm font-medium mb-3">Paramètres Avancés</h3>
-              <div className="bg-muted p-4 rounded-lg">
+              <h3 className="mb-3 text-sm font-medium">Paramètres Avancés</h3>
+              <div className="bg-muted rounded-lg p-4">
                 <details className="cursor-pointer">
                   <summary className="text-sm font-medium">Voir la configuration JSON</summary>
-                  <pre className="text-xs font-mono mt-2 overflow-auto">
+                  <pre className="mt-2 overflow-auto font-mono text-xs">
                     {JSON.stringify(settings, null, 2)}
                   </pre>
                 </details>

@@ -4,7 +4,7 @@ import z from 'zod'
 import { protectedFunctionMiddleware } from '@/core/middleware/auth'
 import { polarMiddleware } from '@/core/middleware/polar'
 
-export const baseFunction = createServerFn().middleware([
+const baseFunction = createServerFn().middleware([
   protectedFunctionMiddleware,
   polarMiddleware,
 ])

@@ -39,8 +39,18 @@ export function UnpublishedNoteSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="rounded-t-[2.5rem] p-0 overflow-hidden border-t-0 bg-background max-w-2xl mx-auto">
-        <SheetHeader className="p-6 pb-4 flex flex-row items-center justify-between border-b border-border/40">
+      <SheetContent
+        side="bottom"
+        className="
+          bg-background mx-auto max-w-2xl overflow-hidden rounded-t-[2.5rem]
+          border-t-0 p-0
+        "
+      >
+        <SheetHeader className="
+          border-border/40 flex flex-row items-center justify-between border-b
+          p-6 pb-4
+        "
+        >
           <div className="space-y-1">
             <SheetTitle className="text-xl font-black">
               {LL.grades.draftTitle()}
@@ -49,33 +59,53 @@ export function UnpublishedNoteSheet({
               {LL.grades.draftSubtitle()}
             </SheetDescription>
           </div>
-          <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 font-bold uppercase tracking-widest text-[10px] px-3 py-1">
+          <Badge
+            variant="outline"
+            className="
+              border-amber-500/20 bg-amber-500/10 px-3 py-1 text-[10px]
+              font-bold tracking-widest text-amber-600 uppercase
+            "
+          >
             {LL.grades.pendingBadge()}
           </Badge>
         </SheetHeader>
 
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           {/* Note Metadata Card */}
-          <div className="rounded-2xl bg-muted/30 border border-border/50 p-4 space-y-4">
+          <div className="
+            bg-muted/30 border-border/50 space-y-4 rounded-2xl border p-4
+          "
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-                  <IconBook className="w-5 h-5" />
+                <div className="
+                  bg-primary/10 text-primary flex h-10 w-10 items-center
+                  justify-center rounded-xl
+                "
+                >
+                  <IconBook className="h-5 w-5" />
                 </div>
                 <div>
-                  <h4 className="font-black text-foreground">{note.title}</h4>
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                  <h4 className="text-foreground font-black">{note.title}</h4>
+                  <p className="
+                    text-muted-foreground text-xs font-bold tracking-wider
+                    uppercase
+                  "
+                  >
                     {String((LL.grades[note.type as keyof TranslationFunctions['grades']] as () => string)?.() || note.type)}
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <span className="block text-lg font-black text-foreground">
+                <span className="text-foreground block text-lg font-black">
                   {LL.grades.coeff()}
                   {' '}
                   {note.weight}
                 </span>
-                <span className="text-xs font-bold text-muted-foreground uppercase">
+                <span className="
+                  text-muted-foreground text-xs font-bold uppercase
+                "
+                >
                   {LL.grades.outOf()}
                   {' '}
                   {note.totalPoints || 20}
@@ -83,19 +113,34 @@ export function UnpublishedNoteSheet({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border/40">
+            <div className="
+              border-border/40 grid grid-cols-2 gap-3 border-t pt-4
+            "
+            >
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{LL.grades.participations()}</span>
+                <span className="
+                  text-muted-foreground text-[10px] font-black tracking-widest
+                  uppercase
+                "
+                >
+                  {LL.grades.participations()}
+                </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-black text-foreground">{participatedCount}</span>
-                  <span className="text-sm font-bold text-muted-foreground">
+                  <span className="text-foreground text-xl font-black">{participatedCount}</span>
+                  <span className="text-muted-foreground text-sm font-bold">
                     /
                     {totalStudents}
                   </span>
                 </div>
               </div>
               <div className="space-y-1 text-right">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{LL.grades.missing()}</span>
+                <span className="
+                  text-muted-foreground text-[10px] font-black tracking-widest
+                  uppercase
+                "
+                >
+                  {LL.grades.missing()}
+                </span>
                 <div className="flex items-center justify-end gap-2">
                   <span className={cn(
                     'text-xl font-black',
@@ -111,32 +156,51 @@ export function UnpublishedNoteSheet({
 
           <div className="space-y-3">
             <Button
-              className="w-full h-14 rounded-2xl font-black text-lg shadow-xl shadow-primary/20"
+              className="
+                shadow-primary/20 h-14 w-full rounded-2xl text-lg font-black
+                shadow-xl
+              "
               onClick={onResume}
             >
-              <IconEdit className="w-5 h-5 mr-3" />
+              <IconEdit className="mr-3 h-5 w-5" />
               {LL.grades.resumeEntry()}
             </Button>
 
             <Button
               variant="outline"
               className={cn(
-                'w-full h-14 rounded-2xl font-black text-lg',
+                'h-14 w-full rounded-2xl text-lg font-black',
                 isComplete
-                  ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20'
-                  : 'border-amber-500/30 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20',
+                  ? `
+                    border-emerald-500/30 bg-emerald-500/10 text-emerald-600
+                    hover:bg-emerald-500/20
+                  `
+                  : `
+                    border-amber-500/30 bg-amber-500/10 text-amber-600
+                    hover:bg-amber-500/20
+                  `,
               )}
               onClick={onPublish}
               disabled={isPublishing}
             >
-              <IconPlayerPlay className="w-5 h-5 mr-3" />
+              <IconPlayerPlay className="mr-3 h-5 w-5" />
               {isPublishing ? LL.grades.publishing() : LL.grades.publishDraft()}
             </Button>
 
             {!isComplete && (
-              <div className="p-4 rounded-xl bg-amber-500/5 border border-amber-500/10 flex items-start gap-3">
-                <IconAlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-                <p className="text-xs font-medium text-amber-700/80 leading-relaxed">
+              <div className="
+                flex items-start gap-3 rounded-xl border border-amber-500/10
+                bg-amber-500/5 p-4
+              "
+              >
+                <IconAlertCircle className="
+                  mt-0.5 h-5 w-5 shrink-0 text-amber-500
+                "
+                />
+                <p className="
+                  text-xs leading-relaxed font-medium text-amber-700/80
+                "
+                >
                   {LL.grades.missingStudentsWarningPublish({ count: missingCount })}
                 </p>
               </div>

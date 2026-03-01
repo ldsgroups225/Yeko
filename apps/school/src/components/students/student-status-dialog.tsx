@@ -53,7 +53,7 @@ export function StudentStatusDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="bg-card/95 border-border/40 backdrop-blur-xl">
         <DialogHeader>
           <DialogTitle>{t.students.changeStatus()}</DialogTitle>
           <DialogDescription>

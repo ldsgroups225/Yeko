@@ -133,55 +133,88 @@ export function BulkGradeEntry({
         render={(
           <Button
             variant="outline"
-            className="rounded-xl border-border/40 bg-background/50 hover:bg-background shadow-sm h-10 px-4 group"
+            className="
+              border-border/40 bg-background/50
+              hover:bg-background
+              group h-10 rounded-xl px-4 shadow-sm
+            "
           >
-            <IconFileSpreadsheet className="mr-2 size-4 text-primary transition-transform group-hover:scale-110" />
-            <span className="font-bold tracking-tight uppercase text-xs">
+            <IconFileSpreadsheet className="
+              text-primary mr-2 size-4 transition-transform
+              group-hover:scale-110
+            "
+            />
+            <span className="text-xs font-bold tracking-tight uppercase">
               {t.academic.grades.bulk.title()}
             </span>
           </Button>
         )}
       />
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-hidden rounded-3xl border-border/40 bg-popover/90 backdrop-blur-2xl shadow-2xl p-0">
+      <DialogContent className="
+        border-border/40 bg-popover/90 max-h-[90vh] max-w-2xl overflow-hidden
+        rounded-3xl p-0 shadow-2xl backdrop-blur-2xl
+      "
+      >
         <DialogHeader className="p-6 pb-0">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
+          <div className="mb-2 flex items-center gap-3">
+            <div className="
+              bg-primary/10 text-primary flex h-10 w-10 items-center
+              justify-center rounded-2xl shadow-inner
+            "
+            >
               <IconFileSpreadsheet className="size-5" />
             </div>
             <div>
               <DialogTitle className="text-xl font-bold tracking-tight">
                 {t.academic.grades.bulk.title()}
               </DialogTitle>
-              <DialogDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest opacity-70">
+              <DialogDescription className="
+                text-muted-foreground text-xs font-medium tracking-widest
+                uppercase opacity-70
+              "
+              >
                 {t.academic.grades.bulk.description()}
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        <div className="px-6 py-4 overflow-hidden border-y border-border/20">
-          <div className="max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+        <div className="border-border/20 overflow-hidden border-y px-6 py-4">
+          <div className="custom-scrollbar max-h-[50vh] overflow-y-auto pr-2">
             <Table>
               <TableHeader>
-                <TableRow className="border-b-border/40 hover:bg-transparent">
+                <TableRow className="
+                  border-b-border/40
+                  hover:bg-transparent
+                "
+                >
                   <TableHead className="py-4">
                     <div className="flex items-center gap-2">
-                      <IconUser className="size-3.5 text-muted-foreground" />
-                      <span className="font-bold uppercase tracking-tight text-[10px]">
+                      <IconUser className="text-muted-foreground size-3.5" />
+                      <span className="
+                        text-[10px] font-bold tracking-tight uppercase
+                      "
+                      >
                         {t.academic.grades.averages.student()}
                       </span>
                     </div>
                   </TableHead>
                   <TableHead className="w-24">
                     <div className="flex items-center gap-2">
-                      <IconHash className="size-3.5 text-muted-foreground" />
-                      <span className="font-bold uppercase tracking-tight text-[10px]">
+                      <IconHash className="text-muted-foreground size-3.5" />
+                      <span className="
+                        text-[10px] font-bold tracking-tight uppercase
+                      "
+                      >
                         {t.academic.grades.averages.matricule()}
                       </span>
                     </div>
                   </TableHead>
                   <TableHead className="w-32 text-center">
-                    <span className="font-bold uppercase tracking-tight text-[10px]">
+                    <span className="
+                      text-[10px] font-bold tracking-tight uppercase
+                    "
+                    >
                       {t.academic.grades.averages.average()}
                     </span>
                   </TableHead>
@@ -195,9 +228,17 @@ export function BulkGradeEntry({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.02 }}
-                      className="group border-b border-border/10 last:border-0 hover:bg-primary/5 transition-colors"
+                      className="
+                        group border-border/10
+                        hover:bg-primary/5
+                        border-b transition-colors
+                        last:border-0
+                      "
                     >
-                      <TableCell className="py-4 font-bold text-sm text-foreground">
+                      <TableCell className="
+                        text-foreground py-4 text-sm font-bold
+                      "
+                      >
                         {student.lastName}
                         {' '}
                         {student.firstName}
@@ -205,7 +246,10 @@ export function BulkGradeEntry({
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className="font-mono text-[9px] font-bold tracking-widest bg-muted/40 border-border/20 rounded-md"
+                          className="
+                            bg-muted/40 border-border/20 rounded-md font-mono
+                            text-[9px] font-bold tracking-widest
+                          "
                         >
                           {student.matricule}
                         </Badge>
@@ -218,7 +262,13 @@ export function BulkGradeEntry({
                           step={0.5}
                           placeholder="--"
                           className={cn(
-                            'h-10 w-24 text-center font-mono text-sm rounded-xl border-border/40 transition-all focus-visible:ring-primary/30 group-hover:bg-background',
+                            `
+                              border-border/40
+                              focus-visible:ring-primary/30
+                              group-hover:bg-background
+                              h-10 w-24 rounded-xl text-center font-mono text-sm
+                              transition-all
+                            `,
                             entries.get(student.id) !== undefined
                             && entries.get(student.id) !== null
                             && 'border-primary/40 bg-primary/5 font-bold',
@@ -237,11 +287,19 @@ export function BulkGradeEntry({
           </div>
         </div>
 
-        <DialogFooter className="p-6 bg-muted/20 sm:flex-row sm:justify-between sm:items-center gap-4">
+        <DialogFooter className="
+          bg-muted/20 gap-4 p-6
+          sm:flex-row sm:items-center sm:justify-between
+        "
+        >
           <div className="flex items-center gap-2">
             <div
               className={cn(
-                'flex h-8 px-3 items-center gap-2 rounded-full border text-[10px] font-bold uppercase tracking-widest shadow-sm transition-all',
+                `
+                  flex h-8 items-center gap-2 rounded-full border px-3
+                  text-[10px] font-bold tracking-widest uppercase shadow-sm
+                  transition-all
+                `,
                 filledCount > 0
                   ? 'bg-success/10 border-success/20 text-success'
                   : 'bg-muted/50 border-border/40 text-muted-foreground',
@@ -249,7 +307,7 @@ export function BulkGradeEntry({
             >
               <div
                 className={cn(
-                  'size-2 rounded-full animate-pulse',
+                  'size-2 animate-pulse rounded-full',
                   filledCount > 0 ? 'bg-success' : 'bg-muted-foreground/40',
                 )}
               />
@@ -263,14 +321,22 @@ export function BulkGradeEntry({
             <Button
               variant="ghost"
               onClick={() => setOpen(false)}
-              className="rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80"
+              className="
+                hover:bg-background/80
+                rounded-xl text-[10px] font-bold tracking-widest uppercase
+              "
             >
               {t.common.cancel()}
             </Button>
             <Button
               onClick={handleSubmit}
               disabled={filledCount === 0 || createMutation.isPending}
-              className="rounded-xl font-bold uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 px-6"
+              className="
+                shadow-primary/20 bg-primary
+                hover:bg-primary/90
+                rounded-xl px-6 text-[10px] font-bold tracking-widest uppercase
+                shadow-lg
+              "
             >
               {createMutation.isPending
                 ? (

@@ -32,7 +32,11 @@ export function PhotoUploadEditor({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-center bg-card/50 backdrop-blur-sm rounded-xl overflow-hidden p-4 border border-border/20">
+      <div className="
+        bg-card/50 border-border/20 flex justify-center overflow-hidden
+        rounded-xl border p-4 backdrop-blur-sm
+      "
+      >
         <ReactCrop
           crop={crop}
           onChange={(_, percentCrop) => onCropChange(percentCrop)}

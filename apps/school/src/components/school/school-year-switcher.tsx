@@ -49,9 +49,13 @@ export function SchoolYearSwitcher() {
 
   if (isPendingYears || isContextPending) {
     return (
-      <div className="flex h-9 w-[156px] items-center gap-2 rounded-md border border-input bg-background px-3">
-        <IconCalendar className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">
+      <div className="
+        border-input bg-background flex h-9 w-[156px] items-center gap-2
+        rounded-md border px-3
+      "
+      >
+        <IconCalendar className="text-muted-foreground h-4 w-4" />
+        <span className="text-muted-foreground text-sm">
           {t.common.loading()}
         </span>
       </div>
@@ -60,9 +64,13 @@ export function SchoolYearSwitcher() {
 
   if (!schoolYears || schoolYears.length === 0) {
     return (
-      <div className="flex h-9 w-[156px] items-center gap-2 rounded-md border border-input bg-background px-3">
-        <IconCalendar className="h-4 w-4 text-muted-foreground" />
-        <span className="text-xs text-muted-foreground">
+      <div className="
+        border-input bg-background flex h-9 w-[156px] items-center gap-2
+        rounded-md border px-3
+      "
+      >
+        <IconCalendar className="text-muted-foreground h-4 w-4" />
+        <span className="text-muted-foreground text-xs">
           {t.schoolYear.noYears()}
         </span>
       </div>
@@ -84,7 +92,7 @@ export function SchoolYearSwitcher() {
             className="h-9 w-[156px] justify-between"
           >
             <div className="flex items-center gap-2 overflow-hidden">
-              <IconCalendar className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <IconCalendar className="text-muted-foreground h-4 w-4 shrink-0" />
               <span className="truncate text-sm">
                 {currentYear?.template?.name || t.schoolYear.select()}
               </span>
@@ -108,7 +116,11 @@ export function SchoolYearSwitcher() {
                   <div className="flex items-center gap-2">
                     <span>{year.template?.name}</span>
                     {year.isActive && (
-                      <span className="rounded bg-green-500/20 px-1.5 py-0.5 text-xs text-green-600">
+                      <span className="
+                        rounded-sm bg-green-500/20 px-1.5 py-0.5 text-xs
+                        text-green-600
+                      "
+                      >
                         {t.schoolYear.active()}
                       </span>
                     )}

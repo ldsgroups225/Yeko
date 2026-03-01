@@ -32,38 +32,58 @@ export function ParticipationStudentCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'overflow-hidden rounded-xl border bg-card/80 shadow-sm backdrop-blur-sm transition-all cursor-pointer',
+        `
+          bg-card/80 cursor-pointer overflow-hidden rounded-xl border shadow-sm
+          backdrop-blur-sm transition-all
+        `,
         hasParticipated
-          ? 'bg-primary/10 border-primary/30 hover:bg-primary/15'
-          : 'border-border/50 hover:bg-muted/50',
+          ? `
+            bg-primary/10 border-primary/30
+            hover:bg-primary/15
+          `
+          : `
+            border-border/50
+            hover:bg-muted/50
+          `,
       )}
       onClick={onToggleParticipation}
     >
-      <div className="w-full p-4 flex items-center justify-between gap-3">
+      <div className="flex w-full items-center justify-between gap-3 p-4">
         {/* Student Info */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
           <div className="relative">
-            <Avatar className="h-10 w-10 border border-border/50 shrink-0">
+            <Avatar className="border-border/50 h-10 w-10 shrink-0 border">
               <AvatarImage src={student.photoUrl ?? undefined} alt={`${student.firstName} ${student.lastName}`} />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+              <AvatarFallback className="
+                bg-primary/10 text-primary text-xs font-bold
+              "
+              >
                 {student.firstName[0]}
                 {student.lastName[0]}
               </AvatarFallback>
             </Avatar>
             {/* Participation indicator */}
             {hasParticipated && (
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center border-2 border-card bg-primary">
-                <IconCheck className="w-3 h-3 text-white" />
+              <div className="
+                border-card bg-primary absolute -right-1 -bottom-1 flex h-5 w-5
+                items-center justify-center rounded-full border-2
+              "
+              >
+                <IconCheck className="h-3 w-3 text-white" />
               </div>
             )}
           </div>
           <div className="min-w-0 flex-1">
-            <h3 className="truncate font-semibold text-foreground text-sm">
+            <h3 className="text-foreground truncate text-sm font-semibold">
               {student.lastName}
               {' '}
               {student.firstName}
             </h3>
-            <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-tighter">
+            <p className="
+              text-muted-foreground text-[10px] font-medium tracking-tighter
+              uppercase
+            "
+            >
               {student.matricule}
             </p>
           </div>
@@ -72,31 +92,40 @@ export function ParticipationStudentCard({
         {/* Actions */}
         <div className="flex items-center gap-2">
           {comment && (
-            <Badge variant="outline" className="text-[10px] bg-muted/50">
-              <IconMessage className="w-3 h-3 mr-1" />
+            <Badge variant="outline" className="bg-muted/50 text-[10px]">
+              <IconMessage className="mr-1 h-3 w-3" />
               Note
             </Badge>
           )}
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-lg hover:bg-primary/10"
+            className="
+              hover:bg-primary/10
+              h-8 w-8 rounded-lg
+            "
             onClick={(e) => {
               e.stopPropagation()
               onComment()
             }}
           >
-            <IconMessage className="w-4 h-4 text-muted-foreground" />
+            <IconMessage className="text-muted-foreground h-4 w-4" />
           </Button>
           <div
             className={cn(
-              'w-10 h-10 rounded-xl flex items-center justify-center transition-all',
+              `
+                flex h-10 w-10 items-center justify-center rounded-xl
+                transition-all
+              `,
               hasParticipated
                 ? 'bg-primary text-white'
-                : 'bg-muted/50 border border-border/50',
+                : 'bg-muted/50 border-border/50 border',
             )}
           >
-            <IconCheck className={cn('w-5 h-5', !hasParticipated && 'text-muted-foreground/50')} />
+            <IconCheck className={cn('h-5 w-5', !hasParticipated && `
+              text-muted-foreground/50
+            `)}
+            />
           </div>
         </div>
       </div>

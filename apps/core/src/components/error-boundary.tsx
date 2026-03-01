@@ -30,7 +30,7 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo)
     this.props.onError?.(error, errorInfo)
   }
@@ -43,18 +43,18 @@ export class ErrorBoundary extends Component<Props, State> {
     window.location.reload()
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback
       }
 
       return (
-        <div className="flex items-center justify-center min-h-[400px] p-4">
-          <Card className="max-w-lg w-full">
+        <div className="flex min-h-[400px] items-center justify-center p-4">
+          <Card className="w-full max-w-lg">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <IconAlertCircle className="h-5 w-5 text-destructive" />
+                <IconAlertCircle className="text-destructive h-5 w-5" />
                 <CardTitle>Une erreur s'est produite</CardTitle>
               </div>
               <CardDescription>
@@ -80,7 +80,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 </Button>
               </div>
 
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Si le problème persiste, veuillez contacter le support technique.
               </p>
             </CardContent>
@@ -107,7 +107,7 @@ export class AnalyticsErrorBoundary extends Component<Props, State> {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('AnalyticsErrorBoundary caught an error:', error, errorInfo)
     this.props.onError?.(error, errorInfo)
   }
@@ -116,14 +116,14 @@ export class AnalyticsErrorBoundary extends Component<Props, State> {
     window.location.reload()
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
-        <div className="flex items-center justify-center min-h-[400px] p-4">
-          <Card className="max-w-lg w-full">
+        <div className="flex min-h-[400px] items-center justify-center p-4">
+          <Card className="w-full max-w-lg">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <IconAlertCircle className="h-5 w-5 text-destructive" />
+                <IconAlertCircle className="text-destructive h-5 w-5" />
                 <CardTitle>Erreur de chargement des analytiques</CardTitle>
               </div>
               <CardDescription>
@@ -144,7 +144,7 @@ export class AnalyticsErrorBoundary extends Component<Props, State> {
                 Recharger la page
               </Button>
 
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 Les données analytiques peuvent être temporairement indisponibles.
                 Veuillez réessayer dans quelques instants.
               </p>

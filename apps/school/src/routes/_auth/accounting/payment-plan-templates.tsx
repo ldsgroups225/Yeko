@@ -86,8 +86,8 @@ function PaymentPlanTemplatesPage() {
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-primary/10">
-              <IconFileText className="h-6 w-6 text-primary" />
+            <div className="bg-primary/10 rounded-xl p-2">
+              <IconFileText className="text-primary h-6 w-6" />
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">
@@ -100,7 +100,7 @@ function PaymentPlanTemplatesPage() {
           </div>
 
           <Button
-            className="rounded-xl gap-2 shadow-lg shadow-primary/20"
+            className="shadow-primary/20 gap-2 rounded-xl shadow-lg"
             onClick={() => {
               setSelectedTemplate(null)
               setIsCreateDialogOpen(true)
@@ -112,7 +112,11 @@ function PaymentPlanTemplatesPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border/40 bg-card/30 backdrop-blur-md overflow-hidden">
+      <div className="
+        border-border/40 bg-card/30 overflow-hidden rounded-2xl border
+        backdrop-blur-md
+      "
+      >
         <PaymentPlanTemplatesTable
           templates={(templates ?? []).map(tpl => ({ ...tpl, isDefault: tpl.isDefault ?? false, status: tpl.status ?? 'active' }))}
           onEdit={handleEdit}

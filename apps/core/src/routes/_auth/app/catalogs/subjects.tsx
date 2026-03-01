@@ -240,9 +240,9 @@ function SubjectsCatalog() {
 
   if (error) {
     return (
-      <div className="text-center py-8">
-        <IconCircleX className="h-8 w-8 text-destructive mx-auto mb-2" />
-        <h3 className="text-lg font-medium text-destructive">Erreur de chargement</h3>
+      <div className="py-8 text-center">
+        <IconCircleX className="text-destructive mx-auto mb-2 h-8 w-8" />
+        <h3 className="text-destructive text-lg font-medium">Erreur de chargement</h3>
         <p className="text-muted-foreground">{error.message}</p>
         <Button
           variant="outline"
@@ -267,15 +267,15 @@ function SubjectsCatalog() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => downloadSubjectsTemplate().catch(() => toast.error('Erreur lors du téléchargement du template'))}>
-            <IconDownload className="h-4 w-4 mr-2" />
+            <IconDownload className="mr-2 h-4 w-4" />
             Template
           </Button>
           <Button variant="outline" size="sm" onClick={handleExport} disabled={allSubjects.length === 0}>
-            <IconDownload className="h-4 w-4 mr-2" />
+            <IconDownload className="mr-2 h-4 w-4" />
             Exporter
           </Button>
           <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-            <IconUpload className="h-4 w-4 mr-2" />
+            <IconUpload className="mr-2 h-4 w-4" />
             Importer
           </Button>
           <input
@@ -298,27 +298,38 @@ function SubjectsCatalog() {
             <CatalogStatsSkeleton />
           )
         : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div className="
+              grid gap-4
+              md:grid-cols-2
+              lg:grid-cols-5
+            "
+            >
               <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardHeader className="
+                  flex flex-row items-center justify-between space-y-0 pb-2
+                "
+                >
                   <CardTitle className="text-sm font-medium">Total</CardTitle>
-                  <IconBook className="h-4 w-4 text-muted-foreground" />
+                  <IconBook className="text-muted-foreground h-4 w-4" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{pagination?.total || 0}</div>
-                  <p className="text-xs text-muted-foreground">matières</p>
+                  <p className="text-muted-foreground text-xs">matières</p>
                 </CardContent>
               </Card>
 
               {categories.map(category => (
                 <Card key={category.name}>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardHeader className="
+                    flex flex-row items-center justify-between space-y-0 pb-2
+                  "
+                  >
                     <CardTitle className="text-sm font-medium">{category.name}</CardTitle>
-                    <IconBook className="h-4 w-4 text-muted-foreground" />
+                    <IconBook className="text-muted-foreground h-4 w-4" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{category.count}</div>
-                    <p className="text-xs text-muted-foreground">matières</p>
+                    <p className="text-muted-foreground text-xs">matières</p>
                   </CardContent>
                 </Card>
               ))}
@@ -334,7 +345,11 @@ function SubjectsCatalog() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleCreate} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="
+                grid gap-4
+                md:grid-cols-3
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="name">Nom *</Label>
                   <Input
@@ -372,11 +387,11 @@ function SubjectsCatalog() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
-                  <IconX className="h-4 w-4 mr-2" />
+                  <IconX className="mr-2 h-4 w-4" />
                   {t.common.cancel()}
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="mr-2 h-4 w-4" />
                   {createMutation.isPending ? t.common.loading() : t.common.create()}
                 </Button>
               </div>
@@ -394,9 +409,13 @@ function SubjectsCatalog() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 items-center">
-            <div className="relative flex-1 max-w-md">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="flex items-center gap-4">
+            <div className="relative max-w-md flex-1">
+              <IconSearch className="
+                text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                -translate-y-1/2
+              "
+              />
               <Input
                 placeholder={t.catalogs.subjects.search()}
                 className="pl-9"
@@ -450,8 +469,11 @@ function SubjectsCatalog() {
               )
             : allSubjects.length === 0
               ? (
-                  <div className="text-center py-8">
-                    <IconBook className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <div className="py-8 text-center">
+                    <IconBook className="
+                      text-muted-foreground mx-auto mb-4 h-12 w-12
+                    "
+                    />
                     <h3 className="text-lg font-medium">Aucune matière trouvée</h3>
                     <p className="text-muted-foreground">
                       {search || categoryFilter !== 'all'
@@ -478,9 +500,15 @@ function SubjectsCatalog() {
                                 ? (
                                     <form
                                       onSubmit={e => handleUpdate(e, subject.id)}
-                                      className="border rounded-lg p-4 space-y-4"
+                                      className="
+                                        space-y-4 rounded-lg border p-4
+                                      "
                                     >
-                                      <div className="grid gap-4 md:grid-cols-3">
+                                      <div className="
+                                        grid gap-4
+                                        md:grid-cols-3
+                                      "
+                                      >
                                         <div className="space-y-2">
                                           <Label htmlFor={`edit-name-${subject.id}`}>Nom *</Label>
                                           <Input
@@ -528,27 +556,48 @@ function SubjectsCatalog() {
                                           variant="outline"
                                           onClick={() => setEditingSubject(null)}
                                         >
-                                          <IconX className="h-4 w-4 mr-2" />
+                                          <IconX className="mr-2 h-4 w-4" />
                                           {t.common.cancel()}
                                         </Button>
                                         <Button type="submit" disabled={updateMutation.isPending}>
-                                          <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                          <IconDeviceFloppy className="
+                                            mr-2 h-4 w-4
+                                          "
+                                          />
                                           {updateMutation.isPending ? t.common.loading() : t.common.save()}
                                         </Button>
                                       </div>
                                     </form>
                                   )
                                 : (
-                                    <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                                    <div className="
+                                      hover:bg-accent/50
+                                      flex items-center justify-between
+                                      rounded-lg border p-4 transition-colors
+                                    "
+                                    >
                                       <div className="flex items-center gap-4">
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                          <IconBook className="h-5 w-5 text-primary" />
+                                        <div className="
+                                          bg-primary/10 flex h-10 w-10
+                                          items-center justify-center rounded-lg
+                                        "
+                                        >
+                                          <IconBook className="
+                                            text-primary h-5 w-5
+                                          "
+                                          />
                                         </div>
                                         <div>
-                                          <div className="flex items-center gap-2">
+                                          <div className="
+                                            flex items-center gap-2
+                                          "
+                                          >
                                             <h3 className="font-semibold">{subject.name}</h3>
                                             {subject.shortName && (
-                                              <Badge variant="outline" className="text-xs">
+                                              <Badge
+                                                variant="outline"
+                                                className="text-xs"
+                                              >
                                                 {subject.shortName}
                                               </Badge>
                                             )}
@@ -556,8 +605,14 @@ function SubjectsCatalog() {
                                               {subject.category}
                                             </Badge>
                                           </div>
-                                          <div className="flex items-center gap-2 mt-1">
-                                            <span className="text-xs text-muted-foreground">
+                                          <div className="
+                                            mt-1 flex items-center gap-2
+                                          "
+                                          >
+                                            <span className="
+                                              text-muted-foreground text-xs
+                                            "
+                                            >
                                               Créé le
                                               {' '}
                                               {formatDate(subject.createdAt, 'MEDIUM')}
@@ -599,10 +654,16 @@ function SubjectsCatalog() {
                         {isPending && (
                           <div className="space-y-4">
                             {Array.from({ length: 3 }).map(() => (
-                              <div key={generateUUID()} className="flex items-center justify-between p-4 border rounded-lg">
-                                <div className="flex items-center gap-4 flex-1">
+                              <div
+                                key={generateUUID()}
+                                className="
+                                  flex items-center justify-between rounded-lg
+                                  border p-4
+                                "
+                              >
+                                <div className="flex flex-1 items-center gap-4">
                                   <Skeleton className="h-10 w-10 rounded-lg" />
-                                  <div className="space-y-2 flex-1">
+                                  <div className="flex-1 space-y-2">
                                     <Skeleton className="h-5 w-32" />
                                     <Skeleton className="h-4 w-24" />
                                   </div>

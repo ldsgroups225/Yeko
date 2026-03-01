@@ -29,11 +29,15 @@ export function CoefficientsListView({ isPending, coefficients, onDelete }: Coef
     return (
       <Card className="border-dashed">
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-            <IconCalculator className="h-8 w-8 text-muted-foreground" />
+          <div className="
+            bg-muted mb-4 flex h-16 w-16 items-center justify-center
+            rounded-full
+          "
+          >
+            <IconCalculator className="text-muted-foreground h-8 w-8" />
           </div>
-          <h3 className="text-xl font-semibold text-foreground">Aucun coefficient trouvé</h3>
-          <p className="text-muted-foreground mt-2 text-center max-w-sm">
+          <h3 className="text-foreground text-xl font-semibold">Aucun coefficient trouvé</h3>
+          <p className="text-muted-foreground mt-2 max-w-sm text-center">
             Commencez par créer votre premier coefficient.
           </p>
         </CardContent>
@@ -42,8 +46,15 @@ export function CoefficientsListView({ isPending, coefficients, onDelete }: Coef
   }
 
   return (
-    <Card className="overflow-hidden border-primary/10 shadow-sm transition-all hover:shadow-md">
-      <CardHeader className="bg-muted/30 flex flex-row items-center justify-between">
+    <Card className="
+      border-primary/10 overflow-hidden shadow-sm transition-all
+      hover:shadow-md
+    "
+    >
+      <CardHeader className="
+        bg-muted/30 flex flex-row items-center justify-between
+      "
+      >
         <div>
           <CardTitle>Liste des Coefficients</CardTitle>
           <CardDescription>
@@ -65,26 +76,58 @@ export function CoefficientsListView({ isPending, coefficients, onDelete }: Coef
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.2 }}
-                  className="flex items-center justify-between p-4 border rounded-xl bg-card hover:border-primary/50 hover:bg-primary/5 transition-all group"
+                  className="
+                    bg-card
+                    hover:border-primary/50 hover:bg-primary/5
+                    group flex items-center justify-between rounded-xl border
+                    p-4 transition-all
+                  "
                 >
-                  <div className="flex items-center gap-5 flex-1">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 group-hover:bg-primary group-hover:text-primary-foreground transition-colors shadow-sm">
+                  <div className="flex flex-1 items-center gap-5">
+                    <div className="
+                      bg-primary/10 border-primary/20
+                      group-hover:bg-primary group-hover:text-primary-foreground
+                      flex h-12 w-12 items-center justify-center rounded-xl
+                      border shadow-sm transition-colors
+                    "
+                    >
                       <span className="text-xl font-black">{coef.weight}</span>
                     </div>
                     <div className="flex-1">
-                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <h3 className="font-bold text-lg text-foreground/90">{coef.subject?.name}</h3>
-                        <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-none font-bold">
+                      <div className="
+                        flex flex-wrap items-center gap-x-3 gap-y-1
+                      "
+                      >
+                        <h3 className="text-foreground/90 text-lg font-bold">{coef.subject?.name}</h3>
+                        <Badge
+                          variant="secondary"
+                          className="
+                            border-none bg-blue-500/10 font-bold text-blue-600
+                          "
+                        >
                           {coef.grade?.name}
                         </Badge>
                         {coef.series && (
-                          <Badge variant="outline" className="border-orange-200 text-orange-600 bg-orange-50/50">
+                          <Badge
+                            variant="outline"
+                            className="
+                              border-orange-200 bg-orange-50/50 text-orange-600
+                            "
+                          >
                             {coef.series.name}
                           </Badge>
                         )}
                       </div>
-                      <div className="text-sm text-muted-foreground mt-1 flex items-center gap-2">
-                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-muted-foreground/30" />
+                      <div className="
+                        text-muted-foreground mt-1 flex items-center gap-2
+                        text-sm
+                      "
+                      >
+                        <span className="
+                          bg-muted-foreground/30 inline-block h-1.5 w-1.5
+                          rounded-full
+                        "
+                        />
                         {coef.schoolYearTemplate?.name}
                       </div>
                     </div>
@@ -93,7 +136,11 @@ export function CoefficientsListView({ isPending, coefficients, onDelete }: Coef
                     variant="ghost"
                     size="icon"
                     onClick={() => onDelete(coef)}
-                    className="h-10 w-10 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                    className="
+                      text-muted-foreground h-10 w-10 rounded-full
+                      transition-colors
+                      hover:bg-red-50 hover:text-red-500
+                    "
                   >
                     <IconTrash className="h-5 w-5" />
                   </Button>

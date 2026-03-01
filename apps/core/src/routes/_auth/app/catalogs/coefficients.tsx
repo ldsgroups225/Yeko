@@ -189,7 +189,7 @@ function CoefficientsCatalog() {
       await exportCoefficientsToExcel(coefficientsData.coefficients, `coefficients-${new Date().toISOString().split('T')[0]}.xlsx`)
       toast.success('Coefficients exportés avec succès')
     }
-    catch (error) {
+    catch {
       toast.error('Erreur lors de l\'exportation')
     }
   }
@@ -199,7 +199,7 @@ function CoefficientsCatalog() {
       await generateCoefficientTemplate()
       toast.success('Modèle téléchargé avec succès')
     }
-    catch (error) {
+    catch {
       toast.error('Erreur lors du téléchargement du modèle')
     }
   }
@@ -252,7 +252,7 @@ function CoefficientsCatalog() {
       queryClient.invalidateQueries({ queryKey: ['coefficient-templates'] })
       queryClient.invalidateQueries({ queryKey: ['coefficient-stats'] })
     }
-    catch (error) {
+    catch {
       toast.dismiss()
       toast.error('Erreur lors de l\'import')
     }
@@ -308,7 +308,7 @@ function CoefficientsCatalog() {
   }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 py-8">
+    <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
       <CoefficientsHeader
         onDownloadTemplate={handleDownloadTemplate}
         onImportClick={() => fileInputRef.current?.click()}

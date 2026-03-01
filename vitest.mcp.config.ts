@@ -1,11 +1,11 @@
-import { defineConfig } from 'vitest/config'
 import path from 'node:path'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
     // MCP-optimized: JSON reporter for structured output
     reporters: ['json'],
-    
+
     // Coverage configuration for gap analysis
     coverage: {
       enabled: true,
@@ -43,16 +43,16 @@ export default defineConfig({
     // Test environment
     environment: 'jsdom',
     globals: true,
-    
+
     // Performance settings
     isolate: true,
     fileParallelism: true,
     testTimeout: 30000,
     hookTimeout: 10000,
-    
+
     // Safety: Disable watch mode for MCP
     watch: false,
-    
+
     // Include test files
     include: [
       'src/**/*.{test,spec}.{js,ts,tsx}',
@@ -64,14 +64,14 @@ export default defineConfig({
       '**/e2e/**',
     ],
   },
-  
+
   // Path resolution for monorepo
   resolve: {
     alias: {
       '@': path.resolve(process.cwd(), './src'),
     },
   },
-  
+
   // TypeScript paths
   plugins: [
     // Plugins would be added by individual app configs

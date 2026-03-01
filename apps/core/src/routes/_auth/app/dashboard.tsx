@@ -145,7 +145,12 @@ function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-4
+      "
+      >
         <StatsCard
           title="Total des écoles"
           value={stats?.totalSchools || 0}
@@ -187,7 +192,12 @@ function Dashboard() {
         />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+        lg:grid-cols-7
+      "
+      >
         {/* Quick Actions */}
         <Card className="lg:col-span-3">
           <CardHeader>
@@ -200,16 +210,28 @@ function Dashboard() {
             {quickActions.map(action => (
               <div
                 key={action.title}
-                className="flex items-center space-x-4 rounded-lg border p-4 hover:bg-accent/50 transition-colors cursor-pointer"
+                className="
+                  hover:bg-accent/50
+                  flex cursor-pointer items-center space-x-4 rounded-lg border
+                  p-4 transition-colors
+                "
               >
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${action.bgColor}`}>
-                  <action.icon className={`h-5 w-5 ${action.color}`} />
+                <div className={`
+                  flex h-10 w-10 items-center justify-center rounded-lg
+                  ${action.bgColor}
+                `}
+                >
+                  <action.icon className={`
+                    h-5 w-5
+                    ${action.color}
+                  `}
+                  />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium leading-none">
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm leading-none font-medium">
                     {action.title}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {action.description}
                   </p>
                 </div>
@@ -229,16 +251,23 @@ function Dashboard() {
           <CardContent>
             <div className="space-y-4">
               {recentSchools.map(school => (
-                <div key={school.id} className="flex items-center justify-between">
+                <div
+                  key={school.id}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center space-x-4">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      <IconSchool className="h-5 w-5 text-primary" />
+                    <div className="
+                      bg-primary/10 flex h-10 w-10 items-center justify-center
+                      rounded-lg
+                    "
+                    >
+                      <IconSchool className="text-primary h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium leading-none">
+                      <p className="text-sm leading-none font-medium">
                         {school.name}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground text-sm">
                         Rejoint
                         {' '}
                         {school.joinedDate}
@@ -249,14 +278,14 @@ function Dashboard() {
                     {school.status === 'active'
                       ? (
                           <>
-                            <IconCircleCheck className="h-4 w-4 text-primary" />
-                            <span className="text-sm text-primary">Active</span>
+                            <IconCircleCheck className="text-primary h-4 w-4" />
+                            <span className="text-primary text-sm">Active</span>
                           </>
                         )
                       : (
                           <>
-                            <IconClock className="h-4 w-4 text-secondary" />
-                            <span className="text-sm text-secondary">En attente</span>
+                            <IconClock className="text-secondary h-4 w-4" />
+                            <span className="text-secondary text-sm">En attente</span>
                           </>
                         )}
                   </div>

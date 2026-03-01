@@ -81,19 +81,31 @@ export function UserCombobox({
             aria-controls="user-combobox-list"
             disabled={disabled}
             className={cn(
-              'w-full justify-between font-medium rounded-xl h-11 border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm',
-              open && 'ring-2 ring-primary/20 border-primary/50 bg-background',
+              `
+                border-border/40 bg-background/50
+                hover:bg-background
+                h-11 w-full justify-between rounded-xl font-medium shadow-sm
+                transition-all
+              `,
+              open && 'ring-primary/20 border-primary/50 bg-background ring-2',
             )}
           >
             {selectedUser
               ? (
                   <div className="flex items-center gap-2 truncate">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                    <div className="
+                      bg-primary/10 text-primary flex h-6 w-6 items-center
+                      justify-center rounded-full
+                    "
+                    >
                       <IconUser className="h-3 w-3" />
                     </div>
                     <span className="truncate">
                       {selectedUser.name}
-                      <span className="ml-2 text-xs text-muted-foreground font-normal">
+                      <span className="
+                        text-muted-foreground ml-2 text-xs font-normal
+                      "
+                      >
                         {selectedUser.email}
                       </span>
                     </span>
@@ -109,17 +121,27 @@ export function UserCombobox({
         )}
       />
       <PopoverContent
-        className="w-(--radix-popover-trigger-width) p-0 rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 shadow-xl overflow-hidden"
+        className="
+          bg-popover/90 border-border/40 w-(--radix-popover-trigger-width)
+          overflow-hidden rounded-xl p-0 shadow-xl backdrop-blur-2xl
+        "
         align="start"
       >
         <Command shouldFilter={false} className="bg-transparent">
-          <div className="relative border-b border-border/40">
-            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="border-border/40 relative border-b">
+            <IconSearch className="
+              text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+              -translate-y-1/2
+            "
+            />
             <CommandInput
               placeholder={t.hr.staff.searchUser()}
               value={search}
               onValueChange={setSearch}
-              className="border-none focus:ring-0 pl-9 py-4 h-11 bg-transparent"
+              className="
+                h-11 border-none bg-transparent py-4 pl-9
+                focus:ring-0
+              "
             />
           </div>
           <CommandList id="user-combobox-list">
@@ -133,7 +155,10 @@ export function UserCombobox({
                       exit={{ opacity: 0 }}
                       className="flex items-center justify-center py-8"
                     >
-                      <IconLoader2 className="h-5 w-5 animate-spin text-primary/60" />
+                      <IconLoader2 className="
+                        text-primary/60 h-5 w-5 animate-spin
+                      "
+                      />
                     </motion.div>
                   )
                 : users.length === 0
@@ -144,7 +169,7 @@ export function UserCombobox({
                         animate={{ opacity: 1 }}
                         className="py-10 text-center"
                       >
-                        <CommandEmpty className="text-sm text-muted-foreground">
+                        <CommandEmpty className="text-muted-foreground text-sm">
                           {t.hr.staff.noUsersFound()}
                         </CommandEmpty>
                       </motion.div>
@@ -159,15 +184,30 @@ export function UserCombobox({
                               onSelect(user.id)
                               setOpen(false)
                             }}
-                            className="rounded-lg py-3 px-3 cursor-pointer data-[selected=true]:bg-primary/10 transition-colors"
+                            className="
+                              data-[selected=true]:bg-primary/10
+                              cursor-pointer rounded-lg px-3 py-3
+                              transition-colors
+                            "
                           >
-                            <div className="flex items-center w-full">
+                            <div className="flex w-full items-center">
                               <div
                                 className={cn(
-                                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-full mr-3 border transition-colors',
+                                  `
+                                    mr-3 flex h-8 w-8 shrink-0 items-center
+                                    justify-center rounded-full border
+                                    transition-colors
+                                  `,
                                   value === user.id
-                                    ? 'bg-primary border-primary text-primary-foreground'
-                                    : 'bg-muted border-border/40 text-muted-foreground group-hover:bg-primary/10',
+                                    ? `
+                                      bg-primary border-primary
+                                      text-primary-foreground
+                                    `
+                                    : `
+                                      bg-muted border-border/40
+                                      text-muted-foreground
+                                      group-hover:bg-primary/10
+                                    `,
                                 )}
                               >
                                 {value === user.id
@@ -178,11 +218,17 @@ export function UserCombobox({
                                       <IconUser className="h-4 w-4" />
                                     )}
                               </div>
-                              <div className="flex flex-col flex-1 truncate">
-                                <span className="font-semibold text-foreground truncate">
+                              <div className="flex flex-1 flex-col truncate">
+                                <span className="
+                                  text-foreground truncate font-semibold
+                                "
+                                >
                                   {user.name}
                                 </span>
-                                <span className="text-xs text-muted-foreground truncate">
+                                <span className="
+                                  text-muted-foreground truncate text-xs
+                                "
+                                >
                                   {user.email}
                                 </span>
                               </div>

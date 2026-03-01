@@ -40,7 +40,10 @@ export function ExistingParentSearch({
   return (
     <div className="space-y-4 pt-4">
       <div className="relative">
-        <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <IconSearch className="
+          text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2
+        "
+        />
         <Input
           placeholder={t.parents.searchPlaceholder()}
           value={search}
@@ -49,13 +52,27 @@ export function ExistingParentSearch({
         />
       </div>
 
-      {isPending && <div className="flex justify-center py-8"><IconLoader2 className="h-6 w-6 animate-spin text-primary" /></div>}
+      {isPending && (
+        <div className="flex justify-center py-8">
+          <IconLoader2 className="text-primary h-6 w-6 animate-spin" />
+        </div>
+      )}
 
       {!isPending && search.length >= 2 && parentsData?.data.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-          <IconUser className="h-8 w-8 opacity-50 mb-2" />
+        <div className="
+          text-muted-foreground flex flex-col items-center justify-center py-8
+          text-center
+        "
+        >
+          <IconUser className="mb-2 h-8 w-8 opacity-50" />
           <p>{t.parents.noParents()}</p>
-          <Button variant="link" onClick={() => onTabChange('new')} className="mt-2">{t.parents.addParent()}</Button>
+          <Button
+            variant="link"
+            onClick={() => onTabChange('new')}
+            className="mt-2"
+          >
+            {t.parents.addParent()}
+          </Button>
         </div>
       )}
 
@@ -67,9 +84,19 @@ export function ExistingParentSearch({
         >
           <div className="space-y-2">
             {parentsData.data.map((parent: any) => (
-              <div key={parent.id} className="flex items-center space-x-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
+              <div
+                key={parent.id}
+                className="
+                  hover:bg-muted/50
+                  flex items-center space-x-3 rounded-lg border p-3
+                  transition-colors
+                "
+              >
                 <RadioGroupItem value={parent.id} id={parent.id} />
-                <Label htmlFor={parent.id} className="flex flex-1 cursor-pointer items-center gap-3">
+                <Label
+                  htmlFor={parent.id}
+                  className="flex flex-1 cursor-pointer items-center gap-3"
+                >
                   <Avatar className="h-10 w-10">
                     <AvatarFallback>
                       {parent.firstName?.[0]}
@@ -82,7 +109,7 @@ export function ExistingParentSearch({
                       {' '}
                       {parent.firstName}
                     </p>
-                    <p className="text-sm text-muted-foreground">{parent.phone}</p>
+                    <p className="text-muted-foreground text-sm">{parent.phone}</p>
                   </div>
                 </Label>
               </div>
@@ -92,8 +119,12 @@ export function ExistingParentSearch({
       )}
 
       {selectedParentId && (
-        <div className="space-y-4 rounded-lg border bg-muted/50 p-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+        <div className="bg-muted/50 space-y-4 rounded-lg border p-4">
+          <div className="
+            grid gap-4
+            sm:grid-cols-2
+          "
+          >
             <div className="space-y-2">
               <Label>{t.parents.relationship()}</Label>
               <Select value={relationship} onValueChange={onRelationshipChange}>

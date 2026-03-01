@@ -228,7 +228,11 @@ function SchoolYearsCatalog() {
           <Skeleton className="h-8 w-64" />
           <Skeleton className="h-4 w-96" />
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="
+          grid gap-4
+          md:grid-cols-3
+        "
+        >
           {[1, 2, 3].map(i => (
             <Skeleton key={i} className="h-24" />
           ))}
@@ -256,7 +260,7 @@ function SchoolYearsCatalog() {
             </p>
           </div>
           <Button onClick={() => setIsCreatingYear(true)}>
-            <IconPlus className="h-4 w-4 mr-2" />
+            <IconPlus className="mr-2 h-4 w-4" />
             Nouvelle Année
           </Button>
         </div>
@@ -284,13 +288,16 @@ function SchoolYearsCatalog() {
             ? (
                 <Card>
                   <CardContent className="py-12 text-center">
-                    <IconCalendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <IconCalendar className="
+                      text-muted-foreground mx-auto mb-4 h-12 w-12
+                    "
+                    />
                     <h3 className="text-lg font-medium">Aucune année scolaire</h3>
                     <p className="text-muted-foreground mb-4">
                       Commencez par créer votre première année scolaire
                     </p>
                     <Button onClick={() => setIsCreatingYear(true)}>
-                      <IconPlus className="h-4 w-4 mr-2" />
+                      <IconPlus className="mr-2 h-4 w-4" />
                       Créer une année
                     </Button>
                   </CardContent>

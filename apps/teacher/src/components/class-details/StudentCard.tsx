@@ -56,10 +56,10 @@ function getPerformanceIcon(average: number | null, classAvg: number | null) {
     return null
   const diff = average - classAvg
   if (diff > 1)
-    return <IconTrendingUp className="w-3 h-3 text-success" />
+    return <IconTrendingUp className="text-success h-3 w-3" />
   if (diff < -1)
-    return <IconTrendingDown className="w-3 h-3 text-destructive" />
-  return <IconMinus className="w-3 h-3 text-muted-foreground" />
+    return <IconTrendingDown className="text-destructive h-3 w-3" />
+  return <IconMinus className="text-muted-foreground h-3 w-3" />
 }
 
 export interface StudentCardProps {
@@ -101,28 +101,34 @@ export function StudentCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'overflow-hidden rounded-xl border border-border/50 bg-card/80 shadow-sm backdrop-blur-sm transition-all',
-        !isEntryMode ? 'hover:shadow-lg hover:scale-[1.01]' : '',
+        `
+          border-border/50 bg-card/80 overflow-hidden rounded-xl border
+          shadow-sm backdrop-blur-sm transition-all
+        `,
+        !isEntryMode ? 'hover:scale-[1.01] hover:shadow-lg' : '',
       )}
     >
-      <div className="w-full p-4 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <Avatar className="h-10 w-10 border border-border/50 shrink-0">
+      <div className="flex w-full items-center justify-between gap-3 p-4">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <Avatar className="border-border/50 h-10 w-10 shrink-0 border">
             <AvatarImage src={student.photoUrl ?? undefined} alt={`${student.firstName} ${student.lastName}`} />
-            <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+            <AvatarFallback className="
+              bg-primary/10 text-primary text-xs font-bold
+            "
+            >
               {student.firstName[0]}
               {student.lastName[0]}
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0">
-            <h3 className="truncate font-semibold text-foreground text-sm">
+            <h3 className="text-foreground truncate text-sm font-semibold">
               {student.firstName}
               {' '}
               {student.lastName}
             </h3>
             {!isEntryMode && (
               <div className="mt-1 flex items-center gap-2">
-                <Badge variant="outline" className="h-5 font-normal text-xs">
+                <Badge variant="outline" className="h-5 text-xs font-normal">
                   <span className="text-muted-foreground">
                     {LL.common.participation()}
                     :
@@ -143,9 +149,14 @@ export function StudentCard({
                   placeholder={LL.common.notAvailable()}
                   value={gradeValue || ''}
                   onChange={e => onGradeChange?.(e.target.value)}
-                  className="h-12 w-20 text-center text-xl font-black bg-muted/40 border-primary/20 rounded-xl focus:ring-2 focus:ring-primary/30"
+                  className="
+                    bg-muted/40 border-primary/20
+                    focus:ring-primary/30
+                    h-12 w-20 rounded-xl text-center text-xl font-black
+                    focus:ring-2
+                  "
                 />
-                <span className="text-sm font-black text-muted-foreground">
+                <span className="text-muted-foreground text-sm font-black">
                   /
                   {gradeOutOf}
                 </span>
@@ -158,10 +169,19 @@ export function StudentCard({
                 className="flex items-center gap-2"
               >
                 <div className="text-right">
-                  <div className="text-muted-foreground text-[10px] uppercase font-bold tracking-tighter">{LL.common.average()}</div>
+                  <div className="
+                    text-muted-foreground text-[10px] font-bold tracking-tighter
+                    uppercase
+                  "
+                  >
+                    {LL.common.average()}
+                  </div>
                   <div
                     className={cn(
-                      'flex items-center gap-1 rounded-md px-2.5 py-1 font-bold text-base',
+                      `
+                        flex items-center gap-1 rounded-md px-2.5 py-1 text-base
+                        font-bold
+                      `,
                       getPerformanceBgColor(studentAverage),
                     )}
                   >
@@ -177,10 +197,10 @@ export function StudentCard({
                 </div>
                 {isExpanded
                   ? (
-                      <IconChevronUp className="h-5 w-5 text-muted-foreground" />
+                      <IconChevronUp className="text-muted-foreground h-5 w-5" />
                     )
                   : (
-                      <IconChevronDown className="h-5 w-5 text-muted-foreground" />
+                      <IconChevronDown className="text-muted-foreground h-5 w-5" />
                     )}
               </button>
             )}
@@ -193,30 +213,58 @@ export function StudentCard({
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="overflow-hidden border-t bg-linear-to-br from-muted/30 to-muted/10"
+            className="
+              from-muted/30 to-muted/10 overflow-hidden border-t bg-linear-to-br
+            "
           >
-            <div className="p-4 space-y-4">
+            <div className="space-y-4 p-4">
               {/* Grade Details */}
               <div className="grid grid-cols-3 gap-3 text-xs">
-                <div className="flex flex-col rounded-md bg-background p-2">
-                  <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.quizzes()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">-</span>
+                <div className="bg-background flex flex-col rounded-md p-2">
+                  <span className="text-muted-foreground mb-1.5 font-medium">{LL.grades.quizzes()}</span>
+                  <span className="
+                    text-muted-foreground text-base font-semibold
+                  "
+                  >
+                    -
+                  </span>
                 </div>
-                <div className="flex flex-col rounded-md bg-background p-2">
-                  <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.tests()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">-</span>
+                <div className="bg-background flex flex-col rounded-md p-2">
+                  <span className="text-muted-foreground mb-1.5 font-medium">{LL.grades.tests()}</span>
+                  <span className="
+                    text-muted-foreground text-base font-semibold
+                  "
+                  >
+                    -
+                  </span>
                 </div>
-                <div className="flex flex-col rounded-md bg-background p-2">
-                  <span className="mb-1.5 font-medium text-muted-foreground">{LL.grades.level_tests()}</span>
-                  <span className="font-semibold text-base text-muted-foreground">-</span>
+                <div className="bg-background flex flex-col rounded-md p-2">
+                  <span className="text-muted-foreground mb-1.5 font-medium">{LL.grades.level_tests()}</span>
+                  <span className="
+                    text-muted-foreground text-base font-semibold
+                  "
+                  >
+                    -
+                  </span>
                 </div>
               </div>
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <Link to="/app/students/$studentId/notes" params={{ studentId: student.id }} className="flex-1">
-                  <Button variant="outline" className="w-full h-10 font-bold border-border/60 hover:bg-muted/50">
-                    <IconEdit className="w-4 h-4 mr-2" />
+                <Link
+                  to="/app/students/$studentId/notes"
+                  params={{ studentId: student.id }}
+                  className="flex-1"
+                >
+                  <Button
+                    variant="outline"
+                    className="
+                      border-border/60
+                      hover:bg-muted/50
+                      h-10 w-full font-bold
+                    "
+                  >
+                    <IconEdit className="mr-2 h-4 w-4" />
                     {LL.notes.manage()}
                   </Button>
                 </Link>

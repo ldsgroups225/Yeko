@@ -43,29 +43,42 @@ export function MiddlewareDemo() {
   }
 
   return (
-    <section className="py-24 bg-linear-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+    <section className="from-background to-muted/20 bg-linear-to-b py-24">
+      <div className="
+        container mx-auto px-4
+        sm:px-6
+        lg:px-8
+      "
+      >
+        <div className="mb-12 text-center">
           <Badge variant="outline" className="mb-4">
-            <IconServer className="w-4 h-4 mr-2" />
+            <IconServer className="mr-2 h-4 w-4" />
             Server Functions & Middleware
           </Badge>
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight mb-4">
+          <h2 className="
+            mb-4 text-3xl font-bold tracking-tight
+            lg:text-4xl
+          "
+          >
             Server-Side Data Flow
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
             See TanStack Start's middleware and server functions in action with
             TanStack Query. Check your server logs to see the execution flow!
           </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-8">
+        <div className="mx-auto max-w-4xl">
+          <div className="
+            grid gap-8
+            lg:grid-cols-2
+          "
+          >
             {/* Demo Card */}
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <IconPlayerPlay className="w-5 h-5 mr-2 text-primary" />
+                  <IconPlayerPlay className="text-primary mr-2 h-5 w-5" />
                   Interactive Demo
                 </CardTitle>
                 <CardDescription>
@@ -77,7 +90,7 @@ export function MiddlewareDemo() {
                 <div>
                   <label
                     htmlFor="input-value"
-                    className="block text-sm font-medium mb-2"
+                    className="mb-2 block text-sm font-medium"
                   >
                     Message to Send
                   </label>
@@ -86,7 +99,12 @@ export function MiddlewareDemo() {
                     type="text"
                     value={inputValue}
                     onChange={e => setInputValue(e.target.value)}
-                    className="w-full px-3 py-2 border border-border rounded-lg bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                    className="
+                      border-border bg-background
+                      focus:ring-primary
+                      w-full rounded-lg border px-3 py-2 transition-colors
+                      focus:border-transparent focus:ring-2
+                    "
                     placeholder="Enter a message..."
                   />
                 </div>
@@ -98,10 +116,10 @@ export function MiddlewareDemo() {
                 >
                   {mutation.isPending
                     ? (
-                        <IconLoader2 className="w-4 h-4 mr-2 animate-spin" />
+                        <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
                       )
                     : (
-                        <IconBolt className="w-4 h-4 mr-2" />
+                        <IconBolt className="mr-2 h-4 w-4" />
                       )}
                   Execute Server Function
                 </Button>
@@ -110,7 +128,7 @@ export function MiddlewareDemo() {
                 <div className="space-y-2">
                   {mutation.isPending && (
                     <Alert>
-                      <IconLoader2 className="w-4 h-4 animate-spin" />
+                      <IconLoader2 className="h-4 w-4 animate-spin" />
                       <AlertDescription>
                         Executing server function with middleware...
                       </AlertDescription>
@@ -119,7 +137,7 @@ export function MiddlewareDemo() {
 
                   {mutation.isSuccess && (
                     <Alert className="border-primary/50 bg-primary/10">
-                      <IconCircleCheck className="w-4 h-4 text-primary" />
+                      <IconCircleCheck className="text-primary h-4 w-4" />
                       <AlertDescription className="text-primary">
                         <strong>Success!</strong>
                         {' '}
@@ -132,7 +150,7 @@ export function MiddlewareDemo() {
 
                   {mutation.isError && (
                     <Alert className="border-destructive/50 bg-destructive/10">
-                      <IconAlertCircle className="w-4 h-4 text-destructive" />
+                      <IconAlertCircle className="text-destructive h-4 w-4" />
                       <AlertDescription className="text-destructive">
                         <strong>Error:</strong>
                         {' '}
@@ -148,7 +166,7 @@ export function MiddlewareDemo() {
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <IconCode className="w-5 h-5 mr-2 text-primary" />
+                  <IconCode className="text-primary mr-2 h-5 w-5" />
                   What's Happening
                 </CardTitle>
                 <CardDescription>
@@ -158,12 +176,21 @@ export function MiddlewareDemo() {
               <CardContent>
                 <div className="space-y-6">
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground">
+                    <h4 className="
+                      text-muted-foreground text-sm font-semibold tracking-wide
+                      uppercase
+                    "
+                    >
                       Execution Flow
                     </h4>
                     <ol className="space-y-3 text-sm">
                       <li className="flex items-start">
-                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="
+                          bg-primary text-primary-foreground mt-0.5 mr-3 flex
+                          h-6 w-6 shrink-0 items-center justify-center
+                          rounded-full text-xs font-medium
+                        "
+                        >
                           1
                         </span>
                         <span>
@@ -171,7 +198,12 @@ export function MiddlewareDemo() {
                         </span>
                       </li>
                       <li className="flex items-start">
-                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="
+                          bg-primary text-primary-foreground mt-0.5 mr-3 flex
+                          h-6 w-6 shrink-0 items-center justify-center
+                          rounded-full text-xs font-medium
+                        "
+                        >
                           2
                         </span>
                         <span>
@@ -179,19 +211,34 @@ export function MiddlewareDemo() {
                         </span>
                       </li>
                       <li className="flex items-start">
-                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="
+                          bg-primary text-primary-foreground mt-0.5 mr-3 flex
+                          h-6 w-6 shrink-0 items-center justify-center
+                          rounded-full text-xs font-medium
+                        "
+                        >
                           3
                         </span>
                         <span>Input validation with Zod schema</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="
+                          bg-primary text-primary-foreground mt-0.5 mr-3 flex
+                          h-6 w-6 shrink-0 items-center justify-center
+                          rounded-full text-xs font-medium
+                        "
+                        >
                           4
                         </span>
                         <span>Server function handler executes</span>
                       </li>
                       <li className="flex items-start">
-                        <span className="shrink-0 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium mr-3 mt-0.5">
+                        <span className="
+                          bg-primary text-primary-foreground mt-0.5 mr-3 flex
+                          h-6 w-6 shrink-0 items-center justify-center
+                          rounded-full text-xs font-medium
+                        "
+                        >
                           5
                         </span>
                         <span>Response sent back to client</span>
@@ -199,9 +246,9 @@ export function MiddlewareDemo() {
                     </ol>
                   </div>
 
-                  <div className="pt-4 border-t border-border">
+                  <div className="border-border border-t pt-4">
                     <Alert>
-                      <IconServer className="w-4 h-4" />
+                      <IconServer className="h-4 w-4" />
                       <AlertDescription>
                         <strong>Check your server logs!</strong>
                         {' '}
@@ -212,11 +259,11 @@ export function MiddlewareDemo() {
                     </Alert>
                   </div>
 
-                  <div className="space-y-2 text-xs text-muted-foreground">
+                  <div className="text-muted-foreground space-y-2 text-xs">
                     <p>
                       <strong>Files involved:</strong>
                     </p>
-                    <ul className="space-y-1 ml-4">
+                    <ul className="ml-4 space-y-1">
                       <li>
                         •
                         {' '}
@@ -235,12 +282,16 @@ export function MiddlewareDemo() {
           </div>
 
           {/* Additional Info */}
-          <div className="mt-8 p-6 bg-muted/50 rounded-xl">
-            <h3 className="text-lg font-semibold mb-3 flex items-center">
-              <IconBolt className="w-5 h-5 mr-2 text-primary" />
+          <div className="bg-muted/50 mt-8 rounded-xl p-6">
+            <h3 className="mb-3 flex items-center text-lg font-semibold">
+              <IconBolt className="text-primary mr-2 h-5 w-5" />
               Key Benefits
             </h3>
-            <div className="grid md:grid-cols-3 gap-4 text-sm">
+            <div className="
+              grid gap-4 text-sm
+              md:grid-cols-3
+            "
+            >
               <div>
                 <strong className="text-foreground">Type-Safe</strong>
                 <p className="text-muted-foreground">

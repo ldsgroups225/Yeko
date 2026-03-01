@@ -63,15 +63,15 @@
     "drizzle:migrate": "drizzle-kit migrate --config drizzle.config.ts",
     "drizzle:pull": "drizzle-kit pull --config drizzle.config.ts",
     "studio": "drizzle-kit studio",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit",
+    "lint:fix": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix",
     "test": "vitest run",
     "test:watch": "vitest",
     "reset:db": "npx tsx src/seed/reset-db.ts",
     "seed": "npx tsx src/seed/index.ts",
     "seed:fresh": "npx tsx src/seed/index.ts --fresh",
     "seed:test": "node scripts/seed-test-db.mjs",
-    "verify": "node dist/verify.js"
+    "verify": "node dist/verify.js",
+    "lint": "eslint . --cache --cache-location node_modules/.cache/eslint/"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "catalog:",

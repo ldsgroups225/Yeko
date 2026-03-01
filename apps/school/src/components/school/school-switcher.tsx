@@ -31,18 +31,26 @@ export function SchoolSwitcher() {
 
   if (isPending) {
     return (
-      <div className="flex h-10 w-[200px] items-center gap-2 rounded-md border border-input bg-background px-3">
-        <IconBuilding className="h-4 w-4 text-muted-foreground animate-pulse" />
-        <span className="text-sm text-muted-foreground">{t.school.switcher.loading()}</span>
+      <div className="
+        border-input bg-background flex h-10 w-[200px] items-center gap-2
+        rounded-md border px-3
+      "
+      >
+        <IconBuilding className="text-muted-foreground h-4 w-4 animate-pulse" />
+        <span className="text-muted-foreground text-sm">{t.school.switcher.loading()}</span>
       </div>
     )
   }
 
   if (schools.length === 0) {
     return (
-      <div className="flex h-10 w-[200px] items-center gap-2 rounded-md border border-input bg-background px-3">
-        <IconBuilding className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">{t.school.switcher.noSchools()}</span>
+      <div className="
+        border-input bg-background flex h-10 w-[200px] items-center gap-2
+        rounded-md border px-3
+      "
+      >
+        <IconBuilding className="text-muted-foreground h-4 w-4" />
+        <span className="text-muted-foreground text-sm">{t.school.switcher.noSchools()}</span>
       </div>
     )
   }
@@ -50,8 +58,12 @@ export function SchoolSwitcher() {
   // If only one school, show as a non-interactive element
   if (schools.length === 1) {
     return (
-      <div className="flex h-10 w-[200px] items-center gap-2 rounded-md border border-input bg-muted/30 px-3 opacity-90 cursor-default">
-        <IconBuilding className="h-4 w-4 shrink-0 text-muted-foreground" />
+      <div className="
+        border-input bg-muted/30 flex h-10 w-[200px] cursor-default items-center
+        gap-2 rounded-md border px-3 opacity-90
+      "
+      >
+        <IconBuilding className="text-muted-foreground h-4 w-4 shrink-0" />
         <span className="truncate text-sm font-medium">{currentSchool?.name || t.common.select()}</span>
       </div>
     )
@@ -66,15 +78,25 @@ export function SchoolSwitcher() {
             type="button"
             disabled={isSwitching}
             className={cn(
-              'flex h-10 w-[200px] items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-sm ring-offset-background transition-all outline-none',
-              'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
-              'data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+              `
+                border-input bg-background ring-offset-background flex h-10
+                w-[200px] items-center justify-between gap-2 rounded-md border
+                px-3 text-sm transition-all outline-none
+              `,
+              `
+                hover:bg-accent hover:text-accent-foreground
+                focus:bg-accent focus:text-accent-foreground
+              `,
+              `
+                data-[state=open]:bg-accent
+                data-[state=open]:text-accent-foreground
+              `,
               'disabled:pointer-events-none disabled:opacity-50',
               props.className,
             )}
           >
             <div className="flex items-center gap-2 overflow-hidden">
-              <IconBuilding className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <IconBuilding className="text-muted-foreground h-4 w-4 shrink-0" />
               <span className="truncate font-medium">{currentSchool?.name || t.common.select()}</span>
             </div>
             <IconSelector className="h-4 w-4 shrink-0 opacity-50" />
@@ -82,7 +104,11 @@ export function SchoolSwitcher() {
         )}
       />
       <DropdownMenuContent className="w-[200px]" align="start" sideOffset={8}>
-        <DropdownMenuLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+        <DropdownMenuLabel className="
+          text-muted-foreground/70 text-xs font-semibold tracking-wider
+          uppercase
+        "
+        >
           {t.school.switcher.title()}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -94,12 +120,17 @@ export function SchoolSwitcher() {
                 switchSchool(school.id)
               }
             }}
-            className="flex items-center justify-between py-2 cursor-pointer"
+            className="flex cursor-pointer items-center justify-between py-2"
           >
-            <span className={cn('truncate', school.id === schoolId && 'font-semibold text-primary')}>
+            <span className={cn('truncate', school.id === schoolId && `
+              text-primary font-semibold
+            `)}
+            >
               {school.name}
             </span>
-            {school.id === schoolId && <IconCheck className="h-4 w-4 text-primary" />}
+            {school.id === schoolId && (
+              <IconCheck className="text-primary h-4 w-4" />
+            )}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

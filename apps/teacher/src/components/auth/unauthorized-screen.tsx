@@ -17,11 +17,18 @@ export function UnauthorizedScreen() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4 bg-background">
+    <div className="
+      bg-background flex min-h-screen items-center justify-center p-4
+    "
+    >
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-            <IconSchool className="h-6 w-6 text-destructive" />
+          <div className="
+            bg-destructive/10 mx-auto mb-4 flex h-12 w-12 items-center
+            justify-center rounded-full
+          "
+          >
+            <IconSchool className="text-destructive h-6 w-6" />
           </div>
           <CardTitle className="text-xl">{LL.unauthorized.title()}</CardTitle>
           <CardDescription>
@@ -29,7 +36,7 @@ export function UnauthorizedScreen() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-center text-sm">
             {LL.unauthorized.message()}
           </p>
         </CardContent>

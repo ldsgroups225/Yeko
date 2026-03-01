@@ -25,13 +25,16 @@ export function GradeEntryHeader() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 flex items-center flex-wrap gap-4 text-destructive"
+          className="
+            bg-destructive/10 border-destructive/20 text-destructive flex
+            flex-wrap items-center gap-4 rounded-2xl border p-4
+          "
         >
-          <div className="flex items-center gap-3 flex-1 min-w-[200px]">
+          <div className="flex min-w-[200px] flex-1 items-center gap-3">
             <IconAlertTriangle className="size-5 shrink-0" />
             <div className="flex-1">
               <p className="text-sm font-bold">{t.academic.grades.errors.noTeacherTitle()}</p>
-              <p className="text-xs opacity-80 font-medium">
+              <p className="text-xs font-medium opacity-80">
                 {t.academic.grades.errors.noTeacherDescription()}
               </p>
             </div>
@@ -51,20 +54,44 @@ export function GradeEntryHeader() {
                 }
               }}
             >
-              <SelectTrigger className="bg-destructive/10 border-destructive/20 h-9 min-w-[200px] text-xs font-bold ring-offset-background focus:ring-destructive/30">
+              <SelectTrigger className="
+                bg-destructive/10 border-destructive/20 ring-offset-background
+                focus:ring-destructive/30
+                h-9 min-w-[200px] text-xs font-bold
+              "
+              >
                 <div className="flex items-center gap-2">
-                  {isPendingAction ? <IconLoader2 className="size-3 animate-spin" /> : <IconUserPlus className="size-3" />}
+                  {isPendingAction
+                    ? (
+                        <IconLoader2 className="size-3 animate-spin" />
+                      )
+                    : (
+                        <IconUserPlus className="size-3" />
+                      )}
                   <SelectValue placeholder={t.academic.grades.assignment.quickAssign()} />
                 </div>
               </SelectTrigger>
-              <SelectContent className="backdrop-blur-xl bg-card/95 border-border/40">
+              <SelectContent className="
+                bg-card/95 border-border/40 backdrop-blur-xl
+              "
+              >
                 {teachers.map(teacher => (
-                  <SelectItem key={teacher.id} value={teacher.id} className="text-xs font-medium focus:bg-primary/5 focus:text-primary">
+                  <SelectItem
+                    key={teacher.id}
+                    value={teacher.id}
+                    className="
+                      focus:bg-primary/5 focus:text-primary
+                      text-xs font-medium
+                    "
+                  >
                     {teacher.user.name}
                   </SelectItem>
                 ))}
                 {teachers.length === 0 && (
-                  <div className="p-2 text-center text-xs text-muted-foreground italic">
+                  <div className="
+                    text-muted-foreground p-2 text-center text-xs italic
+                  "
+                  >
                     {t.common.noResults()}
                   </div>
                 )}

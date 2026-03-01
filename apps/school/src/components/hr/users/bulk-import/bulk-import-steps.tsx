@@ -17,29 +17,48 @@ export function BulkImportSteps() {
   const { downloadTemplate, handleFileChange } = actions
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="
+      grid gap-6
+      md:grid-cols-2
+    "
+    >
       {/* Step 1 */}
       <motion.div
         variants={variants}
         initial="initial"
         animate="animate"
-        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm flex flex-col"
+        className="
+          border-border/40 bg-card/50 flex flex-col rounded-xl border p-8
+          shadow-sm backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="mb-4 flex items-center gap-2">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconFileText className="h-4 w-4" />
           </div>
-          <h2 className="text-xl font-serif font-semibold">{t.hr.users.step1()}</h2>
+          <h2 className="font-serif text-xl font-semibold">{t.hr.users.step1()}</h2>
         </div>
-        <p className="mb-8 text-sm text-muted-foreground leading-relaxed flex-1">
+        <p className="text-muted-foreground mb-8 flex-1 text-sm leading-relaxed">
           {t.hr.users.downloadTemplateDescription()}
         </p>
         <Button
           onClick={downloadTemplate}
           variant="outline"
-          className="w-full rounded-xl h-11 font-semibold border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm group"
+          className="
+            border-border/40 bg-background/50
+            hover:bg-background
+            group h-11 w-full rounded-xl font-semibold shadow-sm transition-all
+          "
         >
-          <IconDownload className="mr-2 h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+          <IconDownload className="
+            mr-2 h-4 w-4 transition-transform
+            group-hover:-translate-y-0.5
+          "
+          />
           {t.hr.users.downloadTemplate()}
         </Button>
       </motion.div>
@@ -50,19 +69,31 @@ export function BulkImportSteps() {
         initial="initial"
         animate="animate"
         transition={{ delay: 0.1 }}
-        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm flex flex-col"
+        className="
+          border-border/40 bg-card/50 flex flex-col rounded-xl border p-8
+          shadow-sm backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="mb-4 flex items-center gap-2">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconUpload className="h-4 w-4" />
           </div>
-          <h2 className="text-xl font-serif font-semibold">{t.hr.users.step2()}</h2>
+          <h2 className="font-serif text-xl font-semibold">{t.hr.users.step2()}</h2>
         </div>
-        <p className="mb-8 text-sm text-muted-foreground leading-relaxed flex-1">
+        <p className="text-muted-foreground mb-8 flex-1 text-sm leading-relaxed">
           {t.hr.users.uploadFileDescription()}
         </p>
         <div className="space-y-3">
-          <Label htmlFor="csv-file" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          <Label
+            htmlFor="csv-file"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
             {t.hr.users.selectFile()}
           </Label>
           <Input
@@ -70,7 +101,15 @@ export function BulkImportSteps() {
             type="file"
             accept=".csv"
             onChange={handleFileChange}
-            className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+            className="
+              border-border/40 bg-background/50
+              focus:bg-background
+              file:bg-primary file:text-primary-foreground
+              hover:file:bg-primary/90
+              h-11 cursor-pointer rounded-xl transition-all
+              file:mr-4 file:rounded-lg file:border-0 file:px-4 file:py-1
+              file:text-xs file:font-semibold
+            "
           />
         </div>
       </motion.div>

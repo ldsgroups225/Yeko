@@ -49,21 +49,27 @@ function StatCard({ icon, title, value, color, unit, className }: StatCardProps)
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className={cn(
-        'flex items-center gap-3 p-3 rounded-xl border',
+        'flex items-center gap-3 rounded-xl border p-3',
         colorClasses[color],
         className,
       )}
     >
-      <div className="w-10 h-10 rounded-lg bg-background/50 flex items-center justify-center">
+      <div className="
+        bg-background/50 flex h-10 w-10 items-center justify-center rounded-lg
+      "
+      >
         {icon}
       </div>
       <div>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+        <p className="
+          text-muted-foreground text-[10px] font-bold tracking-widest uppercase
+        "
+        >
           {title}
         </p>
         <p className="text-xl font-black">
           {value}
-          {unit && <span className="text-sm ml-0.5">{unit}</span>}
+          {unit && <span className="ml-0.5 text-sm">{unit}</span>}
         </p>
       </div>
     </motion.div>
@@ -86,15 +92,15 @@ export function SessionStatsPanel({
   const isAttendanceMode = mode === 'attendance_initial' || mode === 'attendance_late'
 
   return (
-    <div className="flex flex-col h-full">
-      <h2 className="mb-4 font-semibold text-foreground text-lg">
+    <div className="flex h-full flex-col">
+      <h2 className="text-foreground mb-4 text-lg font-semibold">
         {LL.attendance.stats.title()}
       </h2>
 
       <div className="grid flex-1 grid-cols-2 gap-3">
         {/* Total Students */}
         <StatCard
-          icon={<IconUsers className="w-5 h-5" />}
+          icon={<IconUsers className="h-5 w-5" />}
           title={LL.session.statsTotal()}
           value={totalStudents}
           color="primary"
@@ -104,19 +110,19 @@ export function SessionStatsPanel({
         {isAttendanceMode && attendanceStats && (
           <>
             <StatCard
-              icon={<IconCheck className="w-5 h-5" />}
+              icon={<IconCheck className="h-5 w-5" />}
               title={LL.session.statsPresent()}
               value={attendanceStats.present}
               color="emerald"
             />
             <StatCard
-              icon={<IconX className="w-5 h-5" />}
+              icon={<IconX className="h-5 w-5" />}
               title={LL.session.statsAbsent()}
               value={attendanceStats.absent}
               color="red"
             />
             <StatCard
-              icon={<IconClock className="w-5 h-5" />}
+              icon={<IconClock className="h-5 w-5" />}
               title={LL.session.statsLate()}
               value={attendanceStats.late}
               color="amber"
@@ -127,13 +133,13 @@ export function SessionStatsPanel({
         {mode === 'participation' && participationStats && (
           <>
             <StatCard
-              icon={<IconCheck className="w-5 h-5" />}
+              icon={<IconCheck className="h-5 w-5" />}
               title={LL.session.statsParticipated()}
               value={participationStats.participatedCount}
               color="emerald"
             />
             <StatCard
-              icon={<IconPercentage className="w-5 h-5" />}
+              icon={<IconPercentage className="h-5 w-5" />}
               title={LL.session.statsRate()}
               value={participationStats.participationRate}
               color="muted"
@@ -143,13 +149,13 @@ export function SessionStatsPanel({
         )}
       </div>
 
-      <div className="flex flex-row-reverse gap-2 mt-4">
+      <div className="mt-4 flex flex-row-reverse gap-2">
         {/* Action Button */}
         <Button
           size="lg"
           onClick={onAction}
           disabled={isActionDisabled}
-          className="flex-1 h-12 font-bold rounded-xl shadow-lg"
+          className="h-12 flex-1 rounded-xl font-bold shadow-lg"
         >
           {actionLabel}
         </Button>
@@ -160,7 +166,10 @@ export function SessionStatsPanel({
             variant="ghost"
             size="lg"
             onClick={onSecondaryAction}
-            className="flex-1 h-12 rounded-xl hover:bg-destructive/10 hover:text-destructive"
+            className="
+              hover:bg-destructive/10 hover:text-destructive
+              h-12 flex-1 rounded-xl
+            "
           >
             {secondaryActionLabel}
           </Button>

@@ -30,14 +30,21 @@ function AbsenceItem({
   }
 
   return (
-    <div className="flex items-center justify-between rounded-md border border-border/40 bg-background p-4">
+    <div className="
+      border-border/40 bg-background flex items-center justify-between
+      rounded-md border p-4
+    "
+    >
       <div className="space-y-1">
         <p className="text-sm font-medium">{name}</p>
-        <p className="text-xs text-muted-foreground">{className}</p>
-        <p className="text-xs text-muted-foreground">{reason}</p>
+        <p className="text-muted-foreground text-xs">{className}</p>
+        <p className="text-muted-foreground text-xs">{reason}</p>
       </div>
       <span
-        className={`rounded-full px-2 py-1 text-xs font-medium ${statusConfig[status].color}`}
+        className={`
+          rounded-full px-2 py-1 text-xs font-medium
+          ${statusConfig[status].color}
+        `}
       >
         {statusConfig[status].label}
       </span>
@@ -49,7 +56,7 @@ export function AbsencesSection() {
   return (
     <motion.div
       variants={item}
-      className="rounded-lg border border-border/40 bg-card p-6"
+      className="border-border/40 bg-card rounded-lg border p-6"
     >
       <h2 className="mb-4 text-lg font-semibold">Absences du Jour</h2>
       <div className="space-y-3">

@@ -149,92 +149,112 @@ function Support() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-6
+      "
+      >
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">
               {LL.support.stats.total()}
             </CardTitle>
-            <IconHelpCircle className="h-4 w-4 text-muted-foreground" />
+            <IconHelpCircle className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             {statsPending
               ? (
-                  <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+                  <div className="bg-muted h-8 w-16 animate-pulse rounded-sm" />
                 )
               : (
                   <div className="text-2xl font-bold">{stats?.total ?? 0}</div>
                 )}
-            <p className="text-xs text-muted-foreground">{LL.support.stats.sinceInception()}</p>
+            <p className="text-muted-foreground text-xs">{LL.support.stats.sinceInception()}</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">{LL.support.stats.open()}</CardTitle>
-            <IconAlertCircle className="h-4 w-4 text-muted-foreground" />
+            <IconAlertCircle className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             {statsPending
               ? (
-                  <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+                  <div className="bg-muted h-8 w-16 animate-pulse rounded-sm" />
                 )
               : (
                   <div className="text-2xl font-bold">{stats?.open ?? 0}</div>
                 )}
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {LL.support.stats.openDesc()}
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">{LL.support.stats.inProgress()}</CardTitle>
-            <IconClock className="h-4 w-4 text-muted-foreground" />
+            <IconClock className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             {statsPending
               ? (
-                  <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+                  <div className="bg-muted h-8 w-16 animate-pulse rounded-sm" />
                 )
               : (
                   <div className="text-2xl font-bold">{stats?.inProgress ?? 0}</div>
                 )}
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {LL.support.stats.inProgressDesc()}
             </p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">{LL.support.stats.resolved()}</CardTitle>
-            <IconCircleCheck className="h-4 w-4 text-muted-foreground" />
+            <IconCircleCheck className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             {statsPending
               ? (
-                  <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+                  <div className="bg-muted h-8 w-16 animate-pulse rounded-sm" />
                 )
               : (
                   <div className="text-2xl font-bold">{stats?.resolved ?? 0}</div>
                 )}
-            <p className="text-xs text-muted-foreground">{LL.support.stats.resolvedDesc()}</p>
+            <p className="text-muted-foreground text-xs">{LL.support.stats.resolvedDesc()}</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">
               {LL.support.stats.resolutionTime()}
             </CardTitle>
-            <IconClock className="h-4 w-4 text-muted-foreground" />
+            <IconClock className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             {statsPending
               ? (
-                  <div className="h-8 w-20 animate-pulse bg-muted rounded" />
+                  <div className="bg-muted h-8 w-20 animate-pulse rounded-sm" />
                 )
               : (
                   <div className="text-2xl font-bold">
@@ -243,19 +263,22 @@ function Support() {
                       : 'N/A'}
                   </div>
                 )}
-            <p className="text-xs text-muted-foreground">{LL.support.stats.average()}</p>
+            <p className="text-muted-foreground text-xs">{LL.support.stats.average()}</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">{LL.support.stats.satisfaction()}</CardTitle>
-            <IconUsers className="h-4 w-4 text-muted-foreground" />
+            <IconUsers className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             {statsPending
               ? (
-                  <div className="h-8 w-16 animate-pulse bg-muted rounded" />
+                  <div className="bg-muted h-8 w-16 animate-pulse rounded-sm" />
                 )
               : (
                   <div className="text-2xl font-bold">
@@ -264,12 +287,16 @@ function Support() {
                       : 'N/A'}
                   </div>
                 )}
-            <p className="text-xs text-muted-foreground">{LL.support.stats.userRating()}</p>
+            <p className="text-muted-foreground text-xs">{LL.support.stats.userRating()}</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="
+        grid gap-6
+        lg:grid-cols-3
+      "
+      >
         {/* Recent Tickets */}
         <Card className="lg:col-span-2">
           <CardHeader>
@@ -285,12 +312,23 @@ function Support() {
                     {[1, 2, 3, 4].map(i => (
                       <div
                         key={i}
-                        className="flex items-center space-x-4 p-4 border rounded-lg"
+                        className="
+                          flex items-center space-x-4 rounded-lg border p-4
+                        "
                       >
-                        <div className="h-10 w-10 animate-pulse bg-muted rounded-lg" />
+                        <div className="
+                          bg-muted h-10 w-10 animate-pulse rounded-lg
+                        "
+                        />
                         <div className="flex-1 space-y-2">
-                          <div className="h-4 w-3/4 animate-pulse bg-muted rounded" />
-                          <div className="h-3 w-1/2 animate-pulse bg-muted rounded" />
+                          <div className="
+                            bg-muted h-4 w-3/4 animate-pulse rounded-sm
+                          "
+                          />
+                          <div className="
+                            bg-muted h-3 w-1/2 animate-pulse rounded-sm
+                          "
+                          />
                         </div>
                       </div>
                     ))}
@@ -302,25 +340,40 @@ function Support() {
                       {recentTicketsData.map(ticket => (
                         <div
                           key={ticket.id}
-                          className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors"
+                          className="
+                            hover:bg-accent/50
+                            flex items-center justify-between rounded-lg border
+                            p-4 transition-colors
+                          "
                         >
                           <div className="flex items-center space-x-4">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                              <IconMessage className="h-5 w-5 text-primary" />
+                            <div className="
+                              bg-primary/10 flex h-10 w-10 items-center
+                              justify-center rounded-lg
+                            "
+                            >
+                              <IconMessage className="text-primary h-5 w-5" />
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h4 className="text-sm font-medium truncate">
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-1 flex items-center gap-2">
+                                <h4 className="truncate text-sm font-medium">
                                   {ticket.title}
                                 </h4>
                                 <span
-                                  className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(ticket.priority)}`}
+                                  className={`
+                                    rounded-full px-2 py-1 text-xs font-medium
+                                    ${getPriorityColor(ticket.priority)}
+                                  `}
                                 >
                                   {formatPriority(ticket.priority)}
                                 </span>
                                 {getStatusBadge(ticket.status)}
                               </div>
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                              <div className="
+                                text-muted-foreground flex items-center gap-4
+                                text-xs
+                              "
+                              >
                                 {ticket.schoolName && (
                                   <>
                                     <span>{ticket.schoolName}</span>
@@ -339,7 +392,11 @@ function Support() {
                                   </>
                                 )}
                               </div>
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                              <div className="
+                                text-muted-foreground mt-1 flex items-center
+                                gap-4 text-xs
+                              "
+                              >
                                 <span>
                                   {LL.support.recentTickets.created()}
                                   :
@@ -356,8 +413,8 @@ function Support() {
                     </div>
                   )
                 : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <IconMessage className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <div className="text-muted-foreground py-8 text-center">
+                      <IconMessage className="mx-auto mb-4 h-12 w-12 opacity-50" />
                       <p>{LL.support.recentTickets.noTickets()}</p>
                     </div>
                   )}
@@ -373,13 +430,16 @@ function Support() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <IconLoader className="h-12 w-12 mx-auto mb-4 opacity-50 animate-spin" />
+            <div className="text-muted-foreground py-8 text-center">
+              <IconLoader className="
+                mx-auto mb-4 h-12 w-12 animate-spin opacity-50
+              "
+              />
               <p>{LL.support.categories.loading()}</p>
             </div>
 
-            <div className="mt-6 pt-6 border-t">
-              <h4 className="text-sm font-medium mb-4">{LL.support.categories.quickActions()}</h4>
+            <div className="mt-6 border-t pt-6">
+              <h4 className="mb-4 text-sm font-medium">{LL.support.categories.quickActions()}</h4>
               <div className="space-y-2">
                 <Button
                   variant="outline"
@@ -421,8 +481,15 @@ function Support() {
         </CardHeader>
         <CardContent>
           <div className="relative max-w-md">
-            <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder={LL.support.search.placeholder()} className="pl-9" />
+            <IconSearch className="
+              text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+              -translate-y-1/2
+            "
+            />
+            <Input
+              placeholder={LL.support.search.placeholder()}
+              className="pl-9"
+            />
           </div>
         </CardContent>
       </Card>
@@ -431,8 +498,18 @@ function Support() {
       <Card>
         <CardContent className="py-6">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success/10 dark:bg-success/20">
-              <IconCircleCheck className="h-5 w-5 text-success dark:text-success/80" />
+            <div className="
+              bg-success/10
+              dark:bg-success/20
+              flex h-10 w-10 items-center justify-center rounded-lg
+            "
+            >
+              <IconCircleCheck className="
+                text-success
+                dark:text-success/80
+                h-5 w-5
+              "
+              />
             </div>
             <div>
               <h3 className="text-lg font-semibold">

@@ -1,3 +1,1 @@
-import config from '@yeko/eslint-config'
-
-export default config
+export { default } from '../../eslint.config.mjs'

@@ -79,7 +79,7 @@ function FeeStructuresPage() {
         >
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="shadow-lg shadow-primary/20"
+            className="shadow-primary/20 shadow-lg"
           >
             <IconPlus className="mr-2 h-4 w-4" />
             {t('finance.feeStructures.create')}
@@ -92,8 +92,11 @@ function FeeStructuresPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
-          <CardHeader className="border-b border-border/40 bg-muted/5">
+        <Card className="
+          border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
             <CardTitle className="text-lg font-bold">
               {t('finance.feeStructures.title')}
             </CardTitle>

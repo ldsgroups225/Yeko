@@ -23,9 +23,15 @@ export function AttendanceCalendarGrid() {
 
   return (
     <>
-      <div className="grid grid-cols-7 gap-2 text-center mb-4">
+      <div className="mb-4 grid grid-cols-7 gap-2 text-center">
         {dayNames.map(day => (
-          <div key={generateUUID()} className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/30">
+          <div
+            key={generateUUID()}
+            className="
+              text-muted-foreground/30 text-[8px] font-black tracking-widest
+              uppercase
+            "
+          >
             {day}
           </div>
         ))}
@@ -51,16 +57,30 @@ export function AttendanceCalendarGrid() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: idx * 0.005 }}
                         className={cn(
-                          'h-12 rounded-2xl flex flex-col items-center justify-center gap-0.5 transition-all group relative overflow-hidden border',
+                          `
+                            group relative flex h-12 flex-col items-center
+                            justify-center gap-0.5 overflow-hidden rounded-2xl
+                            border transition-all
+                          `,
                           config
-                            ? cn(config.bgColor, config.borderColor, 'shadow-lg shadow-black/5 scale-[1.02] z-10')
-                            : 'bg-background/20 border-border/10 hover:border-primary/30',
-                          isToday && 'ring-2 ring-primary ring-offset-2 ring-offset-background',
+                            ? cn(config.bgColor, config.borderColor, `
+                              z-10 scale-[1.02] shadow-lg shadow-black/5
+                            `)
+                            : `
+                              bg-background/20 border-border/10
+                              hover:border-primary/30
+                            `,
+                          isToday && `
+                            ring-primary ring-offset-background ring-2
+                            ring-offset-2
+                          `,
                         )}
                       >
                         <span className={cn(
-                          'text-xs font-black italic tracking-tight',
-                          config ? 'text-foreground' : 'text-muted-foreground/30',
+                          'text-xs font-black tracking-tight italic',
+                          config
+                            ? 'text-foreground'
+                            : `text-muted-foreground/30`,
                           isToday && 'text-primary',
                         )}
                         >
@@ -68,14 +88,26 @@ export function AttendanceCalendarGrid() {
                         </span>
                         {config
                           ? <div className={cn('size-1.5 rounded-full shadow-sm', config.color)} />
-                          : <div className="size-1.5 rounded-full bg-border/20 group-hover:bg-primary/20 transition-colors" />}
+                          : (
+                              <div className="
+                                bg-border/20
+                                group-hover:bg-primary/20
+                                size-1.5 rounded-full transition-colors
+                              "
+                              />
+                            )}
                       </motion.div>
                     )}
                   />
                   {config && (
-                    <TooltipContent className="rounded-2xl font-black uppercase tracking-[0.2em] text-[8px] border-border/40 backdrop-blur-xl bg-background/80 px-3 py-2">
+                    <TooltipContent className="
+                      border-border/40 bg-background/80 rounded-2xl px-3 py-2
+                      text-[8px] font-black tracking-[0.2em] uppercase
+                      backdrop-blur-xl
+                    "
+                    >
                       <div className="flex items-center gap-2">
-                        <div className={cn('size-2 rounded-full animate-pulse', config.color)} />
+                        <div className={cn('size-2 animate-pulse rounded-full', config.color)} />
                         {config.label(t)}
                       </div>
                     </TooltipContent>

@@ -76,7 +76,7 @@ export function AlertsTable({
           return (
             <div className="flex flex-col">
               <span className="font-medium">{date.toLocaleDateString()}</span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {date.toLocaleTimeString([], {
                   hour: '2-digit',
                   minute: '2-digit',
@@ -97,12 +97,12 @@ export function AlertsTable({
         accessorKey: 'title',
         header: t.alerts.title() || 'Title',
         cell: ({ row }) => (
-          <div className="flex flex-col max-w-[300px]">
-            <span className="font-medium truncate" title={row.original.title}>
+          <div className="flex max-w-[300px] flex-col">
+            <span className="truncate font-medium" title={row.original.title}>
               {row.original.title}
             </span>
             <span
-              className="text-xs text-muted-foreground truncate"
+              className="text-muted-foreground truncate text-xs"
               title={row.original.message}
             >
               {row.original.message}
@@ -258,7 +258,10 @@ export function AlertsTable({
       </Table>
 
       {table.getPageCount() > 1 && (
-        <div className="flex items-center justify-end space-x-2 py-4 px-4 border-t">
+        <div className="
+          flex items-center justify-end space-x-2 border-t px-4 py-4
+        "
+        >
           <Button
             variant="outline"
             size="sm"

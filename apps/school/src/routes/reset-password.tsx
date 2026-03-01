@@ -18,13 +18,22 @@ function ResetPasswordPage() {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="text-center space-y-4">
+      <div className="
+        bg-background flex min-h-screen items-center justify-center p-6
+      "
+      >
+        <div className="space-y-4 text-center">
           <h2 className="text-2xl font-bold">{t.auth.resetPassword.invalidLink()}</h2>
           <p className="text-muted-foreground">
             {t.auth.resetPassword.invalidLinkDescription()}
           </p>
-          <Link to="/dashboard" className="text-primary hover:underline">
+          <Link
+            to="/dashboard"
+            className="
+              text-primary
+              hover:underline
+            "
+          >
             {t.auth.forgotPassword.backToLogin()}
           </Link>
         </div>

@@ -59,13 +59,13 @@ export function ParentTableRow({
               {' '}
               {item.firstName}
             </p>
-            {item.occupation && <p className="text-sm text-muted-foreground">{item.occupation}</p>}
+            {item.occupation && <p className="text-muted-foreground text-sm">{item.occupation}</p>}
           </div>
         </div>
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-1">
-          <IconPhone className="h-3 w-3 text-muted-foreground" />
+          <IconPhone className="text-muted-foreground h-3 w-3" />
           {formatPhone(item.phone)}
         </div>
       </TableCell>
@@ -73,7 +73,7 @@ export function ParentTableRow({
         {item.email
           ? (
               <div className="flex items-center gap-1">
-                <IconMail className="h-3 w-3 text-muted-foreground" />
+                <IconMail className="text-muted-foreground h-3 w-3" />
                 {item.email}
               </div>
             )
@@ -87,7 +87,10 @@ export function ParentTableRow({
         </Badge>
       </TableCell>
       <TableCell>
-        <Badge className={invitationStatusColors[item.invitationStatus || 'pending']}>
+        <Badge className={invitationStatusColors[item.invitationStatus || `
+          pending
+        `]}
+        >
           {{
             pending: t.parents.statusPending,
             sent: t.parents.statusSent,

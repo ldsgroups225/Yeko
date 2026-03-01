@@ -4,7 +4,10 @@ import { generateUUID } from '@/utils/generateUUID'
 
 export function StudentMobileSkeleton() {
   return (
-    <div className="rounded-xl border border-border/10 bg-white/30 p-4 backdrop-blur-sm">
+    <div className="
+      border-border/10 rounded-xl border bg-white/30 p-4 backdrop-blur-sm
+    "
+    >
       <div className="flex items-center gap-3">
         <Skeleton className="h-12 w-12 rounded-full" />
         <div className="flex-1 space-y-2">
@@ -19,7 +22,10 @@ export function StudentMobileSkeleton() {
 
 export function StudentTableRowSkeleton() {
   return (
-    <TableRow key={`table-skeleton-${generateUUID()}`} className="border-border/10">
+    <TableRow
+      key={`table-skeleton-${generateUUID()}`}
+      className="border-border/10"
+    >
       <TableCell><Skeleton className="h-4 w-4" /></TableCell>
       <TableCell>
         <div className="flex items-center gap-3">

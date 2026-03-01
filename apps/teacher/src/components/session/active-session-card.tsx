@@ -50,20 +50,30 @@ export function ActiveSessionCard({
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+                <span className="
+                  bg-primary absolute inline-flex h-full w-full animate-ping
+                  rounded-full opacity-75
+                "
+                />
+                <span className="
+                  bg-primary relative inline-flex h-2 w-2 rounded-full
+                "
+                />
               </span>
-              <span className="text-xs font-medium text-primary">
+              <span className="text-primary text-xs font-medium">
                 {LL.session.active()}
               </span>
             </div>
             <h3 className="font-semibold">{session.className}</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {session.subjectName}
             </p>
           </div>
           <div className="text-right">
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+            <div className="
+              text-muted-foreground flex items-center gap-1 text-sm
+            "
+            >
               <IconClock className="h-3.5 w-3.5" />
               <span>{LL.session.timer()}</span>
             </div>

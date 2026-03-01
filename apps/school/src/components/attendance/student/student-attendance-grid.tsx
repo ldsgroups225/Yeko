@@ -27,7 +27,11 @@ export function StudentAttendanceGrid({
 
   return (
     <StudentAttendanceProvider className={className} entries={entries} onSave={onSave} isSaving={isSaving}>
-      <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+      <Card className="
+        border-border/40 bg-card/30 relative overflow-hidden rounded-3xl
+        shadow-2xl backdrop-blur-xl
+      "
+      >
         <StudentAttendanceHeader />
         <CardContent className="p-0">
           <StudentAttendanceTable />
@@ -39,8 +43,8 @@ export function StudentAttendanceGrid({
 
 function StudentAttendanceGridSkeleton() {
   return (
-    <Card className="rounded-3xl border-border/40 bg-card/30">
-      <div className="p-6 space-y-3">
+    <Card className="border-border/40 bg-card/30 rounded-3xl">
+      <div className="space-y-3 p-6">
         <div className="flex justify-between">
           <Skeleton className="h-7 w-40 rounded-xl" />
           <div className="flex gap-2">
