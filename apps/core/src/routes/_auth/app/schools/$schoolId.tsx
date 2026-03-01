@@ -178,7 +178,12 @@ function SchoolDetails() {
         </div>
 
         {/* Info cards skeleton */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="
+          grid gap-4
+          md:grid-cols-2
+          lg:grid-cols-4
+        "
+        >
           {[1, 2, 3, 4].map(i => (
             <Skeleton key={i} className="h-24 w-full" />
           ))}
@@ -195,7 +200,7 @@ function SchoolDetails() {
 
   if (error || !school) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 gap-4">
+      <div className="flex h-96 flex-col items-center justify-center gap-4">
         <div className="text-destructive font-medium">
           {error?.message || 'École non trouvée'}
         </div>

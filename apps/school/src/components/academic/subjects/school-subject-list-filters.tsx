@@ -36,16 +36,28 @@ export function SchoolSubjectListFilters() {
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col gap-4 rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between"
+      className="
+        border-border/40 bg-card/50 flex flex-col gap-4 rounded-xl border p-4
+        backdrop-blur-xl
+        sm:flex-row sm:items-center sm:justify-between
+      "
     >
       <div className="flex flex-1 gap-3">
         <div className="relative max-w-sm flex-1">
-          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <IconSearch className="
+            text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+            -translate-y-1/2
+          "
+          />
           <Input
             placeholder={t.academic.subjects.searchPlaceholder()}
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="border-border/40 bg-card/50 pl-9 transition-all focus:bg-card/80 shadow-none"
+            className="
+              border-border/40 bg-card/50
+              focus:bg-card/80
+              pl-9 shadow-none transition-all
+            "
           />
         </div>
 
@@ -54,7 +66,11 @@ export function SchoolSubjectListFilters() {
             render={(
               <Button
                 variant="outline"
-                className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80"
+                className="
+                  border-border/40 bg-card/50
+                  hover:bg-card/80
+                  shadow-none backdrop-blur-sm
+                "
               >
                 <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
                 {t.common.actions()}
@@ -65,12 +81,19 @@ export function SchoolSubjectListFilters() {
             )}
           />
           <PopoverContent
-            className="w-80 p-4 space-y-4 backdrop-blur-2xl bg-popover/90 border border-border/40"
+            className="
+              bg-popover/90 border-border/40 w-80 space-y-4 border p-4
+              backdrop-blur-2xl
+            "
             align="start"
           >
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="font-medium leading-none text-muted-foreground text-xs uppercase tracking-wider">
+                <h4 className="
+                  text-muted-foreground text-xs leading-none font-medium
+                  tracking-wider uppercase
+                "
+                >
                   {t.common.filters()}
                 </h4>
                 {isFiltered && (
@@ -78,7 +101,7 @@ export function SchoolSubjectListFilters() {
                     variant="ghost"
                     size="sm"
                     onClick={handleClearFilters}
-                    className="h-6 px-2 text-[10px] text-primary"
+                    className="text-primary h-6 px-2 text-[10px]"
                   >
                     {t.common.clearFilters()}
                   </Button>
@@ -87,14 +110,17 @@ export function SchoolSubjectListFilters() {
 
               <div className="space-y-3">
                 <div className="space-y-2">
-                  <Label className="text-[11px] text-muted-foreground">
+                  <Label className="text-muted-foreground text-[11px]">
                     {t.academic.subjects.filterByCategory()}
                   </Label>
                   <Select
                     value={categoryFilter}
                     onValueChange={val => val && setCategoryFilter(val)}
                   >
-                    <SelectTrigger className="h-8 text-xs bg-card/50 border-border/40">
+                    <SelectTrigger className="
+                      bg-card/50 border-border/40 h-8 text-xs
+                    "
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -111,14 +137,17 @@ export function SchoolSubjectListFilters() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[11px] text-muted-foreground">
+                  <Label className="text-muted-foreground text-[11px]">
                     {t.academic.subjects.filterByStatus()}
                   </Label>
                   <Select
                     value={statusFilter}
                     onValueChange={val => val && setStatusFilter(val)}
                   >
-                    <SelectTrigger className="h-8 text-xs bg-card/50 border-border/40">
+                    <SelectTrigger className="
+                      bg-card/50 border-border/40 h-8 text-xs
+                    "
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -136,8 +165,12 @@ export function SchoolSubjectListFilters() {
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-border/40 space-y-2">
-                <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">
+              <div className="border-border/40 space-y-2 border-t pt-2">
+                <h4 className="
+                  text-muted-foreground mb-3 text-xs leading-none font-medium
+                  tracking-wider uppercase
+                "
+                >
                   {t.common.quickActions()}
                 </h4>
                 <Button
@@ -156,7 +189,7 @@ export function SchoolSubjectListFilters() {
 
       <Button
         onClick={() => setPickerOpen(true)}
-        className="shadow-lg shadow-primary/20"
+        className="shadow-primary/20 shadow-lg"
       >
         <IconPlus className="mr-2 h-4 w-4" />
         {t.academic.subjects.addSubjects()}

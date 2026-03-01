@@ -20,13 +20,21 @@ export function ClassesTableDesktop() {
   const { table, data } = state
 
   return (
-    <div className="hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl md:block overflow-hidden">
+    <div className="
+      border-border/40 bg-card/40 hidden overflow-hidden rounded-xl border
+      backdrop-blur-xl
+      md:block
+    "
+    >
       <Table>
         <TableHeader className="bg-card/20">
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow
               key={headerGroup.id}
-              className="hover:bg-transparent border-border/40"
+              className="
+                border-border/40
+                hover:bg-transparent
+              "
             >
               {headerGroup.headers.map(header => (
                 <TableHead
@@ -48,15 +56,27 @@ export function ClassesTableDesktop() {
           {data?.length === 0
             ? (
                 <TableRow>
-                  <TableCell colSpan={table.getAllColumns().length} className="h-96">
-                    <div className="flex flex-col items-center justify-center text-center">
-                      <div className="rounded-full bg-white/10 p-6 backdrop-blur-xl mb-4">
-                        <IconUsers className="h-12 w-12 text-muted-foreground/50" />
+                  <TableCell
+                    colSpan={table.getAllColumns().length}
+                    className="h-96"
+                  >
+                    <div className="
+                      flex flex-col items-center justify-center text-center
+                    "
+                    >
+                      <div className="
+                        mb-4 rounded-full bg-white/10 p-6 backdrop-blur-xl
+                      "
+                      >
+                        <IconUsers className="
+                          text-muted-foreground/50 h-12 w-12
+                        "
+                        />
                       </div>
                       <h3 className="text-lg font-semibold">
                         {t.tables.noClassesFound()}
                       </h3>
-                      <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+                      <p className="text-muted-foreground mt-2 max-w-sm text-sm">
                         {t.tables.createFirstClass()}
                       </p>
                     </div>
@@ -72,7 +92,11 @@ export function ClassesTableDesktop() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ delay: index * 0.02 }}
-                      className="border-border/10 group hover:bg-card/30 transition-colors cursor-pointer"
+                      className="
+                        border-border/10 group
+                        hover:bg-card/30
+                        cursor-pointer transition-colors
+                      "
                       onClick={() =>
                         navigate({ to: `/classes/${row.original.class.id}` })}
                     >

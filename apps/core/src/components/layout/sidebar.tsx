@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { SystemAction } from '@repo/data-ops'
 import type { ComponentType } from 'react'
 import type { FileRoutesByTo } from '@/routeTree.gen'
@@ -181,7 +182,7 @@ export function Sidebar({ className }: SidebarProps) {
 
     return (
       <SidebarMenuItem key={item.href}>
-        <div className="flex items-center w-full">
+        <div className="flex w-full items-center">
           <SidebarMenuButton
             isActive={isActive && !hasChildren}
             onClick={() => navigate({ to: item.href })}
@@ -194,17 +195,20 @@ export function Sidebar({ className }: SidebarProps) {
             >
               <item.icon className="h-5 w-5" />
             </m.div>
-            <div className="flex flex-col items-start flex-1">
+            <div className="flex flex-1 flex-col items-start">
               <span className="text-sm font-medium">{item.name}</span>
               {!isCollapsed && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   {item.description}
                 </span>
               )}
             </div>
             {item.badge && !isCollapsed && (
               <m.span
-                className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground"
+                className="
+                  bg-primary text-primary-foreground flex h-5 w-5 items-center
+                  justify-center rounded-full text-xs font-medium
+                "
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 15 }}
@@ -220,7 +224,10 @@ export function Sidebar({ className }: SidebarProps) {
                 e.stopPropagation()
                 toggleExpanded(item.href)
               }}
-              className="p-2 hover:bg-accent rounded-md transition-colors"
+              className="
+                hover:bg-accent
+                rounded-md p-2 transition-colors
+              "
               aria-label={isExpanded ? 'Collapse' : 'Expand'}
             >
               <m.div
@@ -241,7 +248,10 @@ export function Sidebar({ className }: SidebarProps) {
               transition={{ duration: 0.2, ease: 'easeOut' }}
               className="overflow-hidden"
             >
-              <SidebarMenuSub className="border-l-2 border-border/40 ml-2 mt-1 py-1">
+              <SidebarMenuSub className="
+                border-border/40 mt-1 ml-2 border-l-2 py-1
+              "
+              >
                 {item.children?.map((child) => {
                   const isChildActive = currentPath === child.href
                   return (
@@ -249,11 +259,17 @@ export function Sidebar({ className }: SidebarProps) {
                       <Link
                         to={child.href}
                         className={cn(
-                          'flex items-center gap-3 py-2 px-3 rounded-md transition-all duration-200 text-sm',
+                          `
+                            flex items-center gap-3 rounded-md px-3 py-2 text-sm
+                            transition-all duration-200
+                          `,
                           'hover:bg-accent/80 hover:translate-x-1',
                           isChildActive
                             ? 'bg-primary/10 text-primary font-medium'
-                            : 'text-muted-foreground hover:text-foreground',
+                            : `
+                              text-muted-foreground
+                              hover:text-foreground
+                            `,
                         )}
                       >
                         <child.icon
@@ -261,7 +277,10 @@ export function Sidebar({ className }: SidebarProps) {
                             'h-4 w-4 shrink-0 transition-colors',
                             isChildActive
                               ? 'text-primary'
-                              : 'text-muted-foreground group-hover/menu-sub-item:text-foreground',
+                              : `
+                                text-muted-foreground
+                                group-hover/menu-sub-item:text-foreground
+                              `,
                           )}
                         />
                         <span className="truncate">{child.name}</span>
@@ -280,7 +299,13 @@ export function Sidebar({ className }: SidebarProps) {
   const roleName = auth?.isSuperAdmin ? 'Super Administrateur' : 'Administrateur Système'
 
   return (
-    <SidebarRoot collapsible="icon" className={cn('hidden lg:flex', className)}>
+    <SidebarRoot
+      collapsible="icon"
+      className={cn(`
+        hidden
+        lg:flex
+      `, className)}
+    >
       <LazyMotion features={domAnimation}>
         <SidebarHeader className="border-b">
           <div className="flex items-center gap-2 px-2">
@@ -298,10 +323,13 @@ export function Sidebar({ className }: SidebarProps) {
                 exit={{ opacity: 0, width: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h1 className="text-xl font-semibold tracking-tight text-foreground">
+                <h1 className="
+                  text-foreground text-xl font-semibold tracking-tight
+                "
+                >
                   Yeko Core
                 </h1>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   {roleName}
                 </p>
               </m.div>

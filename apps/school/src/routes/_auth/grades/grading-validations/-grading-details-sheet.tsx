@@ -63,11 +63,21 @@ export function GradingDetailsSheet({
 }: GradingDetailsSheetProps) {
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="flex flex-col gap-0 p-0 sm:max-w-3xl! w-full">
-        <SheetHeader className="flex flex-row items-center justify-between border-b bg-muted/10 px-6 py-4 pr-12">
+      <SheetContent
+        side="right"
+        className="
+          flex w-full flex-col gap-0 p-0
+          sm:max-w-3xl!
+        "
+      >
+        <SheetHeader className="
+          bg-muted/10 flex flex-row items-center justify-between border-b px-6
+          py-4 pr-12
+        "
+        >
           <div className="space-y-1 text-left">
             <SheetTitle className="flex items-center gap-2">
-              <IconFileText className="h-5 w-5 text-primary" />
+              <IconFileText className="text-primary h-5 w-5" />
               {t.academic.grades.validations.viewDetails()}
             </SheetTitle>
             <SheetDescription>
@@ -80,12 +90,16 @@ export function GradingDetailsSheet({
           </div>
 
           <div className="flex flex-col items-end">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+            <span className="
+              text-muted-foreground/60 text-[10px] font-black tracking-widest
+              uppercase
+            "
+            >
               NB. ÉLÈVES
             </span>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-black text-primary">{detailValidation?.pendingCount}</span>
-              <span className="text-xs font-medium text-muted-foreground">{t.common.total().toLowerCase()}</span>
+              <span className="text-primary text-2xl font-black">{detailValidation?.pendingCount}</span>
+              <span className="text-muted-foreground text-xs font-medium">{t.common.total().toLowerCase()}</span>
             </div>
           </div>
         </SheetHeader>
@@ -93,21 +107,36 @@ export function GradingDetailsSheet({
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="flex-1 overflow-y-auto px-6 py-6">
             <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch text-left">
+              <div className="
+                grid grid-cols-1 items-stretch gap-6 text-left
+                md:grid-cols-3
+              "
+              >
                 {/* Column 1: Evaluation Info */}
-                <div className="flex flex-col gap-3 h-full">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className="h-1 w-8 rounded-full bg-primary/20 shrink-0" />
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground truncate">
+                <div className="flex h-full flex-col gap-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <div className="bg-primary/20 h-1 w-8 shrink-0 rounded-full" />
+                    <h3 className="
+                      text-muted-foreground truncate text-sm font-semibold
+                      tracking-wider uppercase
+                    "
+                    >
                       {t.academic.grades.validations.details.evaluation()}
                     </h3>
                   </div>
-                  <div className="flex-1 rounded-xl border bg-card p-4 shadow-sm space-y-3">
+                  <div className="
+                    bg-card flex-1 space-y-3 rounded-xl border p-4 shadow-sm
+                  "
+                  >
                     <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                      <Label className="
+                        text-muted-foreground/60 text-[10px] font-black
+                        tracking-widest uppercase
+                      "
+                      >
                         {t.academic.grades.entry.class()}
                       </Label>
-                      <p className="text-sm font-bold truncate">
+                      <p className="truncate text-sm font-bold">
                         {detailValidation?.gradeName}
                         {' '}
                         {detailValidation?.className}
@@ -115,21 +144,29 @@ export function GradingDetailsSheet({
                     </div>
 
                     <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                      <Label className="
+                        text-muted-foreground/60 text-[10px] font-black
+                        tracking-widest uppercase
+                      "
+                      >
                         {t.academic.grades.entry.subject()}
                       </Label>
                       <div className="flex items-center gap-2 text-left">
-                        <IconNotebook className="h-3 w-3 text-muted-foreground" />
+                        <IconNotebook className="text-muted-foreground h-3 w-3" />
                         <p className="text-sm font-semibold italic">{detailValidation?.subjectName}</p>
                       </div>
                     </div>
 
                     <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                      <Label className="
+                        text-muted-foreground/60 text-[10px] font-black
+                        tracking-widest uppercase
+                      "
+                      >
                         Type d'évaluation
                       </Label>
                       <div className="flex items-center gap-2">
-                        <IconFileText className="h-3 w-3 text-muted-foreground" />
+                        <IconFileText className="text-muted-foreground h-3 w-3" />
                         <p className="text-sm font-semibold">
                           {studentGradesData?.[0]?.type
                             ? (GRADE_TYPE_LABELS[studentGradesData[0].type as GradeType] || studentGradesData[0].type)
@@ -141,32 +178,51 @@ export function GradingDetailsSheet({
                 </div>
 
                 {/* Column 2: Submission Info */}
-                <div className="flex flex-col gap-3 h-full">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className="h-1 w-8 rounded-full bg-primary/20 shrink-0" />
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground truncate">
+                <div className="flex h-full flex-col gap-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <div className="bg-primary/20 h-1 w-8 shrink-0 rounded-full" />
+                    <h3 className="
+                      text-muted-foreground truncate text-sm font-semibold
+                      tracking-wider uppercase
+                    "
+                    >
                       {t.academic.grades.validations.details.submission()}
                     </h3>
                   </div>
-                  <div className="flex-1 rounded-xl border bg-card p-4 shadow-sm space-y-3">
+                  <div className="
+                    bg-card flex-1 space-y-3 rounded-xl border p-4 shadow-sm
+                  "
+                  >
                     <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                      <Label className="
+                        text-muted-foreground/60 text-[10px] font-black
+                        tracking-widest uppercase
+                      "
+                      >
                         {t.academic.grades.validations.submittedBy()}
                       </Label>
                       <div className="flex items-center gap-2">
-                        <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                          <IconUser className="h-3 w-3 text-primary" />
+                        <div className="
+                          bg-primary/10 flex h-5 w-5 shrink-0 items-center
+                          justify-center rounded-full
+                        "
+                        >
+                          <IconUser className="text-primary h-3 w-3" />
                         </div>
-                        <p className="text-sm font-bold truncate">{detailValidation?.teacherName}</p>
+                        <p className="truncate text-sm font-bold">{detailValidation?.teacherName}</p>
                       </div>
                     </div>
 
                     <div className="grid gap-1">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                      <Label className="
+                        text-muted-foreground/60 text-[10px] font-black
+                        tracking-widest uppercase
+                      "
+                      >
                         {t.academic.grades.validations.submittedAt()}
                       </Label>
                       <div className="flex items-center gap-2">
-                        <IconCalendar className="h-3 w-3 text-muted-foreground" />
+                        <IconCalendar className="text-muted-foreground h-3 w-3" />
                         <p className="text-sm font-medium">
                           {detailValidation?.submittedAt
                             ? new Date(detailValidation.submittedAt).toLocaleDateString('fr-FR', {
@@ -184,22 +240,48 @@ export function GradingDetailsSheet({
                 </div>
 
                 {/* Column 3: Stats */}
-                <div className="flex flex-col gap-3 h-full">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className="h-1 w-8 rounded-full bg-primary/20 shrink-0" />
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground truncate">
+                <div className="flex h-full flex-col gap-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <div className="bg-primary/20 h-1 w-8 shrink-0 rounded-full" />
+                    <h3 className="
+                      text-muted-foreground truncate text-sm font-semibold
+                      tracking-wider uppercase
+                    "
+                    >
                       {t.academic.grades.validations.details.stats()}
                     </h3>
                   </div>
-                  <div className="flex-1 rounded-xl border bg-card p-4 shadow-sm flex flex-col justify-between gap-4">
-                    <div className="flex flex-1 items-center justify-center text-center">
+                  <div className="
+                    bg-card flex flex-1 flex-col justify-between gap-4
+                    rounded-xl border p-4 shadow-sm
+                  "
+                  >
+                    <div className="
+                      flex flex-1 items-center justify-center text-center
+                    "
+                    >
                       <div>
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 block mb-2">
+                        <Label className="
+                          text-muted-foreground/60 mb-2 block text-[10px]
+                          font-black tracking-widest uppercase
+                        "
+                        >
                           Moyenne
                         </Label>
-                        <div className="flex items-baseline justify-center gap-1">
-                          <span className="text-5xl font-black text-primary tracking-tight">{detailValidation?.average}</span>
-                          <span className="text-sm font-bold text-muted-foreground">
+                        <div className="
+                          flex items-baseline justify-center gap-1
+                        "
+                        >
+                          <span className="
+                            text-primary text-5xl font-black tracking-tight
+                          "
+                          >
+                            {detailValidation?.average}
+                          </span>
+                          <span className="
+                            text-muted-foreground text-sm font-bold
+                          "
+                          >
                             /
                             {detailValidation?.maxGrade}
                           </span>
@@ -207,13 +289,27 @@ export function GradingDetailsSheet({
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/50 bg-muted/20 -mx-4 -mb-4 px-4 py-3 mt-auto">
+                    <div className="
+                      border-border/50 bg-muted/20 -mx-4 mt-auto -mb-4 grid
+                      grid-cols-2 gap-4 border-t px-4 py-3 pt-4
+                    "
+                    >
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase text-muted-foreground">Coefficient</span>
+                        <span className="
+                          text-muted-foreground text-[10px] font-bold uppercase
+                        "
+                        >
+                          Coefficient
+                        </span>
                         <span className="text-sm font-black">{detailValidation?.coefficient}</span>
                       </div>
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold uppercase text-muted-foreground">Note sur</span>
+                        <span className="
+                          text-muted-foreground text-[10px] font-bold uppercase
+                        "
+                        >
+                          Note sur
+                        </span>
                         <span className="text-sm font-black">{detailValidation?.maxGrade}</span>
                       </div>
                     </div>
@@ -224,15 +320,22 @@ export function GradingDetailsSheet({
               {/* Student Grades Section */}
               <div className="space-y-4 text-left">
                 <div className="flex items-center gap-2">
-                  <div className="h-1 w-8 rounded-full bg-primary/20" />
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                  <div className="bg-primary/20 h-1 w-8 rounded-full" />
+                  <h3 className="
+                    text-muted-foreground text-sm font-semibold tracking-wider
+                    uppercase
+                  "
+                  >
                     Notes des élèves
                   </h3>
                 </div>
-                <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+                <div className="
+                  bg-card overflow-hidden rounded-xl border shadow-sm
+                "
+                >
                   {isLoadingGrades
                     ? (
-                        <div className="p-4 space-y-2">
+                        <div className="space-y-2 p-4">
                           {[1, 2, 3, 4, 5].map(item => (
                             <Skeleton key={item} className="h-10 w-full" />
                           ))}
@@ -243,21 +346,40 @@ export function GradingDetailsSheet({
                           <Table>
                             <TableHeader className="bg-muted/20">
                               <TableRow>
-                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground pl-6">
+                                <TableHead className="
+                                  text-muted-foreground pl-6 text-[10px]
+                                  font-black tracking-widest uppercase
+                                "
+                                >
                                   Élève
                                 </TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground text-center w-32 pr-6">
+                                <TableHead className="
+                                  text-muted-foreground w-32 pr-6 text-center
+                                  text-[10px] font-black tracking-widest
+                                  uppercase
+                                "
+                                >
                                   Note
                                 </TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
                               {studentGradesData.map((grade: any) => (
-                                <TableRow key={grade.id} className="border-border/10">
+                                <TableRow
+                                  key={grade.id}
+                                  className="border-border/10"
+                                >
                                   <TableCell className="pl-6">
                                     <div className="flex items-center gap-3">
-                                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                                        <IconUser className="h-4 w-4 text-primary" />
+                                      <div className="
+                                        bg-primary/10 flex h-8 w-8 shrink-0
+                                        items-center justify-center rounded-full
+                                      "
+                                      >
+                                        <IconUser className="
+                                          text-primary h-4 w-4
+                                        "
+                                        />
                                       </div>
                                       <span className="text-sm font-bold">
                                         {grade.student?.firstName}
@@ -266,12 +388,14 @@ export function GradingDetailsSheet({
                                       </span>
                                     </div>
                                   </TableCell>
-                                  <TableCell className="text-center pr-6">
+                                  <TableCell className="pr-6 text-center">
                                     <Badge
                                       variant="secondary"
                                       className={cn(
-                                        'font-black text-sm px-3 py-1',
-                                        Number(grade.value) < 10 ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary',
+                                        'px-3 py-1 text-sm font-black',
+                                        Number(grade.value) < 10
+                                          ? `bg-destructive/10 text-destructive`
+                                          : `bg-primary/10 text-primary`,
                                       )}
                                     >
                                       {Number(grade.value).toFixed(2)}
@@ -283,7 +407,10 @@ export function GradingDetailsSheet({
                           </Table>
                         )
                       : (
-                          <div className="p-8 text-center text-muted-foreground text-sm">
+                          <div className="
+                            text-muted-foreground p-8 text-center text-sm
+                          "
+                          >
                             Aucune note trouvée pour cette validation.
                           </div>
                         )}
@@ -292,14 +419,22 @@ export function GradingDetailsSheet({
             </div>
           </div>
 
-          <div className="mt-auto flex items-center justify-end gap-3 border-t bg-muted/10 px-6 py-4">
+          <div className="
+            bg-muted/10 mt-auto flex items-center justify-end gap-3 border-t
+            px-6 py-4
+          "
+          >
             <Button type="button" variant="outline" className="rounded-xl" onClick={() => onOpenChange(false)}>
               {t.common.close()}
             </Button>
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                className="rounded-xl border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
+                className="
+                  border-destructive/30 text-destructive
+                  hover:bg-destructive hover:text-destructive-foreground
+                  rounded-xl shadow-sm transition-all
+                "
                 onClick={() => {
                   if (detailValidation) {
                     onOpenChange(false)
@@ -312,7 +447,11 @@ export function GradingDetailsSheet({
               </Button>
               <Button
                 variant="default"
-                className="rounded-xl bg-success hover:bg-success/90 shadow-lg shadow-success/20"
+                className="
+                  bg-success
+                  hover:bg-success/90
+                  shadow-success/20 rounded-xl shadow-lg
+                "
                 onClick={() => {
                   if (detailValidation) {
                     onOpenChange(false)

@@ -33,10 +33,10 @@ export function useClassroomsTableColumns({
         header: 'Nom',
         cell: ({ row }) => (
           <div>
-            <div className="font-bold text-foreground">
+            <div className="text-foreground font-bold">
               {row.original.name}
             </div>
-            <div className="font-mono text-xs font-medium text-muted-foreground">
+            <div className="text-muted-foreground font-mono text-xs font-medium">
               {row.original.code}
             </div>
           </div>
@@ -56,8 +56,8 @@ export function useClassroomsTableColumns({
         header: 'Capacité',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
-            <div className="p-1 rounded bg-muted/20">
-              <IconUsers className="h-3.5 w-3.5 text-muted-foreground" />
+            <div className="bg-muted/20 rounded-sm p-1">
+              <IconUsers className="text-muted-foreground h-3.5 w-3.5" />
             </div>
             <span className="font-medium tabular-nums">
               {row.original.capacity}
@@ -70,8 +70,8 @@ export function useClassroomsTableColumns({
         header: 'Classes assignées',
         cell: ({ row }) => (
           <div className="flex items-center gap-2">
-            <div className="p-1 rounded bg-muted/20">
-              <IconStack2 className="h-3.5 w-3.5 text-muted-foreground" />
+            <div className="bg-muted/20 rounded-sm p-1">
+              <IconStack2 className="text-muted-foreground h-3.5 w-3.5" />
             </div>
             <span className="font-medium tabular-nums">
               {row.original.assignedClassesCount ?? 0}
@@ -87,11 +87,18 @@ export function useClassroomsTableColumns({
           return (
             <Badge
               variant={status === 'active' ? 'default' : 'secondary'}
-              className={`rounded-lg capitalize transition-colors ${
-                status === 'active'
-                  ? 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/20'
-                  : 'bg-muted text-muted-foreground'
-              }`}
+              className={`
+                rounded-lg capitalize transition-colors
+                ${
+            status === 'active'
+              ? `
+                bg-primary/10 text-primary
+                hover:bg-primary/20
+                border-primary/20
+              `
+              : 'bg-muted text-muted-foreground'
+            }
+              `}
             >
               {status === 'active'
                 ? 'Actif'
@@ -111,7 +118,10 @@ export function useClassroomsTableColumns({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="
+                    h-8 w-8 rounded-lg opacity-0 transition-opacity
+                    group-hover:opacity-100
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     e.preventDefault()
@@ -123,10 +133,17 @@ export function useClassroomsTableColumns({
             />
             <DropdownMenuContent
               align="end"
-              className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+              className="
+                bg-card/95 border-border/40 rounded-xl p-1 shadow-xl
+                backdrop-blur-xl
+              "
             >
               <DropdownMenuItem
-                className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+                className="
+                  text-destructive
+                  focus:bg-destructive/10 focus:text-destructive
+                  cursor-pointer rounded-lg font-medium
+                "
                 onClick={() => setItemToDelete(row.original)}
               >
                 <IconTrash className="mr-2 h-4 w-4" />

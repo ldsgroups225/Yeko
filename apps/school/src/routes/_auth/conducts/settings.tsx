@@ -137,12 +137,21 @@ function AttendanceSettingsPage() {
         animate={{ opacity: 1, x: 0 }}
         className="flex items-center gap-4"
       >
-        <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-          <IconSettings className="size-8 text-primary" />
+        <div className="
+          bg-primary/10 border-primary/20 rounded-2xl border p-3 shadow-lg
+          backdrop-blur-xl
+        "
+        >
+          <IconSettings className="text-primary size-8" />
         </div>
         <div>
           <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.schoolLife.settings()}</h1>
-          <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.settings.attendanceDescription()}</p>
+          <p className="
+            text-muted-foreground max-w-md text-sm font-medium italic
+          "
+          >
+            {t.settings.attendanceDescription()}
+          </p>
         </div>
       </motion.div>
 
@@ -155,27 +164,56 @@ function AttendanceSettingsPage() {
           className="space-y-8"
         >
           <motion.div variants={item}>
-            <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+            <Card className="
+              border-border/40 bg-card/30 relative overflow-hidden rounded-3xl
+              shadow-2xl backdrop-blur-xl
+            "
+            >
               <div className="absolute top-0 right-0 p-6 opacity-5">
                 <IconUserCheck className="size-32" />
               </div>
-              <CardHeader className="relative border-b border-border/10 bg-muted/20">
-                <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+              <CardHeader className="
+                border-border/10 bg-muted/20 relative border-b
+              "
+              >
+                <CardTitle className="
+                  text-muted-foreground/60 flex items-center gap-2 text-[10px]
+                  font-black tracking-[0.2em] uppercase
+                "
+                >
                   <IconUserCheck className="h-3 w-3" />
                   {t.settings.teacherAttendance()}
                 </CardTitle>
-                <CardDescription className="italic font-medium">{t.settings.teacherAttendanceDescription()}</CardDescription>
+                <CardDescription className="font-medium italic">{t.settings.teacherAttendanceDescription()}</CardDescription>
               </CardHeader>
-              <CardContent className="pt-8 space-y-6">
-                <div className="grid md:grid-cols-2 gap-8">
+              <CardContent className="space-y-6 pt-8">
+                <div className="
+                  grid gap-8
+                  md:grid-cols-2
+                "
+                >
                   <FormField
                     control={form.control}
                     name="teacherExpectedArrival"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.expectedArrival()}</FormLabel>
+                        <FormLabel className="
+                          text-muted-foreground/60 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.settings.expectedArrival()}
+                        </FormLabel>
                         <FormControl>
-                          <Input type="time" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                          <Input
+                            type="time"
+                            {...field}
+                            className="
+                              bg-background/50 border-border/40
+                              focus:ring-primary/20
+                              h-12 rounded-2xl font-bold transition-all
+                            "
+                          />
                         </FormControl>
                         <FormDescription className="text-[10px] italic">{t.settings.expectedArrivalDescription()}</FormDescription>
                         <FormMessage />
@@ -188,9 +226,23 @@ function AttendanceSettingsPage() {
                     name="teacherLateThresholdMinutes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.lateThreshold()}</FormLabel>
+                        <FormLabel className="
+                          text-muted-foreground/60 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.settings.lateThreshold()}
+                        </FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                          <Input
+                            type="number"
+                            {...field}
+                            className="
+                              bg-background/50 border-border/40
+                              focus:ring-primary/20
+                              h-12 rounded-2xl font-bold transition-all
+                            "
+                          />
                         </FormControl>
                         <FormDescription className="text-[10px] italic">{t.settings.lateThresholdDescription()}</FormDescription>
                         <FormMessage />
@@ -204,9 +256,23 @@ function AttendanceSettingsPage() {
                   name="teacherLatenessAlertCount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.alertThreshold()}</FormLabel>
+                      <FormLabel className="
+                        text-muted-foreground/60 text-[10px] font-black
+                        tracking-widest uppercase
+                      "
+                      >
+                        {t.settings.alertThreshold()}
+                      </FormLabel>
                       <FormControl>
-                        <Input type="number" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                        <Input
+                          type="number"
+                          {...field}
+                          className="
+                            bg-background/50 border-border/40
+                            focus:ring-primary/20
+                            h-12 rounded-2xl font-bold transition-all
+                          "
+                        />
                       </FormControl>
                       <FormDescription className="text-[10px] italic">{t.settings.alertThresholdDescription()}</FormDescription>
                       <FormMessage />
@@ -218,27 +284,56 @@ function AttendanceSettingsPage() {
           </motion.div>
 
           <motion.div variants={item}>
-            <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+            <Card className="
+              border-border/40 bg-card/30 relative overflow-hidden rounded-3xl
+              shadow-2xl backdrop-blur-xl
+            "
+            >
               <div className="absolute top-0 right-0 p-6 opacity-5">
                 <IconSchool className="size-32" />
               </div>
-              <CardHeader className="relative border-b border-border/10 bg-muted/20">
-                <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+              <CardHeader className="
+                border-border/10 bg-muted/20 relative border-b
+              "
+              >
+                <CardTitle className="
+                  text-muted-foreground/60 flex items-center gap-2 text-[10px]
+                  font-black tracking-[0.2em] uppercase
+                "
+                >
                   <IconSchool className="h-3 w-3" />
                   {t.settings.studentAttendance()}
                 </CardTitle>
-                <CardDescription className="italic font-medium">{t.settings.studentAttendanceDescription()}</CardDescription>
+                <CardDescription className="font-medium italic">{t.settings.studentAttendanceDescription()}</CardDescription>
               </CardHeader>
-              <CardContent className="pt-8 space-y-6">
-                <div className="grid md:grid-cols-2 gap-8">
+              <CardContent className="space-y-6 pt-8">
+                <div className="
+                  grid gap-8
+                  md:grid-cols-2
+                "
+                >
                   <FormField
                     control={form.control}
                     name="studentLateThresholdMinutes"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.studentLateThreshold()}</FormLabel>
+                        <FormLabel className="
+                          text-muted-foreground/60 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.settings.studentLateThreshold()}
+                        </FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                          <Input
+                            type="number"
+                            {...field}
+                            className="
+                              bg-background/50 border-border/40
+                              focus:ring-primary/20
+                              h-12 rounded-2xl font-bold transition-all
+                            "
+                          />
                         </FormControl>
                         <FormDescription className="text-[10px] italic">{t.settings.studentLateThresholdDescription()}</FormDescription>
                         <FormMessage />
@@ -251,9 +346,23 @@ function AttendanceSettingsPage() {
                     name="chronicAbsenceThresholdPercent"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.settings.chronicAbsenceThreshold()}</FormLabel>
+                        <FormLabel className="
+                          text-muted-foreground/60 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.settings.chronicAbsenceThreshold()}
+                        </FormLabel>
                         <FormControl>
-                          <Input type="number" {...field} className="h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold" />
+                          <Input
+                            type="number"
+                            {...field}
+                            className="
+                              bg-background/50 border-border/40
+                              focus:ring-primary/20
+                              h-12 rounded-2xl font-bold transition-all
+                            "
+                          />
                         </FormControl>
                         <FormDescription className="text-[10px] italic">{t.settings.chronicAbsenceThresholdDescription()}</FormDescription>
                         <FormMessage />
@@ -266,28 +375,57 @@ function AttendanceSettingsPage() {
           </motion.div>
 
           <motion.div variants={item}>
-            <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+            <Card className="
+              border-border/40 bg-card/30 relative overflow-hidden rounded-3xl
+              shadow-2xl backdrop-blur-xl
+            "
+            >
               <div className="absolute top-0 right-0 p-6 opacity-5">
                 <IconBell className="size-32" />
               </div>
-              <CardHeader className="relative border-b border-border/10 bg-muted/20">
-                <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+              <CardHeader className="
+                border-border/10 bg-muted/20 relative border-b
+              "
+              >
+                <CardTitle className="
+                  text-muted-foreground/60 flex items-center gap-2 text-[10px]
+                  font-black tracking-[0.2em] uppercase
+                "
+                >
                   <IconBell className="h-3 w-3" />
                   {t.settings.notifications()}
                 </CardTitle>
-                <CardDescription className="italic font-medium">{t.settings.notificationsDescription()}</CardDescription>
+                <CardDescription className="font-medium italic">{t.settings.notificationsDescription()}</CardDescription>
               </CardHeader>
-              <CardContent className="pt-8 space-y-6">
+              <CardContent className="space-y-6 pt-8">
                 <FormField
                   control={form.control}
                   name="notifyParentOnAbsence"
                   render={({ field }) => (
-                    <FormItem className="flex items-center gap-4 p-4 rounded-2xl bg-muted/20 border border-border/10">
+                    <FormItem className="
+                      bg-muted/20 border-border/10 flex items-center gap-4
+                      rounded-2xl border p-4
+                    "
+                    >
                       <FormControl>
-                        <Checkbox checked={field.value} onCheckedChange={field.onChange} className="size-5 rounded-lg border-border/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="
+                            border-border/40
+                            data-[state=checked]:bg-primary
+                            data-[state=checked]:border-primary
+                            size-5 rounded-lg
+                          "
+                        />
                       </FormControl>
                       <div>
-                        <FormLabel className="font-black uppercase tracking-widest text-[10px]">{t.settings.notifyOnAbsence()}</FormLabel>
+                        <FormLabel className="
+                          text-[10px] font-black tracking-widest uppercase
+                        "
+                        >
+                          {t.settings.notifyOnAbsence()}
+                        </FormLabel>
                         <FormDescription className="text-[10px] italic">{t.settings.notifyOnAbsenceDescription()}</FormDescription>
                       </div>
                     </FormItem>
@@ -298,12 +436,30 @@ function AttendanceSettingsPage() {
                   control={form.control}
                   name="notifyParentOnLate"
                   render={({ field }) => (
-                    <FormItem className="flex items-center gap-4 p-4 rounded-2xl bg-muted/20 border border-border/10">
+                    <FormItem className="
+                      bg-muted/20 border-border/10 flex items-center gap-4
+                      rounded-2xl border p-4
+                    "
+                    >
                       <FormControl>
-                        <Checkbox checked={field.value} onCheckedChange={field.onChange} className="size-5 rounded-lg border-border/40 data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="
+                            border-border/40
+                            data-[state=checked]:bg-primary
+                            data-[state=checked]:border-primary
+                            size-5 rounded-lg
+                          "
+                        />
                       </FormControl>
                       <div>
-                        <FormLabel className="font-black uppercase tracking-widest text-[10px]">{t.settings.notifyOnLate()}</FormLabel>
+                        <FormLabel className="
+                          text-[10px] font-black tracking-widest uppercase
+                        "
+                        >
+                          {t.settings.notifyOnLate()}
+                        </FormLabel>
                         <FormDescription className="text-[10px] italic">{t.settings.notifyOnLateDescription()}</FormDescription>
                       </div>
                     </FormItem>
@@ -317,7 +473,12 @@ function AttendanceSettingsPage() {
             <Button
               type="submit"
               disabled={mutation.isPending}
-              className="h-14 px-10 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-[0.2em] shadow-xl transition-all"
+              className="
+                bg-primary
+                hover:bg-primary/90
+                text-primary-foreground h-14 rounded-2xl px-10 font-black
+                tracking-[0.2em] uppercase shadow-xl transition-all
+              "
             >
               {mutation.isPending
                 ? (
@@ -343,7 +504,7 @@ function AttendanceSettingsPage() {
 function SettingsSkeleton() {
   return (
     <div className="space-y-8 p-1">
-      <Skeleton className="h-6 w-48 mb-6" />
+      <Skeleton className="mb-6 h-6 w-48" />
       <div className="flex items-center gap-4">
         <Skeleton className="size-14 rounded-2xl" />
         <div className="space-y-2">

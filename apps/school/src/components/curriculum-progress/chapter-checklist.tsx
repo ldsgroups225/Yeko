@@ -36,8 +36,8 @@ export function ChapterChecklist({
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-center justify-between">
-        <h4 className="font-medium text-sm">{t.curriculum.chapters()}</h4>
-        <span className="text-sm text-muted-foreground">
+        <h4 className="text-sm font-medium">{t.curriculum.chapters()}</h4>
+        <span className="text-muted-foreground text-sm">
           {completedCount}
           /
           {chapters.length}
@@ -52,17 +52,26 @@ export function ChapterChecklist({
               className={cn(
                 'flex items-center gap-3 rounded-md p-2 transition-colors',
                 !readOnly && 'hover:bg-muted',
-                chapter.isCompleted && 'bg-success/5 dark:bg-success/10',
+                chapter.isCompleted && `
+                  bg-success/5
+                  dark:bg-success/10
+                `,
               )}
             >
               {readOnly
                 ? (
                     chapter.isCompleted
                       ? (
-                          <IconCircleCheck className="h-5 w-5 text-success shrink-0" />
+                          <IconCircleCheck className="
+                            text-success h-5 w-5 shrink-0
+                          "
+                          />
                         )
                       : (
-                          <IconCircle className="h-5 w-5 text-muted-foreground shrink-0" />
+                          <IconCircle className="
+                            text-muted-foreground h-5 w-5 shrink-0
+                          "
+                          />
                         )
                   )
                 : (
@@ -84,15 +93,18 @@ export function ChapterChecklist({
                           )
                         : chapter.isCompleted
                           ? (
-                              <IconCircleCheck className="h-5 w-5 text-success" />
+                              <IconCircleCheck className="text-success h-5 w-5" />
                             )
                           : (
-                              <IconCircle className="h-5 w-5 text-muted-foreground" />
+                              <IconCircle className="
+                                text-muted-foreground h-5 w-5
+                              "
+                              />
                             )}
                     </Button>
                   )}
 
-              <div className="flex-1 min-w-0">
+              <div className="min-w-0 flex-1">
                 <p
                   className={cn(
                     'text-sm',

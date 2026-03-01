@@ -63,7 +63,10 @@ export function ClassroomStatsCards({
 
   return (
     <div
-      className="grid gap-6 md:grid-cols-4"
+      className="
+        grid gap-6
+        md:grid-cols-4
+      "
       role="list"
       aria-label={t.spaces.classrooms.roomStatistics()}
     >
@@ -76,16 +79,32 @@ export function ClassroomStatsCards({
         >
           <Card
             role="listitem"
-            className={`rounded-3xl border bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300 ${stat.bgColor.replace('bg-', 'border-').replace('/10', '/20')}`}
+            className={`
+              bg-card/40 rounded-3xl border shadow-sm backdrop-blur-xl
+              transition-all duration-300
+              hover:shadow-md
+              ${stat.bgColor.replace('bg-', 'border-').replace('/10', '/20')}
+            `}
           >
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                <CardTitle className="
+                  text-muted-foreground text-sm font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {stat.title}
                 </CardTitle>
-                <div className={`p-2 rounded-xl ${stat.bgColor}`}>
+                <div className={`
+                  rounded-xl p-2
+                  ${stat.bgColor}
+                `}
+                >
                   <stat.icon
-                    className={`h-4 w-4 ${stat.color}`}
+                    className={`
+                      h-4 w-4
+                      ${stat.color}
+                    `}
                     aria-hidden="true"
                   />
                 </div>
@@ -99,7 +118,7 @@ export function ClassroomStatsCards({
                 >
                   {stat.value}
                 </span>
-                <span className="text-xs font-medium text-muted-foreground/80">
+                <span className="text-muted-foreground/80 text-xs font-medium">
                   {stat.description}
                 </span>
               </div>

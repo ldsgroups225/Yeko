@@ -121,23 +121,27 @@ export function DashboardExample() {
   const canViewFinance = can('view', 'finance')
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="
+      grid grid-cols-1 gap-4
+      md:grid-cols-3
+    "
+    >
       {canViewUsers && (
-        <div className="p-4 border rounded-lg">
+        <div className="rounded-lg border p-4">
           <h3>Users</h3>
           <p>Total: 45</p>
         </div>
       )}
 
       {canViewStudents && (
-        <div className="p-4 border rounded-lg">
+        <div className="rounded-lg border p-4">
           <h3>Students</h3>
           <p>Total: 320</p>
         </div>
       )}
 
       {canViewFinance && (
-        <div className="p-4 border rounded-lg">
+        <div className="rounded-lg border p-4">
           <h3>Revenue</h3>
           <p>$12,450</p>
         </div>
@@ -153,7 +157,7 @@ export function NavigationExample() {
   const { can } = usePermissions()
 
   const navItems = [
-    { label: 'Users', href: '/users/users', permission: { action: 'view', resource: 'users' } },
+    { label: 'Users', href: '/settings/personnel/users', permission: { action: 'view', resource: 'users' } },
     { label: 'Students', href: '/students', permission: { action: 'view', resource: 'students' } },
     { label: 'Finance', href: '/accounting', permission: { action: 'view', resource: 'finance' } },
     { label: 'Settings', href: '/settings', permission: { action: 'view', resource: 'settings' } },
@@ -171,7 +175,10 @@ export function NavigationExample() {
           <Link
             key={item.href}
             to={item.href}
-            className="block px-4 py-2 rounded hover:bg-accent"
+            className="
+              hover:bg-accent
+              block rounded-sm px-4 py-2
+            "
           >
             {item.label}
           </Link>
@@ -192,19 +199,27 @@ export function UserFormExample() {
       {/* Basic fields - always visible */}
       <div>
         <label htmlFor="user-name">Name</label>
-        <input id="user-name" type="text" className="w-full border rounded px-3 py-2" />
+        <input
+          id="user-name"
+          type="text"
+          className="w-full rounded-sm border px-3 py-2"
+        />
       </div>
 
       <div>
         <label htmlFor="user-email">Email</label>
-        <input id="user-email" type="email" className="w-full border rounded px-3 py-2" />
+        <input
+          id="user-email"
+          type="email"
+          className="w-full rounded-sm border px-3 py-2"
+        />
       </div>
 
       {/* Role assignment - only for users with role management permission */}
       {can('edit', 'roles') && (
         <div>
           <label htmlFor="user-roles">Assign Roles</label>
-          <select id="user-roles" className="w-full border rounded px-3 py-2">
+          <select id="user-roles" className="w-full rounded-sm border px-3 py-2">
             <option>Administrator</option>
             <option>Teacher</option>
             <option>Registrar</option>
@@ -216,7 +231,10 @@ export function UserFormExample() {
       {can('delete', 'users') && (
         <div>
           <label htmlFor="user-status">Status</label>
-          <select id="user-status" className="w-full border rounded px-3 py-2">
+          <select
+            id="user-status"
+            className="w-full rounded-sm border px-3 py-2"
+          >
             <option>Active</option>
             <option>Inactive</option>
             <option>Suspended</option>

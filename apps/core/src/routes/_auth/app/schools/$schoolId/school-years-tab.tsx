@@ -14,7 +14,7 @@ export function SchoolYearsTab() {
             <CardDescription>Historique et configuration des années scolaires.</CardDescription>
           </div>
           <Button>
-            <IconCalendar className="h-4 w-4 mr-2" />
+            <IconCalendar className="mr-2 h-4 w-4" />
             Nouvelle année
           </Button>
         </div>
@@ -29,15 +29,19 @@ export function SchoolYearsTab() {
                     <h3 className="font-semibold">Année en cours</h3>
                     <Badge>Actif</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">Configuration de l'année académique actuelle</p>
+                  <p className="text-muted-foreground mt-1 text-sm">Configuration de l'année académique actuelle</p>
                 </div>
                 <Button variant="outline" size="sm">Configurer</Button>
               </div>
             </CardContent>
           </Card>
           <Separator />
-          <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-            <IconCalendar className="h-12 w-12 mb-4 opacity-20" />
+          <div className="
+            text-muted-foreground flex flex-col items-center justify-center py-8
+            text-center
+          "
+          >
+            <IconCalendar className="mb-4 h-12 w-12 opacity-20" />
             <p className="font-medium">Aucune année scolaire configurée</p>
             <p className="text-sm">Créez votre première année scolaire pour commencer</p>
           </div>

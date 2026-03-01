@@ -104,7 +104,11 @@ export function DiscountFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
+      <DialogContent className="
+        bg-card/95 border-border/40 rounded-3xl p-6 shadow-2xl backdrop-blur-xl
+        sm:max-w-[500px]
+      "
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {isEditing ? 'Modifier la réduction' : t.finance.discounts.create()}

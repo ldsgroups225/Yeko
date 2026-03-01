@@ -160,7 +160,11 @@ function TracksManagement() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleCreate} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="
+                grid gap-4
+                md:grid-cols-2
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="name">Nom *</Label>
                   <Input
@@ -201,11 +205,11 @@ function TracksManagement() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
-                  <IconX className="h-4 w-4 mr-2" />
+                  <IconX className="mr-2 h-4 w-4" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createMutation.isPending}>
-                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="mr-2 h-4 w-4" />
                   {createMutation.isPending ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -219,8 +223,12 @@ function TracksManagement() {
         <Card key={level.id}>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                <IconSchool className="h-5 w-5 text-primary" />
+              <div className="
+                bg-primary/10 flex h-10 w-10 items-center justify-center
+                rounded-lg
+              "
+              >
+                <IconSchool className="text-primary h-5 w-5" />
               </div>
               <div>
                 <CardTitle>{level.name}</CardTitle>
@@ -236,7 +244,10 @@ function TracksManagement() {
             <div className="space-y-4">
               {levelTracks.length === 0
                 ? (
-                    <p className="text-sm text-muted-foreground text-center py-4">
+                    <p className="
+                      text-muted-foreground py-4 text-center text-sm
+                    "
+                    >
                       Aucune filière pour ce niveau
                     </p>
                   )
@@ -247,9 +258,13 @@ function TracksManagement() {
                           ? (
                               <form
                                 onSubmit={e => handleUpdate(e, track.id)}
-                                className="border rounded-lg p-4 space-y-4"
+                                className="space-y-4 rounded-lg border p-4"
                               >
-                                <div className="grid gap-4 md:grid-cols-2">
+                                <div className="
+                                  grid gap-4
+                                  md:grid-cols-2
+                                "
+                                >
                                   <div className="space-y-2">
                                     <Label htmlFor={`edit-name-${track.id}`}>Nom *</Label>
                                     <Input
@@ -294,29 +309,47 @@ function TracksManagement() {
                                     variant="outline"
                                     onClick={() => setEditingTrack(null)}
                                   >
-                                    <IconX className="h-4 w-4 mr-2" />
+                                    <IconX className="mr-2 h-4 w-4" />
                                     Annuler
                                   </Button>
                                   <Button type="submit" disabled={updateMutation.isPending}>
-                                    <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                    <IconDeviceFloppy className="mr-2 h-4 w-4" />
                                     {updateMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
                                   </Button>
                                 </div>
                               </form>
                             )
                           : (
-                              <div className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
+                              <div className="
+                                hover:bg-accent/50
+                                flex items-center justify-between rounded-lg
+                                border p-4 transition-colors
+                              "
+                              >
                                 <div className="flex items-center gap-4">
-                                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                    <IconAward className="h-5 w-5 text-primary" />
+                                  <div className="
+                                    bg-primary/10 flex h-10 w-10 items-center
+                                    justify-center rounded-lg
+                                  "
+                                  >
+                                    <IconAward className="text-primary h-5 w-5" />
                                   </div>
                                   <div>
                                     <h3 className="font-semibold">{track.name}</h3>
-                                    <div className="flex items-center gap-2 mt-1">
-                                      <Badge variant="outline" className="text-xs">
+                                    <div className="
+                                      mt-1 flex items-center gap-2
+                                    "
+                                    >
+                                      <Badge
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
                                         {track.code}
                                       </Badge>
-                                      <span className="text-xs text-muted-foreground">
+                                      <span className="
+                                        text-muted-foreground text-xs
+                                      "
+                                      >
                                         Créé le
                                         {' '}
                                         {new Date(track.createdAt).toLocaleDateString()}

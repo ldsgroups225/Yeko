@@ -26,23 +26,31 @@ class ErrorBoundaryComponent extends Component<Props, State> {
     return { hasError: true, error }
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo)
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       if (this.props.fallback) {
         return this.props.fallback
       }
 
       return (
-        <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-            <IconAlertTriangle className="h-6 w-6 text-destructive" />
+        <div className="
+          flex min-h-[400px] flex-col items-center justify-center p-8
+          text-center
+        "
+        >
+          <div className="
+            bg-destructive/10 mx-auto flex h-12 w-12 items-center justify-center
+            rounded-full
+          "
+          >
+            <IconAlertTriangle className="text-destructive h-6 w-6" />
           </div>
           <h3 className="mt-4 text-lg font-semibold">{this.props.t.common.somethingWentWrong()}</h3>
-          <p className="mt-2 text-sm text-muted-foreground max-w-sm">
+          <p className="text-muted-foreground mt-2 max-w-sm text-sm">
             {this.state.error?.message || this.props.t.common.unexpectedError()}
           </p>
           <Button

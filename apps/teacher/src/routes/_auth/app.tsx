@@ -14,9 +14,9 @@ function NotFoundComponent() {
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4">
-      <div className="text-center space-y-4">
-        <h1 className="text-6xl font-bold text-muted-foreground">404</h1>
-        <p className="text-xl text-muted-foreground">{LL.errors.notFound()}</p>
+      <div className="space-y-4 text-center">
+        <h1 className="text-muted-foreground text-6xl font-bold">404</h1>
+        <p className="text-muted-foreground text-xl">{LL.errors.notFound()}</p>
         <Button
           render={(
             <Link to="/app">

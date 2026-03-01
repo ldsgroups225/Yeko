@@ -136,6 +136,7 @@ export default defineConfig({
       'tailwind-merge',
       'xlsx',
       'xlsx-js-style',
+      'string_decoder',
     ],
     exclude: [],
   },

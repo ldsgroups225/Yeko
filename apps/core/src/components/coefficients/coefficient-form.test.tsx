@@ -160,7 +160,7 @@ function CoefficientForm({
   return (
     <div data-testid="coefficient-form">
       {/* Header Controls */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <h2>Gestion des Coefficients</h2>
         <div className="flex gap-2">
           <button
@@ -195,7 +195,7 @@ function CoefficientForm({
       {/* Coefficients Table */}
       {coefficients.length === 0
         ? (
-            <div data-testid="no-coefficients" className="text-center py-8">
+            <div data-testid="no-coefficients" className="py-8 text-center">
               <p>Aucun coefficient configuré</p>
               <button
                 type="button"
@@ -281,7 +281,10 @@ function CoefficientForm({
                                   coefficient.id,
                                   coefficient.weight,
                                 )}
-                              className="cursor-pointer hover:bg-muted px-2 py-1 rounded"
+                              className="
+                                hover:bg-muted
+                                cursor-pointer rounded-sm px-2 py-1
+                              "
                               data-testid={`weight-display-${coefficient.id}`}
                               role="button"
                               tabIndex={0}
@@ -315,7 +318,7 @@ function CoefficientForm({
           )}
 
       {/* Action Buttons */}
-      <div className="flex gap-2 mt-6">
+      <div className="mt-6 flex gap-2">
         <button type="button" onClick={onCancel} data-testid="cancel-button">
           Annuler
         </button>

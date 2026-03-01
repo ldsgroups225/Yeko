@@ -57,7 +57,7 @@ export function GradesSection({
         <h2 className="text-2xl font-bold">Niveau</h2>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={onExport} disabled={!grades || grades.length === 0}>
-            <IconDownload className="h-4 w-4 mr-2" />
+            <IconDownload className="mr-2 h-4 w-4" />
             Exporter
           </Button>
           <Button className="gap-2" onClick={() => setIsCreating(true)}>
@@ -75,7 +75,11 @@ export function GradesSection({
           </CardHeader>
           <CardContent>
             <form onSubmit={onCreate} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="
+                grid gap-4
+                md:grid-cols-3
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="grade-name">Nom *</Label>
                   <Input id="grade-name" name="name" placeholder="6ème" required />
@@ -107,11 +111,11 @@ export function GradesSection({
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
-                  <IconX className="h-4 w-4 mr-2" />
+                  <IconX className="mr-2 h-4 w-4" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={isPending.create}>
-                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="mr-2 h-4 w-4" />
                   {isPending.create ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -124,8 +128,12 @@ export function GradesSection({
         <Card key={track.id}>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                <IconSchool className="h-5 w-5 text-primary" />
+              <div className="
+                bg-primary/10 flex h-10 w-10 items-center justify-center
+                rounded-lg
+              "
+              >
+                <IconSchool className="text-primary h-5 w-5" />
               </div>
               <div>
                 <CardTitle>{track.name}</CardTitle>
@@ -140,7 +148,7 @@ export function GradesSection({
           <CardContent>
             {trackGrades.length === 0
               ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">Aucune niveau pour cette filière</p>
+                  <p className="text-muted-foreground py-4 text-center text-sm">Aucune niveau pour cette filière</p>
                 )
               : editingId && trackGrades.some(g => g.id === editingId)
                 ? (
@@ -149,8 +157,15 @@ export function GradesSection({
                         <div key={grade.id}>
                           {editingId === grade.id
                             ? (
-                                <form onSubmit={e => onUpdate(e, grade.id)} className="border rounded-lg p-4 space-y-4">
-                                  <div className="grid gap-4 md:grid-cols-3">
+                                <form
+                                  onSubmit={e => onUpdate(e, grade.id)}
+                                  className="space-y-4 rounded-lg border p-4"
+                                >
+                                  <div className="
+                                    grid gap-4
+                                    md:grid-cols-3
+                                  "
+                                  >
                                     <div className="space-y-2">
                                       <Label htmlFor={`edit-grade-name-${grade.id}`}>Nom *</Label>
                                       <Input id={`edit-grade-name-${grade.id}`} name="name" defaultValue={grade.name} required />
@@ -180,29 +195,52 @@ export function GradesSection({
                                       </SelectContent>
                                     </Select>
                                   </div>
-                                  <div className="flex nd gap-2">
+                                  <div className="nd flex gap-2">
                                     <Button type="button" variant="outline" onClick={() => setEditingId(null)}>
-                                      <IconX className="h-4 w-4 mr-2" />
+                                      <IconX className="mr-2 h-4 w-4" />
                                       Annuler
                                     </Button>
                                     <Button type="submit" disabled={isPending.update}>
-                                      <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                      <IconDeviceFloppy className="mr-2 h-4 w-4" />
                                       {isPending.update ? 'Enregistrement...' : 'Enregistrer'}
                                     </Button>
                                   </div>
                                 </form>
                               )
                             : (
-                                <div className="flex items-center justify-between border rounded-lg p-4 hover:bg-accent/50 transition-colors">
+                                <div className="
+                                  hover:bg-accent/50
+                                  flex items-center justify-between rounded-lg
+                                  border p-4 transition-colors
+                                "
+                                >
                                   <div className="flex items-center gap-4">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                      <IconSchool className="h-5 w-5 text-primary" />
+                                    <div className="
+                                      bg-primary/10 flex h-10 w-10 items-center
+                                      justify-center rounded-lg
+                                    "
+                                    >
+                                      <IconSchool className="
+                                        text-primary h-5 w-5
+                                      "
+                                      />
                                     </div>
                                     <div>
                                       <h3 className="font-semibold">{grade.name}</h3>
-                                      <div className="flex items-center gap-2 mt-1">
-                                        <Badge variant="outline" className="text-xs">{grade.code}</Badge>
-                                        <Badge variant="secondary" className="text-xs">
+                                      <div className="
+                                        mt-1 flex items-center gap-2
+                                      "
+                                      >
+                                        <Badge
+                                          variant="outline"
+                                          className="text-xs"
+                                        >
+                                          {grade.code}
+                                        </Badge>
+                                        <Badge
+                                          variant="secondary"
+                                          className="text-xs"
+                                        >
                                           Ordre:
                                           {grade.order}
                                         </Badge>

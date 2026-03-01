@@ -121,7 +121,11 @@ export function PaymentFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
+      <DialogContent className="
+        bg-card/95 border-border/40 rounded-3xl p-6 shadow-2xl backdrop-blur-xl
+        sm:max-w-[500px]
+      "
+      >
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {t.finance.payments.recordPayment()}
@@ -132,7 +136,7 @@ export function PaymentFormDialog({
                   <span>
                     {studentName}
                     {outstandingBalance !== undefined && (
-                      <span className="ml-2 text-orange-600 font-medium">
+                      <span className="ml-2 font-medium text-orange-600">
                         (
                         {formatCurrency(outstandingBalance)}
                         {' '}

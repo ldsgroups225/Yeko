@@ -35,7 +35,7 @@ export function SessionTimer({ startedAt, className }: SessionTimerProps) {
 
   return (
     <div className={className}>
-      <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+      <div className="text-muted-foreground flex items-center gap-1.5 text-sm">
         <IconClock className="h-4 w-4" />
         <span>{LL.session.timer()}</span>
       </div>

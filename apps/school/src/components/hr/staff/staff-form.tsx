@@ -67,19 +67,39 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+        className="
+          border-border/40 bg-card/50 rounded-xl border p-8 shadow-sm
+          backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-8">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="mb-8 flex items-center gap-2">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconInfoCircle className="h-4 w-4" />
           </div>
-          <h2 className="text-xl font-serif font-semibold">{t.hr.staff.basicInfo()}</h2>
+          <h2 className="font-serif text-xl font-semibold">{t.hr.staff.basicInfo()}</h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="
+          grid gap-6
+          md:grid-cols-2
+        "
+        >
           {!isEditing && (
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="userId" className="flex items-center gap-1.5 font-semibold text-foreground">
+            <div className="
+              space-y-2
+              md:col-span-2
+            "
+            >
+              <Label
+                htmlFor="userId"
+                className="
+                  text-foreground flex items-center gap-1.5 font-semibold
+                "
+              >
                 {t.hr.staff.selectUser()}
                 <span className="text-destructive">*</span>
               </Label>
@@ -88,17 +108,28 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                 value={watch('userId')}
                 onSelect={userId => setValue('userId', userId)}
               />
-              <p className="text-[10px] text-muted-foreground ml-1">
+              <p className="text-muted-foreground ml-1 text-[10px]">
                 {t.hr.staff.userIdHelp()}
               </p>
               {errors.userId && (
-                <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.userId.message)}</motion.p>
+                <motion.p
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="text-destructive text-xs font-medium"
+                >
+                  {String(errors.userId.message)}
+                </motion.p>
               )}
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="position" className="flex items-center gap-1.5 font-semibold text-foreground">
+            <Label
+              htmlFor="position"
+              className="
+                text-foreground flex items-center gap-1.5 font-semibold
+              "
+            >
               {t.hr.staff.position()}
               <span className="text-destructive">*</span>
             </Label>
@@ -108,7 +139,12 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                 setValue('position', value as StaffFormData['position'], { shouldValidate: true })
               }}
             >
-              <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
+              <SelectTrigger className="
+                border-border/40 bg-background/50
+                focus:bg-background
+                h-11 rounded-xl transition-all
+              "
+              >
                 <SelectValue placeholder={t.hr.staff.selectPosition()}>
                   {watch('position')
                     ? (() => {
@@ -122,7 +158,10 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                         }
                         return (
                           <div className="flex items-center gap-2">
-                            <IconBriefcase className="h-3.5 w-3.5 text-muted-foreground" />
+                            <IconBriefcase className="
+                              text-muted-foreground h-3.5 w-3.5
+                            "
+                            />
                             {positionTranslations[watch('position') as keyof typeof positionTranslations]()}
                           </div>
                         )
@@ -130,7 +169,10 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                     : null}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+              <SelectContent className="
+                bg-popover/90 border-border/40 rounded-xl backdrop-blur-2xl
+              "
+              >
                 {staffPositions.map((position) => {
                   const positionTranslations = {
                     academic_coordinator: t.hr.positions.academic_coordinator,
@@ -141,9 +183,16 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
                     other: t.hr.positions.other,
                   }
                   return (
-                    <SelectItem key={position} value={position} className="rounded-lg py-2.5">
+                    <SelectItem
+                      key={position}
+                      value={position}
+                      className="rounded-lg py-2.5"
+                    >
                       <div className="flex items-center gap-2">
-                        <IconBriefcase className="h-3.5 w-3.5 text-muted-foreground" />
+                        <IconBriefcase className="
+                          text-muted-foreground h-3.5 w-3.5
+                        "
+                        />
                         {positionTranslations[position]()}
                       </div>
                     </SelectItem>
@@ -152,22 +201,37 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
               </SelectContent>
             </Select>
             {errors.position && (
-              <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.position.message)}</motion.p>
+              <motion.p
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-destructive text-xs font-medium"
+              >
+                {String(errors.position.message)}
+              </motion.p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="department" className="font-semibold text-foreground">{t.hr.staff.department()}</Label>
+            <Label
+              htmlFor="department"
+              className="text-foreground font-semibold"
+            >
+              {t.hr.staff.department()}
+            </Label>
             <Input
               id="department"
               {...register('department')}
               placeholder={t.hr.staff.departmentPlaceholder()}
-              className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all"
+              className="
+                border-border/40 bg-background/50
+                focus:bg-background
+                h-11 rounded-xl transition-all
+              "
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="hireDate" className="font-semibold text-foreground">{t.hr.staff.hireDate()}</Label>
+            <Label htmlFor="hireDate" className="text-foreground font-semibold">{t.hr.staff.hireDate()}</Label>
             <DatePicker
               captionLayout="dropdown"
               date={watch('hireDate') || undefined}
@@ -177,7 +241,12 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="status" className="flex items-center gap-1.5 font-semibold text-foreground">
+            <Label
+              htmlFor="status"
+              className="
+                text-foreground flex items-center gap-1.5 font-semibold
+              "
+            >
               {t.hr.common.status()}
               <span className="text-destructive">*</span>
             </Label>
@@ -185,71 +254,96 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
               value={watch('status')}
               onValueChange={value => setValue('status', value as 'active' | 'inactive' | 'on_leave')}
             >
-              <SelectTrigger className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all">
+              <SelectTrigger className="
+                border-border/40 bg-background/50
+                focus:bg-background
+                h-11 rounded-xl transition-all
+              "
+              >
                 <SelectValue>
                   {watch('status') === 'active'
                     ? (
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-success" />
+                          <div className="bg-success h-2 w-2 rounded-full" />
                           {t.hr.status.active()}
                         </div>
                       )
                     : watch('status') === 'inactive'
                       ? (
                           <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                            <div className="
+                              bg-muted-foreground h-2 w-2 rounded-full
+                            "
+                            />
                             {t.hr.status.inactive()}
                           </div>
                         )
                       : (
                           <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-accent" />
+                            <div className="bg-accent h-2 w-2 rounded-full" />
                             {t.hr.status.on_leave()}
                           </div>
                         )}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+              <SelectContent className="
+                bg-popover/90 border-border/40 rounded-xl backdrop-blur-2xl
+              "
+              >
                 <SelectItem value="active" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-success" />
+                    <div className="bg-success h-2 w-2 rounded-full" />
                     {t.hr.status.active()}
                   </div>
                 </SelectItem>
                 <SelectItem value="inactive" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                    <div className="bg-muted-foreground h-2 w-2 rounded-full" />
                     {t.hr.status.inactive()}
                   </div>
                 </SelectItem>
                 <SelectItem value="on_leave" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-accent" />
+                    <div className="bg-accent h-2 w-2 rounded-full" />
                     {t.hr.status.on_leave()}
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
             {errors.status && (
-              <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.status.message)}</motion.p>
+              <motion.p
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-destructive text-xs font-medium"
+              >
+                {String(errors.status.message)}
+              </motion.p>
             )}
           </div>
         </div>
       </motion.div>
 
-      <div className="flex justify-end items-center gap-4">
+      <div className="flex items-center justify-end gap-4">
         <Button
           type="button"
           variant="ghost"
           disabled={isSubmitting}
-          className="rounded-xl px-6 hover:bg-muted font-medium"
+          className="
+            hover:bg-muted
+            rounded-xl px-6 font-medium
+          "
         >
           {t.common.cancel()}
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-xl px-8 min-w-[140px] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20"
+          className="
+            shadow-primary/20 min-w-[140px] rounded-xl px-8 font-semibold
+            shadow-lg transition-all
+            hover:scale-[1.02]
+            active:scale-[0.98]
+          "
         >
           {isSubmitting
             ? (

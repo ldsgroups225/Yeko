@@ -57,7 +57,11 @@ export function AdminDashboard() {
         t={t}
       />
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="
+        grid gap-4
+        lg:grid-cols-3
+      "
+      >
         <QuickActionsSection t={t} />
       </div>
 
@@ -73,18 +77,35 @@ function DashboardSkeleton() {
         <Skeleton className="h-9 w-64" />
         <Skeleton className="mt-2 h-5 w-96" />
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-4
+      "
+      >
         {Array.from({ length: 4 }, (_, i) => `metric-${i}`).map(key => (
           <Skeleton key={key} className="h-32 rounded-xl" />
         ))}
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="
+        grid gap-4
+        lg:grid-cols-2
+      "
+      >
         <Skeleton className="h-[380px] rounded-xl" />
         <Skeleton className="h-[380px] rounded-xl" />
       </div>
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="
+        grid gap-4
+        lg:grid-cols-3
+      "
+      >
         <Skeleton className="h-[300px] rounded-xl" />
-        <Skeleton className="lg:col-span-2 h-[300px] rounded-xl" />
+        <Skeleton className="
+          h-[300px] rounded-xl
+          lg:col-span-2
+        "
+        />
       </div>
     </div>
   )

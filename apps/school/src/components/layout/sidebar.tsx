@@ -7,6 +7,7 @@ import {
   IconLayoutDashboard,
   IconSettings,
   IconUserCheck,
+  IconUserPlus,
   IconUsers,
   IconUserScreen,
 } from '@tabler/icons-react'
@@ -63,10 +64,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             permission: { resource: 'classes', action: 'view' },
           },
           {
-            title: t.sidebar.personnel(),
-            href: '/users',
-            icon: IconUsers,
-            permission: { resource: 'users', action: 'view' },
+            title: t.nav.teachers(),
+            href: '/teachers',
+            icon: IconUserCheck,
+            permission: { resource: 'teachers', action: 'view' },
           },
         ],
       },
@@ -103,6 +104,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t.sidebar.system(),
         items: [
           {
+            title: t.nav.approbations(),
+            href: '/approbations',
+            icon: IconUserPlus,
+            permission: { resource: 'students', action: 'view' },
+          },
+          {
             title: t.nav.programs(),
             href: '/programs/curriculum-progress',
             icon: IconBook,
@@ -138,32 +145,70 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-border/40 bg-white/70 backdrop-blur-2xl dark:bg-card/70 transition-all duration-300"
+      className="
+        border-border/40
+        dark:bg-card/70
+        border-r bg-white/70 backdrop-blur-2xl transition-all duration-300
+      "
       {...props}
     >
-      <SidebarHeader className={`border-b border-border/5 transition-all duration-200 ${isCollapsed ? 'p-2 flex items-center justify-center' : 'p-6'}`}>
+      <SidebarHeader className={`
+        border-border/5 border-b transition-all duration-200
+        ${isCollapsed
+      ? `flex items-center justify-center p-2`
+      : `p-6`}
+      `}
+      >
         <motion.div
-          className={`flex items-center transition-all duration-200 ${isCollapsed ? 'justify-center' : 'gap-4'}`}
+          className={`
+            flex items-center transition-all duration-200
+            ${isCollapsed
+      ? `justify-center`
+      : `gap-4`}
+          `}
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <div className="relative group shrink-0">
+          <div className="group relative shrink-0">
             <img
               src="/icon.png"
               alt="Yeko logo"
-              className={`rounded-lg object-contain shadow-lg shadow-primary/20 ring-1 ring-border/10 transition-all duration-200 group-hover:scale-110 ${isCollapsed ? 'size-8' : 'size-12'}`}
+              className={`
+                shadow-primary/20 ring-border/10 rounded-lg object-contain
+                shadow-lg ring-1 transition-all duration-200
+                group-hover:scale-110
+                ${isCollapsed
+      ? `size-8`
+      : `size-12`}
+              `}
             />
-            <div className="absolute inset-0 rounded-lg bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="
+              bg-primary/5 absolute inset-0 rounded-lg opacity-0
+              transition-opacity
+              group-hover:opacity-100
+            "
+            />
           </div>
           {!isCollapsed && (
             <div className="flex flex-col gap-0.5 overflow-hidden">
-              <span className="truncate text-lg font-black tracking-tight text-foreground/90 font-outfit uppercase">
+              <span className="
+                text-foreground/90 font-outfit truncate text-lg font-black
+                tracking-tight uppercase
+              "
+              >
                 {t.sidebar.schoolName()}
               </span>
               <div className="flex items-center gap-1.5">
-                <span className="shrink-0 size-1.5 rounded-full bg-primary animate-pulse" />
-                <span className="truncate text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">
+                <span className="
+                  bg-primary size-1.5 shrink-0 animate-pulse rounded-full
+                "
+                />
+                <span className="
+                  text-muted-foreground/60 truncate text-[10px] font-bold
+                  tracking-[0.2em] uppercase
+                "
+                >
                   {t.sidebar.schoolSubtitle()}
                 </span>
               </div>
@@ -171,10 +216,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           )}
         </motion.div>
       </SidebarHeader>
-      <SidebarContent className={`scrollbar-none overflow-x-hidden ${isCollapsed ? '' : 'px-2'}`}>
+      <SidebarContent className={`
+        scrollbar-none overflow-x-hidden
+        ${isCollapsed
+      ? ''
+      : `px-2`}
+      `}
+      >
         {sections.map(section => (
           <SidebarGroup key={section.title} className={isCollapsed ? 'px-1' : undefined}>
-            <SidebarGroupLabel className="text-xs font-bold uppercase tracking-wider text-muted-foreground/70 px-4 mb-2 mt-2">
+            <SidebarGroupLabel className="
+              text-muted-foreground/70 mt-2 mb-2 px-4 text-xs font-bold
+              tracking-wider uppercase
+            "
+            >
               {section.title}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -188,16 +243,39 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         onClick={() => navigate({ to: item.href })}
                         isActive={isActive}
                         tooltip={item.title}
-                        className={`transition-all duration-200 ${isActive ? 'bg-primary/10 text-primary shadow-sm' : `hover:bg-sidebar-accent/50 ${isCollapsed ? '' : 'hover:pl-4'}`}`}
+                        className={`
+                          transition-all duration-200
+                          ${isActive
+                      ? `bg-primary/10 text-primary shadow-sm`
+                      : `
+                        hover:bg-sidebar-accent/50
+                        ${isCollapsed
+                      ? ''
+                      : `hover:pl-4`}
+                      `}
+                        `}
                       >
                         <item.icon
-                          className={`size-4 shrink-0 transition-transform duration-300 group-hover:scale-110 ${isActive ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground'}`}
+                          className={`
+                            size-4 shrink-0 transition-transform duration-300
+                            group-hover:scale-110
+                            ${isActive
+                      ? `text-primary scale-110`
+                      : `
+                        text-muted-foreground
+                        group-hover:text-foreground
+                      `}
+                          `}
                         />
                         <span className="font-medium">{item.title}</span>
                         {(isActive && !isCollapsed) && (
                           <motion.div
                             layoutId="active-nav-indicator"
-                            className="absolute left-0 top-1/2 h-7 w-1.5 -translate-y-1/2 rounded-l-full bg-primary shadow-[0_0_12px_rgba(59,130,246,0.6)]"
+                            className="
+                              bg-primary absolute top-1/2 left-0 h-7 w-1.5
+                              -translate-y-1/2 rounded-l-full
+                              shadow-[0_0_12px_rgba(59,130,246,0.6)]
+                            "
                           />
                         )}
                       </SidebarMenuButton>

@@ -83,14 +83,20 @@ export function ParentFormDialog({ open, onOpenChange, parent }: ParentFormDialo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="
+        bg-card/95 border-border/40 max-w-lg backdrop-blur-xl
+      "
+      >
         <DialogHeader>
           <DialogTitle>{isEditing ? t.parents.editParent() : t.parents.addParent()}</DialogTitle>
           <DialogDescription>{isEditing ? t.parents.editParentDescription() : t.parents.addParentDescription()}</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(d => isEditing ? updateMutation.mutate(d) : createMutation.mutate(d))} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(d => isEditing ? updateMutation.mutate(d) : createMutation.mutate(d))}
+            className="space-y-4"
+          >
             <ParentFormFields form={form} />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t.common.cancel()}</Button>

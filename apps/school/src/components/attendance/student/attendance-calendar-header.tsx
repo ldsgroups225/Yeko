@@ -12,37 +12,78 @@ export function AttendanceCalendarHeader() {
   const { handlePrevMonth, handleNextMonth } = actions
 
   return (
-    <CardHeader className="relative border-b border-border/10 bg-muted/20 pb-4 pt-4">
+    <CardHeader className="
+      border-border/10 bg-muted/20 relative border-b pt-4 pb-4
+    "
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Avatar className="h-10 w-10 rounded-2xl border border-primary/20 shadow-lg">
+            <Avatar className="
+              border-primary/20 h-10 w-10 rounded-2xl border shadow-lg
+            "
+            >
               <AvatarImage src={studentPhoto ?? undefined} alt={studentName} />
-              <AvatarFallback className="bg-primary/10 text-primary font-black uppercase tracking-widest text-[10px]">
+              <AvatarFallback className="
+                bg-primary/10 text-primary text-[10px] font-black
+                tracking-widest uppercase
+              "
+              >
                 {studentName.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-1 -right-1 p-1 rounded-lg bg-background border border-border/40 shadow-sm">
-              <IconCalendar className="size-2.5 text-primary" />
+            <div className="
+              bg-background border-border/40 absolute -right-1 -bottom-1
+              rounded-lg border p-1 shadow-sm
+            "
+            >
+              <IconCalendar className="text-primary size-2.5" />
             </div>
           </div>
           <div>
-            <CardTitle className="text-sm font-black uppercase italic tracking-tight">
+            <CardTitle className="
+              text-sm font-black tracking-tight uppercase italic
+            "
+            >
               {studentName}
             </CardTitle>
-            <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+            <p className="
+              text-muted-foreground/40 text-[10px] font-bold tracking-widest
+              uppercase italic
+            "
+            >
               {t.attendance.history()}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" onClick={handlePrevMonth} className="h-8 w-8 rounded-lg hover:bg-primary/5">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handlePrevMonth}
+            className="
+              hover:bg-primary/5
+              h-8 w-8 rounded-lg
+            "
+          >
             <IconChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-[10px] font-black uppercase tracking-widest w-28 text-center italic">
+          <span className="
+            w-28 text-center text-[10px] font-black tracking-widest uppercase
+            italic
+          "
+          >
             {monthName}
           </span>
-          <Button variant="ghost" size="icon" onClick={handleNextMonth} className="h-8 w-8 rounded-lg hover:bg-primary/5">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleNextMonth}
+            className="
+              hover:bg-primary/5
+              h-8 w-8 rounded-lg
+            "
+          >
             <IconChevronRight className="h-4 w-4" />
           </Button>
         </div>

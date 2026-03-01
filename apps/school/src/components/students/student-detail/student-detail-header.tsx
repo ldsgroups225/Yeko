@@ -27,51 +27,97 @@ export function StudentDetailHeader({ student, studentId, onEditPhoto }: Student
   const t = useTranslations()
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-border/20 bg-linear-to-br from-primary/10 via-background/50 to-background/80 p-8 backdrop-blur-2xl dark:from-primary/10 dark:via-card/50 dark:to-card/80">
-      <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-primary/20 blur-3xl opacity-50" />
+    <div className="
+      border-border/20 from-primary/10 via-background/50 to-background/80
+      dark:from-primary/10 dark:via-card/50 dark:to-card/80
+      relative overflow-hidden rounded-3xl border bg-linear-to-br p-8
+      backdrop-blur-2xl
+    "
+    >
+      <div className="
+        bg-primary/20 absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64
+        rounded-full opacity-50 blur-3xl
+      "
+      />
 
-      <div className="relative z-10 flex flex-col items-center gap-6 md:flex-row md:items-start md:justify-between">
-        <div className="flex flex-col items-center gap-6 md:flex-row">
+      <div className="
+        relative z-10 flex flex-col items-center gap-6
+        md:flex-row md:items-start md:justify-between
+      "
+      >
+        <div className="
+          flex flex-col items-center gap-6
+          md:flex-row
+        "
+        >
           <button
             type="button"
             onClick={onEditPhoto}
             className="group relative cursor-pointer"
             title={t.students.changePhoto()}
           >
-            <div className="relative h-28 w-28 rounded-full border-4 border-white overflow-hidden dark:border-border/10">
+            <div className="
+              dark:border-border/10
+              relative h-28 w-28 overflow-hidden rounded-full border-4
+              border-white
+            "
+            >
               <Avatar className="h-full w-full">
                 <AvatarImage
                   src={student.photoUrl ?? undefined}
                   className="object-cover"
                 />
-                <AvatarFallback className="text-3xl font-bold bg-primary/10 text-primary">
+                <AvatarFallback className="
+                  bg-primary/10 text-primary text-3xl font-bold
+                "
+                >
                   {student.firstName?.[0] || '?'}
                   {student.lastName?.[0] || '?'}
                 </AvatarFallback>
               </Avatar>
-              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className="
+                absolute inset-0 flex items-center justify-center bg-black/40
+                opacity-0 transition-opacity duration-300
+                group-hover:opacity-100
+              "
+              >
                 <IconEdit className="h-8 w-8 text-white drop-shadow-md" />
               </div>
             </div>
           </button>
 
-          <div className="text-center md:text-left space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-foreground">
+          <div className="
+            space-y-2 text-center
+            md:text-left
+          "
+          >
+            <h1 className="text-foreground text-4xl font-bold tracking-tight">
               {student.lastName}
               {' '}
-              <span className="font-light text-muted-foreground">
+              <span className="text-muted-foreground font-light">
                 {student.firstName}
               </span>
             </h1>
-            <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
+            <div className="
+              flex flex-wrap items-center justify-center gap-3
+              md:justify-start
+            "
+            >
               <Badge
                 variant="outline"
-                className="text-sm px-3 py-1 font-mono uppercase tracking-widest bg-white/50 dark:bg-card/20"
+                className="
+                  dark:bg-card/20
+                  bg-white/50 px-3 py-1 font-mono text-sm tracking-widest
+                  uppercase
+                "
               >
                 {student.matricule}
               </Badge>
               <Badge
-                className={`${statusColors[student.status as keyof typeof statusColors]} border-0 px-3 py-1 text-sm shadow-none`}
+                className={`
+                  ${statusColors[student.status as keyof typeof statusColors]}
+                  border-0 px-3 py-1 text-sm shadow-none
+                `}
               >
                 {{
                   active: t.students.statusActive,
@@ -98,7 +144,10 @@ export function StudentDetailHeader({ student, studentId, onEditPhoto }: Student
             </Link>
           )}
           size="lg"
-          className="rounded-full shadow-sm hover:shadow-md"
+          className="
+            rounded-full shadow-sm
+            hover:shadow-md
+          "
         />
       </div>
     </div>

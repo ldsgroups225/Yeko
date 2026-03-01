@@ -27,16 +27,22 @@ export function ClassesTableMobile() {
 
   if (isPending) {
     return (
-      <div className="space-y-3 md:hidden">
+      <div className="
+        space-y-3
+        md:hidden
+      "
+      >
         {Array.from({ length: 5 }, () => (
           <div
             key={`card-skeleton-${Math.random()}`}
-            className="rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-sm"
+            className="
+              border-border/40 bg-card/50 rounded-xl border p-4 backdrop-blur-sm
+            "
           >
             <div className="flex items-center gap-3">
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-32 bg-muted animate-pulse rounded" />
-                <div className="h-3 w-24 bg-muted animate-pulse rounded" />
+                <div className="bg-muted h-4 w-32 animate-pulse rounded-sm" />
+                <div className="bg-muted h-3 w-24 animate-pulse rounded-sm" />
               </div>
             </div>
           </div>
@@ -47,12 +53,18 @@ export function ClassesTableMobile() {
 
   if (data?.length === 0) {
     return (
-      <div className="md:hidden flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-dashed border-border/40 bg-card/50 p-8 text-center backdrop-blur-sm">
-        <IconUsers className="mx-auto h-12 w-12 text-muted-foreground/50" />
+      <div className="
+        border-border/40 bg-card/50 flex min-h-[300px] flex-col items-center
+        justify-center rounded-xl border border-dashed p-8 text-center
+        backdrop-blur-sm
+        md:hidden
+      "
+      >
+        <IconUsers className="text-muted-foreground/50 mx-auto h-12 w-12" />
         <h3 className="mt-4 text-lg font-semibold">
           {t.tables.noClassesFound()}
         </h3>
-        <p className="mt-2 max-w-sm text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-2 max-w-sm text-sm">
           {t.tables.createFirstClass()}
         </p>
       </div>
@@ -60,7 +72,11 @@ export function ClassesTableMobile() {
   }
 
   return (
-    <div className="space-y-3 md:hidden">
+    <div className="
+      space-y-3
+      md:hidden
+    "
+    >
       <AnimatePresence>
         {data?.map((item, index) => (
           <motion.div
@@ -69,7 +85,10 @@ export function ClassesTableMobile() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ delay: index * 0.05 }}
-            className="rounded-xl border border-border/40 bg-card/50 p-4 shadow-sm backdrop-blur-xl"
+            className="
+              border-border/40 bg-card/50 rounded-xl border p-4 shadow-sm
+              backdrop-blur-xl
+            "
           >
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
@@ -77,7 +96,11 @@ export function ClassesTableMobile() {
                   checked={selectedRows.includes(item.class.id)}
                   onCheckedChange={checked =>
                     handleSelectRow(item.class.id, !!checked)}
-                  className="mr-2 border-primary/50 data-[state=checked]:border-primary"
+                  className="
+                    border-primary/50
+                    data-[state=checked]:border-primary
+                    mr-2
+                  "
                 />
                 <div
                   onClick={() =>
@@ -91,7 +114,7 @@ export function ClassesTableMobile() {
                     }
                   }}
                 >
-                  <p className="font-medium text-foreground">
+                  <p className="text-foreground font-medium">
                     {item.grade.name}
                     {' '}
                     {item.series?.name}
@@ -100,7 +123,7 @@ export function ClassesTableMobile() {
                       {item.class.section}
                     </span>
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {item.classroom?.name || t.classes.noClassroom()}
                   </p>
                 </div>
@@ -119,7 +142,9 @@ export function ClassesTableMobile() {
                 />
                 <DropdownMenuContent
                   align="end"
-                  className="backdrop-blur-xl bg-popover/90 border border-border/40"
+                  className="
+                    bg-popover/90 border-border/40 border backdrop-blur-xl
+                  "
                 >
                   <DropdownMenuItem
                     onClick={() => {
@@ -132,7 +157,10 @@ export function ClassesTableMobile() {
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => setClassToDelete(item)}
-                    className="text-destructive focus:text-destructive"
+                    className="
+                      text-destructive
+                      focus:text-destructive
+                    "
                   >
                     <IconTrash className="mr-2 h-4 w-4" />
                     {t.common.delete()}

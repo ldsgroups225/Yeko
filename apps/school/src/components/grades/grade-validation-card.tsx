@@ -50,49 +50,93 @@ export function GradeValidationCard({
       animate={{ opacity: 1, scale: 1 }}
       className={cn('group', className)}
     >
-      <Card className="overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl transition-all group-hover:shadow-primary/10">
+      <Card className="
+        border-border/40 bg-card/30
+        group-hover:shadow-primary/10
+        overflow-hidden rounded-2xl shadow-xl backdrop-blur-xl transition-all
+      "
+      >
         <CardHeader className="pb-4">
           <div className="flex items-start justify-between">
             <div className="flex gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary group-hover:scale-110 transition-transform shadow-inner">
+              <div className="
+                bg-primary/10 text-primary flex h-12 w-12 items-center
+                justify-center rounded-2xl shadow-inner transition-transform
+                group-hover:scale-110
+              "
+              >
                 <IconFileText className="size-6" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-bold tracking-tight text-foreground leading-none">
+                  <h3 className="
+                    text-foreground text-lg leading-none font-bold
+                    tracking-tight
+                  "
+                  >
                     {validation.gradeName}
                   </h3>
-                  <div className="h-1 w-1 rounded-full bg-border" />
-                  <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider">{validation.className}</span>
+                  <div className="bg-border h-1 w-1 rounded-full" />
+                  <span className="
+                    text-muted-foreground text-sm font-bold tracking-wider
+                    uppercase
+                  "
+                  >
+                    {validation.className}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2 text-sm font-semibold text-primary/60">
+                <div className="
+                  text-primary/60 flex items-center gap-2 text-sm font-semibold
+                "
+                >
                   {validation.subjectName}
                 </div>
               </div>
             </div>
-            <div className="rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-primary border border-primary/20 shadow-sm">
+            <div className="
+              bg-primary/10 text-primary border-primary/20 rounded-full border
+              px-3 py-1 text-[10px] font-bold tracking-widest uppercase
+              shadow-sm
+            "
+            >
               {t.academic.grades.validations.pendingCount({ count: validation.pendingCount })}
             </div>
           </div>
         </CardHeader>
 
         <CardContent className="pb-6">
-          <div className="flex flex-col gap-3 p-4 rounded-xl bg-muted/30 border border-border/20">
+          <div className="
+            bg-muted/30 border-border/20 flex flex-col gap-3 rounded-xl border
+            p-4
+          "
+          >
             <div className="flex items-center gap-2 text-sm">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-background/50 border border-border/40">
-                <IconUser className="size-3 text-muted-foreground" />
+              <div className="
+                bg-background/50 border-border/40 flex h-6 w-6 items-center
+                justify-center rounded-full border
+              "
+              >
+                <IconUser className="text-muted-foreground size-3" />
               </div>
-              <span className="text-muted-foreground italic truncate">
+              <span className="text-muted-foreground truncate italic">
                 {t.academic.grades.validations.submittedBy()}
                 :
-                <span className="text-foreground font-bold not-italic ml-1">{validation.teacherName}</span>
+                <span className="text-foreground ml-1 font-bold not-italic">{validation.teacherName}</span>
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs">
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-background/50 border border-border/40">
-                <IconClock className="size-3 text-muted-foreground" />
+              <div className="
+                bg-background/50 border-border/40 flex h-6 w-6 items-center
+                justify-center rounded-full border
+              "
+              >
+                <IconClock className="text-muted-foreground size-3" />
               </div>
-              <span className="text-muted-foreground font-medium uppercase tracking-wider opacity-60">
+              <span className="
+                text-muted-foreground font-medium tracking-wider uppercase
+                opacity-60
+              "
+              >
                 {t.academic.grades.validations.submittedAt()}
                 {' '}
                 {timeAgo}
@@ -101,13 +145,16 @@ export function GradeValidationCard({
           </div>
         </CardContent>
 
-        <CardFooter className="gap-3 p-4 bg-muted/20 border-t border-border/20">
+        <CardFooter className="bg-muted/20 border-border/20 gap-3 border-t p-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={onViewDetails}
             disabled={isPending}
-            className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80"
+            className="
+              hover:bg-background/80
+              flex-1 rounded-xl text-[10px] font-bold tracking-widest uppercase
+            "
           >
             {t.academic.grades.validations.viewDetails()}
             <IconChevronRight className="ml-1 size-3" />
@@ -118,7 +165,12 @@ export function GradeValidationCard({
             size="sm"
             onClick={onReject}
             disabled={isPending}
-            className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] border-destructive/30 text-destructive hover:bg-destructive hover:text-destructive-foreground transition-all shadow-sm"
+            className="
+              border-destructive/30 text-destructive
+              hover:bg-destructive hover:text-destructive-foreground
+              flex-1 rounded-xl text-[10px] font-bold tracking-widest uppercase
+              shadow-sm transition-all
+            "
           >
             <IconCircleX className="mr-1.5 size-3.5" />
             {t.academic.grades.validations.reject()}
@@ -129,7 +181,12 @@ export function GradeValidationCard({
             size="sm"
             onClick={onValidate}
             disabled={isPending}
-            className="flex-1 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-success hover:bg-success/90 shadow-lg shadow-success/20"
+            className="
+              bg-success
+              hover:bg-success/90
+              shadow-success/20 flex-1 rounded-xl text-[10px] font-bold
+              tracking-widest uppercase shadow-lg
+            "
           >
             <IconCircleCheck className="mr-1.5 size-3.5" />
             {t.academic.grades.validations.validate()}

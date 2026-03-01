@@ -87,8 +87,18 @@ export function SessionFinalizationSheet({
         onOpenChange(isOpen)
       }}
     >
-      <SheetContent side="bottom" className="rounded-t-[2.5rem] p-0 overflow-hidden border-t-0 bg-background max-w-2xl mx-auto max-h-[90vh] overflow-y-auto">
-        <SheetHeader className="p-6 pb-4 flex flex-row items-center justify-between border-b border-border/40">
+      <SheetContent
+        side="bottom"
+        className="
+          bg-background mx-auto max-h-[90vh] max-w-2xl overflow-hidden
+          overflow-y-auto rounded-t-[2.5rem] border-t-0 p-0
+        "
+      >
+        <SheetHeader className="
+          border-border/40 flex flex-row items-center justify-between border-b
+          p-6 pb-4
+        "
+        >
           <div className="space-y-1">
             <SheetTitle className="text-xl font-black">
               {LL.session.finalize()}
@@ -97,54 +107,79 @@ export function SessionFinalizationSheet({
               {LL.session.confirmLessonProgress()}
             </SheetDescription>
           </div>
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 font-bold uppercase tracking-widest text-[10px] px-3 py-1">
+          <Badge
+            variant="outline"
+            className="
+              bg-primary/10 text-primary border-primary/20 px-3 py-1 text-[10px]
+              font-bold tracking-widest uppercase
+            "
+          >
             {LL.session.completed()}
           </Badge>
         </SheetHeader>
 
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           {/* Session Summary */}
-          <div className="rounded-2xl bg-muted/30 border border-border/50 p-4 space-y-4">
-            <h4 className="font-black text-foreground flex items-center gap-2">
-              <IconBook className="w-5 h-5 text-primary" />
+          <div className="
+            bg-muted/30 border-border/50 space-y-4 rounded-2xl border p-4
+          "
+          >
+            <h4 className="text-foreground flex items-center gap-2 font-black">
+              <IconBook className="text-primary h-5 w-5" />
               {LL.session.summary()}
             </h4>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <span className="
+                  text-muted-foreground text-[10px] font-black tracking-widest
+                  uppercase
+                "
+                >
                   {LL.session.statsPresent()}
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-black text-emerald-500">{attendanceStats.present}</span>
-                  <span className="text-sm text-muted-foreground">{LL.common.students()}</span>
+                  <span className="text-muted-foreground text-sm">{LL.common.students()}</span>
                 </div>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <span className="
+                  text-muted-foreground text-[10px] font-black tracking-widest
+                  uppercase
+                "
+                >
                   {LL.session.statsAbsent()}
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="text-xl font-black text-red-500">{attendanceStats.absent}</span>
-                  <span className="text-sm text-muted-foreground">{LL.common.students()}</span>
+                  <span className="text-muted-foreground text-sm">{LL.common.students()}</span>
                 </div>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <span className="
+                  text-muted-foreground text-[10px] font-black tracking-widest
+                  uppercase
+                "
+                >
                   {LL.session.statsLate()}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-black text-accent">{attendanceStats.late}</span>
-                  <span className="text-sm text-muted-foreground">{LL.common.students()}</span>
+                  <span className="text-accent text-xl font-black">{attendanceStats.late}</span>
+                  <span className="text-muted-foreground text-sm">{LL.common.students()}</span>
                 </div>
               </div>
               <div className="space-y-1">
-                <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <span className="
+                  text-muted-foreground text-[10px] font-black tracking-widest
+                  uppercase
+                "
+                >
                   {LL.session.statsParticipated()}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xl font-black text-primary">{participationStats.participatedCount}</span>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-primary text-xl font-black">{participationStats.participatedCount}</span>
+                  <span className="text-muted-foreground text-sm">
                     /
                     {participationStats.totalStudents}
                   </span>
@@ -154,10 +189,13 @@ export function SessionFinalizationSheet({
           </div>
 
           {/* Homework Section */}
-          <div className="rounded-2xl bg-muted/30 border border-border/50 p-4 space-y-4">
+          <div className="
+            bg-muted/30 border-border/50 space-y-4 rounded-2xl border p-4
+          "
+          >
             <div className="flex items-center justify-between">
-              <h4 className="font-black text-foreground flex items-center gap-2">
-                <IconHome className="w-5 h-5 text-primary" />
+              <h4 className="text-foreground flex items-center gap-2 font-black">
+                <IconHome className="text-primary h-5 w-5" />
                 {LL.session.homeworkQuestion()}
               </h4>
               <div className="flex items-center gap-2">
@@ -167,7 +205,7 @@ export function SessionFinalizationSheet({
                   onClick={() => setShowHomeworkForm(true)}
                   className="h-8"
                 >
-                  <IconCheck className="w-4 h-4 mr-1" />
+                  <IconCheck className="mr-1 h-4 w-4" />
                   {LL.common.yes()}
                 </Button>
                 <Button
@@ -176,14 +214,14 @@ export function SessionFinalizationSheet({
                   onClick={() => setShowHomeworkForm(false)}
                   className="h-8"
                 >
-                  <IconX className="w-4 h-4 mr-1" />
+                  <IconX className="mr-1 h-4 w-4" />
                   {LL.common.no()}
                 </Button>
               </div>
             </div>
 
             {showHomeworkForm && (
-              <div className="space-y-4 pt-2 border-t border-border/40">
+              <div className="border-border/40 space-y-4 border-t pt-2">
                 <div className="space-y-2">
                   <Label htmlFor="homework-title">{LL.homework.titleField()}</Label>
                   <Input
@@ -201,7 +239,7 @@ export function SessionFinalizationSheet({
                     value={homeworkDescription}
                     onChange={e => setHomeworkDescription(e.target.value)}
                     placeholder={LL.homework.descriptionPlaceholder()}
-                    className="rounded-xl resize-none"
+                    className="resize-none rounded-xl"
                     rows={3}
                   />
                 </div>
@@ -220,13 +258,13 @@ export function SessionFinalizationSheet({
           </div>
 
           {/* Lesson Completion */}
-          <div className="rounded-2xl bg-muted/30 border border-border/50 p-4">
+          <div className="bg-muted/30 border-border/50 rounded-2xl border p-4">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <h4 className="font-black text-foreground">
+                <h4 className="text-foreground font-black">
                   {LL.session.lessonCompleted()}
                 </h4>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {lessonCompleted ? LL.session.lessonCompletedYes() : LL.session.lessonCompletedNo()}
                 </p>
               </div>
@@ -239,9 +277,13 @@ export function SessionFinalizationSheet({
 
           {/* Warning if homework form is open but empty */}
           {showHomeworkForm && !homeworkTitle.trim() && (
-            <div className="p-4 rounded-xl bg-accent/5 border border-accent/10 flex items-start gap-3">
-              <IconAlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-              <p className="text-xs font-medium text-accent/80 leading-relaxed">
+            <div className="
+              bg-accent/5 border-accent/10 flex items-start gap-3 rounded-xl
+              border p-4
+            "
+            >
+              <IconAlertCircle className="text-accent mt-0.5 h-5 w-5 shrink-0" />
+              <p className="text-accent/80 text-xs leading-relaxed font-medium">
                 {LL.session.homeworkWarning()}
               </p>
             </div>
@@ -251,7 +293,10 @@ export function SessionFinalizationSheet({
           <div className="space-y-3 pt-2">
             <Button
               className={cn(
-                'w-full h-14 rounded-2xl font-black text-lg shadow-xl shadow-primary/20',
+                `
+                  shadow-primary/20 h-14 w-full rounded-2xl text-lg font-black
+                  shadow-xl
+                `,
               )}
               onClick={handleFinalize}
               disabled={isSubmitting}
@@ -260,7 +305,7 @@ export function SessionFinalizationSheet({
             </Button>
             <Button
               variant="ghost"
-              className="w-full h-12 rounded-2xl font-semibold"
+              className="h-12 w-full rounded-2xl font-semibold"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
             >

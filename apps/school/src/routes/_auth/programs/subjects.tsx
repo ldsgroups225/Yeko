@@ -33,7 +33,12 @@ function SchoolSubjectsPage() {
               <SchoolSubjectList schoolYearId={schoolYearId} />
             )
           : (
-              <div className="flex flex-col items-center justify-center py-20 text-muted-foreground border-2 border-dashed border-border/30 rounded-3xl bg-card/10">
+              <div className="
+                text-muted-foreground border-border/30 bg-card/10 flex flex-col
+                items-center justify-center rounded-3xl border-2 border-dashed
+                py-20
+              "
+              >
                 <p className="text-lg font-medium">{t.academic.subjects.messages.selectSchoolYearPrompt()}</p>
               </div>
             )}

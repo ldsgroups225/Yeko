@@ -18,7 +18,7 @@ if (!process.env.DATABASE_HOST) {
       }
     })
   }
-  catch (e) { }
+  catch { }
 }
 
 const connectionString = `postgres://${process.env.DATABASE_USERNAME}:${process.env.DATABASE_PASSWORD}@${process.env.DATABASE_HOST}`

@@ -68,14 +68,19 @@ export function PaymentPlansTable({
 
   if (paymentPlans.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconCalendarTime className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconCalendarTime className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">
           {t.finance.paymentPlans.noPaymentPlans()}
         </p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+        <p className="text-muted-foreground/70 mt-1 max-w-sm text-sm">
           {t.finance.paymentPlans.description()}
         </p>
       </div>
@@ -84,10 +89,18 @@ export function PaymentPlansTable({
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">
                 {t.students.matricule()}
               </TableHead>
@@ -122,18 +135,25 @@ export function PaymentPlansTable({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="group hover:bg-muted/30 border-border/40 transition-colors"
+                    className="
+                      group
+                      hover:bg-muted/30
+                      border-border/40 transition-colors
+                    "
                   >
-                    <TableCell className="font-mono text-sm text-muted-foreground font-medium">
+                    <TableCell className="
+                      text-muted-foreground font-mono text-sm font-medium
+                    "
+                    >
                       {plan.matricule || '-'}
                     </TableCell>
-                    <TableCell className="font-bold text-foreground">
+                    <TableCell className="text-foreground font-bold">
                       {plan.studentName}
                     </TableCell>
                     <TableCell className="text-right font-medium">
                       {formatCurrency(plan.totalAmount)}
                       {' '}
-                      <span className="text-xs text-muted-foreground ml-1">
+                      <span className="text-muted-foreground ml-1 text-xs">
                         FCFA
                       </span>
                     </TableCell>
@@ -143,7 +163,10 @@ export function PaymentPlansTable({
                           value={progressPercent}
                           className="h-2 w-20 rounded-full"
                         />
-                        <span className="text-sm font-medium text-muted-foreground">
+                        <span className="
+                          text-muted-foreground text-sm font-medium
+                        "
+                        >
                           {progressPercent}
                           %
                         </span>
@@ -159,7 +182,7 @@ export function PaymentPlansTable({
                     <TableCell>
                       <Badge
                         variant={getStatusVariant(plan.status)}
-                        className="capitalize rounded-md"
+                        className="rounded-md capitalize"
                       >
                         {{
                           active: t.finance.paymentPlans.status.active,
@@ -183,7 +206,11 @@ export function PaymentPlansTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {paymentPlans.map((plan, index) => {
             const progressPercent
@@ -197,18 +224,24 @@ export function PaymentPlansTable({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-4"
+                className="
+                  bg-card/50 border-border/40 space-y-4 rounded-2xl border p-4
+                  backdrop-blur-md
+                "
               >
-                <div className="flex justify-between items-start">
+                <div className="flex items-start justify-between">
                   <div>
-                    <div className="font-bold text-lg">{plan.studentName}</div>
-                    <div className="text-xs font-mono text-muted-foreground mt-0.5">
+                    <div className="text-lg font-bold">{plan.studentName}</div>
+                    <div className="
+                      text-muted-foreground mt-0.5 font-mono text-xs
+                    "
+                    >
                       {plan.matricule || 'N/A'}
                     </div>
                   </div>
                   <Badge
                     variant={getStatusVariant(plan.status)}
-                    className="capitalize rounded-md"
+                    className="rounded-md capitalize"
                   >
                     {{
                       active: t.finance.paymentPlans.status.active,
@@ -242,20 +275,37 @@ export function PaymentPlansTable({
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-muted/20 border border-border/20 flex-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                  <div className="
+                    bg-muted/20 border-border/20 flex-1 rounded-xl border p-3
+                  "
+                  >
+                    <div className="
+                      text-muted-foreground mb-1 text-xs tracking-wider
+                      uppercase
+                    "
+                    >
                       {t.finance.paymentPlans.totalAmount()}
                     </div>
-                    <div className="font-bold text-lg">
+                    <div className="text-lg font-bold">
                       {formatCurrency(plan.totalAmount)}
                       {' '}
-                      <span className="text-sm font-normal text-muted-foreground">
+                      <span className="
+                        text-muted-foreground text-sm font-normal
+                      "
+                      >
                         FCFA
                       </span>
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-muted/20 border border-border/20 flex-1">
-                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                  <div className="
+                    bg-muted/20 border-border/20 flex-1 rounded-xl border p-3
+                  "
+                  >
+                    <div className="
+                      text-muted-foreground mb-1 text-xs tracking-wider
+                      uppercase
+                    "
+                    >
                       {t.finance.paymentPlans.installments()}
                     </div>
                     <div className="font-bold">

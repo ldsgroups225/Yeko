@@ -1,0 +1,14 @@
+{
+  "references": [
+    { "path": "packages/logger" },
+    { "path": "packages/ui" },
+    { "path": "packages/background-tasks" },
+    { "path": "packages/data-ops" },
+    { "path": "packages/queue-worker" },
+    { "path": "apps/core" },
+    { "path": "apps/data-service" },
+    { "path": "apps/school" },
+    { "path": "apps/teacher" }
+  ],
+  "files": []
+}

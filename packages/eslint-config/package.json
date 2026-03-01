@@ -1,35 +1,11 @@
 {
   "name": "@yeko/eslint-config",
+  "type": "module",
   "version": "1.0.0",
   "description": "ESLint configuration for the Yeko project",
-  "main": "index.js",
-  "type": "module",
-  "exports": {
-    ".": "./index.js"
-  },
-  "files": [
-    "index.js"
-  ],
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
-  },
-  "dependencies": {
-    "@antfu/eslint-config": "^7.4.3",
-    "@eslint-react/eslint-plugin": "^2.13.0",
-    "@vitest/eslint-plugin": "^1.6.9",
-    "eslint": "^10.0.1",
-    "eslint-plugin-better-tailwindcss": "^4.3.0",
-    "eslint-plugin-format": "^1.4.0",
-    "eslint-plugin-jsx-a11y": "^6.10.2"
-  },
-  "keywords": [
-    "eslint",
-    "eslint-config",
-    "yeko"
-  ],
   "author": "Yeko Team",
   "license": "MIT",
+  "homepage": "https://github.com/yeko/yeko/tree/main/packages/eslint-config#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/yeko/yeko.git",
@@ -38,5 +14,29 @@
   "bugs": {
     "url": "https://github.com/yeko/yeko/issues"
   },
-  "homepage": "https://github.com/yeko/yeko/tree/main/packages/eslint-config#readme"
+  "keywords": [
+    "eslint",
+    "eslint-config",
+    "yeko"
+  ],
+  "exports": {
+    ".": "./index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "lint": "eslint . --cache --cache-location node_modules/.cache/eslint/",
+    "lint:fix": "eslint . --cache --cache-location node_modules/.cache/eslint/ --fix"
+  },
+  "dependencies": {
+    "@antfu/eslint-config": "catalog:",
+    "@eslint-react/eslint-plugin": "catalog:",
+    "@vitest/eslint-plugin": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-better-tailwindcss": "catalog:",
+    "eslint-plugin-format": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:"
+  }
 }

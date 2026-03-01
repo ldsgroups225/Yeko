@@ -72,29 +72,56 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+      "
+      >
         <div className="space-y-2">
-          <Label htmlFor="name" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+          <Label
+            htmlFor="name"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
             {t.spaces.classrooms.name()}
             {' '}
             <span className="text-destructive">*</span>
           </Label>
           <Input id="name" {...register('name')} placeholder={t.spaces.classrooms.namePlaceholder()} className={inputClass} />
-          {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+          {errors.name && <p className="text-destructive text-sm">{errors.name.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="code" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+          <Label
+            htmlFor="code"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
             {t.spaces.classrooms.code()}
             {' '}
             <span className="text-destructive">*</span>
           </Label>
-          <Input id="code" {...register('code')} placeholder={t.spaces.classrooms.codePlaceholder()} className={`${inputClass} font-mono`} />
-          {errors.code && <p className="text-sm text-destructive">{errors.code.message}</p>}
+          <Input
+            id="code"
+            {...register('code')}
+            placeholder={t.spaces.classrooms.codePlaceholder()}
+            className={`
+              ${inputClass}
+              font-mono
+            `}
+          />
+          {errors.code && <p className="text-destructive text-sm">{errors.code.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="type" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+          <Label
+            htmlFor="type"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
             {t.spaces.classrooms.type()}
             {' '}
             <span className="text-destructive">*</span>
@@ -105,38 +132,106 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
                 {t.spaces.classrooms.types[watch('type') as keyof typeof t.spaces.classrooms.types]()}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-              <SelectItem value="regular" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.regular()}</SelectItem>
-              <SelectItem value="lab" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.lab()}</SelectItem>
-              <SelectItem value="gym" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.gym()}</SelectItem>
-              <SelectItem value="library" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.library()}</SelectItem>
-              <SelectItem value="auditorium" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.types.auditorium()}</SelectItem>
+            <SelectContent className="
+              bg-popover/95 border-border/40 rounded-xl shadow-xl
+              backdrop-blur-xl
+            "
+            >
+              <SelectItem
+                value="regular"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg
+                "
+              >
+                {t.spaces.classrooms.types.regular()}
+              </SelectItem>
+              <SelectItem
+                value="lab"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg
+                "
+              >
+                {t.spaces.classrooms.types.lab()}
+              </SelectItem>
+              <SelectItem
+                value="gym"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg
+                "
+              >
+                {t.spaces.classrooms.types.gym()}
+              </SelectItem>
+              <SelectItem
+                value="library"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg
+                "
+              >
+                {t.spaces.classrooms.types.library()}
+              </SelectItem>
+              <SelectItem
+                value="auditorium"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg
+                "
+              >
+                {t.spaces.classrooms.types.auditorium()}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="capacity" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+          <Label
+            htmlFor="capacity"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
             {t.spaces.classrooms.capacity()}
             {' '}
             <span className="text-destructive">*</span>
           </Label>
           <Input id="capacity" type="number" {...register('capacity', { valueAsNumber: true })} className={inputClass} />
-          {errors.capacity && <p className="text-sm text-destructive">{errors.capacity.message}</p>}
+          {errors.capacity && <p className="text-destructive text-sm">{errors.capacity.message}</p>}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="floor" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.spaces.classrooms.floor()}</Label>
+          <Label
+            htmlFor="floor"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
+            {t.spaces.classrooms.floor()}
+          </Label>
           <Input id="floor" {...register('floor')} placeholder={t.spaces.classrooms.floorPlaceholder()} className={inputClass} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="building" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.spaces.classrooms.building()}</Label>
+          <Label
+            htmlFor="building"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
+            {t.spaces.classrooms.building()}
+          </Label>
           <Input id="building" {...register('building')} placeholder={t.spaces.classrooms.buildingPlaceholder()} className={inputClass} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="status" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+          <Label
+            htmlFor="status"
+            className="
+              text-muted-foreground text-xs font-bold tracking-wider uppercase
+            "
+          >
             {t.common.status()}
             {' '}
             <span className="text-destructive">*</span>
@@ -147,42 +242,96 @@ export function ClassroomForm({ classroom, onSuccess }: ClassroomFormProps) {
                 {watch('status') === 'active'
                   ? (
                       <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-primary" />
+                        <div className="bg-primary h-2 w-2 rounded-full" />
                         {t.common.active()}
                       </div>
                     )
                   : watch('status') === 'maintenance'
                     ? (
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-accent" />
+                          <div className="bg-accent h-2 w-2 rounded-full" />
                           {t.spaces.classrooms.status.maintenance()}
                         </div>
                       )
                     : (
                         <div className="flex items-center gap-2">
-                          <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                          <div className="
+                            bg-muted-foreground h-2 w-2 rounded-full
+                          "
+                          />
                           {t.common.inactive()}
                         </div>
                       )}
               </SelectValue>
             </SelectTrigger>
-            <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
-              <SelectItem value="active" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.common.active()}</SelectItem>
-              <SelectItem value="maintenance" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.spaces.classrooms.status.maintenance()}</SelectItem>
-              <SelectItem value="inactive" className="rounded-lg cursor-pointer focus:bg-primary/10">{t.common.inactive()}</SelectItem>
+            <SelectContent className="
+              bg-popover/95 border-border/40 rounded-xl shadow-xl
+              backdrop-blur-xl
+            "
+            >
+              <SelectItem
+                value="active"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg
+                "
+              >
+                {t.common.active()}
+              </SelectItem>
+              <SelectItem
+                value="maintenance"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg
+                "
+              >
+                {t.spaces.classrooms.status.maintenance()}
+              </SelectItem>
+              <SelectItem
+                value="inactive"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg
+                "
+              >
+                {t.common.inactive()}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="notes" className="text-xs uppercase font-bold tracking-wider text-muted-foreground">{t.common.notes()}</Label>
-        <Textarea id="notes" {...register('notes')} rows={3} placeholder={t.spaces.classrooms.notesPlaceholder()} className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors resize-none" />
+        <Label
+          htmlFor="notes"
+          className="
+            text-muted-foreground text-xs font-bold tracking-wider uppercase
+          "
+        >
+          {t.common.notes()}
+        </Label>
+        <Textarea
+          id="notes"
+          {...register('notes')}
+          rows={3}
+          placeholder={t.spaces.classrooms.notesPlaceholder()}
+          className="
+            border-border/40 bg-muted/20
+            focus:bg-background
+            resize-none rounded-xl transition-colors
+          "
+        />
       </div>
 
       <div className="flex justify-end gap-2 pt-2">
-        <Button type="submit" disabled={mutation.isPending} className="rounded-xl shadow-lg shadow-primary/20">
-          {mutation.isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
+        <Button
+          type="submit"
+          disabled={mutation.isPending}
+          className="shadow-primary/20 rounded-xl shadow-lg"
+        >
+          {mutation.isPending && (
+            <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+          )}
           {isEditing ? t.common.update() : t.common.create()}
         </Button>
       </div>

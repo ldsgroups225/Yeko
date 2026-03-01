@@ -28,25 +28,29 @@ export function AccountTableRow({ account, index, onEdit, onDelete, t }: Account
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       className={cn(
-        'group hover:bg-muted/30 border-border/40 transition-colors',
+        `
+          group
+          hover:bg-muted/30
+          border-border/40 transition-colors
+        `,
         {
           'bg-muted/5': account.isHeader,
         },
       )}
     >
-      <TableCell className="font-mono text-sm font-medium text-muted-foreground">
+      <TableCell className="text-muted-foreground font-mono text-sm font-medium">
         {account.code}
       </TableCell>
       <TableCell>
         <div
           className={cn('flex items-center gap-2', {
-            'font-bold text-foreground': account.isHeader,
+            'text-foreground font-bold': account.isHeader,
             'font-medium': !account.isHeader,
           })}
           style={{ paddingLeft: `${(account.level - 1) * 24}px` }}
         >
           {account.level > 1 && (
-            <IconChevronRight className="h-3.5 w-3.5 text-muted-foreground/50" />
+            <IconChevronRight className="text-muted-foreground/50 h-3.5 w-3.5" />
           )}
           {account.name}
         </div>
@@ -55,7 +59,7 @@ export function AccountTableRow({ account, index, onEdit, onDelete, t }: Account
         <Badge
           variant="outline"
           className={cn(
-            'font-medium border',
+            'border font-medium',
             getTypeColor(account.type),
           )}
         >
@@ -67,7 +71,7 @@ export function AccountTableRow({ account, index, onEdit, onDelete, t }: Account
           <>
             {formatCurrency(account.balance)}
             {' '}
-            <span className="text-xs text-muted-foreground font-medium ml-1">
+            <span className="text-muted-foreground ml-1 text-xs font-medium">
               FCFA
             </span>
           </>
@@ -80,7 +84,10 @@ export function AccountTableRow({ account, index, onEdit, onDelete, t }: Account
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                className="
+                  h-8 w-8 rounded-lg opacity-0 transition-opacity
+                  group-hover:opacity-100
+                "
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()
@@ -92,13 +99,19 @@ export function AccountTableRow({ account, index, onEdit, onDelete, t }: Account
           />
           <DropdownMenuContent
             align="end"
-            className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+            className="
+              bg-card/95 border-border/40 rounded-xl p-1 shadow-xl
+              backdrop-blur-xl
+            "
           >
             <DropdownMenuItem
               onClick={() => onEdit?.(account)}
-              className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+              className="
+                focus:bg-primary/10
+                cursor-pointer rounded-lg font-medium
+              "
             >
-              <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
+              <IconEdit className="text-muted-foreground mr-2 h-4 w-4" />
               {t.common.edit()}
             </DropdownMenuItem>
             {!account.isHeader && (
@@ -106,7 +119,11 @@ export function AccountTableRow({ account, index, onEdit, onDelete, t }: Account
                 <DropdownMenuSeparator className="bg-border/40" />
                 <DropdownMenuItem
                   onClick={() => onDelete?.(account)}
-                  className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+                  className="
+                    text-destructive
+                    focus:bg-destructive/10 focus:text-destructive
+                    cursor-pointer rounded-lg font-medium
+                  "
                 >
                   <IconTrash className="mr-2 h-4 w-4" />
                   {t.common.delete()}

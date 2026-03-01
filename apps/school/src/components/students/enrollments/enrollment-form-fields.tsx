@@ -39,7 +39,15 @@ export function EnrollmentFormFields({ form, schoolYears, classes, isPendingClas
                             ? (
                                 <div className="flex items-center gap-2">
                                   <span>{year.template.name}</span>
-                                  {year.isActive && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{t.common.active()}</span>}
+                                  {year.isActive && (
+                                    <span className="
+                                      bg-primary/10 text-primary rounded-full
+                                      px-2 py-0.5 text-xs
+                                    "
+                                    >
+                                      {t.common.active()}
+                                    </span>
+                                  )}
                                 </div>
                               )
                             : undefined
@@ -87,7 +95,15 @@ export function EnrollmentFormFields({ form, schoolYears, classes, isPendingClas
                                     {' '}
                                     {cls.class.section}
                                   </span>
-                                  {cls.series?.name && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">{cls.series.name}</span>}
+                                  {cls.series?.name && (
+                                    <span className="
+                                      bg-primary/10 text-primary rounded-full
+                                      px-2 py-0.5 text-xs
+                                    "
+                                    >
+                                      {cls.series.name}
+                                    </span>
+                                  )}
                                 </div>
                               )
                             : undefined

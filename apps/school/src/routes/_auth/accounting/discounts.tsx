@@ -78,20 +78,31 @@ function DiscountsPage() {
         ]}
       />
 
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="
+        flex flex-col gap-4
+        sm:flex-row sm:items-end sm:justify-between
+      "
+      >
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconTag className="size-8 text-primary" />
+          <div className="
+            bg-primary/10 border-primary/20 rounded-2xl border p-3 shadow-lg
+            backdrop-blur-xl
+          "
+          >
+            <IconTag className="text-primary size-8" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">
               {t.finance.discounts.title()}
             </h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">
+            <p className="
+              text-muted-foreground max-w-lg text-sm font-medium italic
+            "
+            >
               {t.finance.discounts.description()}
             </p>
           </div>
@@ -103,7 +114,7 @@ function DiscountsPage() {
         >
           <Button
             onClick={() => setIsCreateOpen(true)}
-            className="h-10 rounded-xl shadow-lg shadow-primary/20"
+            className="shadow-primary/20 h-10 rounded-xl shadow-lg"
           >
             <IconPlus className="mr-2 h-4 w-4" />
             {t.finance.discounts.create()}
@@ -116,8 +127,11 @@ function DiscountsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
-          <CardHeader className="border-b border-border/40 bg-muted/5">
+        <Card className="
+          border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
             <CardTitle className="text-lg font-bold">
               {t.finance.discounts.title()}
             </CardTitle>

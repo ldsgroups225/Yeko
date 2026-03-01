@@ -55,11 +55,15 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0 gap-0 overflow-hidden backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl">
-        <DialogHeader className="p-6 border-b border-border/40 bg-muted/30">
+      <DialogContent className="
+        bg-card/95 border-border/40 flex max-h-[90vh] max-w-4xl flex-col gap-0
+        overflow-hidden rounded-3xl p-0 shadow-2xl backdrop-blur-xl
+      "
+      >
+        <DialogHeader className="border-border/40 bg-muted/30 border-b p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-primary/10">
-              <IconInfoCircle className="h-6 w-6 text-primary" />
+            <div className="bg-primary/10 rounded-2xl p-3">
+              <IconInfoCircle className="text-primary h-6 w-6" />
             </div>
             <div>
               <DialogTitle className="text-xl font-bold">
@@ -72,24 +76,37 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
           </div>
         </DialogHeader>
 
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex flex-1 overflow-hidden">
           {/* Stepper Sidebar */}
-          <div className="w-64 border-r border-border/40 bg-muted/10 p-4 hidden md:flex flex-col gap-2">
+          <div className="
+            border-border/40 bg-muted/10 hidden w-64 flex-col gap-2 border-r p-4
+            md:flex
+          "
+          >
             {steps.map((step, index) => (
               <div
                 key={step.title}
                 className={cn(
-                  'flex items-center gap-3 p-3 rounded-xl transition-all duration-200',
+                  `
+                    flex items-center gap-3 rounded-xl p-3 transition-all
+                    duration-200
+                  `,
                   currentStep === index
                     ? 'bg-primary/10 text-primary shadow-sm'
                     : index < currentStep
                       ? 'text-success'
-                      : 'text-muted-foreground hover:bg-muted/50',
+                      : `
+                        text-muted-foreground
+                        hover:bg-muted/50
+                      `,
                 )}
               >
                 <div
                   className={cn(
-                    'h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold border-2',
+                    `
+                      flex h-6 w-6 items-center justify-center rounded-full
+                      border-2 text-xs font-bold
+                    `,
                     currentStep === index
                       ? 'border-primary bg-primary text-white'
                       : index < currentStep
@@ -105,13 +122,13 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
                         index + 1
                       )}
                 </div>
-                <span className="text-sm font-medium truncate">{step.title}</span>
+                <span className="truncate text-sm font-medium">{step.title}</span>
               </div>
             ))}
           </div>
 
           {/* Step Content */}
-          <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex min-w-0 flex-1 flex-col">
             <div className="flex-1 overflow-y-auto p-6">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -123,10 +140,10 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
                   className="h-full"
                 >
                   <div className="mb-6">
-                    <h3 className="text-lg font-bold mb-1">
+                    <h3 className="mb-1 text-lg font-bold">
                       {steps[currentStep]?.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {steps[currentStep]?.description}
                     </p>
                   </div>
@@ -136,12 +153,16 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
             </div>
 
             {/* Actions */}
-            <div className="p-6 border-t border-border/40 bg-muted/30 flex items-center justify-between">
+            <div className="
+              border-border/40 bg-muted/30 flex items-center justify-between
+              border-t p-6
+            "
+            >
               <Button
                 variant="ghost"
                 onClick={handleBack}
                 disabled={isFirstStep}
-                className="rounded-xl gap-2 px-6"
+                className="gap-2 rounded-xl px-6"
               >
                 <IconChevronLeft className="h-4 w-4" />
                 {t.common.back()}
@@ -151,13 +172,13 @@ export function AccountingWizard({ open, onOpenChange, steps }: AccountingWizard
                 <Button
                   variant="outline"
                   onClick={() => onOpenChange(false)}
-                  className="rounded-xl px-6 border-border/40"
+                  className="border-border/40 rounded-xl px-6"
                 >
                   {t.common.cancel()}
                 </Button>
                 <Button
                   onClick={handleNext}
-                  className="rounded-xl gap-2 px-8 shadow-lg shadow-primary/20"
+                  className="shadow-primary/20 gap-2 rounded-xl px-8 shadow-lg"
                 >
                   {isLastStep ? t.common.finish() : t.common.next()}
                   {!isLastStep && <IconChevronRight className="h-4 w-4" />}

@@ -111,7 +111,11 @@ export function PhotoUploadDialog({ open, onOpenChange, currentPhotoUrl, entityT
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="
+        bg-card/95 border-border/40 backdrop-blur-xl
+        sm:max-w-[500px]
+      "
+      >
         <DialogHeader>
           <DialogTitle>{t.students.uploadPhoto()}</DialogTitle>
           <DialogDescription>{t.students.uploadPhotoDescription({ name: entityName })}</DialogDescription>
@@ -152,7 +156,13 @@ export function PhotoUploadDialog({ open, onOpenChange, currentPhotoUrl, entityT
             }}
             disabled={(!completedCrop && !!imgSrc) || uploadMutation.isPending || (!imgSrc && !selectedFile)}
           >
-            {uploadMutation.isPending ? <IconLoader2 className="mr-2 h-4 w-4 animate-spin" /> : <IconCamera className="mr-2 h-4 w-4" />}
+            {uploadMutation.isPending
+              ? (
+                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                )
+              : (
+                  <IconCamera className="mr-2 h-4 w-4" />
+                )}
             {t.students.savePhoto()}
           </Button>
         </DialogFooter>

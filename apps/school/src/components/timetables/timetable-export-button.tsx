@@ -62,12 +62,18 @@ export function TimetableExportButton({
       />
       <DropdownMenuContent
         align="end"
-        className="w-48 backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-2xl p-1"
+        className="
+          bg-card/95 border-border/40 w-48 rounded-2xl p-1 shadow-xl
+          backdrop-blur-xl
+        "
       >
         <DropdownMenuItem
           onClick={() => handleExport('pdf')}
           disabled={isExporting}
-          className="rounded-xl focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 font-medium text-sm"
+          className="
+            focus:bg-primary/10 focus:text-primary
+            cursor-pointer rounded-xl py-2.5 text-sm font-medium
+          "
         >
           <IconFileText className="mr-2 h-4 w-4" />
           {exportingFormat === 'pdf' ? t.common.exporting() : 'PDF'}
@@ -75,7 +81,10 @@ export function TimetableExportButton({
         <DropdownMenuItem
           onClick={() => handleExport('csv')}
           disabled={isExporting}
-          className="rounded-xl focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 font-medium text-sm"
+          className="
+            focus:bg-primary/10 focus:text-primary
+            cursor-pointer rounded-xl py-2.5 text-sm font-medium
+          "
         >
           <IconFileSpreadsheet className="mr-2 h-4 w-4" />
           {exportingFormat === 'csv' ? t.common.exporting() : 'CSV'}
@@ -83,7 +92,10 @@ export function TimetableExportButton({
         <DropdownMenuItem
           onClick={() => handleExport('xlsx')}
           disabled={isExporting}
-          className="rounded-xl focus:bg-primary/10 focus:text-primary cursor-pointer py-2.5 font-medium text-sm"
+          className="
+            focus:bg-primary/10 focus:text-primary
+            cursor-pointer rounded-xl py-2.5 text-sm font-medium
+          "
         >
           <IconFileSpreadsheet className="mr-2 h-4 w-4" />
           {exportingFormat === 'xlsx' ? t.common.exporting() : 'Excel'}

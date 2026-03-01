@@ -50,25 +50,29 @@ export function PaymentTableRow({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="group hover:bg-muted/30 border-border/40 transition-colors cursor-pointer"
+      className="
+        group
+        hover:bg-muted/30
+        border-border/40 cursor-pointer transition-colors
+      "
       onClick={() => onView?.(payment)}
     >
-      <TableCell className="font-mono text-sm text-muted-foreground font-medium">
+      <TableCell className="text-muted-foreground font-mono text-sm font-medium">
         {payment.receiptNumber || '-'}
       </TableCell>
       <TableCell>
         <div>
-          <div className="font-bold text-foreground">{payment.studentName}</div>
-          <div className="text-xs font-mono text-muted-foreground mt-0.5">
+          <div className="text-foreground font-bold">{payment.studentName}</div>
+          <div className="text-muted-foreground mt-0.5 font-mono text-xs">
             {payment.studentMatricule}
           </div>
         </div>
       </TableCell>
       <TableCell>
-        <span className="font-bold text-foreground">
+        <span className="text-foreground font-bold">
           {formatCurrency(payment.amount)}
         </span>
-        <span className="ml-1 text-xs text-muted-foreground uppercase">
+        <span className="text-muted-foreground ml-1 text-xs uppercase">
           {t.common.currency()}
         </span>
       </TableCell>
@@ -80,7 +84,7 @@ export function PaymentTableRow({
       <TableCell>
         <Badge
           variant={getStatusVariant(payment.status)}
-          className="capitalize rounded-md"
+          className="rounded-md capitalize"
         >
           {payment.status === 'pending' && t.finance.payments.status.pending()}
           {payment.status === 'completed' && t.finance.payments.status.completed()}
@@ -88,7 +92,7 @@ export function PaymentTableRow({
           {payment.status === 'refunded' && t.finance.payments.status.refunded()}
         </Badge>
       </TableCell>
-      <TableCell className="text-sm text-muted-foreground font-medium">
+      <TableCell className="text-muted-foreground text-sm font-medium">
         {formatDate(payment.createdAt)}
       </TableCell>
       <TableCell className="text-right">
@@ -98,7 +102,10 @@ export function PaymentTableRow({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-lg hover:bg-muted"
+                className="
+                  hover:bg-muted
+                  h-8 w-8 rounded-lg
+                "
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()
@@ -110,14 +117,20 @@ export function PaymentTableRow({
           />
           <DropdownMenuContent
             align="end"
-            className="w-48 backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+            className="
+              bg-card/95 border-border/40 w-48 rounded-xl p-1 shadow-xl
+              backdrop-blur-xl
+            "
           >
             {payment.status === 'completed' && (
               <DropdownMenuItem
                 onClick={() => onPrintReceipt?.(payment)}
-                className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+                className="
+                  focus:bg-primary/10
+                  cursor-pointer rounded-lg font-medium
+                "
               >
-                <IconPrinter className="mr-2 h-4 w-4 text-muted-foreground" />
+                <IconPrinter className="text-muted-foreground mr-2 h-4 w-4" />
                 {t.finance.receipt()}
               </DropdownMenuItem>
             )}

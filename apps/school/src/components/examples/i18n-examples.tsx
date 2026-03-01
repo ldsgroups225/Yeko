@@ -36,7 +36,7 @@ export function NavigationExample() {
     { key: '/dashboard', icon: '📊' },
     { key: '/users', icon: '👥' },
     { key: '/students', icon: '🎓' },
-    { key: '/users/teachers', icon: '👨‍🏫' },
+    { key: '/teachers', icon: '👨‍🏫' },
     { key: '/accounting', icon: '💰' },
   ]
 
@@ -54,7 +54,10 @@ export function NavigationExample() {
         <Link
           key={item.key}
           to={item.key}
-          className="flex items-center gap-2 px-4 py-2 rounded hover:bg-accent"
+          className="
+            hover:bg-accent
+            flex items-center gap-2 rounded-sm px-4 py-2
+          "
         >
           <span>{item.icon}</span>
           <span>
@@ -75,40 +78,40 @@ export function FormExample() {
   return (
     <form className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">
+        <label className="mb-1 block text-sm font-medium">
           {t.users.name()}
         </label>
         <input
           type="text"
-          className="w-full border rounded px-3 py-2"
+          className="w-full rounded-sm border px-3 py-2"
           placeholder={t.users.name()}
         />
-        <p className="text-sm text-destructive mt-1">
+        <p className="text-destructive mt-1 text-sm">
           {t.validation.required()}
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">
+        <label className="mb-1 block text-sm font-medium">
           {t.users.email()}
         </label>
         <input
           type="email"
-          className="w-full border rounded px-3 py-2"
+          className="w-full rounded-sm border px-3 py-2"
           placeholder={t.users.email()}
         />
-        <p className="text-sm text-destructive mt-1">
+        <p className="text-destructive mt-1 text-sm">
           {t.validation.email()}
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">
+        <label className="mb-1 block text-sm font-medium">
           {t.users.phone()}
         </label>
         <input
           type="tel"
-          className="w-full border rounded px-3 py-2"
+          className="w-full rounded-sm border px-3 py-2"
           placeholder={t.users.phone()}
         />
       </div>
@@ -141,14 +144,18 @@ export function DashboardExample() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">
+      <h2 className="mb-4 text-2xl font-bold">
         {t.dashboard.overview()}
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="
+        grid grid-cols-1 gap-4
+        md:grid-cols-3
+      "
+      >
         {metrics.map(metric => (
-          <div key={metric.key} className="p-4 border rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
+          <div key={metric.key} className="rounded-lg border p-4">
+            <div className="mb-2 flex items-center gap-2">
               <span className="text-2xl">{metric.icon}</span>
               <h3 className="font-semibold">
                 {metricTranslations[metric.key as keyof typeof metricTranslations]()}
@@ -160,7 +167,7 @@ export function DashboardExample() {
       </div>
 
       <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-3">
+        <h3 className="mb-3 text-lg font-semibold">
           {t.dashboard.quickActions()}
         </h3>
         <div className="flex gap-2">
@@ -196,7 +203,7 @@ export function StatusBadgesExample() {
         {statuses.map(status => (
           <span
             key={status}
-            className="px-3 py-1 rounded-full text-sm font-medium bg-accent"
+            className="bg-accent rounded-full px-3 py-1 text-sm font-medium"
           >
             {statusTranslations[status as keyof typeof statusTranslations]()}
           </span>
@@ -236,9 +243,9 @@ export function ErrorMessagesExample() {
       {errors.map(error => (
         <div
           key={error}
-          className="p-3 border border-destructive rounded bg-destructive/10"
+          className="border-destructive bg-destructive/10 rounded-sm border p-3"
         >
-          <p className="text-sm text-destructive">
+          <p className="text-destructive text-sm">
             {errorTranslations[error as keyof typeof errorTranslations]()}
           </p>
         </div>
@@ -297,13 +304,13 @@ export function RoleDashboardExample() {
   return (
     <div className="space-y-4">
       {roles.map(role => (
-        <div key={role} className="p-4 border rounded-lg">
-          <h3 className="font-semibold mb-2">
+        <div key={role} className="rounded-lg border p-4">
+          <h3 className="mb-2 font-semibold">
             {roleDescriptionTranslations[
               role as keyof typeof roleDescriptionTranslations
             ]()}
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {dashboardTitleTranslations[
               role as keyof typeof dashboardTitleTranslations
             ]()}
@@ -330,7 +337,7 @@ export function DateFormattingExample() {
 
   return (
     <div>
-      <p className="text-sm text-muted-foreground">{t.common.date()}</p>
+      <p className="text-muted-foreground text-sm">{t.common.date()}</p>
       <p className="font-semibold">{formattedDate}</p>
     </div>
   )

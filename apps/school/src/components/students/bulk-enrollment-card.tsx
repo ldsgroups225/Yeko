@@ -77,7 +77,7 @@ export function BulkEnrollmentCard() {
   }
 
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+    <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <IconUsers className="h-5 w-5" />
@@ -110,10 +110,14 @@ export function BulkEnrollmentCard() {
           </Select>
         </div>
 
-        <div className="flex items-center justify-between rounded-xl border border-border/40 bg-card/30 p-4">
+        <div className="
+          border-border/40 bg-card/30 flex items-center justify-between
+          rounded-xl border p-4
+        "
+        >
           <div className="space-y-0.5">
             <Label>{t.students.autoConfirmEnrollments()}</Label>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {t.students.autoConfirmEnrollmentsDescription()}
             </p>
           </div>

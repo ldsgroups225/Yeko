@@ -98,7 +98,9 @@ describe('cn', () => {
 
   describe('handling of object inputs', () => {
     test('should handle object with boolean values', () => {
-      const result = cn('base', { 'conditional-true': true, 'conditional-false': false }, 'end')
+      const result = cn('base', { 'conditional-true': true, 'conditional-false': false }, `
+        end
+      `)
       expect(result).toBe('base conditional-true end')
     })
 
@@ -168,7 +170,7 @@ describe('cn', () => {
 
     test('should handle typography classes', () => {
       const result = cn(
-        'text-lg font-bold leading-tight text-gray-900',
+        'text-lg leading-tight font-bold text-gray-900',
         { truncate: true },
       )
       expect(result).toBe('text-lg font-bold leading-tight text-gray-900 truncate')

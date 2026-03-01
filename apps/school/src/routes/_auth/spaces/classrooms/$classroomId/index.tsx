@@ -66,7 +66,11 @@ function ClassroomDetailPage() {
   if (isPending) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="
+          border-primary h-8 w-8 animate-spin rounded-full border-4
+          border-t-transparent
+        "
+        />
       </div>
     )
   }
@@ -75,7 +79,7 @@ function ClassroomDetailPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium text-muted-foreground">
+          <p className="text-muted-foreground text-lg font-medium">
             {t.spaces.classroom.notFound()}
           </p>
           <Button
@@ -84,7 +88,7 @@ function ClassroomDetailPage() {
                 {t.spaces.classroom.backToList()}
               </Link>
             )}
-            className="mt-4 rounded-xl shadow-lg shadow-primary/20"
+            className="shadow-primary/20 mt-4 rounded-xl shadow-lg"
           />
         </div>
       </div>
@@ -109,14 +113,18 @@ function ClassroomDetailPage() {
         className="flex items-start justify-between"
       >
         <div className="flex items-center gap-4">
-          <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconBuilding className="size-10 text-primary" />
+          <div className="
+            bg-primary/10 border-primary/20 rounded-2xl border p-4 shadow-lg
+            backdrop-blur-xl
+          "
+          >
+            <IconBuilding className="text-primary size-10" />
           </div>
           <div>
             <h1 className="text-4xl font-black tracking-tight uppercase italic">
               {classroom.name}
             </h1>
-            <p className="text-lg font-medium text-muted-foreground italic">
+            <p className="text-muted-foreground text-lg font-medium italic">
               {classroom.code}
             </p>
           </div>
@@ -126,7 +134,12 @@ function ClassroomDetailPage() {
             variant="outline"
             size="sm"
             onClick={() => setShowDeleteDialog(true)}
-            className="rounded-xl h-10 border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive/40 transition-colors"
+            className="
+              border-destructive/20 text-destructive
+              hover:bg-destructive/10 hover:text-destructive
+              hover:border-destructive/40
+              h-10 rounded-xl transition-colors
+            "
           >
             <IconTrash className="mr-2 h-4 w-4" />
             {t.common.delete()}
@@ -138,7 +151,7 @@ function ClassroomDetailPage() {
                 to: '/spaces/classrooms/$classroomId/edit',
                 params: { classroomId },
               })}
-            className="rounded-xl h-10 shadow-lg shadow-primary/20"
+            className="shadow-primary/20 h-10 rounded-xl shadow-lg"
           >
             <IconEdit className="mr-2 h-4 w-4" />
             {t.common.edit()}
@@ -147,37 +160,68 @@ function ClassroomDetailPage() {
       </motion.div>
 
       <Tabs defaultValue="info" className="space-y-6">
-        <TabsList className="bg-muted/20 backdrop-blur-md border border-border/40 p-1 rounded-2xl w-full sm:w-auto inline-flex gap-1">
+        <TabsList className="
+          bg-muted/20 border-border/40 inline-flex w-full gap-1 rounded-2xl
+          border p-1 backdrop-blur-md
+          sm:w-auto
+        "
+        >
           <TabsTrigger
             value="info"
-            className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-xl data-[state=active]:shadow-primary/5"
+            className="
+              data-[state=active]:bg-card data-[state=active]:shadow-primary/5
+              rounded-xl
+              data-[state=active]:shadow-xl
+            "
           >
             {t.spaces.classroom.tabs.info()}
           </TabsTrigger>
           <TabsTrigger
             value="classes"
-            className="rounded-xl data-[state=active]:bg-card data-[state=active]:shadow-xl data-[state=active]:shadow-primary/5"
+            className="
+              data-[state=active]:bg-card data-[state=active]:shadow-primary/5
+              rounded-xl
+              data-[state=active]:shadow-xl
+            "
           >
             {t.spaces.classroom.tabs.classes()}
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="info" className="space-y-6 mt-6">
+        <TabsContent value="info" className="mt-6 space-y-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="grid gap-6 md:grid-cols-2"
+            className="
+              grid gap-6
+              md:grid-cols-2
+            "
           >
-            <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
-              <CardHeader className="border-b border-border/40 bg-muted/5">
-                <CardTitle className="text-lg font-bold uppercase tracking-wider text-muted-foreground">
+            <Card className="
+              border-border/40 bg-card/40 rounded-3xl border shadow-sm
+              backdrop-blur-xl transition-all duration-300
+              hover:shadow-md
+            "
+            >
+              <CardHeader className="border-border/40 bg-muted/5 border-b">
+                <CardTitle className="
+                  text-muted-foreground text-lg font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.spaces.classroom.details()}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
-                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/10 hover:bg-muted/20 transition-colors">
-                  <span className="text-sm font-medium text-muted-foreground">
+                <div className="
+                  bg-muted/10
+                  hover:bg-muted/20
+                  flex items-center justify-between rounded-xl p-3
+                  transition-colors
+                "
+                >
+                  <span className="text-muted-foreground text-sm font-medium">
                     {t.spaces.classroom.status()}
                   </span>
                   <Badge
@@ -193,21 +237,33 @@ function ClassroomDetailPage() {
                         : t.spaces.classroom.statusInactive()}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/10 hover:bg-muted/20 transition-colors">
-                  <span className="text-sm font-medium text-muted-foreground">
+                <div className="
+                  bg-muted/10
+                  hover:bg-muted/20
+                  flex items-center justify-between rounded-xl p-3
+                  transition-colors
+                "
+                >
+                  <span className="text-muted-foreground text-sm font-medium">
                     {t.spaces.classroom.type()}
                   </span>
-                  <span className="capitalize font-bold">{classroom.type}</span>
+                  <span className="font-bold capitalize">{classroom.type}</span>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/10 hover:bg-muted/20 transition-colors">
-                  <span className="text-sm font-medium text-muted-foreground">
+                <div className="
+                  bg-muted/10
+                  hover:bg-muted/20
+                  flex items-center justify-between rounded-xl p-3
+                  transition-colors
+                "
+                >
+                  <span className="text-muted-foreground text-sm font-medium">
                     {t.spaces.classroom.capacity()}
                   </span>
                   <span className="flex items-center gap-2 font-bold">
-                    <IconUsers className="h-4 w-4 text-muted-foreground" />
+                    <IconUsers className="text-muted-foreground h-4 w-4" />
                     {classroom.capacity}
                     {' '}
-                    <span className="text-xs font-normal text-muted-foreground">
+                    <span className="text-muted-foreground text-xs font-normal">
                       {t.students.title().toLowerCase()}
                     </span>
                   </span>
@@ -215,24 +271,45 @@ function ClassroomDetailPage() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
-              <CardHeader className="border-b border-border/40 bg-muted/5">
-                <CardTitle className="text-lg font-bold uppercase tracking-wider text-muted-foreground">
+            <Card className="
+              border-border/40 bg-card/40 rounded-3xl border shadow-sm
+              backdrop-blur-xl transition-all duration-300
+              hover:shadow-md
+            "
+            >
+              <CardHeader className="border-border/40 bg-muted/5 border-b">
+                <CardTitle className="
+                  text-muted-foreground text-lg font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.spaces.classroom.location()}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-6">
-                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/10 hover:bg-muted/20 transition-colors">
-                  <span className="text-sm font-medium text-muted-foreground">
+                <div className="
+                  bg-muted/10
+                  hover:bg-muted/20
+                  flex items-center justify-between rounded-xl p-3
+                  transition-colors
+                "
+                >
+                  <span className="text-muted-foreground text-sm font-medium">
                     {t.spaces.classroom.building()}
                   </span>
                   <span className="flex items-center gap-2 font-bold">
-                    <IconMapPin className="h-4 w-4 text-muted-foreground" />
+                    <IconMapPin className="text-muted-foreground h-4 w-4" />
                     {classroom.building || '-'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between p-3 rounded-xl bg-muted/10 hover:bg-muted/20 transition-colors">
-                  <span className="text-sm font-medium text-muted-foreground">
+                <div className="
+                  bg-muted/10
+                  hover:bg-muted/20
+                  flex items-center justify-between rounded-xl p-3
+                  transition-colors
+                "
+                >
+                  <span className="text-muted-foreground text-sm font-medium">
                     {t.spaces.classrooms.floor()}
                   </span>
                   <span className="font-bold">{classroom.floor || '-'}</span>
@@ -248,9 +325,18 @@ function ClassroomDetailPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
-                <CardHeader className="border-b border-border/40 bg-muted/5">
-                  <CardTitle className="text-lg font-bold uppercase tracking-wider text-muted-foreground">
+              <Card className="
+                border-border/40 bg-card/40 rounded-3xl border shadow-sm
+                backdrop-blur-xl transition-all duration-300
+                hover:shadow-md
+              "
+              >
+                <CardHeader className="border-border/40 bg-muted/5 border-b">
+                  <CardTitle className="
+                    text-muted-foreground text-lg font-bold tracking-wider
+                    uppercase
+                  "
+                  >
                     {t.spaces.classroom.equipment()}
                   </CardTitle>
                 </CardHeader>
@@ -259,7 +345,10 @@ function ClassroomDetailPage() {
                     {classroom.equipment.projector && (
                       <Badge
                         variant="outline"
-                        className="px-3 py-1 rounded-lg text-sm bg-primary/5 border-primary/20 text-primary"
+                        className="
+                          bg-primary/5 border-primary/20 text-primary rounded-lg
+                          px-3 py-1 text-sm
+                        "
                       >
                         {t.spaces.classroom.projector()}
                       </Badge>
@@ -267,7 +356,10 @@ function ClassroomDetailPage() {
                     {classroom.equipment.whiteboard && (
                       <Badge
                         variant="outline"
-                        className="px-3 py-1 rounded-lg text-sm bg-primary/5 border-primary/20 text-primary"
+                        className="
+                          bg-primary/5 border-primary/20 text-primary rounded-lg
+                          px-3 py-1 text-sm
+                        "
                       >
                         {t.spaces.classroom.whiteboard()}
                       </Badge>
@@ -275,7 +367,10 @@ function ClassroomDetailPage() {
                     {classroom.equipment.smartboard && (
                       <Badge
                         variant="outline"
-                        className="px-3 py-1 rounded-lg text-sm bg-primary/5 border-primary/20 text-primary"
+                        className="
+                          bg-primary/5 border-primary/20 text-primary rounded-lg
+                          px-3 py-1 text-sm
+                        "
                       >
                         {t.spaces.classroom.smartboard()}
                       </Badge>
@@ -283,7 +378,10 @@ function ClassroomDetailPage() {
                     {classroom.equipment.ac && (
                       <Badge
                         variant="outline"
-                        className="px-3 py-1 rounded-lg text-sm bg-primary/5 border-primary/20 text-primary"
+                        className="
+                          bg-primary/5 border-primary/20 text-primary rounded-lg
+                          px-3 py-1 text-sm
+                        "
                       >
                         {t.spaces.classroom.ac()}
                       </Badge>
@@ -291,7 +389,10 @@ function ClassroomDetailPage() {
                     {classroom.equipment.computers && (
                       <Badge
                         variant="outline"
-                        className="px-3 py-1 rounded-lg text-sm bg-primary/5 border-primary/20 text-primary"
+                        className="
+                          bg-primary/5 border-primary/20 text-primary rounded-lg
+                          px-3 py-1 text-sm
+                        "
                       >
                         {classroom.equipment.computers}
                         {' '}
@@ -302,7 +403,7 @@ function ClassroomDetailPage() {
                       <Badge
                         key={item}
                         variant="outline"
-                        className="px-3 py-1 rounded-lg text-sm"
+                        className="rounded-lg px-3 py-1 text-sm"
                       >
                         {item}
                       </Badge>
@@ -319,14 +420,27 @@ function ClassroomDetailPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
-                <CardHeader className="border-b border-border/40 bg-muted/5">
-                  <CardTitle className="text-lg font-bold uppercase tracking-wider text-muted-foreground">
+              <Card className="
+                border-border/40 bg-card/40 rounded-3xl border shadow-sm
+                backdrop-blur-xl transition-all duration-300
+                hover:shadow-md
+              "
+              >
+                <CardHeader className="border-border/40 bg-muted/5 border-b">
+                  <CardTitle className="
+                    text-muted-foreground text-lg font-bold tracking-wider
+                    uppercase
+                  "
+                  >
                     {t.spaces.classroom.notes()}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                  <p className="text-sm font-medium text-muted-foreground leading-relaxed italic">
+                  <p className="
+                    text-muted-foreground text-sm leading-relaxed font-medium
+                    italic
+                  "
+                  >
                     {classroom.notes}
                   </p>
                 </CardContent>
@@ -340,32 +454,52 @@ function ClassroomDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
-              <CardHeader className="border-b border-border/40 bg-muted/5">
-                <CardTitle className="text-lg font-bold uppercase tracking-wider text-muted-foreground">
+            <Card className="
+              border-border/40 bg-card/40 overflow-hidden rounded-3xl border
+              shadow-sm backdrop-blur-xl transition-all duration-300
+              hover:shadow-md
+            "
+            >
+              <CardHeader className="border-border/40 bg-muted/5 border-b">
+                <CardTitle className="
+                  text-muted-foreground text-lg font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.spaces.classroom.assignedClasses()}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 {assignedClasses && assignedClasses.length > 0
                   ? (
-                      <div className="divide-y divide-border/40">
+                      <div className="divide-border/40 divide-y">
                         {assignedClasses.map((cls, index) => (
                           <motion.div
                             key={cls.id}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors group"
+                            className="
+                              hover:bg-muted/30
+                              group flex items-center justify-between p-4
+                              transition-colors
+                            "
                           >
-                            <span className="font-bold text-lg">
+                            <span className="text-lg font-bold">
                               {cls.gradeName}
                               {' '}
-                              <span className="font-normal text-muted-foreground">
+                              <span className="
+                                text-muted-foreground font-normal
+                              "
+                              >
                                 {cls.seriesName}
                               </span>
                               {' '}
-                              <span className="ml-2 px-2 py-0.5 rounded-md bg-muted/20 text-xs font-mono">
+                              <span className="
+                                bg-muted/20 ml-2 rounded-md px-2 py-0.5
+                                font-mono text-xs
+                              "
+                              >
                                 {cls.section}
                               </span>
                             </span>
@@ -380,7 +514,11 @@ function ClassroomDetailPage() {
                                   {t.common.view()}
                                 </Link>
                               )}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity text-primary font-medium"
+                              className="
+                                text-primary font-medium opacity-0
+                                transition-opacity
+                                group-hover:opacity-100
+                              "
                             />
                           </motion.div>
                         ))}
@@ -388,8 +526,15 @@ function ClassroomDetailPage() {
                     )
                   : (
                       <div className="p-12 text-center">
-                        <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-muted/20 mb-4">
-                          <IconUsers className="h-8 w-8 text-muted-foreground/30" />
+                        <div className="
+                          bg-muted/20 mb-4 inline-flex h-16 w-16 items-center
+                          justify-center rounded-full
+                        "
+                        >
+                          <IconUsers className="
+                            text-muted-foreground/30 h-8 w-8
+                          "
+                          />
                         </div>
                         <p className="text-muted-foreground font-medium">
                           {t.spaces.classroom.noAssignedClasses()}

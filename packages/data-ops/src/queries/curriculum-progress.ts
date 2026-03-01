@@ -65,7 +65,7 @@ type CurriculumProgressWithDetails = typeof curriculumProgress.$inferSelect & {
   }) | null
 }
 
-interface ProgressOverviewItem {
+export interface ProgressOverviewItem {
   classId: string
   className: string
   gradeName: string
@@ -80,7 +80,7 @@ interface ProgressOverviewItem {
   lastChapterCompletedAt: Date | null
 }
 
-interface ClassBehindSchedule {
+export interface ClassBehindSchedule {
   classId: string
   className: string
   gradeName: string
@@ -92,12 +92,12 @@ interface ClassBehindSchedule {
   status: ProgressStatus
 }
 
-interface ProgressStatsByStatus {
+export interface ProgressStatsByStatus {
   status: ProgressStatus
   count: number
 }
 
-interface ProgressBySubject {
+export interface ProgressBySubject {
   subjectId: string
   subjectName: string
   avgProgress: number

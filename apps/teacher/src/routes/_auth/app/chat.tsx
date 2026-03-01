@@ -71,15 +71,33 @@ function MessagesPage() {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="inbox" className="gap-1.5">
             <IconInbox className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.messages.inbox()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.messages.inbox()}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="sent" className="gap-1.5">
             <IconSend className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.messages.sent()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.messages.sent()}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="archived" className="gap-1.5">
             <IconArchive className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.messages.archived()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.messages.archived()}
+            </span>
           </TabsTrigger>
         </TabsList>
 
@@ -141,43 +159,58 @@ function MessageItem({ message, teacherId, locale }: MessageItemProps) {
   return (
     <Link to="/app/chat/$messageId" params={{ messageId: message.id }}>
       <Card
-        className={`transition-colors hover:bg-muted/50 ${!message.isRead ? 'border-primary/50 bg-primary/5' : ''}`}
+        className={`
+          hover:bg-muted/50
+          transition-colors
+          ${!message.isRead
+      ? `border-primary/50 bg-primary/5`
+      : ''}
+        `}
       >
         <CardContent className="p-3">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted">
-              <IconMail className="h-5 w-5 text-muted-foreground" />
+            <div className="
+              bg-muted flex h-10 w-10 shrink-0 items-center justify-center
+              rounded-full
+            "
+            >
+              <IconMail className="text-muted-foreground h-5 w-5" />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
                 <p
-                  className={`truncate text-sm ${!message.isRead ? 'font-semibold' : 'font-medium'}`}
+                  className={`
+                    truncate text-sm
+                    ${!message.isRead
+      ? `font-semibold`
+      : `font-medium`}
+                  `}
                 >
                   {displayName}
                 </p>
-                <span className="shrink-0 text-xs text-muted-foreground">
+                <span className="text-muted-foreground shrink-0 text-xs">
                   {isToday
                     ? format(date, 'HH:mm')
                     : format(date, 'd MMM', { locale })}
                 </span>
               </div>
               {message.studentName && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   {message.studentName}
                 </p>
               )}
               {message.subject && (
-                <p className="truncate text-sm text-muted-foreground">
+                <p className="text-muted-foreground truncate text-sm">
                   {message.subject}
                 </p>
               )}
-              <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+              <p className="text-muted-foreground mt-1 line-clamp-2 text-xs">
                 {message.preview}
               </p>
             </div>
             <div className="flex flex-col items-center gap-1">
               {message.isStarred && (
-                <IconStar className="h-4 w-4 fill-accent text-accent" />
+                <IconStar className="fill-accent text-accent h-4 w-4" />
               )}
               {!message.isRead && (
                 <Badge variant="default" className="h-2 w-2 rounded-full p-0" />
@@ -196,8 +229,8 @@ function EmptyMessages({ folder }: { folder: string }) {
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <IconMessageCircle className="h-12 w-12 text-muted-foreground/50" />
-        <p className="mt-4 text-sm text-muted-foreground">
+        <IconMessageCircle className="text-muted-foreground/50 h-12 w-12" />
+        <p className="text-muted-foreground mt-4 text-sm">
           {LL.messages.noMessages()}
         </p>
         {folder === 'inbox' && (

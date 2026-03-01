@@ -56,14 +56,18 @@ export function ProgressBar({
                 />
                 {expectedPercentage !== undefined && (
                   <div
-                    className="absolute top-0 h-2 w-0.5 bg-foreground/50"
+                    className="bg-foreground/50 absolute top-0 h-2 w-0.5"
                     style={{ left: `${expectedPercentage}%` }}
                     aria-hidden="true"
                   />
                 )}
               </div>
               {showLabel && (
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <div className="
+                  text-muted-foreground flex items-center justify-between
+                  text-xs
+                "
+                >
                   <span>
                     {completed}
                     /
@@ -81,7 +85,7 @@ export function ProgressBar({
           )}
         />
         <TooltipContent>
-          <div className="text-sm space-y-1">
+          <div className="space-y-1 text-sm">
             <p>
               {t.curriculum.completed()}
               :

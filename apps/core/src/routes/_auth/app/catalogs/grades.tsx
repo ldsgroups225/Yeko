@@ -300,8 +300,8 @@ function GradesManagement() {
     return (
       <div className="space-y-6">
         <div className="space-y-2">
-          <div className="h-8 w-64 bg-muted animate-pulse rounded" />
-          <div className="h-4 w-96 bg-muted animate-pulse rounded" />
+          <div className="bg-muted h-8 w-64 animate-pulse rounded-sm" />
+          <div className="bg-muted h-4 w-96 animate-pulse rounded-sm" />
         </div>
         <CatalogStatsSkeleton />
         <CatalogListSkeleton count={5} />

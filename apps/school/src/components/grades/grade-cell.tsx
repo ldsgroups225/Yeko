@@ -149,7 +149,7 @@ export function GradeCell({
   const isEditable = !disabled && (status === 'draft' || status === 'rejected')
 
   const cell = (
-    <div className={cn('relative group', className)}>
+    <div className={cn('group relative', className)}>
       <motion.div
         animate={isEditing ? { scale: 1.05 } : { scale: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -165,12 +165,19 @@ export function GradeCell({
           onKeyDown={handleKeyDown}
           disabled={!isEditable}
           className={cn(
-            'h-10 w-20 text-center font-mono text-sm transition-all focus-visible:ring-primary/30 rounded-lg shadow-sm',
+            `
+              focus-visible:ring-primary/30
+              h-10 w-20 rounded-lg text-center font-mono text-sm shadow-sm
+              transition-all
+            `,
             statusStyles[status],
             !isEditing && getValueColor(value),
-            error && 'border-destructive focus-visible:ring-destructive/30',
+            error && `
+              border-destructive
+              focus-visible:ring-destructive/30
+            `,
             !isEditable
-            && 'cursor-not-allowed opacity-80 backdrop-blur-none bg-muted/30',
+            && 'bg-muted/30 cursor-not-allowed opacity-80 backdrop-blur-none',
           )}
           aria-label={t.ui.grade()}
           aria-invalid={!!error}
@@ -183,9 +190,14 @@ export function GradeCell({
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
-            className="absolute -bottom-6 left-0 z-50 pointer-events-none"
+            className="pointer-events-none absolute -bottom-6 left-0 z-50"
           >
-            <div className="bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-0.5 rounded shadow-lg border border-border/10 uppercase tracking-tight whitespace-nowrap">
+            <div className="
+              bg-destructive text-destructive-foreground border-border/10
+              rounded-sm border px-2 py-0.5 text-[10px] font-bold tracking-tight
+              whitespace-nowrap uppercase shadow-lg
+            "
+            >
               {error}
             </div>
           </motion.div>
@@ -193,7 +205,12 @@ export function GradeCell({
       </AnimatePresence>
 
       {status === 'rejected' && !isEditing && !error && (
-        <div className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-destructive text-destructive-foreground border-2 border-background flex items-center justify-center shadow-lg">
+        <div className="
+          bg-destructive text-destructive-foreground border-background absolute
+          -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center
+          rounded-full border-2 shadow-lg
+        "
+        >
           <IconAlertCircle className="h-2.5 w-2.5" />
         </div>
       )}
@@ -207,12 +224,15 @@ export function GradeCell({
           <TooltipTrigger render={cell} />
           <TooltipContent
             side="top"
-            className="max-w-xs rounded-xl backdrop-blur-xl bg-destructive/90 text-destructive-foreground border-none p-4 shadow-xl"
+            className="
+              bg-destructive/90 text-destructive-foreground max-w-xs rounded-xl
+              border-none p-4 shadow-xl backdrop-blur-xl
+            "
           >
             <div className="flex items-start gap-2">
-              <IconAlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+              <IconAlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <div>
-                <p className="mb-1 text-xs font-bold uppercase tracking-wider">
+                <p className="mb-1 text-xs font-bold tracking-wider uppercase">
                   {t.academic.grades.validations.rejectReason()}
                 </p>
                 <p className="text-sm leading-relaxed">{rejectionReason}</p>

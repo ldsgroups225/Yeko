@@ -100,16 +100,27 @@ export function TeacherAssignmentDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl backdrop-blur-xl bg-card/95 border-border/40 p-0 overflow-hidden">
-        <div className="p-6 pb-4 border-b border-border/10 bg-white/5">
+      <DialogContent className="
+        bg-card/95 border-border/40 max-w-2xl overflow-hidden p-0
+        backdrop-blur-xl
+      "
+      >
+        <div className="border-border/10 border-b bg-white/5 p-6 pb-4">
           <DialogHeader>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <IconBook className="h-5 w-5 text-primary" />
+            <div className="mb-1 flex items-center gap-3">
+              <div className="
+                bg-primary/10 flex h-10 w-10 items-center justify-center
+                rounded-xl
+              "
+              >
+                <IconBook className="text-primary h-5 w-5" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.assignments.dialogTitle()}</DialogTitle>
-                <DialogDescription className="text-xs uppercase tracking-wider font-semibold opacity-70">
+                <DialogDescription className="
+                  text-xs font-semibold tracking-wider uppercase opacity-70
+                "
+                >
                   {teacherName}
                 </DialogDescription>
               </div>
@@ -126,10 +137,15 @@ export function TeacherAssignmentDialog({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-center h-[350px] gap-3"
+                    className="
+                      flex h-[350px] flex-col items-center justify-center gap-3
+                    "
                   >
-                    <IconLoader2 className="h-8 w-8 animate-spin text-primary/40" />
-                    <p className="text-sm text-muted-foreground animate-pulse">{t.common.loading()}</p>
+                    <IconLoader2 className="
+                      text-primary/40 h-8 w-8 animate-spin
+                    "
+                    />
+                    <p className="text-muted-foreground animate-pulse text-sm">{t.common.loading()}</p>
                   </motion.div>
                 )
               : (
@@ -189,14 +205,20 @@ function AssignmentList({ subjects, assignedIds, onAssign, isPending, onCancel, 
         key="empty"
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center h-[350px] text-center space-y-4"
+        className="
+          flex h-[350px] flex-col items-center justify-center space-y-4
+          text-center
+        "
       >
-        <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center">
-          <IconBook className="h-8 w-8 text-muted-foreground/30" />
+        <div className="
+          flex h-16 w-16 items-center justify-center rounded-full bg-white/5
+        "
+        >
+          <IconBook className="text-muted-foreground/30 h-8 w-8" />
         </div>
         <div className="space-y-1">
-          <p className="font-semibold text-foreground">{t.academic.assignments.noAvailableSubjects()}</p>
-          <p className="text-sm text-muted-foreground max-w-[280px]">
+          <p className="text-foreground font-semibold">{t.academic.assignments.noAvailableSubjects()}</p>
+          <p className="text-muted-foreground max-w-[280px] text-sm">
             {t.academic.assignments.allSubjectsAssigned()}
           </p>
         </div>
@@ -215,12 +237,20 @@ function AssignmentList({ subjects, assignedIds, onAssign, isPending, onCancel, 
         {Object.entries(groupedSubjects).map(([category, categorySubjects], catIdx) => (
           <div key={category} className="space-y-4">
             <div className="flex items-center gap-3">
-              <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+              <h4 className="
+                text-muted-foreground text-[10px] font-bold tracking-[0.2em]
+                uppercase
+              "
+              >
                 {category}
               </h4>
-              <div className="h-px flex-1 bg-border/20" />
+              <div className="bg-border/20 h-px flex-1" />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="
+              grid grid-cols-1 gap-3
+              sm:grid-cols-2
+            "
+            >
               {categorySubjects.map((item, idx) => {
                 const isSelected = selectedIds.has(item.subjectId)
                 return (
@@ -233,24 +263,51 @@ function AssignmentList({ subjects, assignedIds, onAssign, isPending, onCancel, 
                     whileTap={{ scale: 0.99 }}
                     onClick={() => handleToggle(item.subjectId)}
                     className={cn(
-                      'relative group flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer overflow-hidden',
+                      `
+                        group relative flex cursor-pointer items-center gap-4
+                        overflow-hidden rounded-xl border p-4 transition-all
+                      `,
                       isSelected
-                        ? 'border-primary/50 bg-primary/10 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]'
-                        : 'border-border/40 bg-white/5 hover:border-primary/30 hover:bg-white/10',
+                        ? `
+                          border-primary/50 bg-primary/10
+                          shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]
+                        `
+                        : `
+                          border-border/40
+                          hover:border-primary/30
+                          bg-white/5
+                          hover:bg-white/10
+                        `,
                     )}
                   >
                     <div className={cn(
-                      'h-10 w-10 rounded-lg flex items-center justify-center shrink-0 transition-colors',
-                      isSelected ? 'bg-primary text-white' : 'bg-white/5 text-muted-foreground',
+                      `
+                        flex h-10 w-10 shrink-0 items-center justify-center
+                        rounded-lg transition-colors
+                      `,
+                      isSelected
+                        ? 'bg-primary text-white'
+                        : `text-muted-foreground bg-white/5`,
                     )}
                     >
-                      {isSelected ? <IconCheck className="h-5 w-5" /> : <IconBook className="h-5 w-5" />}
+                      {isSelected
+                        ? <IconCheck className="h-5 w-5" />
+                        : (
+                            <IconBook className="h-5 w-5" />
+                          )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={cn('font-bold text-sm truncate', isSelected ? 'text-primary' : 'text-foreground')}>
+                    <div className="min-w-0 flex-1">
+                      <p className={cn('truncate text-sm font-bold', isSelected
+                        ? `text-primary`
+                        : `text-foreground`)}
+                      >
                         {item.subject?.name}
                       </p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                      <p className="
+                        text-muted-foreground text-[10px] font-semibold
+                        tracking-wider uppercase
+                      "
+                      >
                         {item.subject?.shortName}
                       </p>
                     </div>
@@ -261,7 +318,7 @@ function AssignmentList({ subjects, assignedIds, onAssign, isPending, onCancel, 
                     />
                     {isSelected && (
                       <div className="absolute top-0 right-0 p-1">
-                        <div className="h-1 w-1 rounded-full bg-primary" />
+                        <div className="bg-primary h-1 w-1 rounded-full" />
                       </div>
                     )}
                   </motion.div>
@@ -272,28 +329,56 @@ function AssignmentList({ subjects, assignedIds, onAssign, isPending, onCancel, 
         ))}
       </motion.div>
 
-      <div className="fixed bottom-0 left-0 right-0 p-6 bg-white/5 border-t border-border/10 backdrop-blur-md">
-        <DialogFooter className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="
+        border-border/10 fixed right-0 bottom-0 left-0 border-t bg-white/5 p-6
+        backdrop-blur-md
+      "
+      >
+        <DialogFooter className="
+          flex flex-col items-center justify-between gap-4
+          sm:flex-row
+        "
+        >
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="font-mono bg-primary/10 text-primary border-primary/20">
+            <Badge
+              variant="secondary"
+              className="bg-primary/10 text-primary border-primary/20 font-mono"
+            >
               {selectedIds.size}
             </Badge>
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-tight">
+            <span className="
+              text-muted-foreground text-xs font-semibold tracking-tight
+              uppercase
+            "
+            >
               {t.academic.assignments.selectedCount({ count: selectedIds.size })}
             </span>
           </div>
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="
+            flex w-full gap-2
+            sm:w-auto
+          "
+          >
             <Button
               variant="ghost"
               onClick={onCancel}
-              className="flex-1 sm:flex-none hover:bg-white/10"
+              className="
+                flex-1
+                hover:bg-white/10
+                sm:flex-none
+              "
             >
               {t.common.cancel()}
             </Button>
             <Button
               onClick={() => onAssign(Array.from(selectedIds))}
               disabled={selectedIds.size === 0 || isPending}
-              className="flex-1 sm:min-w-[140px] bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+              className="
+                bg-primary
+                hover:bg-primary/90
+                shadow-primary/20 flex-1 shadow-lg
+                sm:min-w-[140px]
+              "
             >
               {isPending
                 ? (

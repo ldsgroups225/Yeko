@@ -9,13 +9,13 @@ import {
   CommandItem,
   CommandList,
 } from '@workspace/ui/components/command'
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@workspace/ui/components/popover'
 import * as React from 'react'
+import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { getStudents } from '@/school/functions/students'
@@ -42,6 +42,8 @@ interface StudentComboboxProps {
   placeholder?: string
   disabled?: boolean
   classId?: string
+  schoolYearId?: string
+  requireValidEnrollmentInSchoolYear?: boolean
 }
 
 export function StudentCombobox({
@@ -50,45 +52,72 @@ export function StudentCombobox({
   placeholder,
   disabled,
   classId,
+  schoolYearId,
+  requireValidEnrollmentInSchoolYear = false,
 }: StudentComboboxProps) {
   const t = useTranslations()
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
 
+  const { schoolYearId: activeSchoolYearId } = useSchoolYearContext()
+  const effectiveSchoolYearId = schoolYearId ?? activeSchoolYearId ?? undefined
+
   const { data, isPending } = useQuery({
-    queryKey: ['students-combobox', search, classId],
+    queryKey: [
+      'students-combobox',
+      search,
+      classId,
+      effectiveSchoolYearId,
+      requireValidEnrollmentInSchoolYear,
+    ],
     queryFn: async () => {
       const result = await getStudents({
         data: {
           search: search || undefined,
           status: 'active',
           classId: classId || undefined,
+          schoolYearId: requireValidEnrollmentInSchoolYear
+            ? effectiveSchoolYearId
+            : undefined,
           page: 1,
           limit: 50,
         },
       })
+
       if (!result.success)
         return []
-      return result.data.data.map((item) => {
-        const className = [
-          item.currentClass?.gradeName,
-          item.currentClass?.section,
-        ]
-          .filter(Boolean)
-          .join(' ')
-        return {
-          id: item.student.id,
-          matricule: item.student.matricule,
-          user: {
-            name: `${item.student.lastName} ${item.student.firstName}`,
-            image: item.student.photoUrl,
-          },
-          currentEnrollment: item.currentClass
-            ? { class: { name: className } }
-            : null,
-        }
-      }) as Student[]
+
+      return result.data.data
+        .filter((item) => {
+          if (!requireValidEnrollmentInSchoolYear)
+            return true
+
+          // Keep only students that have a current class context in this year query.
+          // This aligns with "valid enrollment during active school year" expectation.
+          return !!item.currentClass
+        })
+        .map((item) => {
+          const className = [
+            item.currentClass?.gradeName,
+            item.currentClass?.section,
+          ]
+            .filter(Boolean)
+            .join(' ')
+
+          return {
+            id: item.student.id,
+            matricule: item.student.matricule,
+            user: {
+              name: `${item.student.lastName} ${item.student.firstName}`,
+              image: item.student.photoUrl,
+            },
+            currentEnrollment: item.currentClass
+              ? { class: { name: className } }
+              : null,
+          }
+        }) as Student[]
     },
+    enabled: !requireValidEnrollmentInSchoolYear || !!effectiveSchoolYearId,
   })
 
   const students = data ?? []
@@ -111,7 +140,7 @@ export function StudentCombobox({
                   <span className="truncate">
                     {selectedStudent.user?.name ?? 'Unknown'}
                     {selectedStudent.matricule && (
-                      <span className="ml-2 text-muted-foreground">
+                      <span className="text-muted-foreground ml-2">
                         (
                         {selectedStudent.matricule}
                         )
@@ -169,12 +198,13 @@ export function StudentCombobox({
                           />
                           <div className="flex flex-col">
                             <span>{student.user?.name ?? 'Unknown'}</span>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-muted-foreground text-xs">
                               {student.matricule}
                               {student.currentEnrollment?.class?.name && (
                                 <>
                                   {' '}
                                   •
+                                  {' '}
                                   {student.currentEnrollment.class.name}
                                 </>
                               )}

@@ -88,12 +88,17 @@ export function PaymentsTable({
 
   if (payments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconCreditCard className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconCreditCard className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">{t.finance.payments.noPayments()}</p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+        <p className="text-muted-foreground/70 mt-1 max-w-sm text-sm">
           {t.finance.payments.description()}
         </p>
       </div>
@@ -102,10 +107,18 @@ export function PaymentsTable({
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">{t.finance.receipt()}</TableHead>
               <TableHead className="font-semibold">{t.students.student()}</TableHead>
               <TableHead className="font-semibold">{t.finance.amount()}</TableHead>
@@ -135,7 +148,11 @@ export function PaymentsTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {payments.map((payment, index) => (
             <PaymentMobileCard

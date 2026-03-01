@@ -207,56 +207,76 @@ function ProgramsCatalog() {
           </p>
         </div>
         <Button onClick={() => setIsCreatingProgram(true)}>
-          <IconPlus className="h-4 w-4 mr-2" />
+          <IconPlus className="mr-2 h-4 w-4" />
           Créer un Programme
         </Button>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="
+        grid gap-4
+        md:grid-cols-4
+      "
+      >
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Programmes</CardTitle>
-            <IconDatabase className="h-4 w-4 text-muted-foreground" />
+            <IconDatabase className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.programs || 0}</div>
-            <p className="text-xs text-muted-foreground">Modèles actifs</p>
+            <p className="text-muted-foreground text-xs">Modèles actifs</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Chapitres</CardTitle>
-            <IconFileText className="h-4 w-4 text-muted-foreground" />
+            <IconFileText className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats?.chapters || 0}</div>
-            <p className="text-xs text-muted-foreground">Total chapitres</p>
+            <p className="text-muted-foreground text-xs">Total chapitres</p>
           </CardContent>
         </Card>
 
         <Link to="/app/catalogs/school-years" className="block">
-          <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="
+            hover:bg-accent/50
+            cursor-pointer transition-colors
+          "
+          >
+            <CardHeader className="
+              flex flex-row items-center justify-between space-y-0 pb-2
+            "
+            >
               <CardTitle className="text-sm font-medium">Années Scolaires</CardTitle>
-              <IconCalendar className="h-4 w-4 text-muted-foreground" />
+              <IconCalendar className="text-muted-foreground h-4 w-4" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats?.schoolYears || 0}</div>
-              <p className="text-xs text-muted-foreground">Gérer les années et périodes →</p>
+              <p className="text-muted-foreground text-xs">Gérer les années et périodes →</p>
             </CardContent>
           </Card>
         </Link>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Année Active</CardTitle>
-            <IconCalendar className="h-4 w-4 text-muted-foreground" />
+            <IconCalendar className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{activeYear?.name || 'Aucune'}</div>
-            <p className="text-xs text-muted-foreground">Année en cours</p>
+            <p className="text-muted-foreground text-xs">Année en cours</p>
           </CardContent>
         </Card>
       </div>
@@ -279,7 +299,11 @@ function ProgramsCatalog() {
                   required
                 />
               </div>
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="
+                grid gap-4
+                md:grid-cols-3
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="program-year">Année Scolaire *</Label>
                   <Select name="schoolYearTemplateId" required value={newProgramYear} onValueChange={val => val && setNewProgramYear(val)}>
@@ -292,7 +316,14 @@ function ProgramsCatalog() {
                                 ? (
                                     <div className="flex items-center gap-2">
                                       <span>{year.name}</span>
-                                      {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                                      {year.isActive && (
+                                        <Badge
+                                          variant="secondary"
+                                          className="h-4 text-[10px]"
+                                        >
+                                          Active
+                                        </Badge>
+                                      )}
                                     </div>
                                   )
                                 : undefined
@@ -351,11 +382,11 @@ function ProgramsCatalog() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreatingProgram(false)}>
-                  <IconX className="h-4 w-4 mr-2" />
+                  <IconX className="mr-2 h-4 w-4" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createProgramMutation.isPending}>
-                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="mr-2 h-4 w-4" />
                   {createProgramMutation.isPending ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -371,9 +402,17 @@ function ProgramsCatalog() {
           <CardDescription>Trouver des programmes spécifiques</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
+          <div className="
+            flex flex-col gap-4
+            md:flex-row
+          "
+          >
             <div className="relative flex-1">
-              <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <IconSearch className="
+                text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                -translate-y-1/2
+              "
+              />
               <Input
                 placeholder="Rechercher des programmes..."
                 className="pl-9"
@@ -392,7 +431,14 @@ function ProgramsCatalog() {
                           ? (
                               <div className="flex items-center gap-2">
                                 <span>{year.name}</span>
-                                {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                                {year.isActive && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="h-4 text-[10px]"
+                                  >
+                                    Active
+                                  </Badge>
+                                )}
                               </div>
                             )
                           : undefined
@@ -479,8 +525,11 @@ function ProgramsCatalog() {
               )
             : !programsData || programsData.programs.length === 0
                 ? (
-                    <div className="text-center py-8">
-                      <IconDatabase className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <div className="py-8 text-center">
+                      <IconDatabase className="
+                        text-muted-foreground mx-auto mb-4 h-12 w-12
+                      "
+                      />
                       <h3 className="text-lg font-medium">Aucun programme trouvé</h3>
                       <p className="text-muted-foreground">
                         {search || yearFilter !== 'all' || subjectFilter !== 'all' || gradeFilter !== 'all'
@@ -501,30 +550,62 @@ function ProgramsCatalog() {
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, scale: 0.95 }}
                               transition={{ duration: 0.2 }}
-                              className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+                              className="
+                                hover:bg-accent/50
+                                flex cursor-pointer items-center justify-between
+                                rounded-lg border p-4 transition-colors
+                              "
                               onClick={() => navigate({ to: `/app/catalogs/programs/${program.id}` })}
                             >
-                              <div className="flex items-center gap-4 flex-1">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                                  <IconBook className="h-5 w-5 text-primary" />
+                              <div className="flex flex-1 items-center gap-4">
+                                <div className="
+                                  bg-primary/10 flex h-10 w-10 items-center
+                                  justify-center rounded-lg
+                                "
+                                >
+                                  <IconBook className="text-primary h-5 w-5" />
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2">
                                     <h3 className="font-semibold">{program.name}</h3>
                                     {program.status === 'published' && (
-                                      <Badge variant="default" className="text-xs">Publié</Badge>
+                                      <Badge
+                                        variant="default"
+                                        className="text-xs"
+                                      >
+                                        Publié
+                                      </Badge>
                                     )}
                                     {program.status === 'draft' && (
-                                      <Badge variant="secondary" className="text-xs">Brouillon</Badge>
+                                      <Badge
+                                        variant="secondary"
+                                        className="text-xs"
+                                      >
+                                        Brouillon
+                                      </Badge>
                                     )}
                                     {program.status === 'archived' && (
-                                      <Badge variant="outline" className="text-xs">Archivé</Badge>
+                                      <Badge
+                                        variant="outline"
+                                        className="text-xs"
+                                      >
+                                        Archivé
+                                      </Badge>
                                     )}
                                     {program.schoolYearTemplate?.isActive && (
-                                      <Badge variant="default" className="text-xs">Active</Badge>
+                                      <Badge
+                                        variant="default"
+                                        className="text-xs"
+                                      >
+                                        Active
+                                      </Badge>
                                     )}
                                   </div>
-                                  <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                                  <div className="
+                                    text-muted-foreground mt-1 flex items-center
+                                    gap-2 text-sm
+                                  "
+                                  >
                                     <span>{program.subject?.name}</span>
                                     <span>•</span>
                                     <span>{program.grade?.name}</span>
@@ -532,7 +613,10 @@ function ProgramsCatalog() {
                                     <span>{program.schoolYearTemplate?.name}</span>
                                   </div>
                                 </div>
-                                <IconChevronRight className="h-5 w-5 text-muted-foreground" />
+                                <IconChevronRight className="
+                                  text-muted-foreground h-5 w-5
+                                "
+                                />
                               </div>
                               <div
                                 className="flex gap-2"
@@ -571,7 +655,11 @@ function ProgramsCatalog() {
 
       {/* Clone Dialog */}
       {cloningProgram && (
-        <Card className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+        <Card className="
+          bg-background/80 fixed inset-0 z-50 flex items-center justify-center
+          backdrop-blur-sm
+        "
+        >
           <div className="w-full max-w-lg">
             <CardHeader>
               <CardTitle>Cloner le Programme</CardTitle>
@@ -595,7 +683,14 @@ function ProgramsCatalog() {
                                 ? (
                                     <div className="flex items-center gap-2">
                                       <span>{year.name}</span>
-                                      {year.isActive && <Badge variant="secondary" className="text-[10px] h-4">Active</Badge>}
+                                      {year.isActive && (
+                                        <Badge
+                                          variant="secondary"
+                                          className="h-4 text-[10px]"
+                                        >
+                                          Active
+                                        </Badge>
+                                      )}
                                     </div>
                                   )
                                 : undefined

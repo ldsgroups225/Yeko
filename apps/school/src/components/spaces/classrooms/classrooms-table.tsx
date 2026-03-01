@@ -128,33 +128,48 @@ export function ClassroomsTable({
 
   return (
     <div className="space-y-6">
-      <Card className="border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden shadow-sm">
-        <CardHeader className="border-b border-border/40 bg-muted/5 pb-4">
+      <Card className="
+        border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+      "
+      >
+        <CardHeader className="border-border/40 bg-muted/5 border-b pb-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg font-bold">
               {t.spaces.title()}
             </CardTitle>
             <div className="relative w-full max-w-sm">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <IconSearch className="
+                text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                -translate-y-1/2
+              "
+              />
               <Input
                 placeholder={t.common.search()}
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                className="pl-9 h-9 rounded-xl border-border/40 bg-background/50 focus:bg-background transition-colors"
+                className="
+                  border-border/40 bg-background/50
+                  focus:bg-background
+                  h-9 rounded-xl pl-9 transition-colors
+                "
               />
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-0">
           {hasNoData && !hasNoResults && (
-            <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-b border-border/40 bg-card/10">
-              <div className="p-4 rounded-full bg-muted/20 mb-4">
-                <IconBuilding className="size-8 text-muted-foreground/50" />
+            <div className="
+              text-muted-foreground border-border/40 bg-card/10 flex flex-col
+              items-center justify-center border-b py-16 text-center
+            "
+            >
+              <div className="bg-muted/20 mb-4 rounded-full p-4">
+                <IconBuilding className="text-muted-foreground/50 size-8" />
               </div>
               <p className="text-lg font-medium">
                 {t.tables.noClassroomsFound()}
               </p>
-              <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+              <p className="text-muted-foreground/70 mt-1 max-w-sm text-sm">
                 {t.tables.createFirstClassroom()}
               </p>
             </div>
@@ -176,18 +191,25 @@ export function ClassroomsTable({
 
           {!hasNoData && (
             <>
-              <div className="hidden md:block">
+              <div className="
+                hidden
+                md:block
+              "
+              >
                 <Table>
                   <TableHeader className="bg-muted/50">
                     {table.getHeaderGroups().map(headerGroup => (
                       <TableRow
                         key={headerGroup.id}
-                        className="hover:bg-transparent border-border/40"
+                        className="
+                          border-border/40
+                          hover:bg-transparent
+                        "
                       >
                         {headerGroup.headers.map(header => (
                           <TableHead
                             key={header.id}
-                            className="font-semibold text-muted-foreground"
+                            className="text-muted-foreground font-semibold"
                           >
                             {header.isPlaceholder
                               ? null
@@ -208,7 +230,11 @@ export function ClassroomsTable({
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.15, delay: index * 0.03 }}
-                          className="group hover:bg-muted/30 border-border/40 transition-colors cursor-pointer"
+                          className="
+                            group
+                            hover:bg-muted/30
+                            border-border/40 cursor-pointer transition-colors
+                          "
                           onClick={() =>
                             navigate({
                               to: `/spaces/classrooms/${row.original.id}`,
@@ -234,11 +260,15 @@ export function ClassroomsTable({
           )}
 
           {!hasNoData && table.getPageCount() > 1 && (
-            <div className="flex items-center justify-between p-4 border-t border-border/40 bg-muted/5">
-              <div className="text-sm text-muted-foreground font-medium">
+            <div className="
+              border-border/40 bg-muted/5 flex items-center justify-between
+              border-t p-4
+            "
+            >
+              <div className="text-muted-foreground text-sm font-medium">
                 {t.common.showing()}
                 {' '}
-                <span className="font-bold text-foreground">
+                <span className="text-foreground font-bold">
                   {table.getState().pagination.pageIndex
                     * table.getState().pagination.pageSize
                     + 1}
@@ -246,7 +276,7 @@ export function ClassroomsTable({
                 {' '}
                 -
                 {' '}
-                <span className="font-bold text-foreground">
+                <span className="text-foreground font-bold">
                   {Math.min(
                     (table.getState().pagination.pageIndex + 1)
                     * table.getState().pagination.pageSize,
@@ -256,7 +286,7 @@ export function ClassroomsTable({
                 {' '}
                 {t.common.of()}
                 {' '}
-                <span className="font-bold text-foreground">{data.length}</span>
+                <span className="text-foreground font-bold">{data.length}</span>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -264,7 +294,7 @@ export function ClassroomsTable({
                   size="sm"
                   onClick={() => table.previousPage()}
                   disabled={!table.getCanPreviousPage()}
-                  className="rounded-lg h-8"
+                  className="h-8 rounded-lg"
                 >
                   {t.common.previous()}
                 </Button>
@@ -273,7 +303,7 @@ export function ClassroomsTable({
                   size="sm"
                   onClick={() => table.nextPage()}
                   disabled={!table.getCanNextPage()}
-                  className="rounded-lg h-8"
+                  className="h-8 rounded-lg"
                 >
                   {t.common.next()}
                 </Button>

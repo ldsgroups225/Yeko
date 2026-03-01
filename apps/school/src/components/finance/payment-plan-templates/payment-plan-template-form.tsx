@@ -73,14 +73,21 @@ export function PaymentPlanTemplateForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 Nom *
               </FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   placeholder="Ex: Plan trimestriel"
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormMessage />
@@ -93,14 +100,21 @@ export function PaymentPlanTemplateForm({
           name="nameEn"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 Nom (English)
               </FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   placeholder="Ex: Quarterly Plan"
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormDescription className="text-[11px]">
@@ -111,13 +125,21 @@ export function PaymentPlanTemplateForm({
           )}
         />
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="
+          grid gap-4
+          md:grid-cols-2
+        "
+        >
           <FormField
             control={form.control}
             name="installmentsCount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                <FormLabel className="
+                  text-muted-foreground text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   Nombre d'échéances *
                 </FormLabel>
                 <FormControl>
@@ -127,7 +149,11 @@ export function PaymentPlanTemplateForm({
                     max={12}
                     {...field}
                     onChange={e => field.onChange(Number(e.target.value))}
-                    className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                    className="
+                      border-border/40 bg-muted/20
+                      focus:bg-background
+                      rounded-xl transition-colors
+                    "
                   />
                 </FormControl>
                 <FormMessage />
@@ -139,8 +165,12 @@ export function PaymentPlanTemplateForm({
             control={form.control}
             name="isDefault"
             render={({ field }) => (
-              <FormItem className="flex items-center justify-between space-y-0 rounded-xl border border-border/40 p-3 bg-muted/10 mt-6">
-                <FormLabel className="font-medium cursor-pointer">
+              <FormItem className="
+                border-border/40 bg-muted/10 mt-6 flex items-center
+                justify-between space-y-0 rounded-xl border p-3
+              "
+              >
+                <FormLabel className="cursor-pointer font-medium">
                   Modèle par défaut
                 </FormLabel>
                 <FormControl>
@@ -154,27 +184,37 @@ export function PaymentPlanTemplateForm({
           />
         </div>
 
-        <div className="border-t border-border/40 pt-4 mt-4">
-          <h4 className="text-sm font-semibold mb-3">Calendrier des échéances</h4>
-          <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+        <div className="border-border/40 mt-4 border-t pt-4">
+          <h4 className="mb-3 text-sm font-semibold">Calendrier des échéances</h4>
+          <div className="max-h-[300px] space-y-3 overflow-y-auto pr-2">
             {fields.map((field, index) => (
               <div
                 key={field.id}
-                className="grid gap-2 md:grid-cols-4 items-end p-3 rounded-xl border border-border/40 bg-muted/5"
+                className="
+                  border-border/40 bg-muted/5 grid items-end gap-2 rounded-xl
+                  border p-3
+                  md:grid-cols-4
+                "
               >
                 <FormField
                   control={form.control}
                   name={`schedule.${index}.label`}
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+                      <FormLabel className="
+                        text-muted-foreground text-[10px] font-bold
+                        tracking-wider uppercase
+                      "
+                      >
                         Label
                       </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           placeholder={`Échéance ${index + 1}`}
-                          className="rounded-lg border-border/40 bg-muted/20 text-sm"
+                          className="
+                            border-border/40 bg-muted/20 rounded-lg text-sm
+                          "
                         />
                       </FormControl>
                     </FormItem>
@@ -186,7 +226,11 @@ export function PaymentPlanTemplateForm({
                   name={`schedule.${index}.percentage`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+                      <FormLabel className="
+                        text-muted-foreground text-[10px] font-bold
+                        tracking-wider uppercase
+                      "
+                      >
                         %
                       </FormLabel>
                       <FormControl>
@@ -197,7 +241,9 @@ export function PaymentPlanTemplateForm({
                           max={100}
                           {...field}
                           onChange={e => field.onChange(Number(e.target.value))}
-                          className="rounded-lg border-border/40 bg-muted/20 text-sm"
+                          className="
+                            border-border/40 bg-muted/20 rounded-lg text-sm
+                          "
                         />
                       </FormControl>
                     </FormItem>
@@ -209,7 +255,11 @@ export function PaymentPlanTemplateForm({
                   name={`schedule.${index}.dueDaysFromStart`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
+                      <FormLabel className="
+                        text-muted-foreground text-[10px] font-bold
+                        tracking-wider uppercase
+                      "
+                      >
                         Jours
                       </FormLabel>
                       <FormControl>
@@ -218,7 +268,9 @@ export function PaymentPlanTemplateForm({
                           min={0}
                           {...field}
                           onChange={e => field.onChange(Number(e.target.value))}
-                          className="rounded-lg border-border/40 bg-muted/20 text-sm"
+                          className="
+                            border-border/40 bg-muted/20 rounded-lg text-sm
+                          "
                         />
                       </FormControl>
                     </FormItem>
@@ -229,19 +281,19 @@ export function PaymentPlanTemplateForm({
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-border/10">
+        <div className="border-border/10 flex justify-end gap-3 border-t pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="rounded-xl border-border/40"
+            className="border-border/40 rounded-xl"
           >
             {t.common.cancel()}
           </Button>
           <Button
             type="submit"
             disabled={isPending}
-            className="rounded-xl shadow-lg shadow-primary/20"
+            className="shadow-primary/20 rounded-xl shadow-lg"
           >
             {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isEditMode ? 'Mettre à jour' : 'Créer le modèle'}

@@ -118,18 +118,31 @@ function ConductReportsPage() {
         ]}
       />
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="
+        flex flex-col justify-between gap-6
+        md:flex-row md:items-end
+      "
+      >
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconChartBar className="size-8 text-primary" />
+          <div className="
+            bg-primary/10 border-primary/20 rounded-2xl border p-3 shadow-lg
+            backdrop-blur-xl
+          "
+          >
+            <IconChartBar className="text-primary size-8" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.conduct.reports()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.conduct.reportsDescription()}</p>
+            <p className="
+              text-muted-foreground max-w-md text-sm font-medium italic
+            "
+            >
+              {t.conduct.reportsDescription()}
+            </p>
           </div>
         </motion.div>
 
@@ -138,7 +151,15 @@ function ConductReportsPage() {
           animate={{ opacity: 1, x: 0 }}
         >
           <Link to="/conducts/conduct">
-            <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="
+                hover:bg-primary/10 hover:text-primary
+                rounded-xl text-[10px] font-black tracking-widest uppercase
+                transition-all
+              "
+            >
               <IconArrowLeft className="mr-2 h-4 w-4" />
               {t.common.back()}
             </Button>
@@ -149,21 +170,52 @@ function ConductReportsPage() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
+        className="
+          bg-card/20 border-border/40 rounded-3xl border p-6 backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-4 ml-1">
-          <IconFilter className="size-3 text-muted-foreground/60" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.conduct.filters()}</span>
+        <div className="mb-4 ml-1 flex items-center gap-2">
+          <IconFilter className="text-muted-foreground/60 size-3" />
+          <span className="
+            text-muted-foreground/60 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
+            {t.conduct.filters()}
+          </span>
         </div>
         <div className="flex flex-wrap gap-4">
           <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' || v === null ? '' : v)}>
-            <SelectTrigger className="w-[200px] h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+            <SelectTrigger className="
+              bg-background/50 border-border/40
+              focus:ring-primary/20
+              h-12 w-[200px] rounded-2xl font-bold transition-all
+            "
+            >
               <SelectValue placeholder={t.conduct.allClasses()} />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-              <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.allClasses()}</SelectItem>
+            <SelectContent className="
+              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+            "
+            >
+              <SelectItem
+                value="all"
+                className="
+                  rounded-xl py-3 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.allClasses()}
+              </SelectItem>
               {classes.map(c => (
-                <SelectItem key={c.class.id} value={c.class.id} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">
+                <SelectItem
+                  key={c.class.id}
+                  value={c.class.id}
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
                   {c.grade?.name}
                   {' '}
                   {c.class.section}
@@ -173,21 +225,81 @@ function ConductReportsPage() {
           </Select>
 
           <Select value={type ?? 'all'} onValueChange={v => setType(v === 'all' || v === null ? undefined : v as typeof type)}>
-            <SelectTrigger className="w-[180px] h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+            <SelectTrigger className="
+              bg-background/50 border-border/40
+              focus:ring-primary/20
+              h-12 w-[180px] rounded-2xl font-bold transition-all
+            "
+            >
               <SelectValue placeholder={t.conduct.allTypes()} />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-              <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.allTypes()}</SelectItem>
-              <SelectItem value="incident" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.type.incident()}</SelectItem>
-              <SelectItem value="sanction" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.type.sanction()}</SelectItem>
-              <SelectItem value="reward" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.type.reward()}</SelectItem>
-              <SelectItem value="note" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.conduct.type.note()}</SelectItem>
+            <SelectContent className="
+              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+            "
+            >
+              <SelectItem
+                value="all"
+                className="
+                  rounded-xl py-3 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.allTypes()}
+              </SelectItem>
+              <SelectItem
+                value="incident"
+                className="
+                  rounded-xl py-3 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.type.incident()}
+              </SelectItem>
+              <SelectItem
+                value="sanction"
+                className="
+                  rounded-xl py-3 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.type.sanction()}
+              </SelectItem>
+              <SelectItem
+                value="reward"
+                className="
+                  rounded-xl py-3 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.type.reward()}
+              </SelectItem>
+              <SelectItem
+                value="note"
+                className="
+                  rounded-xl py-3 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.type.note()}
+              </SelectItem>
             </SelectContent>
           </Select>
 
           <div className="flex gap-2">
-            <DatePicker date={startDate} onSelect={d => d && setStartDate(d)} className="h-12 rounded-2xl bg-background/50 border-border/40 font-bold" />
-            <DatePicker date={endDate} onSelect={d => d && setEndDate(d)} className="h-12 rounded-2xl bg-background/50 border-border/40 font-bold" />
+            <DatePicker
+              date={startDate}
+              onSelect={d => d && setStartDate(d)}
+              className="
+                bg-background/50 border-border/40 h-12 rounded-2xl font-bold
+              "
+            />
+            <DatePicker
+              date={endDate}
+              onSelect={d => d && setEndDate(d)}
+              className="
+                bg-background/50 border-border/40 h-12 rounded-2xl font-bold
+              "
+            />
           </div>
         </div>
       </motion.div>
@@ -200,10 +312,16 @@ function ConductReportsPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="grid gap-6 md:grid-cols-4"
+                className="
+                  grid gap-6
+                  md:grid-cols-4
+                "
               >
                 {Array.from({ length: 4 }).map(() => (
-                  <Skeleton key={`skeleton-${generateUUID()}`} className="h-32 rounded-3xl" />
+                  <Skeleton
+                    key={`skeleton-${generateUUID()}`}
+                    className="h-32 rounded-3xl"
+                  />
                 ))}
               </motion.div>
             )
@@ -215,14 +333,33 @@ function ConductReportsPage() {
                 animate="show"
                 className="space-y-8"
               >
-                <div className="grid gap-6 md:grid-cols-4">
+                <div className="
+                  grid gap-6
+                  md:grid-cols-4
+                "
+                >
                   <motion.div variants={item}>
-                    <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl group">
-                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <IconTrendingUp className="size-16 text-primary" />
+                    <Card className="
+                      border-border/40 bg-card/30 group relative overflow-hidden
+                      rounded-3xl shadow-xl backdrop-blur-xl
+                    "
+                    >
+                      <div className="
+                        absolute top-0 right-0 p-4 opacity-10
+                        transition-transform duration-500
+                        group-hover:scale-110
+                      "
+                      >
+                        <IconTrendingUp className="text-primary size-16" />
                       </div>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.conduct.totalRecords()}</CardTitle>
+                        <CardTitle className="
+                          text-muted-foreground/60 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.conduct.totalRecords()}
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-4xl font-black tracking-tight">{stats.total}</div>
@@ -231,65 +368,156 @@ function ConductReportsPage() {
                   </motion.div>
 
                   <motion.div variants={item}>
-                    <Card className="relative overflow-hidden rounded-3xl border-destructive/20 bg-destructive/5 backdrop-blur-xl shadow-xl group">
-                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <IconAlertTriangle className="size-16 text-destructive" />
+                    <Card className="
+                      border-destructive/20 bg-destructive/5 group relative
+                      overflow-hidden rounded-3xl shadow-xl backdrop-blur-xl
+                    "
+                    >
+                      <div className="
+                        absolute top-0 right-0 p-4 opacity-10
+                        transition-transform duration-500
+                        group-hover:scale-110
+                      "
+                      >
+                        <IconAlertTriangle className="text-destructive size-16" />
                       </div>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-destructive/60">{t.conduct.type.incident()}</CardTitle>
+                        <CardTitle className="
+                          text-destructive/60 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.conduct.type.incident()}
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-4xl font-black tracking-tight text-destructive">{stats.incidents}</div>
+                        <div className="
+                          text-destructive text-4xl font-black tracking-tight
+                        "
+                        >
+                          {stats.incidents}
+                        </div>
                         <Progress
                           value={stats.total > 0 ? (stats.incidents / stats.total) * 100 : 0}
-                          className="mt-4 h-1.5 bg-destructive/10 [&>div]:bg-destructive"
+                          className="
+                            bg-destructive/10
+                            [&>div]:bg-destructive
+                            mt-4 h-1.5
+                          "
                         />
                       </CardContent>
                     </Card>
                   </motion.div>
 
                   <motion.div variants={item}>
-                    <Card className="relative overflow-hidden rounded-3xl border-accent/20 bg-accent/5 backdrop-blur-xl shadow-xl group">
-                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <IconShieldCheck className="size-16 text-accent-foreground" />
+                    <Card className="
+                      border-accent/20 bg-accent/5 group relative
+                      overflow-hidden rounded-3xl shadow-xl backdrop-blur-xl
+                    "
+                    >
+                      <div className="
+                        absolute top-0 right-0 p-4 opacity-10
+                        transition-transform duration-500
+                        group-hover:scale-110
+                      "
+                      >
+                        <IconShieldCheck className="
+                          text-accent-foreground size-16
+                        "
+                        />
                       </div>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-accent-foreground/60">{t.conduct.type.sanction()}</CardTitle>
+                        <CardTitle className="
+                          text-accent-foreground/60 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.conduct.type.sanction()}
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-4xl font-black tracking-tight text-accent-foreground">{stats.sanctions}</div>
+                        <div className="
+                          text-accent-foreground text-4xl font-black
+                          tracking-tight
+                        "
+                        >
+                          {stats.sanctions}
+                        </div>
                         <Progress
                           value={stats.total > 0 ? (stats.sanctions / stats.total) * 100 : 0}
-                          className="mt-4 h-1.5 bg-accent/10 [&>div]:bg-accent"
+                          className="
+                            bg-accent/10
+                            [&>div]:bg-accent
+                            mt-4 h-1.5
+                          "
                         />
                       </CardContent>
                     </Card>
                   </motion.div>
 
                   <motion.div variants={item}>
-                    <Card className="relative overflow-hidden rounded-3xl border-success/20 bg-success/5 backdrop-blur-xl shadow-xl group">
-                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                        <IconTrophy className="size-16 text-success" />
+                    <Card className="
+                      border-success/20 bg-success/5 group relative
+                      overflow-hidden rounded-3xl shadow-xl backdrop-blur-xl
+                    "
+                    >
+                      <div className="
+                        absolute top-0 right-0 p-4 opacity-10
+                        transition-transform duration-500
+                        group-hover:scale-110
+                      "
+                      >
+                        <IconTrophy className="text-success size-16" />
                       </div>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-success/60">{t.conduct.type.reward()}</CardTitle>
+                        <CardTitle className="
+                          text-success/60 text-[10px] font-black tracking-widest
+                          uppercase
+                        "
+                        >
+                          {t.conduct.type.reward()}
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-4xl font-black tracking-tight text-success">{stats.rewards}</div>
+                        <div className="
+                          text-success text-4xl font-black tracking-tight
+                        "
+                        >
+                          {stats.rewards}
+                        </div>
                         <Progress
                           value={stats.total > 0 ? (stats.rewards / stats.total) * 100 : 0}
-                          className="mt-4 h-1.5 bg-success/10 [&>div]:bg-success"
+                          className="
+                            bg-success/10
+                            [&>div]:bg-success
+                            mt-4 h-1.5
+                          "
                         />
                       </CardContent>
                     </Card>
                   </motion.div>
                 </div>
 
-                <div className="grid gap-8 md:grid-cols-2">
+                <div className="
+                  grid gap-8
+                  md:grid-cols-2
+                "
+                >
                   <motion.div variants={item}>
-                    <Card className="rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl h-full">
-                      <CardHeader className="border-b border-border/10 bg-muted/20">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
+                    <Card className="
+                      border-border/40 bg-card/30 h-full rounded-3xl shadow-xl
+                      backdrop-blur-xl
+                    "
+                    >
+                      <CardHeader className="
+                        border-border/10 bg-muted/20 border-b
+                      "
+                      >
+                        <CardTitle className="
+                          text-muted-foreground/60 flex items-center gap-2
+                          text-[10px] font-black tracking-widest uppercase
+                        "
+                        >
                           <IconChartPie className="size-3" />
                           {t.conduct.bySeverity()}
                         </CardTitle>
@@ -297,14 +525,29 @@ function ConductReportsPage() {
                       <CardContent className="pt-6">
                         <div className="space-y-4">
                           {(['low', 'medium', 'high', 'critical'] as const).map(severity => (
-                            <div key={severity} className="flex items-center justify-between group">
+                            <div
+                              key={severity}
+                              className="
+                                group flex items-center justify-between
+                              "
+                            >
                               <ConductSeverityBadge severity={severity} />
                               <div className="flex items-center gap-4">
-                                <span className="text-sm font-black text-muted-foreground/40">
+                                <span className="
+                                  text-muted-foreground/40 text-sm font-black
+                                "
+                                >
                                   {Math.round((stats.bySeverity[severity] / (stats.total || 1)) * 100)}
                                   %
                                 </span>
-                                <span className="font-black text-lg tracking-tight group-hover:text-primary transition-colors">{stats.bySeverity[severity]}</span>
+                                <span className="
+                                  group-hover:text-primary
+                                  text-lg font-black tracking-tight
+                                  transition-colors
+                                "
+                                >
+                                  {stats.bySeverity[severity]}
+                                </span>
                               </div>
                             </div>
                           ))}
@@ -314,9 +557,20 @@ function ConductReportsPage() {
                   </motion.div>
 
                   <motion.div variants={item}>
-                    <Card className="rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl h-full">
-                      <CardHeader className="border-b border-border/10 bg-muted/20">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 flex items-center gap-2">
+                    <Card className="
+                      border-border/40 bg-card/30 h-full rounded-3xl shadow-xl
+                      backdrop-blur-xl
+                    "
+                    >
+                      <CardHeader className="
+                        border-border/10 bg-muted/20 border-b
+                      "
+                      >
+                        <CardTitle className="
+                          text-muted-foreground/60 flex items-center gap-2
+                          text-[10px] font-black tracking-widest uppercase
+                        "
+                        >
                           <IconChartBar className="size-3" />
                           {t.conduct.byCategory()}
                         </CardTitle>
@@ -327,9 +581,18 @@ function ConductReportsPage() {
                             .sort((a, b) => b[1] - a[1])
                             .slice(0, 5)
                             .map(([category, count]) => (
-                              <div key={category} className="space-y-1.5 group">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 transition-colors group-hover:text-primary">
+                              <div key={category} className="group space-y-1.5">
+                                <div className="
+                                  flex items-center justify-between
+                                "
+                                >
+                                  <span className="
+                                    text-muted-foreground/60
+                                    group-hover:text-primary
+                                    text-[10px] font-black tracking-widest
+                                    uppercase transition-colors
+                                  "
+                                  >
                                     {(() => {
                                       switch (category) {
                                         case 'behavior': return t.conduct.category.behavior()
@@ -349,7 +612,10 @@ function ConductReportsPage() {
                                   </span>
                                   <span className="font-black tracking-tight">{count}</span>
                                 </div>
-                                <Progress value={(count / (stats.total || 1)) * 100} className="h-1 bg-muted/20" />
+                                <Progress
+                                  value={(count / (stats.total || 1)) * 100}
+                                  className="bg-muted/20 h-1"
+                                />
                               </div>
                             ))}
                         </div>

@@ -32,41 +32,66 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <section className="
+      py-24
+      sm:py-32
+    "
+    >
+      <div className="
+        mx-auto max-w-7xl px-6
+        lg:px-8
+      "
+      >
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="
+            text-foreground text-3xl font-bold tracking-tight
+            sm:text-4xl
+          "
+          >
             Loved by Schools Across Africa
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="text-muted-foreground mt-4 text-lg">
             See what educators, parents, and administrators are saying about Yeko
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div className="
+          mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8
+          lg:mx-0 lg:max-w-none lg:grid-cols-3
+        "
+        >
           {testimonials.map(testimonial => (
             <Card key={testimonial.author} className="border-2">
               <CardContent className="p-8">
-                <div className="flex gap-1 mb-4">
+                <div className="mb-4 flex gap-1">
                   {Array.from({ length: testimonial.rating }).map(() => (
-                    <IconStar key={generateUUID()} className="h-5 w-5 fill-primary text-primary" />
+                    <IconStar
+                      key={generateUUID()}
+                      className="fill-primary text-primary h-5 w-5"
+                    />
                   ))}
                 </div>
-                <blockquote className="text-muted-foreground mb-6 leading-relaxed">
+                <blockquote className="
+                  text-muted-foreground mb-6 leading-relaxed
+                "
+                >
                   "
                   {testimonial.content}
                   "
                 </blockquote>
                 <div className="flex items-center gap-4">
                   <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
+                    <AvatarFallback className="
+                      bg-primary text-primary-foreground
+                    "
+                    >
                       {testimonial.avatar}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <div className="font-semibold">{testimonial.author}</div>
-                    <div className="text-sm text-muted-foreground">{testimonial.role}</div>
-                    <div className="text-xs text-muted-foreground">{testimonial.location}</div>
+                    <div className="text-muted-foreground text-sm">{testimonial.role}</div>
+                    <div className="text-muted-foreground text-xs">{testimonial.location}</div>
                   </div>
                 </div>
               </CardContent>

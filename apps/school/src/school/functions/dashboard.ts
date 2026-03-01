@@ -17,6 +17,7 @@ export interface AdminDashboardStats {
     revenueThisMonth: number
     pendingPayments: number
     overdueAmount: number
+    pendingEnrollments: number
   }
   charts: {
     revenueLast6Months: MonthlyRevenue[]
@@ -95,6 +96,7 @@ export const getAdminDashboardStats = authServerFn
             revenueThisMonth,
             pendingPayments: finance.pendingPayments,
             overdueAmount: finance.overdueAmount,
+            pendingEnrollments: enrollmentStatsResult && R.isSuccess(enrollmentStatsResult) ? enrollmentStatsResult.value.pending : 0,
           },
           charts: {
             revenueLast6Months: monthlyRevenue,

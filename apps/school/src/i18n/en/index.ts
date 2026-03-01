@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { Translation } from '../i18n-types'
 
 const en: Translation = {
@@ -130,7 +131,8 @@ const en: Translation = {
     students: 'Students',
     studentsList: 'Student List',
     parents: 'Parents',
-    enrollments: 'Enrollments',
+    enrollments: 'Approbations',
+    approbations: 'Approbations',
     academic: 'Academic',
     classes: 'Classes',
     assignments: 'Assignments',
@@ -707,7 +709,20 @@ const en: Translation = {
       createSuccess: 'Teacher created successfully',
       updateSuccess: 'Teacher updated successfully',
       teacherDetails: 'Teacher Details',
+      addClass: 'Add class',
+      newAssignment: 'New Assignment',
+      classPlaceholder: 'Select a class',
+      subjectPlaceholder: 'Select a subject',
+      assignSuccess: 'Class assigned successfully',
+      assignError: 'Error assigning class',
+      noClassesDescription: 'This teacher has no classes assigned yet.',
+      addSubjectSuccess: 'Subject added successfully',
+      addSubjectError: 'Error adding subject',
+      chooseSubject: 'Choose a subject',
+      add: 'Add',
+      teacherNotFoundDescription: 'The teacher you are looking for does not exist or has been deleted.',
       noSpecialization: 'No specialization',
+      needQualification: 'The teacher must be qualified for a subject in this class (see Subjects tab).',
     },
     staff: {
       title: 'Staff',
@@ -1293,6 +1308,7 @@ const en: Translation = {
     teachers: 'Teachers',
     activeClasses: 'Active Classes',
     revenueThisMonth: 'Revenue This Month',
+    pendingEnrollments: 'Pending Validations',
     revenueSubtitle: 'Revenue vs. Expenses over time',
     enrollmentChartTitle: 'Enrollment Trends',
     enrollmentChartSubtitle: 'Annual student enrollment growth',
@@ -2077,10 +2093,10 @@ const en: Translation = {
     saved: 'IconSettings saved',
     saveFailed: 'Failed to save settings',
     tabs: {
-      pedagogicalAndReportCards: 'Pedagogy & Report Cards',
-      attendanceAndConduct: 'Attendance & Conduct',
-      accountingAndFinance: 'Accounting & Finance',
-      systemAndNotifications: 'System & Notifications',
+      pedagogicalAndReportCards: 'Report Cards',
+      attendanceAndConduct: 'Conduct',
+      accountingAndFinance: 'Accounting',
+      systemAndNotifications: 'Notifications',
     },
     profile: {
       title: 'School Profile',

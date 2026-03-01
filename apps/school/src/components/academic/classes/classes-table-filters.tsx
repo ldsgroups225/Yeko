@@ -38,16 +38,28 @@ export function ClassesTableFilters() {
     <motion.div
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col gap-4 rounded-xl border border-border/40 bg-card/50 p-4 backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between"
+      className="
+        border-border/40 bg-card/50 flex flex-col gap-4 rounded-xl border p-4
+        backdrop-blur-xl
+        sm:flex-row sm:items-center sm:justify-between
+      "
     >
       <div className="flex flex-1 gap-3">
         <div className="relative max-w-sm flex-1">
-          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <IconSearch className="
+            text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+            -translate-y-1/2
+          "
+          />
           <Input
             placeholder={t.common.search()}
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
-            className="border-border/40 bg-card/50 pl-9 transition-all focus:bg-card/80 shadow-none"
+            className="
+              border-border/40 bg-card/50
+              focus:bg-card/80
+              pl-9 shadow-none transition-all
+            "
           />
         </div>
 
@@ -56,7 +68,11 @@ export function ClassesTableFilters() {
             render={(
               <Button
                 variant="outline"
-                className="border-border/40 bg-card/50 backdrop-blur-sm shadow-none hover:bg-card/80"
+                className="
+                  border-border/40 bg-card/50
+                  hover:bg-card/80
+                  shadow-none backdrop-blur-sm
+                "
               >
                 <IconAdjustmentsHorizontal className="mr-2 h-4 w-4" />
                 {t.common.actions()}
@@ -72,11 +88,18 @@ export function ClassesTableFilters() {
             )}
           />
           <PopoverContent
-            className="w-80 p-4 space-y-4 backdrop-blur-2xl bg-popover/90 border border-border/40"
+            className="
+              bg-popover/90 border-border/40 w-80 space-y-4 border p-4
+              backdrop-blur-2xl
+            "
             align="start"
           >
             <div className="space-y-2">
-              <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">
+              <h4 className="
+                text-muted-foreground mb-3 text-xs leading-none font-medium
+                tracking-wider uppercase
+              "
+              >
                 {t.common.filters()}
               </h4>
               <Label>{t.classes.status()}</Label>
@@ -96,7 +119,11 @@ export function ClassesTableFilters() {
                           const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.all
                           return (
                             <div className="flex items-center gap-2">
-                              <div className={`h-2 w-2 rounded-full ${config.color}`} />
+                              <div className={`
+                                h-2 w-2 rounded-full
+                                ${config.color}
+                              `}
+                              />
                               <span>
                                 {config.icon}
                                 {' '}
@@ -121,15 +148,19 @@ export function ClassesTableFilters() {
             {status && status !== 'all' && (
               <Button
                 variant="ghost"
-                className="w-full text-muted-foreground"
+                className="text-muted-foreground w-full"
                 onClick={handleClearFilters}
               >
                 {t.common.refresh()}
               </Button>
             )}
 
-            <div className="pt-4 border-t border-border/40 space-y-2">
-              <h4 className="font-medium leading-none text-muted-foreground text-xs mb-3 uppercase tracking-wider">
+            <div className="border-border/40 space-y-2 border-t pt-4">
+              <h4 className="
+                text-muted-foreground mb-3 text-xs leading-none font-medium
+                tracking-wider uppercase
+              "
+              >
                 {t.common.quickActions()}
               </h4>
               <Button
@@ -156,7 +187,13 @@ export function ClassesTableFilters() {
           <Button
             variant="ghost"
             onClick={handleClearFilters}
-            className="h-10 px-3 text-muted-foreground hover:text-foreground hover:bg-white/20 dark:hover:bg-white/10"
+            className="
+              text-muted-foreground
+              hover:text-foreground
+              h-10 px-3
+              hover:bg-white/20
+              dark:hover:bg-white/10
+            "
           >
             <IconX className="mr-2 h-4 w-4" />
             {t.common.refresh()}
@@ -169,7 +206,11 @@ export function ClassesTableFilters() {
           <Button
             variant="secondary"
             size="sm"
-            className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 shadow-none"
+            className="
+              bg-primary/10
+              hover:bg-primary/20
+              text-primary border-primary/20 border shadow-none
+            "
           >
             {selectedRows.length}
             {' '}
@@ -180,7 +221,11 @@ export function ClassesTableFilters() {
         <Button
           size="sm"
           onClick={() => setIsAddDialogOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+          className="
+            bg-primary text-primary-foreground
+            hover:bg-primary/90
+            shadow-sm
+          "
         >
           <IconPlus className="mr-2 h-4 w-4" />
           {t.classes.addClass()}

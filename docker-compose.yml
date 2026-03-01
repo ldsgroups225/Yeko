@@ -14,7 +14,7 @@ services:
     container_name: yeko-core-dev
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./apps/core:/app/apps/core:delegated
       - ./packages:/app/packages:delegated
@@ -48,7 +48,7 @@ services:
     container_name: yeko-school-dev
     restart: unless-stopped
     ports:
-      - "3001:3001"
+      - '3001:3001'
     volumes:
       - ./apps/school:/app/apps/school:delegated
       - ./packages:/app/packages:delegated
@@ -76,7 +76,7 @@ services:
     container_name: yeko-teacher-dev
     restart: unless-stopped
     ports:
-      - "3002:3002"
+      - '3002:3002'
     volumes:
       - ./apps/teacher:/app/apps/teacher:delegated
       - ./packages:/app/packages:delegated
@@ -104,7 +104,7 @@ services:
     container_name: yeko-data-service-dev
     restart: unless-stopped
     ports:
-      - "8787:8787"
+      - '8787:8787'
     volumes:
       - ./apps/data-service:/app/apps/data-service:delegated
       - ./packages:/app/packages:delegated

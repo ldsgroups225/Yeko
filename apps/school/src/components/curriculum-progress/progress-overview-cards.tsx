@@ -36,7 +36,12 @@ export function ProgressOverviewCards({ data, isPending }: ProgressOverviewCards
 
   if (isPending) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="
+        grid gap-4
+        sm:grid-cols-2
+        lg:grid-cols-4
+      "
+      >
         <CardSkeleton />
         <CardSkeleton />
         <CardSkeleton />
@@ -76,14 +81,26 @@ export function ProgressOverviewCards({ data, isPending }: ProgressOverviewCards
   ]
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="
+      grid gap-4
+      sm:grid-cols-2
+      lg:grid-cols-4
+    "
+    >
       {cards.map(card => (
         <Card key={card.title}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+          <CardHeader className="
+            flex flex-row items-center justify-between pb-2
+          "
+          >
+            <CardTitle className="text-muted-foreground text-sm font-medium">
               {card.title}
             </CardTitle>
-            <card.icon className={`h-4 w-4 ${card.color}`} />
+            <card.icon className={`
+              h-4 w-4
+              ${card.color}
+            `}
+            />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{card.value}</div>

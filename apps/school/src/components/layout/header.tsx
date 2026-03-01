@@ -10,7 +10,12 @@ export function Header() {
   const t = useTranslations()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="
+      border-border/40 bg-background/95
+      supports-backdrop-filter:bg-background/60
+      sticky top-0 z-50 w-full border-b backdrop-blur-sm
+    "
+    >
       <div className="flex h-14 items-center gap-4 px-4">
         {/* Mobile menu button */}
         <SidebarTrigger className="lg:hidden" />
@@ -28,17 +33,30 @@ export function Header() {
         <button
           type="button"
           className={cn(
-            'relative inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium transition-colors',
+            `
+              relative inline-flex h-9 w-9 items-center justify-center
+              rounded-md text-sm font-medium transition-colors
+            `,
             'hover:bg-accent hover:text-accent-foreground',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+            `
+              focus-visible:ring-ring focus-visible:ring-2
+              focus-visible:outline-none
+            `,
           )}
         >
           <IconBell className="h-5 w-5" />
           <span className="sr-only">{t.common.notifications()}</span>
           {/* Notification badge */}
-          <span className="absolute right-1 top-1 flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
+          <span className="absolute top-1 right-1 flex h-2 w-2">
+            <span className="
+              bg-destructive absolute inline-flex h-full w-full animate-ping
+              rounded-full opacity-75
+            "
+            />
+            <span className="
+              bg-destructive relative inline-flex h-2 w-2 rounded-full
+            "
+            />
           </span>
         </button>
 

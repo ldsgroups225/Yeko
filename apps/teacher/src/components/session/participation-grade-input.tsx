@@ -41,10 +41,19 @@ export function ParticipationGradeInput({
           disabled={disabled}
           onClick={() => onChange(grade)}
           className={cn(
-            'flex h-9 w-9 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all',
+            `
+              flex h-9 w-9 items-center justify-center rounded-full border-2
+              text-sm font-semibold transition-all
+            `,
             value === grade
-              ? `${gradeColors[grade]} text-white scale-110`
-              : 'border-muted-foreground/30 bg-muted/50 text-muted-foreground hover:border-muted-foreground/50',
+              ? `
+                ${gradeColors[grade]}
+                scale-110 text-white
+              `
+              : `
+                border-muted-foreground/30 bg-muted/50 text-muted-foreground
+                hover:border-muted-foreground/50
+              `,
             disabled && 'cursor-not-allowed opacity-50',
           )}
           title={gradeLabels[grade]}

@@ -166,7 +166,7 @@ function RoleManagement() {
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
+    <div className="animate-in fade-in space-y-8 duration-700">
       <RoleHeader
         title={t.roles.title()}
         subtitle={t.roles.subtitle()}
@@ -189,13 +189,35 @@ function RoleManagement() {
         </Dialog>
       )}
 
-      <Tabs value={activeScope} onValueChange={val => setActiveScope(val as SchoolScope)} className="w-full">
-        <div className="flex flex-col items-center mb-10">
-          <TabsList className="grid w-full grid-cols-2 max-w-md p-1 bg-muted/50 backdrop-blur-sm rounded-2xl border border-border/50">
-            <TabsTrigger value="school" className="rounded-xl data-[state=active]:shadow-lg data-[state=active]:bg-background transition-all py-2.5">
+      <Tabs
+        value={activeScope}
+        onValueChange={val => setActiveScope(val as SchoolScope)}
+        className="w-full"
+      >
+        <div className="mb-10 flex flex-col items-center">
+          <TabsList className="
+            bg-muted/50 border-border/50 grid w-full max-w-md grid-cols-2
+            rounded-2xl border p-1 backdrop-blur-sm
+          "
+          >
+            <TabsTrigger
+              value="school"
+              className="
+                data-[state=active]:bg-background
+                rounded-xl py-2.5 transition-all
+                data-[state=active]:shadow-lg
+              "
+            >
               {t.roles.schoolRoles()}
             </TabsTrigger>
-            <TabsTrigger value="system" className="rounded-xl data-[state=active]:shadow-lg data-[state=active]:bg-background transition-all py-2.5">
+            <TabsTrigger
+              value="system"
+              className="
+                data-[state=active]:bg-background
+                rounded-xl py-2.5 transition-all
+                data-[state=active]:shadow-lg
+              "
+            >
               {t.roles.systemRoles()}
             </TabsTrigger>
           </TabsList>
@@ -206,13 +228,24 @@ function RoleManagement() {
             {isPending
               ? (
                   <div className="flex justify-center py-20">
-                    <IconShield className="animate-spin h-10 w-10 text-primary/40" />
+                    <IconShield className="
+                      text-primary/40 h-10 w-10 animate-spin
+                    "
+                    />
                   </div>
                 )
               : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="
+                    grid grid-cols-1 gap-6
+                    md:grid-cols-2
+                    lg:grid-cols-3
+                  "
+                  >
                     {roles.length === 0 && (
-                      <div className="col-span-full py-20 text-center text-muted-foreground">
+                      <div className="
+                        text-muted-foreground col-span-full py-20 text-center
+                      "
+                      >
                         {t.roles.none()}
                       </div>
                     )}
@@ -239,11 +272,19 @@ function RoleManagement() {
             {isPending
               ? (
                   <div className="flex justify-center py-20">
-                    <IconShield className="animate-spin h-10 w-10 text-primary/40" />
+                    <IconShield className="
+                      text-primary/40 h-10 w-10 animate-spin
+                    "
+                    />
                   </div>
                 )
               : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="
+                    grid grid-cols-1 gap-6
+                    md:grid-cols-2
+                    lg:grid-cols-3
+                  "
+                  >
                     {roles.map((role: Role) => (
                       <RoleCard
                         key={role.id}
@@ -272,7 +313,11 @@ function RoleManagement() {
             <p>
               {t.roles.deleteDescription({ name: roleToDelete?.name || '' })}
             </p>
-            <p className="text-destructive font-medium border-l-2 border-destructive pl-3 py-1 bg-destructive/5 rounded-r-md">
+            <p className="
+              text-destructive border-destructive bg-destructive/5 rounded-r-md
+              border-l-2 py-1 pl-3 font-medium
+            "
+            >
               {t.roles.deleteWarning()}
             </p>
           </div>

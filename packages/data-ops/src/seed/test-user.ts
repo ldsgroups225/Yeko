@@ -1,6 +1,6 @@
-import { auth } from '../../config/auth.js'
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
+import { auth } from '../../config/auth.js'
 import * as coreSchema from '../drizzle/core-schema.js'
 
 // Load env vars
@@ -21,7 +21,8 @@ export async function createTestUser() {
 
     console.log('✅ Test user created: admin@yeko.test')
     return testUser
-  } catch (error) {
+  }
+  catch (error) {
     console.log('ℹ️ Test user might already exist or there was an error:', error)
   }
 }

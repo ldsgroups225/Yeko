@@ -62,11 +62,16 @@ export function NotificationSettingsForm({
         {notificationOptions.map(option => (
           <div
             key={option.id}
-            className="flex items-center justify-between rounded-2xl border border-border/40 bg-muted/20 p-5 transition-all hover:bg-muted/30"
+            className="
+              border-border/40 bg-muted/20
+              hover:bg-muted/30
+              flex items-center justify-between rounded-2xl border p-5
+              transition-all
+            "
           >
             <div className="space-y-1">
               <Label htmlFor={option.id} className="text-base font-semibold">{option.label}</Label>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {option.description}
               </p>
             </div>
@@ -81,7 +86,11 @@ export function NotificationSettingsForm({
       </div>
 
       <div className="flex justify-end pt-4">
-        <Button type="submit" disabled={isSubmitting} className="rounded-xl shadow-lg shadow-primary/20 px-8">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="shadow-primary/20 rounded-xl px-8 shadow-lg"
+        >
           {isSubmitting ? t.common.saving() : t.common.save()}
         </Button>
       </div>

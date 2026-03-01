@@ -84,7 +84,7 @@ export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowPr
           <div>
             <div className="font-medium">{entry.teacherName}</div>
             {entry.department && (
-              <div className="text-xs text-muted-foreground">{entry.department}</div>
+              <div className="text-muted-foreground text-xs">{entry.department}</div>
             )}
           </div>
           {entry.lateCount && entry.lateCount >= 3 && (
@@ -140,7 +140,7 @@ export function TeacherAttendanceRow({ entry, onChange }: TeacherAttendanceRowPr
           value={entry.notes ?? ''}
           onChange={e => handleNotesChange(e.target.value)}
           placeholder={t.attendance.notesPlaceholder()}
-          className="min-h-[36px] h-9 resize-none"
+          className="h-9 min-h-[36px] resize-none"
           rows={1}
         />
       </TableCell>

@@ -46,15 +46,19 @@ export function ReportCardCard({
   const canDownload = reportCard.status !== 'draft' && reportCard.pdfUrl
 
   return (
-    <Card className={cn('transition-shadow hover:shadow-md', className)}>
+    <Card className={cn(`
+      transition-shadow
+      hover:shadow-md
+    `, className)}
+    >
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
-            <IconFileText className="h-5 w-5 text-muted-foreground" />
+            <IconFileText className="text-muted-foreground h-5 w-5" />
             <div>
-              <h3 className="font-semibold leading-none">{reportCard.studentName}</h3>
+              <h3 className="leading-none font-semibold">{reportCard.studentName}</h3>
               {reportCard.studentMatricule && (
-                <p className="text-sm text-muted-foreground">{reportCard.studentMatricule}</p>
+                <p className="text-muted-foreground text-sm">{reportCard.studentMatricule}</p>
               )}
             </div>
           </div>

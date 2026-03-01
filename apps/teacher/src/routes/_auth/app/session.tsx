@@ -59,22 +59,29 @@ function SessionsPage() {
       {activeSession && (
         <Card className="border-primary/50 bg-primary/5">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <IconClock className="w-5 h-5 text-primary animate-pulse" />
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <IconClock className="text-primary h-5 w-5 animate-pulse" />
               {LL.session.active()}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-2">
-              <h3 className="font-semibold text-lg">{activeSession.subjectName}</h3>
+              <h3 className="text-lg font-semibold">{activeSession.subjectName}</h3>
               <p className="text-muted-foreground">{activeSession.className}</p>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <IconCalendar className="w-4 h-4" />
+              <div className="
+                text-muted-foreground flex items-center gap-2 text-sm
+              "
+              >
+                <IconCalendar className="h-4 w-4" />
                 {format(new Date(activeSession.startTime), 'HH:mm')}
               </div>
-              <Link to="/app/sessions/$sessionId" params={{ sessionId: activeSession.id }} className="mt-2">
+              <Link
+                to="/app/sessions/$sessionId"
+                params={{ sessionId: activeSession.id }}
+                className="mt-2"
+              >
                 <Button className="w-full">
-                  <IconPlayerPlay className="w-4 h-4 mr-2" />
+                  <IconPlayerPlay className="mr-2 h-4 w-4" />
                   {LL.common.resume()}
                 </Button>
               </Link>
@@ -99,9 +106,12 @@ function SessionsPage() {
           )
         : (
             <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <IconBook className="h-12 w-12 text-muted-foreground/50" />
-                <p className="mt-4 text-sm text-muted-foreground">
+              <CardContent className="
+                flex flex-col items-center justify-center py-12
+              "
+              >
+                <IconBook className="text-muted-foreground/50 h-12 w-12" />
+                <p className="text-muted-foreground mt-4 text-sm">
                   {LL.session.noHistory()}
                 </p>
               </CardContent>
@@ -152,11 +162,18 @@ function SessionHistoryCard({ session, locale }: SessionHistoryCardProps) {
 
   return (
     <Link to="/app/sessions/$sessionId" params={{ sessionId: session.id }}>
-      <Card className="transition-colors hover:bg-muted/50">
+      <Card className="
+        hover:bg-muted/50
+        transition-colors
+      "
+      >
         <CardContent className="p-4">
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="
+                text-muted-foreground flex items-center gap-2 text-sm
+              "
+              >
                 <IconCalendar className="h-3.5 w-3.5" />
                 <span>
                   {format(new Date(session.date), 'EEEE d MMM', { locale })}
@@ -170,7 +187,7 @@ function SessionHistoryCard({ session, locale }: SessionHistoryCardProps) {
                 </span>
               </div>
               <h3 className="font-semibold">{session.subjectName}</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {session.className}
               </p>
             </div>
@@ -181,7 +198,7 @@ function SessionHistoryCard({ session, locale }: SessionHistoryCardProps) {
               </Badge>
               {session.status === 'completed'
                 && session.studentsPresent !== null && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   {session.studentsPresent}
                   {' '}
                   présents

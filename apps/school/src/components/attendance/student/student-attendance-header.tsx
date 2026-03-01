@@ -13,22 +13,38 @@ export function StudentAttendanceHeader() {
   const { setSearchQuery, handleMarkAllPresent, handleSave } = actions
 
   return (
-    <CardHeader className="relative border-b border-border/10 bg-muted/20 pb-4 pt-4">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <CardHeader className="
+      border-border/10 bg-muted/20 relative border-b pt-4 pb-4
+    "
+    >
+      <div className="
+        flex flex-col gap-4
+        md:flex-row md:items-center md:justify-between
+      "
+      >
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+          <div className="mb-1 flex items-center gap-2">
+            <span className="bg-primary h-1.5 w-1.5 animate-pulse rounded-full" />
+            <CardTitle className="
+              text-muted-foreground/60 text-[10px] font-black tracking-[0.2em]
+              uppercase
+            "
+            >
               {className}
             </CardTitle>
           </div>
-          <h2 className="text-xl font-black uppercase italic tracking-tight">{t.schoolLife.studentAttendance()}</h2>
+          <h2 className="text-xl font-black tracking-tight uppercase italic">{t.schoolLife.studentAttendance()}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button
             variant="outline"
             onClick={handleMarkAllPresent}
-            className="h-9 rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] hover:bg-success/10 hover:text-success transition-all px-4"
+            className="
+              border-border/40
+              hover:bg-success/10 hover:text-success
+              h-9 rounded-2xl px-4 text-[10px] font-black tracking-widest
+              uppercase transition-all
+            "
           >
             <IconCircleCheck className="mr-2 h-4 w-4" />
             {t.attendance.markAllPresent()}
@@ -36,7 +52,13 @@ export function StudentAttendanceHeader() {
           <Button
             onClick={handleSave}
             disabled={!hasChanges || isSaving}
-            className="h-9 rounded-2xl bg-primary shadow-xl shadow-primary/20 font-black uppercase tracking-widest text-[10px] px-6 transition-all hover:scale-105 active:scale-95 disabled:grayscale"
+            className="
+              bg-primary shadow-primary/20 h-9 rounded-2xl px-6 text-[10px]
+              font-black tracking-widest uppercase shadow-xl transition-all
+              hover:scale-105
+              active:scale-95
+              disabled:grayscale
+            "
           >
             <IconDeviceFloppy className="mr-2 h-4 w-4" />
             {isSaving ? t.common.saving() : t.common.save()}
@@ -46,13 +68,21 @@ export function StudentAttendanceHeader() {
 
       <StudentAttendanceSummary />
 
-      <div className="mt-4 relative">
-        <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/40" />
+      <div className="relative mt-4">
+        <IconSearch className="
+          text-muted-foreground/40 absolute top-1/2 left-4 size-4
+          -translate-y-1/2
+        "
+        />
         <Input
           placeholder={t.common.search()}
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="h-10 pl-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold italic"
+          className="
+            bg-background/50 border-border/40
+            focus:ring-primary/20
+            h-10 rounded-2xl pl-12 font-bold italic transition-all
+          "
         />
       </div>
     </CardHeader>

@@ -89,18 +89,25 @@ export function StudentGradeRow({
   return (
     <div
       className={cn(
-        'flex items-center justify-between rounded-lg border p-3 transition-all duration-200',
-        isFocused && 'border-primary ring-1 ring-primary/20',
+        `
+          flex items-center justify-between rounded-lg border p-3 transition-all
+          duration-200
+        `,
+        isFocused && 'border-primary ring-primary/20 ring-1',
         disabled && 'cursor-not-allowed opacity-50',
       )}
     >
       {/* Student Info */}
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 font-medium text-sm">
+        <div className="
+          bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full
+          text-sm font-medium
+        "
+        >
           {initials}
         </div>
         <div>
-          <p className="font-medium text-sm">{studentName}</p>
+          <p className="text-sm font-medium">{studentName}</p>
           {email && (
             <p className="text-muted-foreground text-xs">{email}</p>
           )}

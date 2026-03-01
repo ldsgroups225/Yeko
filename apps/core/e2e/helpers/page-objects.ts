@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { Locator, Page } from '@playwright/test'
 
 export class AuthPage {

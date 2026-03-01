@@ -31,7 +31,11 @@ export function YearCreateForm({ onSubmit, onCancel, isPending, isActive, setIsA
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="
+              grid gap-4
+              md:grid-cols-2
+            "
+            >
               <div className="space-y-2">
                 <Label htmlFor="year-name">Nom de l'année *</Label>
                 <Input id="year-name" name="name" placeholder="2025-2026" required />
@@ -57,11 +61,11 @@ export function YearCreateForm({ onSubmit, onCancel, isPending, isActive, setIsA
             </div>
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={onCancel}>
-                <IconX className="h-4 w-4 mr-2" />
+                <IconX className="mr-2 h-4 w-4" />
                 Annuler
               </Button>
               <Button type="submit" disabled={isPending}>
-                <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                <IconDeviceFloppy className="mr-2 h-4 w-4" />
                 {isPending ? 'Création...' : 'Créer'}
               </Button>
             </div>

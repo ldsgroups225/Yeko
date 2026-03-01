@@ -68,7 +68,11 @@ function SettingsProfilePage() {
   if (isPending) {
     return (
       <div className="space-y-6">
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="
+          grid gap-6
+          lg:grid-cols-2
+        "
+        >
           <Skeleton className="h-[400px] w-full rounded-3xl" />
           <Skeleton className="h-[400px] w-full rounded-3xl" />
         </div>
@@ -80,15 +84,29 @@ function SettingsProfilePage() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="
+        grid gap-6
+        lg:grid-cols-2
+      "
+      >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="h-full rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="border-b border-border/40 bg-muted/5">
-              <CardTitle className="text-xl font-bold uppercase tracking-wider text-muted-foreground">{t.settings.profile.schoolInfo()}</CardTitle>
+          <Card className="
+            border-border/40 bg-card/40 h-full rounded-3xl border shadow-sm
+            backdrop-blur-xl transition-all duration-300
+            hover:shadow-md
+          "
+          >
+            <CardHeader className="border-border/40 bg-muted/5 border-b">
+              <CardTitle className="
+                text-muted-foreground text-xl font-bold tracking-wider uppercase
+              "
+              >
+                {t.settings.profile.schoolInfo()}
+              </CardTitle>
               <CardDescription>
                 {t.settings.profile.schoolInfoDescription()}
               </CardDescription>
@@ -111,9 +129,19 @@ function SettingsProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="h-full rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
-            <CardHeader className="border-b border-border/40 bg-muted/5">
-              <CardTitle className="text-xl font-bold uppercase tracking-wider text-muted-foreground">{t.settings.profile.schoolSettings()}</CardTitle>
+          <Card className="
+            border-border/40 bg-card/40 h-full rounded-3xl border shadow-sm
+            backdrop-blur-xl transition-all duration-300
+            hover:shadow-md
+          "
+          >
+            <CardHeader className="border-border/40 bg-muted/5 border-b">
+              <CardTitle className="
+                text-muted-foreground text-xl font-bold tracking-wider uppercase
+              "
+              >
+                {t.settings.profile.schoolSettings()}
+              </CardTitle>
               <CardDescription>
                 {t.settings.profile.schoolSettingsDescription()}
               </CardDescription>

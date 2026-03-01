@@ -61,11 +61,18 @@ function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8">
+    <div className="
+      flex min-h-screen flex-col items-center justify-center px-4 py-8
+    "
+    >
       <div className="w-full max-w-sm space-y-6">
         {/* Logo */}
         <div className="flex flex-col items-center space-y-2">
-          <img src="/icon.png" alt="Yeko Logo" className="h-24 w-24 object-contain rounded-lg" />
+          <img
+            src="/icon.png"
+            alt="Yeko Logo"
+            className="h-24 w-24 rounded-lg object-contain"
+          />
           <h1 className="text-2xl font-bold">{LL.app.name()}</h1>
           <p className="text-muted-foreground">Créer un compte enseignant</p>
         </div>
@@ -130,7 +137,7 @@ function SignupPage() {
 
           <Button
             type="submit"
-            className={cn('h-12 w-full touch-target')}
+            className={cn('touch-target h-12 w-full')}
             disabled={isLoading}
           >
             {isLoading
@@ -149,16 +156,22 @@ function SignupPage() {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">{LL.auth.or()}</span>
+            <span className="bg-background text-muted-foreground px-2">{LL.auth.or()}</span>
           </div>
         </div>
 
         {/* Login Link */}
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Déjà un compte ?
             {' '}
-            <Link to="/login" className="text-primary hover:underline">
+            <Link
+              to="/login"
+              className="
+                text-primary
+                hover:underline
+              "
+            >
               Se connecter
             </Link>
           </p>
