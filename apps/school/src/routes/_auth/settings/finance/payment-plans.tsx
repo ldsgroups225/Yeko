@@ -4,11 +4,11 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
-import { PaymentPlansTable } from '@/components/finance'
+import { FinanceSubpageToolbar, PaymentPlansTable } from '@/components/finance'
 import { useTranslations } from '@/i18n'
 import { paymentPlansOptions } from '@/lib/queries'
 
-export const Route = createFileRoute('/_auth/accounting/payment-plans')({
+export const Route = createFileRoute('/_auth/settings/finance/payment-plans')({
   component: PaymentPlansPage,
 })
 
@@ -31,15 +31,22 @@ function PaymentPlansPage() {
 
   return (
     <div className="space-y-8 p-1">
-      <div className="flex justify-end">
-        <Button
-          onClick={() => navigate({ to: '/accounting/payment-plan-templates' })}
-          className="gap-2"
-        >
-          <IconPlus className="size-4" />
-          {t.finance.paymentPlans.create()}
-        </Button>
-      </div>
+      <FinanceSubpageToolbar
+        actions={(
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <Button
+              onClick={() => navigate({ to: '/settings/finance/payment-plan-templates' })}
+              className="gap-2"
+            >
+              <IconPlus className="size-4" />
+              {t.finance.paymentPlans.create()}
+            </Button>
+          </motion.div>
+        )}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -64,8 +64,12 @@ export function PaymentForm({
                     value={field.value}
                     onSelect={id => field.onChange(id)}
                     placeholder={t.students.searchPlaceholder()}
+                    requireValidEnrollmentInSchoolYear
                   />
                 </FormControl>
+                <FormDescription className="text-[11px]">
+                  Seuls les élèves inscrits et confirmés dans l'année scolaire active sont affichés.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

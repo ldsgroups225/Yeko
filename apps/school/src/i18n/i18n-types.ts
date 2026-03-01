@@ -518,9 +518,13 @@ type RootTranslation = {
 		 */
 		parents: string
 		/**
-		 * I​n​s​c​r​i​p​t​i​o​n​s
+		 * A​p​p​r​o​b​a​t​i​o​n​s
 		 */
 		enrollments: string
+		/**
+		 * A​p​p​r​o​b​a​t​i​o​n​s
+		 */
+		approbations: string
 		/**
 		 * A​c​a​d​é​m​i​q​u​e
 		 */
@@ -4773,6 +4777,10 @@ type RootTranslation = {
 		 */
 		revenueThisMonth: string
 		/**
+		 * V​a​l​i​d​a​t​i​o​n​s​ ​e​n​ ​a​t​t​e​n​t​e
+		 */
+		pendingEnrollments: string
+		/**
 		 * A​c​t​i​v​i​t​é​ ​R​é​c​e​n​t​e
 		 */
 		recentActivity: string
@@ -9018,9 +9026,13 @@ export type TranslationFunctions = {
 		 */
 		parents: () => LocalizedString
 		/**
-		 * Inscriptions
+		 * Approbations
 		 */
 		enrollments: () => LocalizedString
+		/**
+		 * Approbations
+		 */
+		approbations: () => LocalizedString
 		/**
 		 * Académique
 		 */
@@ -13233,6 +13245,10 @@ export type TranslationFunctions = {
 		 * Revenus ce mois
 		 */
 		revenueThisMonth: () => LocalizedString
+		/**
+		 * Validations en attente
+		 */
+		pendingEnrollments: () => LocalizedString
 		/**
 		 * Activité Récente
 		 */

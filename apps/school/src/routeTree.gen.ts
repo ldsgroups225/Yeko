@@ -22,6 +22,7 @@ import { Route as AuthGradesRouteImport } from './routes/_auth/grades'
 import { Route as AuthDashboardRouteImport } from './routes/_auth/dashboard'
 import { Route as AuthConductsRouteImport } from './routes/_auth/conducts'
 import { Route as AuthClassesRouteImport } from './routes/_auth/classes'
+import { Route as AuthApprobationsRouteImport } from './routes/_auth/approbations'
 import { Route as AuthAccountingRouteImport } from './routes/_auth/accounting'
 import { Route as AuthUsersIndexRouteImport } from './routes/_auth/users/index'
 import { Route as AuthStudentsIndexRouteImport } from './routes/_auth/students/index'
@@ -35,7 +36,6 @@ import { Route as AuthAccountingIndexRouteImport } from './routes/_auth/accounti
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 import { Route as AuthStudentsParentsRouteImport } from './routes/_auth/students/parents'
 import { Route as AuthStudentsNewRouteImport } from './routes/_auth/students/new'
-import { Route as AuthStudentsEnrollmentsRouteImport } from './routes/_auth/students/enrollments'
 import { Route as AuthStudentsBulkOperationsRouteImport } from './routes/_auth/students/bulk-operations'
 import { Route as AuthSpacesAvailabilityRouteImport } from './routes/_auth/spaces/availability'
 import { Route as AuthSettingsSchoolYearsRouteImport } from './routes/_auth/settings/school-years'
@@ -70,6 +70,7 @@ import { Route as AuthUsersStaffIndexRouteImport } from './routes/_auth/users/st
 import { Route as AuthUsersRolesIndexRouteImport } from './routes/_auth/users/roles/index'
 import { Route as AuthStudentsStudentIdIndexRouteImport } from './routes/_auth/students/$studentId/index'
 import { Route as AuthSpacesClassroomsIndexRouteImport } from './routes/_auth/spaces/classrooms/index'
+import { Route as AuthSettingsFinanceIndexRouteImport } from './routes/_auth/settings/finance/index'
 import { Route as AuthConductsTeacherAttendanceIndexRouteImport } from './routes/_auth/conducts/teacher-attendance/index'
 import { Route as AuthConductsStudentAttendanceIndexRouteImport } from './routes/_auth/conducts/student-attendance/index'
 import { Route as AuthConductsConductIndexRouteImport } from './routes/_auth/conducts/conduct/index'
@@ -81,6 +82,17 @@ import { Route as AuthUsersTeachersNewRouteImport } from './routes/_auth/users/t
 import { Route as AuthUsersStaffNewRouteImport } from './routes/_auth/users/staff/new'
 import { Route as AuthUsersRolesNewRouteImport } from './routes/_auth/users/roles/new'
 import { Route as AuthStudentsStudentIdEditRouteImport } from './routes/_auth/students/$studentId/edit'
+import { Route as AuthSettingsFinanceStudentFeesRouteImport } from './routes/_auth/settings/finance/student-fees'
+import { Route as AuthSettingsFinanceSetupRouteImport } from './routes/_auth/settings/finance/setup'
+import { Route as AuthSettingsFinanceRefundsRouteImport } from './routes/_auth/settings/finance/refunds'
+import { Route as AuthSettingsFinancePaymentsRouteImport } from './routes/_auth/settings/finance/payments'
+import { Route as AuthSettingsFinancePaymentPlansRouteImport } from './routes/_auth/settings/finance/payment-plans'
+import { Route as AuthSettingsFinancePaymentPlanTemplatesRouteImport } from './routes/_auth/settings/finance/payment-plan-templates'
+import { Route as AuthSettingsFinanceFiscalYearsRouteImport } from './routes/_auth/settings/finance/fiscal-years'
+import { Route as AuthSettingsFinanceFeeTypesRouteImport } from './routes/_auth/settings/finance/fee-types'
+import { Route as AuthSettingsFinanceFeeStructuresRouteImport } from './routes/_auth/settings/finance/fee-structures'
+import { Route as AuthSettingsFinanceDiscountsRouteImport } from './routes/_auth/settings/finance/discounts'
+import { Route as AuthSettingsFinanceAccountsRouteImport } from './routes/_auth/settings/finance/accounts'
 import { Route as AuthConductsTeacherAttendanceReportsRouteImport } from './routes/_auth/conducts/teacher-attendance/reports'
 import { Route as AuthConductsStudentAttendanceStatisticsRouteImport } from './routes/_auth/conducts/student-attendance/statistics'
 import { Route as AuthConductsStudentAttendanceHistoryRouteImport } from './routes/_auth/conducts/student-attendance/history'
@@ -163,6 +175,11 @@ const AuthClassesRoute = AuthClassesRouteImport.update({
   path: '/classes',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthApprobationsRoute = AuthApprobationsRouteImport.update({
+  id: '/approbations',
+  path: '/approbations',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthAccountingRoute = AuthAccountingRouteImport.update({
   id: '/accounting',
   path: '/accounting',
@@ -226,11 +243,6 @@ const AuthStudentsParentsRoute = AuthStudentsParentsRouteImport.update({
 const AuthStudentsNewRoute = AuthStudentsNewRouteImport.update({
   id: '/new',
   path: '/new',
-  getParentRoute: () => AuthStudentsRoute,
-} as any)
-const AuthStudentsEnrollmentsRoute = AuthStudentsEnrollmentsRouteImport.update({
-  id: '/enrollments',
-  path: '/enrollments',
   getParentRoute: () => AuthStudentsRoute,
 } as any)
 const AuthStudentsBulkOperationsRoute =
@@ -415,6 +427,12 @@ const AuthSpacesClassroomsIndexRoute =
     path: '/classrooms/',
     getParentRoute: () => AuthSpacesRoute,
   } as any)
+const AuthSettingsFinanceIndexRoute =
+  AuthSettingsFinanceIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
 const AuthConductsTeacherAttendanceIndexRoute =
   AuthConductsTeacherAttendanceIndexRouteImport.update({
     id: '/teacher-attendance/',
@@ -473,6 +491,72 @@ const AuthStudentsStudentIdEditRoute =
     id: '/$studentId/edit',
     path: '/$studentId/edit',
     getParentRoute: () => AuthStudentsRoute,
+  } as any)
+const AuthSettingsFinanceStudentFeesRoute =
+  AuthSettingsFinanceStudentFeesRouteImport.update({
+    id: '/student-fees',
+    path: '/student-fees',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinanceSetupRoute =
+  AuthSettingsFinanceSetupRouteImport.update({
+    id: '/setup',
+    path: '/setup',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinanceRefundsRoute =
+  AuthSettingsFinanceRefundsRouteImport.update({
+    id: '/refunds',
+    path: '/refunds',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinancePaymentsRoute =
+  AuthSettingsFinancePaymentsRouteImport.update({
+    id: '/payments',
+    path: '/payments',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinancePaymentPlansRoute =
+  AuthSettingsFinancePaymentPlansRouteImport.update({
+    id: '/payment-plans',
+    path: '/payment-plans',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinancePaymentPlanTemplatesRoute =
+  AuthSettingsFinancePaymentPlanTemplatesRouteImport.update({
+    id: '/payment-plan-templates',
+    path: '/payment-plan-templates',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinanceFiscalYearsRoute =
+  AuthSettingsFinanceFiscalYearsRouteImport.update({
+    id: '/fiscal-years',
+    path: '/fiscal-years',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinanceFeeTypesRoute =
+  AuthSettingsFinanceFeeTypesRouteImport.update({
+    id: '/fee-types',
+    path: '/fee-types',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinanceFeeStructuresRoute =
+  AuthSettingsFinanceFeeStructuresRouteImport.update({
+    id: '/fee-structures',
+    path: '/fee-structures',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinanceDiscountsRoute =
+  AuthSettingsFinanceDiscountsRouteImport.update({
+    id: '/discounts',
+    path: '/discounts',
+    getParentRoute: () => AuthSettingsFinanceRoute,
+  } as any)
+const AuthSettingsFinanceAccountsRoute =
+  AuthSettingsFinanceAccountsRouteImport.update({
+    id: '/accounts',
+    path: '/accounts',
+    getParentRoute: () => AuthSettingsFinanceRoute,
   } as any)
 const AuthConductsTeacherAttendanceReportsRoute =
   AuthConductsTeacherAttendanceReportsRouteImport.update({
@@ -579,6 +663,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
   '/accounting': typeof AuthAccountingRouteWithChildren
+  '/approbations': typeof AuthApprobationsRoute
   '/classes': typeof AuthClassesRouteWithChildren
   '/conducts': typeof AuthConductsRouteWithChildren
   '/dashboard': typeof AuthDashboardRoute
@@ -609,7 +694,7 @@ export interface FileRoutesByFullPath {
   '/programs/coefficients': typeof AuthProgramsCoefficientsRoute
   '/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/programs/subjects': typeof AuthProgramsSubjectsRoute
-  '/settings/finance': typeof AuthSettingsFinanceRoute
+  '/settings/finance': typeof AuthSettingsFinanceRouteWithChildren
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/settings/profile': typeof AuthSettingsProfileRoute
@@ -617,7 +702,6 @@ export interface FileRoutesByFullPath {
   '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
   '/spaces/availability': typeof AuthSpacesAvailabilityRoute
   '/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
-  '/students/enrollments': typeof AuthStudentsEnrollmentsRoute
   '/students/new': typeof AuthStudentsNewRoute
   '/students/parents': typeof AuthStudentsParentsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -637,6 +721,17 @@ export interface FileRoutesByFullPath {
   '/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
   '/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
   '/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
+  '/settings/finance/accounts': typeof AuthSettingsFinanceAccountsRoute
+  '/settings/finance/discounts': typeof AuthSettingsFinanceDiscountsRoute
+  '/settings/finance/fee-structures': typeof AuthSettingsFinanceFeeStructuresRoute
+  '/settings/finance/fee-types': typeof AuthSettingsFinanceFeeTypesRoute
+  '/settings/finance/fiscal-years': typeof AuthSettingsFinanceFiscalYearsRoute
+  '/settings/finance/payment-plan-templates': typeof AuthSettingsFinancePaymentPlanTemplatesRoute
+  '/settings/finance/payment-plans': typeof AuthSettingsFinancePaymentPlansRoute
+  '/settings/finance/payments': typeof AuthSettingsFinancePaymentsRoute
+  '/settings/finance/refunds': typeof AuthSettingsFinanceRefundsRoute
+  '/settings/finance/setup': typeof AuthSettingsFinanceSetupRoute
+  '/settings/finance/student-fees': typeof AuthSettingsFinanceStudentFeesRoute
   '/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
   '/users/roles/new': typeof AuthUsersRolesNewRoute
   '/users/staff/new': typeof AuthUsersStaffNewRoute
@@ -648,6 +743,7 @@ export interface FileRoutesByFullPath {
   '/conducts/conduct/': typeof AuthConductsConductIndexRoute
   '/conducts/student-attendance/': typeof AuthConductsStudentAttendanceIndexRoute
   '/conducts/teacher-attendance/': typeof AuthConductsTeacherAttendanceIndexRoute
+  '/settings/finance/': typeof AuthSettingsFinanceIndexRoute
   '/spaces/classrooms/': typeof AuthSpacesClassroomsIndexRoute
   '/students/$studentId/': typeof AuthStudentsStudentIdIndexRoute
   '/users/roles/': typeof AuthUsersRolesIndexRoute
@@ -668,6 +764,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/approbations': typeof AuthApprobationsRoute
   '/dashboard': typeof AuthDashboardRoute
   '/schedules': typeof AuthSchedulesRoute
   '/accounting/accounts': typeof AuthAccountingAccountsRoute
@@ -690,7 +787,6 @@ export interface FileRoutesByTo {
   '/programs/coefficients': typeof AuthProgramsCoefficientsRoute
   '/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/programs/subjects': typeof AuthProgramsSubjectsRoute
-  '/settings/finance': typeof AuthSettingsFinanceRoute
   '/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/settings/profile': typeof AuthSettingsProfileRoute
@@ -698,7 +794,6 @@ export interface FileRoutesByTo {
   '/settings/school-years': typeof AuthSettingsSchoolYearsRoute
   '/spaces/availability': typeof AuthSpacesAvailabilityRoute
   '/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
-  '/students/enrollments': typeof AuthStudentsEnrollmentsRoute
   '/students/new': typeof AuthStudentsNewRoute
   '/students/parents': typeof AuthStudentsParentsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -718,6 +813,17 @@ export interface FileRoutesByTo {
   '/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
   '/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
   '/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
+  '/settings/finance/accounts': typeof AuthSettingsFinanceAccountsRoute
+  '/settings/finance/discounts': typeof AuthSettingsFinanceDiscountsRoute
+  '/settings/finance/fee-structures': typeof AuthSettingsFinanceFeeStructuresRoute
+  '/settings/finance/fee-types': typeof AuthSettingsFinanceFeeTypesRoute
+  '/settings/finance/fiscal-years': typeof AuthSettingsFinanceFiscalYearsRoute
+  '/settings/finance/payment-plan-templates': typeof AuthSettingsFinancePaymentPlanTemplatesRoute
+  '/settings/finance/payment-plans': typeof AuthSettingsFinancePaymentPlansRoute
+  '/settings/finance/payments': typeof AuthSettingsFinancePaymentsRoute
+  '/settings/finance/refunds': typeof AuthSettingsFinanceRefundsRoute
+  '/settings/finance/setup': typeof AuthSettingsFinanceSetupRoute
+  '/settings/finance/student-fees': typeof AuthSettingsFinanceStudentFeesRoute
   '/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
   '/users/roles/new': typeof AuthUsersRolesNewRoute
   '/users/staff/new': typeof AuthUsersStaffNewRoute
@@ -729,6 +835,7 @@ export interface FileRoutesByTo {
   '/conducts/conduct': typeof AuthConductsConductIndexRoute
   '/conducts/student-attendance': typeof AuthConductsStudentAttendanceIndexRoute
   '/conducts/teacher-attendance': typeof AuthConductsTeacherAttendanceIndexRoute
+  '/settings/finance': typeof AuthSettingsFinanceIndexRoute
   '/spaces/classrooms': typeof AuthSpacesClassroomsIndexRoute
   '/students/$studentId': typeof AuthStudentsStudentIdIndexRoute
   '/users/roles': typeof AuthUsersRolesIndexRoute
@@ -752,6 +859,7 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/reset-password': typeof ResetPasswordRoute
   '/_auth/accounting': typeof AuthAccountingRouteWithChildren
+  '/_auth/approbations': typeof AuthApprobationsRoute
   '/_auth/classes': typeof AuthClassesRouteWithChildren
   '/_auth/conducts': typeof AuthConductsRouteWithChildren
   '/_auth/dashboard': typeof AuthDashboardRoute
@@ -782,7 +890,7 @@ export interface FileRoutesById {
   '/_auth/programs/coefficients': typeof AuthProgramsCoefficientsRoute
   '/_auth/programs/curriculum-progress': typeof AuthProgramsCurriculumProgressRoute
   '/_auth/programs/subjects': typeof AuthProgramsSubjectsRoute
-  '/_auth/settings/finance': typeof AuthSettingsFinanceRoute
+  '/_auth/settings/finance': typeof AuthSettingsFinanceRouteWithChildren
   '/_auth/settings/notifications': typeof AuthSettingsNotificationsRoute
   '/_auth/settings/pedagogical-structure': typeof AuthSettingsPedagogicalStructureRoute
   '/_auth/settings/profile': typeof AuthSettingsProfileRoute
@@ -790,7 +898,6 @@ export interface FileRoutesById {
   '/_auth/settings/school-years': typeof AuthSettingsSchoolYearsRoute
   '/_auth/spaces/availability': typeof AuthSpacesAvailabilityRoute
   '/_auth/students/bulk-operations': typeof AuthStudentsBulkOperationsRoute
-  '/_auth/students/enrollments': typeof AuthStudentsEnrollmentsRoute
   '/_auth/students/new': typeof AuthStudentsNewRoute
   '/_auth/students/parents': typeof AuthStudentsParentsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -810,6 +917,17 @@ export interface FileRoutesById {
   '/_auth/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
   '/_auth/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
   '/_auth/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
+  '/_auth/settings/finance/accounts': typeof AuthSettingsFinanceAccountsRoute
+  '/_auth/settings/finance/discounts': typeof AuthSettingsFinanceDiscountsRoute
+  '/_auth/settings/finance/fee-structures': typeof AuthSettingsFinanceFeeStructuresRoute
+  '/_auth/settings/finance/fee-types': typeof AuthSettingsFinanceFeeTypesRoute
+  '/_auth/settings/finance/fiscal-years': typeof AuthSettingsFinanceFiscalYearsRoute
+  '/_auth/settings/finance/payment-plan-templates': typeof AuthSettingsFinancePaymentPlanTemplatesRoute
+  '/_auth/settings/finance/payment-plans': typeof AuthSettingsFinancePaymentPlansRoute
+  '/_auth/settings/finance/payments': typeof AuthSettingsFinancePaymentsRoute
+  '/_auth/settings/finance/refunds': typeof AuthSettingsFinanceRefundsRoute
+  '/_auth/settings/finance/setup': typeof AuthSettingsFinanceSetupRoute
+  '/_auth/settings/finance/student-fees': typeof AuthSettingsFinanceStudentFeesRoute
   '/_auth/students/$studentId/edit': typeof AuthStudentsStudentIdEditRoute
   '/_auth/users/roles/new': typeof AuthUsersRolesNewRoute
   '/_auth/users/staff/new': typeof AuthUsersStaffNewRoute
@@ -821,6 +939,7 @@ export interface FileRoutesById {
   '/_auth/conducts/conduct/': typeof AuthConductsConductIndexRoute
   '/_auth/conducts/student-attendance/': typeof AuthConductsStudentAttendanceIndexRoute
   '/_auth/conducts/teacher-attendance/': typeof AuthConductsTeacherAttendanceIndexRoute
+  '/_auth/settings/finance/': typeof AuthSettingsFinanceIndexRoute
   '/_auth/spaces/classrooms/': typeof AuthSpacesClassroomsIndexRoute
   '/_auth/students/$studentId/': typeof AuthStudentsStudentIdIndexRoute
   '/_auth/users/roles/': typeof AuthUsersRolesIndexRoute
@@ -844,6 +963,7 @@ export interface FileRouteTypes {
     | '/'
     | '/reset-password'
     | '/accounting'
+    | '/approbations'
     | '/classes'
     | '/conducts'
     | '/dashboard'
@@ -882,7 +1002,6 @@ export interface FileRouteTypes {
     | '/settings/school-years'
     | '/spaces/availability'
     | '/students/bulk-operations'
-    | '/students/enrollments'
     | '/students/new'
     | '/students/parents'
     | '/api/auth/$'
@@ -902,6 +1021,17 @@ export interface FileRouteTypes {
     | '/conducts/student-attendance/history'
     | '/conducts/student-attendance/statistics'
     | '/conducts/teacher-attendance/reports'
+    | '/settings/finance/accounts'
+    | '/settings/finance/discounts'
+    | '/settings/finance/fee-structures'
+    | '/settings/finance/fee-types'
+    | '/settings/finance/fiscal-years'
+    | '/settings/finance/payment-plan-templates'
+    | '/settings/finance/payment-plans'
+    | '/settings/finance/payments'
+    | '/settings/finance/refunds'
+    | '/settings/finance/setup'
+    | '/settings/finance/student-fees'
     | '/students/$studentId/edit'
     | '/users/roles/new'
     | '/users/staff/new'
@@ -913,6 +1043,7 @@ export interface FileRouteTypes {
     | '/conducts/conduct/'
     | '/conducts/student-attendance/'
     | '/conducts/teacher-attendance/'
+    | '/settings/finance/'
     | '/spaces/classrooms/'
     | '/students/$studentId/'
     | '/users/roles/'
@@ -933,6 +1064,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/reset-password'
+    | '/approbations'
     | '/dashboard'
     | '/schedules'
     | '/accounting/accounts'
@@ -955,7 +1087,6 @@ export interface FileRouteTypes {
     | '/programs/coefficients'
     | '/programs/curriculum-progress'
     | '/programs/subjects'
-    | '/settings/finance'
     | '/settings/notifications'
     | '/settings/pedagogical-structure'
     | '/settings/profile'
@@ -963,7 +1094,6 @@ export interface FileRouteTypes {
     | '/settings/school-years'
     | '/spaces/availability'
     | '/students/bulk-operations'
-    | '/students/enrollments'
     | '/students/new'
     | '/students/parents'
     | '/api/auth/$'
@@ -983,6 +1113,17 @@ export interface FileRouteTypes {
     | '/conducts/student-attendance/history'
     | '/conducts/student-attendance/statistics'
     | '/conducts/teacher-attendance/reports'
+    | '/settings/finance/accounts'
+    | '/settings/finance/discounts'
+    | '/settings/finance/fee-structures'
+    | '/settings/finance/fee-types'
+    | '/settings/finance/fiscal-years'
+    | '/settings/finance/payment-plan-templates'
+    | '/settings/finance/payment-plans'
+    | '/settings/finance/payments'
+    | '/settings/finance/refunds'
+    | '/settings/finance/setup'
+    | '/settings/finance/student-fees'
     | '/students/$studentId/edit'
     | '/users/roles/new'
     | '/users/staff/new'
@@ -994,6 +1135,7 @@ export interface FileRouteTypes {
     | '/conducts/conduct'
     | '/conducts/student-attendance'
     | '/conducts/teacher-attendance'
+    | '/settings/finance'
     | '/spaces/classrooms'
     | '/students/$studentId'
     | '/users/roles'
@@ -1016,6 +1158,7 @@ export interface FileRouteTypes {
     | '/_auth'
     | '/reset-password'
     | '/_auth/accounting'
+    | '/_auth/approbations'
     | '/_auth/classes'
     | '/_auth/conducts'
     | '/_auth/dashboard'
@@ -1054,7 +1197,6 @@ export interface FileRouteTypes {
     | '/_auth/settings/school-years'
     | '/_auth/spaces/availability'
     | '/_auth/students/bulk-operations'
-    | '/_auth/students/enrollments'
     | '/_auth/students/new'
     | '/_auth/students/parents'
     | '/api/auth/$'
@@ -1074,6 +1216,17 @@ export interface FileRouteTypes {
     | '/_auth/conducts/student-attendance/history'
     | '/_auth/conducts/student-attendance/statistics'
     | '/_auth/conducts/teacher-attendance/reports'
+    | '/_auth/settings/finance/accounts'
+    | '/_auth/settings/finance/discounts'
+    | '/_auth/settings/finance/fee-structures'
+    | '/_auth/settings/finance/fee-types'
+    | '/_auth/settings/finance/fiscal-years'
+    | '/_auth/settings/finance/payment-plan-templates'
+    | '/_auth/settings/finance/payment-plans'
+    | '/_auth/settings/finance/payments'
+    | '/_auth/settings/finance/refunds'
+    | '/_auth/settings/finance/setup'
+    | '/_auth/settings/finance/student-fees'
     | '/_auth/students/$studentId/edit'
     | '/_auth/users/roles/new'
     | '/_auth/users/staff/new'
@@ -1085,6 +1238,7 @@ export interface FileRouteTypes {
     | '/_auth/conducts/conduct/'
     | '/_auth/conducts/student-attendance/'
     | '/_auth/conducts/teacher-attendance/'
+    | '/_auth/settings/finance/'
     | '/_auth/spaces/classrooms/'
     | '/_auth/students/$studentId/'
     | '/_auth/users/roles/'
@@ -1203,6 +1357,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthClassesRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/approbations': {
+      id: '/_auth/approbations'
+      path: '/approbations'
+      fullPath: '/approbations'
+      preLoaderRoute: typeof AuthApprobationsRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/accounting': {
       id: '/_auth/accounting'
       path: '/accounting'
@@ -1292,13 +1453,6 @@ declare module '@tanstack/react-router' {
       path: '/new'
       fullPath: '/students/new'
       preLoaderRoute: typeof AuthStudentsNewRouteImport
-      parentRoute: typeof AuthStudentsRoute
-    }
-    '/_auth/students/enrollments': {
-      id: '/_auth/students/enrollments'
-      path: '/enrollments'
-      fullPath: '/students/enrollments'
-      preLoaderRoute: typeof AuthStudentsEnrollmentsRouteImport
       parentRoute: typeof AuthStudentsRoute
     }
     '/_auth/students/bulk-operations': {
@@ -1539,6 +1693,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSpacesClassroomsIndexRouteImport
       parentRoute: typeof AuthSpacesRoute
     }
+    '/_auth/settings/finance/': {
+      id: '/_auth/settings/finance/'
+      path: '/'
+      fullPath: '/settings/finance/'
+      preLoaderRoute: typeof AuthSettingsFinanceIndexRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
     '/_auth/conducts/teacher-attendance/': {
       id: '/_auth/conducts/teacher-attendance/'
       path: '/teacher-attendance'
@@ -1615,6 +1776,83 @@ declare module '@tanstack/react-router' {
       fullPath: '/students/$studentId/edit'
       preLoaderRoute: typeof AuthStudentsStudentIdEditRouteImport
       parentRoute: typeof AuthStudentsRoute
+    }
+    '/_auth/settings/finance/student-fees': {
+      id: '/_auth/settings/finance/student-fees'
+      path: '/student-fees'
+      fullPath: '/settings/finance/student-fees'
+      preLoaderRoute: typeof AuthSettingsFinanceStudentFeesRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/setup': {
+      id: '/_auth/settings/finance/setup'
+      path: '/setup'
+      fullPath: '/settings/finance/setup'
+      preLoaderRoute: typeof AuthSettingsFinanceSetupRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/refunds': {
+      id: '/_auth/settings/finance/refunds'
+      path: '/refunds'
+      fullPath: '/settings/finance/refunds'
+      preLoaderRoute: typeof AuthSettingsFinanceRefundsRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/payments': {
+      id: '/_auth/settings/finance/payments'
+      path: '/payments'
+      fullPath: '/settings/finance/payments'
+      preLoaderRoute: typeof AuthSettingsFinancePaymentsRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/payment-plans': {
+      id: '/_auth/settings/finance/payment-plans'
+      path: '/payment-plans'
+      fullPath: '/settings/finance/payment-plans'
+      preLoaderRoute: typeof AuthSettingsFinancePaymentPlansRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/payment-plan-templates': {
+      id: '/_auth/settings/finance/payment-plan-templates'
+      path: '/payment-plan-templates'
+      fullPath: '/settings/finance/payment-plan-templates'
+      preLoaderRoute: typeof AuthSettingsFinancePaymentPlanTemplatesRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/fiscal-years': {
+      id: '/_auth/settings/finance/fiscal-years'
+      path: '/fiscal-years'
+      fullPath: '/settings/finance/fiscal-years'
+      preLoaderRoute: typeof AuthSettingsFinanceFiscalYearsRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/fee-types': {
+      id: '/_auth/settings/finance/fee-types'
+      path: '/fee-types'
+      fullPath: '/settings/finance/fee-types'
+      preLoaderRoute: typeof AuthSettingsFinanceFeeTypesRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/fee-structures': {
+      id: '/_auth/settings/finance/fee-structures'
+      path: '/fee-structures'
+      fullPath: '/settings/finance/fee-structures'
+      preLoaderRoute: typeof AuthSettingsFinanceFeeStructuresRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/discounts': {
+      id: '/_auth/settings/finance/discounts'
+      path: '/discounts'
+      fullPath: '/settings/finance/discounts'
+      preLoaderRoute: typeof AuthSettingsFinanceDiscountsRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
+    }
+    '/_auth/settings/finance/accounts': {
+      id: '/_auth/settings/finance/accounts'
+      path: '/accounts'
+      fullPath: '/settings/finance/accounts'
+      preLoaderRoute: typeof AuthSettingsFinanceAccountsRouteImport
+      parentRoute: typeof AuthSettingsFinanceRoute
     }
     '/_auth/conducts/teacher-attendance/reports': {
       id: '/_auth/conducts/teacher-attendance/reports'
@@ -1868,8 +2106,42 @@ const AuthProgramsRouteWithChildren = AuthProgramsRoute._addFileChildren(
   AuthProgramsRouteChildren,
 )
 
+interface AuthSettingsFinanceRouteChildren {
+  AuthSettingsFinanceAccountsRoute: typeof AuthSettingsFinanceAccountsRoute
+  AuthSettingsFinanceDiscountsRoute: typeof AuthSettingsFinanceDiscountsRoute
+  AuthSettingsFinanceFeeStructuresRoute: typeof AuthSettingsFinanceFeeStructuresRoute
+  AuthSettingsFinanceFeeTypesRoute: typeof AuthSettingsFinanceFeeTypesRoute
+  AuthSettingsFinanceFiscalYearsRoute: typeof AuthSettingsFinanceFiscalYearsRoute
+  AuthSettingsFinancePaymentPlanTemplatesRoute: typeof AuthSettingsFinancePaymentPlanTemplatesRoute
+  AuthSettingsFinancePaymentPlansRoute: typeof AuthSettingsFinancePaymentPlansRoute
+  AuthSettingsFinancePaymentsRoute: typeof AuthSettingsFinancePaymentsRoute
+  AuthSettingsFinanceRefundsRoute: typeof AuthSettingsFinanceRefundsRoute
+  AuthSettingsFinanceSetupRoute: typeof AuthSettingsFinanceSetupRoute
+  AuthSettingsFinanceStudentFeesRoute: typeof AuthSettingsFinanceStudentFeesRoute
+  AuthSettingsFinanceIndexRoute: typeof AuthSettingsFinanceIndexRoute
+}
+
+const AuthSettingsFinanceRouteChildren: AuthSettingsFinanceRouteChildren = {
+  AuthSettingsFinanceAccountsRoute: AuthSettingsFinanceAccountsRoute,
+  AuthSettingsFinanceDiscountsRoute: AuthSettingsFinanceDiscountsRoute,
+  AuthSettingsFinanceFeeStructuresRoute: AuthSettingsFinanceFeeStructuresRoute,
+  AuthSettingsFinanceFeeTypesRoute: AuthSettingsFinanceFeeTypesRoute,
+  AuthSettingsFinanceFiscalYearsRoute: AuthSettingsFinanceFiscalYearsRoute,
+  AuthSettingsFinancePaymentPlanTemplatesRoute:
+    AuthSettingsFinancePaymentPlanTemplatesRoute,
+  AuthSettingsFinancePaymentPlansRoute: AuthSettingsFinancePaymentPlansRoute,
+  AuthSettingsFinancePaymentsRoute: AuthSettingsFinancePaymentsRoute,
+  AuthSettingsFinanceRefundsRoute: AuthSettingsFinanceRefundsRoute,
+  AuthSettingsFinanceSetupRoute: AuthSettingsFinanceSetupRoute,
+  AuthSettingsFinanceStudentFeesRoute: AuthSettingsFinanceStudentFeesRoute,
+  AuthSettingsFinanceIndexRoute: AuthSettingsFinanceIndexRoute,
+}
+
+const AuthSettingsFinanceRouteWithChildren =
+  AuthSettingsFinanceRoute._addFileChildren(AuthSettingsFinanceRouteChildren)
+
 interface AuthSettingsRouteChildren {
-  AuthSettingsFinanceRoute: typeof AuthSettingsFinanceRoute
+  AuthSettingsFinanceRoute: typeof AuthSettingsFinanceRouteWithChildren
   AuthSettingsNotificationsRoute: typeof AuthSettingsNotificationsRoute
   AuthSettingsPedagogicalStructureRoute: typeof AuthSettingsPedagogicalStructureRoute
   AuthSettingsProfileRoute: typeof AuthSettingsProfileRoute
@@ -1879,7 +2151,7 @@ interface AuthSettingsRouteChildren {
 }
 
 const AuthSettingsRouteChildren: AuthSettingsRouteChildren = {
-  AuthSettingsFinanceRoute: AuthSettingsFinanceRoute,
+  AuthSettingsFinanceRoute: AuthSettingsFinanceRouteWithChildren,
   AuthSettingsNotificationsRoute: AuthSettingsNotificationsRoute,
   AuthSettingsPedagogicalStructureRoute: AuthSettingsPedagogicalStructureRoute,
   AuthSettingsProfileRoute: AuthSettingsProfileRoute,
@@ -1916,7 +2188,6 @@ const AuthSpacesRouteWithChildren = AuthSpacesRoute._addFileChildren(
 
 interface AuthStudentsRouteChildren {
   AuthStudentsBulkOperationsRoute: typeof AuthStudentsBulkOperationsRoute
-  AuthStudentsEnrollmentsRoute: typeof AuthStudentsEnrollmentsRoute
   AuthStudentsNewRoute: typeof AuthStudentsNewRoute
   AuthStudentsParentsRoute: typeof AuthStudentsParentsRoute
   AuthStudentsIndexRoute: typeof AuthStudentsIndexRoute
@@ -1926,7 +2197,6 @@ interface AuthStudentsRouteChildren {
 
 const AuthStudentsRouteChildren: AuthStudentsRouteChildren = {
   AuthStudentsBulkOperationsRoute: AuthStudentsBulkOperationsRoute,
-  AuthStudentsEnrollmentsRoute: AuthStudentsEnrollmentsRoute,
   AuthStudentsNewRoute: AuthStudentsNewRoute,
   AuthStudentsParentsRoute: AuthStudentsParentsRoute,
   AuthStudentsIndexRoute: AuthStudentsIndexRoute,
@@ -1986,6 +2256,7 @@ const AuthUsersRouteWithChildren = AuthUsersRoute._addFileChildren(
 
 interface AuthRouteChildren {
   AuthAccountingRoute: typeof AuthAccountingRouteWithChildren
+  AuthApprobationsRoute: typeof AuthApprobationsRoute
   AuthClassesRoute: typeof AuthClassesRouteWithChildren
   AuthConductsRoute: typeof AuthConductsRouteWithChildren
   AuthDashboardRoute: typeof AuthDashboardRoute
@@ -2000,6 +2271,7 @@ interface AuthRouteChildren {
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthAccountingRoute: AuthAccountingRouteWithChildren,
+  AuthApprobationsRoute: AuthApprobationsRoute,
   AuthClassesRoute: AuthClassesRouteWithChildren,
   AuthConductsRoute: AuthConductsRouteWithChildren,
   AuthDashboardRoute: AuthDashboardRoute,

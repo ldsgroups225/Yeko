@@ -4,7 +4,7 @@ import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { EnrollmentsList } from '@/components/students'
 import { useTranslations } from '@/i18n'
 
-export const Route = createFileRoute('/_auth/students/enrollments')({
+export const Route = createFileRoute('/_auth/approbations')({
   component: EnrollmentsPage,
 })
 

@@ -10,6 +10,7 @@ import {
   students,
 } from '@repo/data-ops/drizzle/school-schema'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
+import { databaseLogger } from '@repo/logger'
 import {
   bulkEnrollmentSchema,
   bulkReEnrollmentSchema,
@@ -17,6 +18,7 @@ import {
 import { generateUUID } from '@/utils/generateUUID'
 import { authServerFn } from '../../lib/server-fn'
 import { requirePermission } from '../../middleware/permissions'
+import { autoAssignFeesForEnrollment } from '../fee-calculation/auto-assign'
 
 /**
  * Bulk enroll students into a class
@@ -111,6 +113,23 @@ export const bulkEnrollStudents = authServerFn
           recordId: 'bulk-enroll',
           newValues: { classId: data.classId, count: toInsert.length },
         })
+
+        if (data.autoConfirm) {
+          const feeResults = await Promise.allSettled(
+            toInsert.map(entry => autoAssignFeesForEnrollment({
+              studentId: entry.studentId,
+              schoolId,
+              schoolYearId: data.schoolYearId,
+              userId,
+            })),
+          )
+          for (const [i, result] of feeResults.entries()) {
+            if (result.status === 'rejected' || !result.value.success) {
+              const error = result.status === 'rejected' ? String(result.reason) : result.value.error
+              databaseLogger.warning(`Auto fee assignment failed for student ${toInsert[i]!.studentId}: ${error}`)
+            }
+          }
+        }
       }
 
       results.skipped = data.studentIds.length - toInsert.length - results.failed
@@ -246,6 +265,23 @@ export const bulkReEnrollFromPreviousYear = authServerFn
           recordId: 'bulk-reenroll',
           newValues: { fromYear: data.fromSchoolYearId, toYear: data.toSchoolYearId, count: toInsert.length },
         })
+
+        if (data.autoConfirm) {
+          const feeResults = await Promise.allSettled(
+            toInsert.map(entry => autoAssignFeesForEnrollment({
+              studentId: entry.studentId,
+              schoolId,
+              schoolYearId: data.toSchoolYearId,
+              userId,
+            })),
+          )
+          for (const [i, result] of feeResults.entries()) {
+            if (result.status === 'rejected' || !result.value.success) {
+              const error = result.status === 'rejected' ? String(result.reason) : result.value.error
+              databaseLogger.warning(`Auto fee assignment failed for student ${toInsert[i]!.studentId}: ${error}`)
+            }
+          }
+        }
       }
 
       return { success: true as const, data: results }

@@ -1,17 +1,20 @@
 import { formatCurrency, formatNumber } from '@repo/data-ops'
-import { IconBook, IconCurrencyDollar, IconSchool, IconUsers } from '@tabler/icons-react'
+import { IconArrowRight, IconBook, IconCurrencyDollar, IconSchool, IconUserCheck, IconUsers } from '@tabler/icons-react'
+import { useNavigate } from '@tanstack/react-router'
 import { motion } from 'motion/react'
 import { container, item } from '../constants'
 
 interface MetricCardProps {
   title: string
   value: string
-  change: string
-  trend: 'up' | 'down' | 'neutral'
+  change?: string
+  trend?: 'up' | 'down' | 'neutral'
   icon: React.ComponentType<{ className?: string }>
+  link?: string
 }
 
-function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps) {
+function MetricCard({ title, value, change, trend, icon: Icon, link }: MetricCardProps) {
+  const navigate = useNavigate()
   return (
     <motion.div
       variants={item}
@@ -52,6 +55,14 @@ function MetricCard({ title, value, change, trend, icon: Icon }: MetricCardProps
           </p>
         )}
       </div>
+      {link && (
+        <button
+          onClick={() => navigate({ to: link })}
+          className="absolute bottom-4 right-6 p-1.5 px-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-all active:scale-95 group-hover:bg-primary group-hover:text-primary-foreground shadow-sm"
+        >
+          <IconArrowRight className="h-4 w-4" />
+        </button>
+      )}
     </motion.div>
   )
 }
@@ -70,7 +81,8 @@ export function MetricsSection({ metrics, t }: MetricsSectionProps) {
       className="
         grid gap-4
         md:grid-cols-2
-        lg:grid-cols-4
+        lg:grid-cols-3
+        xl:grid-cols-5
       "
     >
       <MetricCard
@@ -100,6 +112,13 @@ export function MetricsSection({ metrics, t }: MetricsSectionProps) {
         change=""
         trend="neutral"
         icon={IconCurrencyDollar}
+      />
+      <MetricCard
+        title={t.dashboard.pendingEnrollments()}
+        value={formatNumber(metrics?.pendingEnrollments ?? 0)}
+        trend="neutral"
+        icon={IconUserCheck}
+        link="/approbations"
       />
     </motion.div>
   )

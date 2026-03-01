@@ -7,6 +7,7 @@ import {
   IconLayoutDashboard,
   IconSettings,
   IconUserCheck,
+  IconUserPlus,
   IconUsers,
   IconUserScreen,
 } from '@tabler/icons-react'
@@ -108,6 +109,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: t.sidebar.system(),
         items: [
+          {
+            title: t.nav.approbations(),
+            href: '/approbations',
+            icon: IconUserPlus,
+            permission: { resource: 'students', action: 'view' },
+          },
           {
             title: t.nav.programs(),
             href: '/programs/curriculum-progress',

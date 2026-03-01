@@ -83,7 +83,7 @@ export function WizardStep1() {
         </div>
 
         <Link
-          to="/accounting/accounts"
+          to="/settings/finance/accounts"
           className={cn(buttonVariants({ variant: 'outline' }), `
             w-full gap-2 rounded-xl
           `)}
