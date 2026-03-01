@@ -31,7 +31,7 @@ export const feeTypeTemplatesData: FeeTypeTemplateData[] = [
   {
     id: 'ftpl-registration-001',
     code: 'REGISTRATION',
-    name: "Frais d'Inscription",
+    name: 'Frais d\'Inscription',
     nameEn: 'Registration Fee',
     category: 'registration',
     description: 'One-time registration and enrollment fees',
@@ -44,7 +44,7 @@ export const feeTypeTemplatesData: FeeTypeTemplateData[] = [
   {
     id: 'ftpl-exam-001',
     code: 'EXAM',
-    name: "Frais d'Examen",
+    name: 'Frais d\'Examen',
     nameEn: 'Exam Fee',
     category: 'exam',
     description: 'Fees for official examinations and assessments',
@@ -109,7 +109,7 @@ export const feeTypeTemplatesData: FeeTypeTemplateData[] = [
   {
     id: 'ftpl-activities-001',
     code: 'ACTIVITIES',
-    name: "Frais d'Activités",
+    name: 'Frais d\'Activités',
     nameEn: 'Activities Fee',
     category: 'activities',
     description: 'Extracurricular activities and sports',

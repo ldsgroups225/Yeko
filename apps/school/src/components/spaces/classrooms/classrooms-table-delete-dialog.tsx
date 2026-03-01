@@ -29,7 +29,10 @@ export function ClassroomsTableDeleteDialog({
       open={!!itemToDelete}
       onOpenChange={open => !open && setItemToDelete(null)}
     >
-      <AlertDialogContent className="backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
+      <AlertDialogContent className="
+        bg-card/95 border-border/40 rounded-3xl p-6 shadow-2xl backdrop-blur-xl
+      "
+      >
         <AlertDialogHeader>
           <AlertDialogTitle className="text-xl font-bold">
             {t.dialogs.deleteConfirmation.title()}
@@ -41,11 +44,15 @@ export function ClassroomsTableDeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-4">
-          <AlertDialogCancel className="rounded-xl border-border/40">
+          <AlertDialogCancel className="border-border/40 rounded-xl">
             {t.dialogs.deleteConfirmation.cancel()}
           </AlertDialogCancel>
           <AlertDialogAction
-            className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
+            className="
+              bg-destructive text-destructive-foreground
+              hover:bg-destructive/90
+              shadow-destructive/20 rounded-xl shadow-lg
+            "
             onClick={handleDelete}
           >
             {t.dialogs.deleteConfirmation.delete()}

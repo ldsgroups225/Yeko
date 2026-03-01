@@ -5,6 +5,8 @@ import { getServerTranslations } from '../../lib/i18n-server'
 import { getAuthContext } from '../middleware/auth'
 import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
 
+export { createServerFn } from '@tanstack/react-start'
+
 export interface ServerContext {
   auth: { userId: string, email: string, name: string }
   school: { schoolId: string, userId: string } | null
@@ -33,4 +35,10 @@ const authenticatedMiddleware = createMiddleware().server(async ({ next }) => {
   })
 })
 
-export const authServerFn = createServerFn().middleware([authenticatedMiddleware])
+const authServerBuilder = createServerFn({
+  method: 'POST' as const,
+})
+
+type AuthServerFn = ReturnType<typeof authServerBuilder.middleware<[typeof authenticatedMiddleware]>>
+
+export const authServerFn: AuthServerFn = authServerBuilder.middleware([authenticatedMiddleware])

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { BaseTranslation } from '../i18n-types'
 
 const fr = {
@@ -131,7 +132,8 @@ const fr = {
     students: 'Élèves',
     studentsList: 'Liste des élèves',
     parents: 'Parents',
-    enrollments: 'Inscriptions',
+    enrollments: 'Approbations',
+    approbations: 'Approbations',
     academic: 'Académique',
     classes: 'Classes',
     assignments: 'Affectations',
@@ -728,7 +730,20 @@ const fr = {
       createSuccess: 'Enseignant créé avec succès',
       updateSuccess: 'Enseignant mis à jour avec succès',
       teacherDetails: 'Détails de l\'enseignant',
+      addClass: 'Ajouter une classe',
+      newAssignment: 'Nouvelle affectation',
+      classPlaceholder: 'Sélectionner une classe',
+      subjectPlaceholder: 'Sélectionner une matière',
+      assignSuccess: 'Classe assignée avec succès',
+      assignError: 'Erreur lors de l\'assignation de la classe',
+      noClassesDescription: 'Cet enseignant n\'a pas encore de classes assignées.',
+      addSubjectSuccess: 'Matière ajoutée avec succès',
+      addSubjectError: 'Erreur lors de l\'ajout de la matière',
+      chooseSubject: 'Choisir une matière',
+      add: 'Ajouter',
+      teacherNotFoundDescription: 'L\'enseignant que vous recherchez n\'existe pas ou a été supprimé.',
       noSpecialization: 'Aucune spécialisation',
+      needQualification: "L'enseignant doit être qualifié pour une matière de cette classe (voir l'onglet Matières).",
     },
     staff: {
       title: 'Personnel',
@@ -1319,6 +1334,7 @@ const fr = {
     teachers: 'Enseignants',
     activeClasses: 'Classes Actives',
     revenueThisMonth: 'Revenus ce mois',
+    pendingEnrollments: 'Validations en attente',
     recentActivity: 'Activité Récente',
     alerts: 'Alertes',
     revenueSubtitle: 'Revenus des 6 derniers mois',
@@ -2121,10 +2137,10 @@ const fr = {
     saved: 'Paramètres enregistrés',
     saveFailed: 'Échec de l\'enregistrement',
     tabs: {
-      pedagogicalAndReportCards: 'Pédagogie & Bulletins',
-      attendanceAndConduct: 'Assiduité & Conduite',
-      accountingAndFinance: 'Comptabilité & Finances',
-      systemAndNotifications: 'Système & Notifications',
+      pedagogicalAndReportCards: 'Bulletins',
+      attendanceAndConduct: 'Conduite',
+      accountingAndFinance: 'Comptabilité',
+      systemAndNotifications: 'Notifications',
     },
     profile: {
       title: 'Profil de l\'école',

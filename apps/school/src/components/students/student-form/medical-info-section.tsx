@@ -27,12 +27,16 @@ export function MedicalInfoSection() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20"
+      className="
+        border-border/20
+        dark:bg-card/20
+        rounded-xl border bg-white/50 backdrop-blur-xl
+      "
     >
-      <div className="border-b border-border/10 bg-white/30 px-6 py-4">
+      <div className="border-border/10 border-b bg-white/30 px-6 py-4">
         <h3 className="text-lg font-semibold">{t.students.medicalInfo()}</h3>
       </div>
-      <div className="p-6 space-y-6">
+      <div className="space-y-6 p-6">
         <FormField
           control={form.control}
           name="bloodType"
@@ -45,9 +49,14 @@ export function MedicalInfoSection() {
                     <SelectValue placeholder={t.students.selectBloodType()}>
                       {field.value && (
                         <div className="flex items-center gap-2">
-                          <div className={`h-2 w-2 rounded-full ${
-                            field.value.includes('+') ? 'bg-red-500' : 'bg-blue-500'
-                          }`}
+                          <div className={`
+                            h-2 w-2 rounded-full
+                            ${
+                        field.value.includes('+')
+                          ? 'bg-red-500'
+                          : `bg-blue-500`
+                        }
+                          `}
                           />
                           <span className="ml-2">{field.value}</span>
                         </div>

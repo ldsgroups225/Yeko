@@ -25,8 +25,10 @@ export function SubjectStatusToggle({
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       className={cn(
-        'flex items-center space-x-3 px-3 py-1.5 rounded-full transition-colors',
-        isActive ? 'bg-primary/10 border border-primary/20' : 'bg-muted/50 border border-border/40',
+        'flex items-center space-x-3 rounded-full px-3 py-1.5 transition-colors',
+        isActive
+          ? 'bg-primary/10 border-primary/20 border'
+          : `bg-muted/50 border-border/40 border`,
         className,
       )}
     >
@@ -42,7 +44,10 @@ export function SubjectStatusToggle({
       <Label
         htmlFor="subject-status"
         className={cn(
-          'text-xs font-semibold cursor-pointer transition-colors uppercase tracking-wider',
+          `
+            cursor-pointer text-xs font-semibold tracking-wider uppercase
+            transition-colors
+          `,
           isActive ? 'text-primary' : 'text-muted-foreground',
         )}
       >

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { BloodType, EnrollmentStatus, Gender, Relationship, StudentInsert, StudentStatus } from '../drizzle/school-schema'
 import crypto from 'node:crypto'
 import { Result as R } from '@praha/byethrow'
@@ -335,13 +336,13 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
           .update(matriculeSequences)
           .set({
             lastNumber: sql`${matriculeSequences.lastNumber} + 1`,
-            updatedAt: new Date()
+            updatedAt: new Date(),
           })
           .where(
             and(
               eq(matriculeSequences.schoolId, schoolId),
-              eq(matriculeSequences.schoolYearId, schoolYearId)
-            )
+              eq(matriculeSequences.schoolYearId, schoolYearId),
+            ),
           )
           .returning()
 
@@ -374,32 +375,38 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
           })
 
           return `${prefix}${year}0001`
-        } catch (insertError: any) {
-            // Check for unique constraint violation (Postgres error code 23505)
-            // This happens if another request inserted the sequence between our update attempt and insert attempt.
-            if (insertError.code === '23505') {
-                 // Retry the update one more time as the record now exists
-                const [retrySequence] = await db
-                .update(matriculeSequences)
-                .set({
-                  lastNumber: sql`${matriculeSequences.lastNumber} + 1`,
-                  updatedAt: new Date()
-                })
-                .where(
-                  and(
-                    eq(matriculeSequences.schoolId, schoolId),
-                    eq(matriculeSequences.schoolYearId, schoolYearId)
-                  )
-                )
-                .returning()
+        }
+        catch (insertError) {
+          // Check for unique constraint violation (Postgres error code 23505)
+          // This happens if another request inserted the sequence between our update attempt and insert attempt.
+          if (
+            typeof insertError === 'object'
+            && insertError !== null
+            && 'code' in insertError
+            && insertError.code === '23505'
+          ) {
+            // Retry the update one more time as the record now exists
+            const [retrySequence] = await db
+              .update(matriculeSequences)
+              .set({
+                lastNumber: sql`${matriculeSequences.lastNumber} + 1`,
+                updatedAt: new Date(),
+              })
+              .where(
+                and(
+                  eq(matriculeSequences.schoolId, schoolId),
+                  eq(matriculeSequences.schoolYearId, schoolYearId),
+                ),
+              )
+              .returning()
 
-                if (retrySequence) {
-                     const paddedNumber = retrySequence.lastNumber.toString().padStart(4, '0')
-                     const year = retrySequence.format.match(/\d{2}/)?.[0] || new Date().getFullYear().toString().slice(-2)
-                     return `${retrySequence.prefix}${year}${paddedNumber}`
-                }
+            if (retrySequence) {
+              const paddedNumber = retrySequence.lastNumber.toString().padStart(4, '0')
+              const year = retrySequence.format.match(/\d{2}/)?.[0] || new Date().getFullYear().toString().slice(-2)
+              return `${retrySequence.prefix}${year}${paddedNumber}`
             }
-            throw insertError
+          }
+          throw insertError
         }
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'generateMatriculeFailed')),

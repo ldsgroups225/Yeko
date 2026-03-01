@@ -30,10 +30,18 @@ export function TableSkeleton({ columns = 6, rows = 5 }: TableSkeletonProps) {
       </div>
 
       {/* Table Skeleton */}
-      <div className="overflow-hidden rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+      <div className="
+        border-border/40 bg-card/50 overflow-hidden rounded-xl border shadow-sm
+        backdrop-blur-xl
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50 backdrop-blur-md">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               {Array.from({ length: columns }).map(() => (
                 <TableHead key={generateUUID()}>
                   <Skeleton className="h-4 w-24 opacity-60" />

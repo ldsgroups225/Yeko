@@ -10,13 +10,16 @@ export function ClassroomEmptyState() {
   return (
     <Card className="border-border/40 bg-card/40 backdrop-blur-xl">
       <CardContent className="p-16">
-        <div className="flex flex-col items-center justify-center text-center space-y-6">
-          <div className="rounded-full bg-muted/30 p-8 ring-1 ring-border/50">
-            <IconBuilding className="h-12 w-12 text-muted-foreground/50" />
+        <div className="
+          flex flex-col items-center justify-center space-y-6 text-center
+        "
+        >
+          <div className="bg-muted/30 ring-border/50 rounded-full p-8 ring-1">
+            <IconBuilding className="text-muted-foreground/50 h-12 w-12" />
           </div>
           <div className="space-y-2">
             <h3 className="text-xl font-bold">{t.empty.noClassrooms()}</h3>
-            <p className="text-muted-foreground max-w-md mx-auto">
+            <p className="text-muted-foreground mx-auto max-w-md">
               {t.empty.createClassroomsDescription()}
             </p>
           </div>
@@ -27,7 +30,7 @@ export function ClassroomEmptyState() {
                 {t.empty.createClassroom()}
               </Link>
             )}
-            className="mt-4 rounded-xl shadow-lg shadow-primary/20 h-11 px-8"
+            className="shadow-primary/20 mt-4 h-11 rounded-xl px-8 shadow-lg"
           />
         </div>
       </CardContent>

@@ -21,7 +21,11 @@ export function TimetableImportResults() {
   return (
     <div className="space-y-4">
       <Alert variant={result.failed === 0 ? 'default' : 'destructive'}>
-        {result.failed === 0 ? <IconCircleCheck className="h-4 w-4" /> : <IconAlertCircle className="h-4 w-4" />}
+        {result.failed === 0
+          ? <IconCircleCheck className="h-4 w-4" />
+          : (
+              <IconAlertCircle className="h-4 w-4" />
+            )}
         <AlertTitle>{t.timetables.importComplete()}</AlertTitle>
         <AlertDescription>
           {t.timetables.importSummary({

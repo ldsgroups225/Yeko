@@ -159,9 +159,12 @@ function FeeTypeTemplatesPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <IconCircleX className="h-12 w-12 text-destructive mb-4" />
-        <h2 className="text-2xl font-bold text-destructive">Erreur</h2>
+      <div className="
+        flex flex-col items-center justify-center py-20 text-center
+      "
+      >
+        <IconCircleX className="text-destructive mb-4 h-12 w-12" />
+        <h2 className="text-destructive text-2xl font-bold">Erreur</h2>
         <p className="text-muted-foreground mt-2">{error.message}</p>
         <Button variant="outline" className="mt-6" onClick={() => window.location.reload()}>
           Réessayer
@@ -187,9 +190,21 @@ function FeeTypeTemplatesPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="relative w-full md:w-96">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="
+            flex flex-col justify-between gap-4
+            md:flex-row md:items-center
+          "
+          >
+            <div className="
+              relative w-full
+              md:w-96
+            "
+            >
+              <IconSearch className="
+                text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                -translate-y-1/2
+              "
+              />
               <Input
                 placeholder="Rechercher par nom ou code..."
                 className="pl-9"
@@ -197,7 +212,11 @@ function FeeTypeTemplatesPage() {
                 onChange={e => setSearch(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+            <div className="
+              flex items-center gap-2 overflow-x-auto pb-2
+              md:pb-0
+            "
+            >
               <Button
                 variant={selectedCategory === 'all' ? 'default' : 'outline'}
                 size="sm"
@@ -240,7 +259,9 @@ function FeeTypeTemplatesPage() {
                       [1, 2, 3, 4, 5].map(item1 => (
                         <TableRow key={item1}>
                           {[1, 2, 3, 4, 5, 6, 7, 8].map(item2 => (
-                            <TableCell key={item2}><Skeleton className="h-4 w-full" /></TableCell>
+                            <TableCell key={item2}>
+                              <Skeleton className="h-4 w-full" />
+                            </TableCell>
                           ))}
                         </TableRow>
                       ))
@@ -259,7 +280,11 @@ function FeeTypeTemplatesPage() {
                             <TableCell className="font-mono text-xs">{template.code}</TableCell>
                             <TableCell>
                               <div className="font-medium">{template.name}</div>
-                              {template.nameEn && <div className="text-xs text-muted-foreground">{template.nameEn}</div>}
+                              {template.nameEn && (
+                                <div className="text-muted-foreground text-xs">
+                                  {template.nameEn}
+                                </div>
+                              )}
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline">{getCategoryLabel(template.category)}</Badge>
@@ -268,19 +293,31 @@ function FeeTypeTemplatesPage() {
                             <TableCell className="text-center">
                               {template.isMandatory
                                 ? (
-                                    <IconCheck className="h-4 w-4 text-green-500 mx-auto" />
+                                    <IconCheck className="
+                                      mx-auto h-4 w-4 text-green-500
+                                    "
+                                    />
                                   )
                                 : (
-                                    <IconX className="h-4 w-4 text-muted-foreground mx-auto" />
+                                    <IconX className="
+                                      text-muted-foreground mx-auto h-4 w-4
+                                    "
+                                    />
                                   )}
                             </TableCell>
                             <TableCell className="text-center">
                               {template.isRecurring
                                 ? (
-                                    <IconCheck className="h-4 w-4 text-blue-500 mx-auto" />
+                                    <IconCheck className="
+                                      mx-auto h-4 w-4 text-blue-500
+                                    "
+                                    />
                                   )
                                 : (
-                                    <IconX className="h-4 w-4 text-muted-foreground mx-auto" />
+                                    <IconX className="
+                                      text-muted-foreground mx-auto h-4 w-4
+                                    "
+                                    />
                                   )}
                             </TableCell>
                             <TableCell className="text-center">
@@ -292,7 +329,12 @@ function FeeTypeTemplatesPage() {
                               <DropdownMenu>
                                 <DropdownMenuTrigger
                                   render={props => (
-                                    <Button {...props} variant="ghost" size="icon" className="h-8 w-8">
+                                    <Button
+                                      {...props}
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-8 w-8"
+                                    >
                                       <IconDotsVertical className="h-4 w-4" />
                                     </Button>
                                   )}
@@ -304,7 +346,7 @@ function FeeTypeTemplatesPage() {
                                     Modifier
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
-                                    className="gap-2 text-destructive"
+                                    className="text-destructive gap-2"
                                     onClick={() => setDeletingTemplate(template)}
                                   >
                                     <IconTrash className="h-4 w-4" />
@@ -325,10 +367,14 @@ function FeeTypeTemplatesPage() {
 
       {/* Create/Edit Sheet */}
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
-        <SheetContent className="flex flex-col gap-0 p-0 sm:max-w-md">
-          <SheetHeader className="border-b bg-muted/10 px-6 py-4">
+        <SheetContent className="
+          flex flex-col gap-0 p-0
+          sm:max-w-md
+        "
+        >
+          <SheetHeader className="bg-muted/10 border-b px-6 py-4">
             <SheetTitle className="flex items-center gap-2">
-              <IconReceipt className="h-5 w-5 text-primary" />
+              <IconReceipt className="text-primary h-5 w-5" />
               {editingTemplate ? 'Modifier le modèle' : 'Nouveau modèle de frais'}
             </SheetTitle>
             <SheetDescription>
@@ -336,20 +382,36 @@ function FeeTypeTemplatesPage() {
             </SheetDescription>
           </SheetHeader>
 
-          <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-hidden">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-1 flex-col overflow-hidden"
+          >
             <div className="flex-1 overflow-y-auto px-6 py-6">
               <div className="space-y-8">
                 {/* Identification Section */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-1 w-8 rounded-full bg-primary/20" />
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    <div className="bg-primary/20 h-1 w-8 rounded-full" />
+                    <h3 className="
+                      text-muted-foreground text-sm font-semibold tracking-wider
+                      uppercase
+                    "
+                    >
                       Identification
                     </h3>
                   </div>
-                  <div className="grid gap-4 rounded-xl border bg-card p-4 shadow-sm">
+                  <div className="
+                    bg-card grid gap-4 rounded-xl border p-4 shadow-sm
+                  "
+                  >
                     <div className="grid gap-2">
-                      <Label htmlFor="code" className="text-xs font-bold uppercase tracking-tight text-muted-foreground">
+                      <Label
+                        htmlFor="code"
+                        className="
+                          text-muted-foreground text-xs font-bold tracking-tight
+                          uppercase
+                        "
+                      >
                         Code Unique *
                       </Label>
                       <Input
@@ -359,12 +421,22 @@ function FeeTypeTemplatesPage() {
                         defaultValue={editingTemplate?.code}
                         required
                         disabled={!!editingTemplate}
-                        className="font-mono uppercase transition-all focus:ring-2 focus:ring-primary/20"
+                        className="
+                          focus:ring-primary/20
+                          font-mono uppercase transition-all
+                          focus:ring-2
+                        "
                       />
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="name" className="text-xs font-bold uppercase tracking-tight text-muted-foreground">
+                      <Label
+                        htmlFor="name"
+                        className="
+                          text-muted-foreground text-xs font-bold tracking-tight
+                          uppercase
+                        "
+                      >
                         Nom (Français) *
                       </Label>
                       <Input
@@ -377,7 +449,13 @@ function FeeTypeTemplatesPage() {
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="nameEn" className="text-xs font-bold uppercase tracking-tight text-muted-foreground">
+                      <Label
+                        htmlFor="nameEn"
+                        className="
+                          text-muted-foreground text-xs font-bold tracking-tight
+                          uppercase
+                        "
+                      >
                         Nom (Anglais)
                       </Label>
                       <Input
@@ -393,14 +471,27 @@ function FeeTypeTemplatesPage() {
                 {/* Configuration Section */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-1 w-8 rounded-full bg-primary/20" />
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    <div className="bg-primary/20 h-1 w-8 rounded-full" />
+                    <h3 className="
+                      text-muted-foreground text-sm font-semibold tracking-wider
+                      uppercase
+                    "
+                    >
                       Configuration
                     </h3>
                   </div>
-                  <div className="grid gap-4 rounded-xl border bg-card p-4 shadow-sm">
+                  <div className="
+                    bg-card grid gap-4 rounded-xl border p-4 shadow-sm
+                  "
+                  >
                     <div className="grid gap-2">
-                      <Label htmlFor="category" className="text-xs font-bold uppercase tracking-tight text-muted-foreground">
+                      <Label
+                        htmlFor="category"
+                        className="
+                          text-muted-foreground text-xs font-bold tracking-tight
+                          uppercase
+                        "
+                      >
                         Catégorie *
                       </Label>
                       <Select name="category" defaultValue={editingTemplate?.category} required>
@@ -416,7 +507,13 @@ function FeeTypeTemplatesPage() {
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="defaultAmount" className="text-xs font-bold uppercase tracking-tight text-muted-foreground">
+                      <Label
+                        htmlFor="defaultAmount"
+                        className="
+                          text-muted-foreground text-xs font-bold tracking-tight
+                          uppercase
+                        "
+                      >
                         Montant par défaut (XOF)
                       </Label>
                       <div className="relative">
@@ -428,14 +525,29 @@ function FeeTypeTemplatesPage() {
                           defaultValue={editingTemplate?.defaultAmount}
                           className="pr-12"
                         />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                          <span className="text-xs font-bold text-muted-foreground">XOF</span>
+                        <div className="
+                          pointer-events-none absolute inset-y-0 right-0 flex
+                          items-center pr-3
+                        "
+                        >
+                          <span className="
+                            text-muted-foreground text-xs font-bold
+                          "
+                          >
+                            XOF
+                          </span>
                         </div>
                       </div>
                     </div>
 
                     <div className="grid gap-2">
-                      <Label htmlFor="description" className="text-xs font-bold uppercase tracking-tight text-muted-foreground">
+                      <Label
+                        htmlFor="description"
+                        className="
+                          text-muted-foreground text-xs font-bold tracking-tight
+                          uppercase
+                        "
+                      >
                         Description
                       </Label>
                       <Textarea
@@ -452,16 +564,20 @@ function FeeTypeTemplatesPage() {
                 {/* Status & Options */}
                 <div className="space-y-4 pb-4">
                   <div className="flex items-center gap-2">
-                    <div className="h-1 w-8 rounded-full bg-primary/20" />
-                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    <div className="bg-primary/20 h-1 w-8 rounded-full" />
+                    <h3 className="
+                      text-muted-foreground text-sm font-semibold tracking-wider
+                      uppercase
+                    "
+                    >
                       Options & Statut
                     </h3>
                   </div>
-                  <div className="divide-y rounded-xl border bg-card shadow-sm">
+                  <div className="bg-card divide-y rounded-xl border shadow-sm">
                     <div className="flex items-center justify-between p-4">
                       <div className="space-y-0.5">
                         <Label className="text-sm font-medium">Obligatoire</Label>
-                        <p className="text-xs text-muted-foreground text-pretty">Requis pour l'inscription</p>
+                        <p className="text-muted-foreground text-xs text-pretty">Requis pour l'inscription</p>
                       </div>
                       <Switch name="isMandatory" defaultChecked={editingTemplate?.isMandatory} />
                     </div>
@@ -469,22 +585,28 @@ function FeeTypeTemplatesPage() {
                     <div className="flex items-center justify-between p-4">
                       <div className="space-y-0.5">
                         <Label className="text-sm font-medium">Récurrent</Label>
-                        <p className="text-xs text-muted-foreground">Frais périodique (ex: mensuel)</p>
+                        <p className="text-muted-foreground text-xs">Frais périodique (ex: mensuel)</p>
                       </div>
                       <Switch name="isRecurring" defaultChecked={editingTemplate?.isRecurring} />
                     </div>
 
                     <div className="flex items-center justify-between p-4">
                       <div className="space-y-0.5">
-                        <Label className="text-sm font-medium text-primary">Statut Actif</Label>
-                        <p className="text-xs text-muted-foreground">Rendre disponible pour les écoles</p>
+                        <Label className="text-primary text-sm font-medium">Statut Actif</Label>
+                        <p className="text-muted-foreground text-xs">Rendre disponible pour les écoles</p>
                       </div>
                       <Switch name="isActive" defaultChecked={editingTemplate?.isActive ?? true} />
                     </div>
 
                     <div className="p-4 pt-2">
                       <div className="grid gap-2">
-                        <Label htmlFor="displayOrder" className="text-xs font-bold uppercase tracking-tight text-muted-foreground">
+                        <Label
+                          htmlFor="displayOrder"
+                          className="
+                            text-muted-foreground text-xs font-bold
+                            tracking-tight uppercase
+                          "
+                        >
                           Ordre d'affichage
                         </Label>
                         <Input
@@ -501,14 +623,18 @@ function FeeTypeTemplatesPage() {
               </div>
             </div>
 
-            <div className="mt-auto flex items-center justify-end gap-3 border-t bg-muted/10 px-6 py-4">
+            <div className="
+              bg-muted/10 mt-auto flex items-center justify-end gap-3 border-t
+              px-6 py-4
+            "
+            >
               <Button type="button" variant="outline" onClick={() => setIsSheetOpen(false)}>
                 Annuler
               </Button>
               <Button
                 type="submit"
                 disabled={createMutation.isPending || updateMutation.isPending}
-                className="min-w-[140px] shadow-lg shadow-primary/20"
+                className="shadow-primary/20 min-w-[140px] shadow-lg"
               >
                 {createMutation.isPending || updateMutation.isPending
                   ? 'Chargement...'

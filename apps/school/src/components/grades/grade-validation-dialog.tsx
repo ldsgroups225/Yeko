@@ -81,21 +81,39 @@ export function GradeValidationDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-md rounded-3xl border-border/40 bg-popover/90 backdrop-blur-2xl shadow-2xl p-0 overflow-hidden">
+      <DialogContent className="
+        border-border/40 bg-popover/90 max-w-md overflow-hidden rounded-3xl p-0
+        shadow-2xl backdrop-blur-2xl
+      "
+      >
         <DialogHeader className="p-6 pb-0">
-          <div className="flex items-center gap-4 mb-2">
+          <div className="mb-2 flex items-center gap-4">
             <div className={cn(
-              'flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner transition-transform group-hover:scale-110',
-              isReject ? 'bg-destructive/10 text-destructive' : 'bg-success/10 text-success',
+              `
+                flex h-12 w-12 items-center justify-center rounded-2xl
+                shadow-inner transition-transform
+                group-hover:scale-110
+              `,
+              isReject
+                ? 'bg-destructive/10 text-destructive'
+                : `bg-success/10 text-success`,
             )}
             >
-              {isReject ? <IconCircleX className="size-6" /> : <IconCircleCheck className="size-6" />}
+              {isReject
+                ? <IconCircleX className="size-6" />
+                : (
+                    <IconCircleCheck className="size-6" />
+                  )}
             </div>
             <div>
               <DialogTitle className="text-xl font-bold tracking-tight">
                 {isReject ? t.academic.grades.validations.rejectTitle() : t.academic.grades.validations.validateTitle()}
               </DialogTitle>
-              <DialogDescription className="text-xs font-medium text-muted-foreground uppercase tracking-widest opacity-70">
+              <DialogDescription className="
+                text-muted-foreground text-xs font-medium tracking-widest
+                uppercase opacity-70
+              "
+              >
                 {isReject ? t.academic.grades.validations.rejectDescription() : t.academic.grades.validations.validateDescription({ count: gradeCount })}
               </DialogDescription>
             </div>
@@ -112,7 +130,11 @@ export function GradeValidationDialog({
                       name="reason"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                          <FormLabel className="
+                            text-muted-foreground flex items-center gap-2
+                            text-[11px] font-bold tracking-widest uppercase
+                          "
+                          >
                             <IconAlertCircle className="size-3" />
                             {t.academic.grades.validations.rejectReason()}
                             {' '}
@@ -121,11 +143,19 @@ export function GradeValidationDialog({
                           <FormControl>
                             <Textarea
                               placeholder={t.academic.grades.validations.rejectReasonPlaceholder()}
-                              className="min-h-[120px] rounded-2xl border-border/40 bg-background/50 focus:bg-background transition-all resize-none p-4"
+                              className="
+                                border-border/40 bg-background/50
+                                focus:bg-background
+                                min-h-[120px] resize-none rounded-2xl p-4
+                                transition-all
+                              "
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage className="text-[10px] font-bold uppercase tracking-tight" />
+                          <FormMessage className="
+                            text-[10px] font-bold tracking-tight uppercase
+                          "
+                          />
                         </FormItem>
                       )}
                     />
@@ -134,7 +164,13 @@ export function GradeValidationDialog({
               )
             : (
                 <div className="space-y-3">
-                  <Label htmlFor="comment" className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <Label
+                    htmlFor="comment"
+                    className="
+                      text-muted-foreground flex items-center gap-2 text-[11px]
+                      font-bold tracking-widest uppercase
+                    "
+                  >
                     <IconMessage className="size-3" />
                     {t.academic.grades.validations.comment()}
                   </Label>
@@ -143,18 +179,29 @@ export function GradeValidationDialog({
                     placeholder={t.academic.grades.validations.commentPlaceholder()}
                     value={comment}
                     onChange={e => setComment(e.target.value)}
-                    className="min-h-[100px] rounded-2xl border-border/40 bg-background/50 focus:bg-background transition-all resize-none p-4"
+                    className="
+                      border-border/40 bg-background/50
+                      focus:bg-background
+                      min-h-[100px] resize-none rounded-2xl p-4 transition-all
+                    "
                   />
                 </div>
               )}
         </div>
 
-        <DialogFooter className="p-6 bg-muted/20 gap-3 sm:gap-0">
+        <DialogFooter className="
+          bg-muted/20 gap-3 p-6
+          sm:gap-0
+        "
+        >
           <Button
             variant="ghost"
             onClick={() => handleOpenChange(false)}
             disabled={isPending}
-            className="rounded-xl font-bold uppercase tracking-widest text-[10px] hover:bg-background/80"
+            className="
+              hover:bg-background/80
+              rounded-xl text-[10px] font-bold tracking-widest uppercase
+            "
           >
             {t.common.cancel()}
           </Button>
@@ -163,8 +210,15 @@ export function GradeValidationDialog({
             onClick={handleConfirm}
             disabled={isPending}
             className={cn(
-              'rounded-xl font-bold uppercase tracking-widest text-[10px] px-8 shadow-lg transition-all',
-              !isReject && 'bg-success hover:bg-success/90 shadow-success/20',
+              `
+                rounded-xl px-8 text-[10px] font-bold tracking-widest uppercase
+                shadow-lg transition-all
+              `,
+              !isReject && `
+                bg-success
+                hover:bg-success/90
+                shadow-success/20
+              `,
               isReject && 'shadow-destructive/20',
             )}
           >

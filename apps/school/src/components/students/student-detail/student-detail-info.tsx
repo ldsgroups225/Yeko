@@ -29,7 +29,11 @@ export function StudentDetailInfo({ student, onEnroll, onTransfer }: StudentDeta
   const currentClass = student.enrollmentHistory?.[0]?.class
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="
+      grid gap-6
+      md:grid-cols-2
+    "
+    >
       {/* Personal Details */}
       <motion.div
         variants={{
@@ -40,10 +44,15 @@ export function StudentDetailInfo({ student, onEnroll, onTransfer }: StudentDeta
         animate="show"
         transition={{ delay: 0.1 }}
       >
-        <Card className="h-full border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
+        <Card className="
+          border-border/20
+          dark:bg-card/20
+          h-full bg-white/50 backdrop-blur-xl
+        "
+        >
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg text-primary">
-              <div className="p-2 rounded-lg bg-primary/10">
+            <CardTitle className="text-primary flex items-center gap-2 text-lg">
+              <div className="bg-primary/10 rounded-lg p-2">
                 <IconUser className="h-5 w-5" />
               </div>
               {t.students.personalInfo()}
@@ -98,10 +107,15 @@ export function StudentDetailInfo({ student, onEnroll, onTransfer }: StudentDeta
         animate="show"
         transition={{ delay: 0.2 }}
       >
-        <Card className="h-full border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
+        <Card className="
+          border-border/20
+          dark:bg-card/20
+          h-full bg-white/50 backdrop-blur-xl
+        "
+        >
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg text-primary">
-              <div className="p-2 rounded-lg bg-primary/10">
+            <CardTitle className="text-primary flex items-center gap-2 text-lg">
+              <div className="bg-primary/10 rounded-lg p-2">
                 <IconSchool className="h-5 w-5" />
               </div>
               {t.students.currentEnrollment()}
@@ -147,7 +161,11 @@ export function StudentDetailInfo({ student, onEnroll, onTransfer }: StudentDeta
                       <Button
                         variant="outline"
                         size="sm"
-                        className="mt-4 w-full border-primary/20 hover:bg-primary/5 hover:text-primary"
+                        className="
+                          border-primary/20
+                          hover:bg-primary/5 hover:text-primary
+                          mt-4 w-full
+                        "
                         onClick={onTransfer}
                       >
                         {t.students.transferStudent()}
@@ -156,7 +174,11 @@ export function StudentDetailInfo({ student, onEnroll, onTransfer }: StudentDeta
                   </>
                 )
               : (
-                  <div className="flex flex-col items-center justify-center h-32 text-center text-muted-foreground">
+                  <div className="
+                    text-muted-foreground flex h-32 flex-col items-center
+                    justify-center text-center
+                  "
+                  >
                     <p>{t.students.notEnrolled()}</p>
                     <Button
                       variant="link"
@@ -180,10 +202,15 @@ export function StudentDetailInfo({ student, onEnroll, onTransfer }: StudentDeta
         animate="show"
         transition={{ delay: 0.3 }}
       >
-        <Card className="h-full border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
+        <Card className="
+          border-border/20
+          dark:bg-card/20
+          h-full bg-white/50 backdrop-blur-xl
+        "
+        >
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg text-primary">
-              <div className="p-2 rounded-lg bg-primary/10">
+            <CardTitle className="text-primary flex items-center gap-2 text-lg">
+              <div className="bg-primary/10 rounded-lg p-2">
                 <IconMapPin className="h-5 w-5" />
               </div>
               {t.students.contactInfo()}
@@ -217,10 +244,15 @@ export function StudentDetailInfo({ student, onEnroll, onTransfer }: StudentDeta
         animate="show"
         transition={{ delay: 0.4 }}
       >
-        <Card className="h-full border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20">
+        <Card className="
+          border-border/20
+          dark:bg-card/20
+          h-full bg-white/50 backdrop-blur-xl
+        "
+        >
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg text-pink-500">
-              <div className="p-2 rounded-lg bg-pink-500/10">
+              <div className="rounded-lg bg-pink-500/10 p-2">
                 <IconHeart className="h-5 w-5" />
               </div>
               {t.students.medicalInfo()}
@@ -253,11 +285,23 @@ function InfoRow({
 }) {
   return (
     <div
-      className={`flex justify-between items-center py-2 border-b border-dashed border-border/50 last:border-0 ${highlight ? 'bg-primary/5 -mx-2 px-2 rounded-md' : ''}`}
+      className={`
+        border-border/50 flex items-center justify-between border-b
+        border-dashed py-2
+        last:border-0
+        ${highlight
+      ? `bg-primary/5 -mx-2 rounded-md px-2`
+      : ''}
+      `}
     >
-      <span className="text-sm text-muted-foreground font-medium">{label}</span>
+      <span className="text-muted-foreground text-sm font-medium">{label}</span>
       <span
-        className={`text-sm ${highlight ? 'font-bold text-primary' : 'font-medium'}`}
+        className={`
+          text-sm
+          ${highlight
+      ? 'text-primary font-bold'
+      : `font-medium`}
+        `}
       >
         {value || '-'}
       </span>

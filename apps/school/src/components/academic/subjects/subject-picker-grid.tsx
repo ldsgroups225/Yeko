@@ -20,7 +20,11 @@ export function SubjectPickerGrid() {
         {[1, 2, 3].map(i => (
           <div key={i} className="space-y-4">
             <Skeleton className="h-4 w-32 bg-white/5" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="
+              grid grid-cols-1 gap-3
+              sm:grid-cols-2
+            "
+            >
               {[1, 2, 3, 4].map(j => (
                 <Skeleton key={j} className="h-16 w-full rounded-xl bg-white/5" />
               ))}
@@ -36,14 +40,19 @@ export function SubjectPickerGrid() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center justify-center py-20 text-center space-y-4"
+        className="
+          flex flex-col items-center justify-center space-y-4 py-20 text-center
+        "
       >
-        <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center">
-          <IconBook className="h-8 w-8 text-muted-foreground/30" />
+        <div className="
+          flex h-16 w-16 items-center justify-center rounded-full bg-white/5
+        "
+        >
+          <IconBook className="text-muted-foreground/30 h-8 w-8" />
         </div>
         <div className="space-y-1">
-          <p className="font-semibold text-foreground">{t.academic.subjects.picker.noAvailable()}</p>
-          <p className="text-xs text-muted-foreground max-w-[280px]">
+          <p className="text-foreground font-semibold">{t.academic.subjects.picker.noAvailable()}</p>
+          <p className="text-muted-foreground max-w-[280px] text-xs">
             {t.academic.subjects.picker.noAvailableDescription()}
           </p>
         </div>
@@ -73,14 +82,25 @@ export function SubjectPickerGrid() {
                 id={`category-${category}`}
                 checked={allSelected}
                 className={cn(
-                  'h-4 w-4 rounded border-border/20 data-[state=checked]:bg-primary',
-                  someSelected && !allSelected && 'data-[state=unchecked]:bg-primary/40',
+                  `
+                    border-border/20
+                    data-[state=checked]:bg-primary
+                    h-4 w-4 rounded-sm
+                  `,
+                  someSelected && !allSelected && `
+                    data-[state=unchecked]:bg-primary/40
+                  `,
                 )}
                 onCheckedChange={() => selectAllInCategory(category)}
               />
               <Label
                 htmlFor={`category-${category}`}
-                className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+                className="
+                  text-muted-foreground
+                  hover:text-foreground
+                  cursor-pointer text-[10px] font-bold tracking-[0.2em]
+                  uppercase transition-colors
+                "
               >
                 {category}
                 {' '}
@@ -90,10 +110,14 @@ export function SubjectPickerGrid() {
                   )
                 </span>
               </Label>
-              <div className="h-px flex-1 bg-border/20" />
+              <div className="bg-border/20 h-px flex-1" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="
+              grid grid-cols-1 gap-3
+              sm:grid-cols-2
+            "
+            >
               {categorySubjects.map((subject, idx) => {
                 const isSelected = selectedIds.has(subject.id)
                 return (
@@ -103,26 +127,53 @@ export function SubjectPickerGrid() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: (catIdx * 0.1) + (idx * 0.05) }}
                     className={cn(
-                      'group relative flex items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer overflow-hidden',
+                      `
+                        group relative flex cursor-pointer items-center gap-4
+                        overflow-hidden rounded-xl border p-4 transition-all
+                      `,
                       isSelected
-                        ? 'border-primary/50 bg-primary/10 shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]'
-                        : 'border-border/40 bg-white/5 hover:border-primary/30 hover:bg-white/10',
+                        ? `
+                          border-primary/50 bg-primary/10
+                          shadow-[0_0_20px_rgba(var(--primary-rgb),0.1)]
+                        `
+                        : `
+                          border-border/40
+                          hover:border-primary/30
+                          bg-white/5
+                          hover:bg-white/10
+                        `,
                     )}
                     onClick={() => toggleSubject(subject.id)}
                   >
                     <div className={cn(
-                      'h-10 w-10 rounded-lg flex items-center justify-center shrink-0 transition-colors',
-                      isSelected ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-white/5 text-muted-foreground',
+                      `
+                        flex h-10 w-10 shrink-0 items-center justify-center
+                        rounded-lg transition-colors
+                      `,
+                      isSelected
+                        ? `bg-primary shadow-primary/20 text-white shadow-lg`
+                        : `text-muted-foreground bg-white/5`,
                     )}
                     >
-                      {isSelected ? <IconCheck className="h-5 w-5" /> : <IconBook className="h-5 w-5" />}
+                      {isSelected
+                        ? <IconCheck className="h-5 w-5" />
+                        : (
+                            <IconBook className="h-5 w-5" />
+                          )}
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <p className={cn('font-bold text-sm truncate', isSelected ? 'text-primary' : 'text-foreground')}>
+                    <div className="min-w-0 flex-1">
+                      <p className={cn('truncate text-sm font-bold', isSelected
+                        ? `text-primary`
+                        : `text-foreground`)}
+                      >
                         {subject.name}
                       </p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                      <p className="
+                        text-muted-foreground text-[10px] font-semibold
+                        tracking-wider uppercase
+                      "
+                      >
                         {subject.shortName}
                       </p>
                     </div>

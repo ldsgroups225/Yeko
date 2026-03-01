@@ -34,7 +34,11 @@ function EditClassroomPage() {
   if (isPending) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <div className="
+          border-primary h-8 w-8 animate-spin rounded-full border-4
+          border-t-transparent
+        "
+        />
       </div>
     )
   }
@@ -43,12 +47,12 @@ function EditClassroomPage() {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <p className="text-lg font-medium text-muted-foreground">
+          <p className="text-muted-foreground text-lg font-medium">
             {t.spaces.classroom.notFound()}
           </p>
           <Button
             render={<Link to="/spaces/classrooms">{t.common.back()}</Link>}
-            className="mt-4 rounded-xl shadow-lg shadow-primary/20"
+            className="shadow-primary/20 mt-4 rounded-xl shadow-lg"
           />
         </div>
       </div>
@@ -68,20 +72,31 @@ function EditClassroomPage() {
         ]}
       />
 
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+      <div className="
+        flex flex-col gap-4
+        sm:flex-row sm:items-end sm:justify-between
+      "
+      >
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="flex items-center gap-4"
         >
-          <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20 shadow-lg backdrop-blur-xl">
-            <IconEdit className="size-8 text-primary" />
+          <div className="
+            bg-primary/10 border-primary/20 rounded-2xl border p-3 shadow-lg
+            backdrop-blur-xl
+          "
+          >
+            <IconEdit className="text-primary size-8" />
           </div>
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">
               {t.spaces.classroom.editClassroom()}
             </h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-lg">
+            <p className="
+              text-muted-foreground max-w-lg text-sm font-medium italic
+            "
+            >
               {t.spaces.classroom.editClassroomDescription()}
             </p>
           </div>
@@ -102,7 +117,7 @@ function EditClassroomPage() {
                 {t.common.back()}
               </Link>
             )}
-            className="rounded-xl border-border/40"
+            className="border-border/40 rounded-xl"
           />
         </motion.div>
       </div>
@@ -112,9 +127,16 @@ function EditClassroomPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm">
-          <CardHeader className="border-b border-border/40 bg-muted/5">
-            <CardTitle className="text-lg font-bold uppercase tracking-wider text-muted-foreground">
+        <Card className="
+          border-border/40 bg-card/40 rounded-3xl border shadow-sm
+          backdrop-blur-xl
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
+            <CardTitle className="
+              text-muted-foreground text-lg font-bold tracking-wider uppercase
+            "
+            >
               {t.spaces.classroom.classroomInfo()}
             </CardTitle>
           </CardHeader>

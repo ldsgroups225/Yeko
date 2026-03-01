@@ -39,7 +39,11 @@ export function AccountantDashboard() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-4"
+        className="
+          grid gap-4
+          md:grid-cols-2
+          lg:grid-cols-4
+        "
       >
         <MetricCard
           title={t.dashboard.accountant.monthlyRevenue()}
@@ -72,8 +76,15 @@ export function AccountantDashboard() {
       </motion.div>
 
       {/* Recent Transactions & Pending Payments */}
-      <div className="grid gap-4 lg:grid-cols-2">
-        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
+      <div className="
+        grid gap-4
+        lg:grid-cols-2
+      "
+      >
+        <motion.div
+          variants={item}
+          className="border-border/40 bg-card rounded-lg border p-6"
+        >
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.accountant.recentTransactions()}</h2>
           <div className="space-y-3">
             <TransactionItem
@@ -97,7 +108,10 @@ export function AccountantDashboard() {
           </div>
         </motion.div>
 
-        <motion.div variants={item} className="rounded-lg border border-border/40 bg-card p-6">
+        <motion.div
+          variants={item}
+          className="border-border/40 bg-card rounded-lg border p-6"
+        >
           <h2 className="mb-4 text-lg font-semibold">{t.dashboard.accountant.overduePayments()}</h2>
           <div className="space-y-3">
             <PendingPaymentItem
@@ -144,15 +158,23 @@ function MetricCard({ title, value, currency, icon: Icon, trend }: MetricCardPro
     <motion.div
       variants={item}
       whileHover={{ y: -5, transition: { duration: 0.2 } }}
-      className="rounded-lg border border-border/40 bg-card p-6 shadow-sm transition-shadow hover:shadow-md"
+      className="
+        border-border/40 bg-card rounded-lg border p-6 shadow-sm
+        transition-shadow
+        hover:shadow-md
+      "
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-        <Icon className={`h-4 w-4 ${trendColors[trend]}`} />
+        <h3 className="text-muted-foreground text-sm font-medium">{title}</h3>
+        <Icon className={`
+          h-4 w-4
+          ${trendColors[trend]}
+        `}
+        />
       </div>
       <div className="mt-2">
         <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{currency}</p>
+        <p className="text-muted-foreground text-xs">{currency}</p>
       </div>
     </motion.div>
   )
@@ -170,13 +192,16 @@ function TransactionItem({ type, description, amount, date }: TransactionItemPro
     <div className="flex items-center justify-between">
       <div className="space-y-1">
         <p className="text-sm font-medium">{description}</p>
-        <p className="text-xs text-muted-foreground">{date}</p>
+        <p className="text-muted-foreground text-xs">{date}</p>
       </div>
       <p
-        className={`text-sm font-bold ${type === 'income'
-          ? 'text-success'
-          : 'text-destructive'
-        }`}
+        className={`
+          text-sm font-bold
+          ${type === 'income'
+      ? 'text-success'
+      : 'text-destructive'
+    }
+        `}
       >
         {type === 'income' ? '+' : '-'}
         {amount}
@@ -197,11 +222,15 @@ interface PendingPaymentItemProps {
 function PendingPaymentItem({ name, class: className, amount, daysLate }: PendingPaymentItemProps) {
   const t = useTranslations()
   return (
-    <div className="flex items-center justify-between rounded-md border border-border/40 bg-background p-4">
+    <div className="
+      border-border/40 bg-background flex items-center justify-between
+      rounded-md border p-4
+    "
+    >
       <div className="space-y-1">
         <p className="text-sm font-medium">{name}</p>
-        <p className="text-xs text-muted-foreground">{className}</p>
-        <p className="text-xs text-destructive">
+        <p className="text-muted-foreground text-xs">{className}</p>
+        <p className="text-destructive text-xs">
           {daysLate}
           {' '}
           {t.dashboard.accountant.daysAgo()}

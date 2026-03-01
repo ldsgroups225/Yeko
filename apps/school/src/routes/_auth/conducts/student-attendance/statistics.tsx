@@ -85,7 +85,11 @@ function StudentAttendanceStatisticsPage() {
         ]}
       />
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="
+        flex flex-col justify-between gap-6
+        md:flex-row md:items-end
+      "
+      >
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -94,7 +98,12 @@ function StudentAttendanceStatisticsPage() {
 
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.attendance.statistics()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.attendance.statisticsDescription()}</p>
+            <p className="
+              text-muted-foreground max-w-md text-sm font-medium italic
+            "
+            >
+              {t.attendance.statisticsDescription()}
+            </p>
           </div>
         </motion.div>
 
@@ -103,7 +112,15 @@ function StudentAttendanceStatisticsPage() {
           animate={{ opacity: 1, x: 0 }}
         >
           <Link to="/conducts/student-attendance">
-            <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="
+                hover:bg-primary/10 hover:text-primary
+                rounded-xl text-[10px] font-black tracking-widest uppercase
+                transition-all
+              "
+            >
               <IconArrowLeft className="mr-2 h-4 w-4" />
               {t.common.back()}
             </Button>
@@ -114,21 +131,52 @@ function StudentAttendanceStatisticsPage() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
+        className="
+          bg-card/20 border-border/40 rounded-3xl border p-6 backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-4 ml-1">
-          <IconFilter className="size-3 text-muted-foreground/60" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.attendance.filters()}</span>
+        <div className="mb-4 ml-1 flex items-center gap-2">
+          <IconFilter className="text-muted-foreground/60 size-3" />
+          <span className="
+            text-muted-foreground/60 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
+            {t.attendance.filters()}
+          </span>
         </div>
         <div className="flex flex-wrap gap-4">
           <Select value={classId || 'all'} onValueChange={v => setClassId(v === 'all' || v === null ? '' : v)}>
-            <SelectTrigger className="w-[200px] h-12 rounded-2xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+            <SelectTrigger className="
+              bg-background/50 border-border/40
+              focus:ring-primary/20
+              h-12 w-[200px] rounded-2xl font-bold transition-all
+            "
+            >
               <SelectValue placeholder={t.attendance.allClasses()} />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-              <SelectItem value="all" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">{t.attendance.allClasses()}</SelectItem>
+            <SelectContent className="
+              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+            "
+            >
+              <SelectItem
+                value="all"
+                className="
+                  rounded-xl py-3 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.attendance.allClasses()}
+              </SelectItem>
               {classes.map(c => (
-                <SelectItem key={c.class.id} value={c.class.id} className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-3">
+                <SelectItem
+                  key={c.class.id}
+                  value={c.class.id}
+                  className="
+                    rounded-xl py-3 text-[10px] font-bold tracking-widest
+                    uppercase
+                  "
+                >
                   {c.grade?.name}
                   {' '}
                   {c.class.section}
@@ -136,8 +184,20 @@ function StudentAttendanceStatisticsPage() {
               ))}
             </SelectContent>
           </Select>
-          <DatePicker date={startDate} onSelect={d => d && setStartDate(d)} className="h-12 rounded-2xl bg-background/50 border-border/40 font-bold" />
-          <DatePicker date={endDate} onSelect={d => d && setEndDate(d)} className="h-12 rounded-2xl bg-background/50 border-border/40 font-bold" />
+          <DatePicker
+            date={startDate}
+            onSelect={d => d && setStartDate(d)}
+            className="
+              bg-background/50 border-border/40 h-12 rounded-2xl font-bold
+            "
+          />
+          <DatePicker
+            date={endDate}
+            onSelect={d => d && setEndDate(d)}
+            className="
+              bg-background/50 border-border/40 h-12 rounded-2xl font-bold
+            "
+          />
         </div>
       </motion.div>
 
@@ -149,10 +209,20 @@ function StudentAttendanceStatisticsPage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="grid gap-6 md:grid-cols-2 lg:grid-cols-4"
+                className="
+                  grid gap-6
+                  md:grid-cols-2
+                  lg:grid-cols-4
+                "
               >
                 {Array.from({ length: 4 }).map(() => (
-                  <Card key={generateUUID()} className="rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl p-6">
+                  <Card
+                    key={generateUUID()}
+                    className="
+                      border-border/40 bg-card/30 rounded-3xl p-6
+                      backdrop-blur-xl
+                    "
+                  >
                     <Skeleton className="h-20 w-full rounded-2xl" />
                   </Card>
                 ))}
@@ -167,60 +237,146 @@ function StudentAttendanceStatisticsPage() {
                   animate="show"
                   className="space-y-8"
                 >
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                  <div className="
+                    grid gap-6
+                    md:grid-cols-2
+                    lg:grid-cols-4
+                  "
+                  >
                     <motion.div variants={item}>
-                      <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl p-6 hover:translate-y-[-4px] transition-all group">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                      <Card className="
+                        border-border/40 bg-card/30 group relative
+                        overflow-hidden rounded-3xl p-6 shadow-xl
+                        backdrop-blur-xl transition-all
+                        hover:translate-y-[-4px]
+                      "
+                      >
+                        <div className="
+                          absolute top-0 right-0 p-4 opacity-10
+                          transition-transform
+                          group-hover:scale-110
+                        "
+                        >
                           <IconTrendingUp className="size-12" />
                         </div>
                         <div className="space-y-4">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.attendance.attendanceRate()}</p>
+                          <p className="
+                            text-muted-foreground/60 text-[10px] font-black
+                            tracking-widest uppercase
+                          "
+                          >
+                            {t.attendance.attendanceRate()}
+                          </p>
                           <div className="flex items-baseline gap-2">
                             <span className="text-4xl font-black">{stats.attendanceRate.toFixed(1)}</span>
-                            <span className="text-xl font-bold text-muted-foreground/60">%</span>
+                            <span className="
+                              text-muted-foreground/60 text-xl font-bold
+                            "
+                            >
+                              %
+                            </span>
                           </div>
-                          <Progress value={stats.attendanceRate} className="h-2 rounded-full bg-primary/10" />
+                          <Progress
+                            value={stats.attendanceRate}
+                            className="bg-primary/10 h-2 rounded-full"
+                          />
                         </div>
                       </Card>
                     </motion.div>
 
                     <motion.div variants={item}>
-                      <Card className="relative overflow-hidden rounded-3xl border-success/20 bg-success/5 backdrop-blur-xl shadow-xl p-6 hover:translate-y-[-4px] transition-all group">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                          <IconShieldCheck className="size-12 text-success" />
+                      <Card className="
+                        border-success/20 bg-success/5 group relative
+                        overflow-hidden rounded-3xl p-6 shadow-xl
+                        backdrop-blur-xl transition-all
+                        hover:translate-y-[-4px]
+                      "
+                      >
+                        <div className="
+                          absolute top-0 right-0 p-4 opacity-10
+                          transition-transform
+                          group-hover:scale-110
+                        "
+                        >
+                          <IconShieldCheck className="text-success size-12" />
                         </div>
                         <div className="space-y-4">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-success/60">{t.attendance.status.present()}</p>
+                          <p className="
+                            text-success/60 text-[10px] font-black
+                            tracking-widest uppercase
+                          "
+                          >
+                            {t.attendance.status.present()}
+                          </p>
                           <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black text-success">{stats.present}</span>
-                            <span className="text-sm font-bold text-success/60 uppercase tracking-widest">
+                            <span className="text-success text-4xl font-black">{stats.present}</span>
+                            <span className="
+                              text-success/60 text-sm font-bold tracking-widest
+                              uppercase
+                            "
+                            >
                               {((stats.present / Math.max(1, stats.totalRecords)) * 100).toFixed(1)}
                               %
                             </span>
                           </div>
-                          <div className="h-1 rounded-full bg-success/20 overflow-hidden">
-                            <div className="h-full bg-success" style={{ width: `${(stats.present / Math.max(1, stats.totalRecords)) * 100}%` }} />
+                          <div className="
+                            bg-success/20 h-1 overflow-hidden rounded-full
+                          "
+                          >
+                            <div className="bg-success h-full" style={{ width: `${(stats.present / Math.max(1, stats.totalRecords)) * 100}%` }} />
                           </div>
                         </div>
                       </Card>
                     </motion.div>
 
                     <motion.div variants={item}>
-                      <Card className="relative overflow-hidden rounded-3xl border-destructive/20 bg-destructive/5 backdrop-blur-xl shadow-xl p-6 hover:translate-y-[-4px] transition-all group">
-                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                          <IconAlertTriangle className="size-12 text-destructive" />
+                      <Card className="
+                        border-destructive/20 bg-destructive/5 group relative
+                        overflow-hidden rounded-3xl p-6 shadow-xl
+                        backdrop-blur-xl transition-all
+                        hover:translate-y-[-4px]
+                      "
+                      >
+                        <div className="
+                          absolute top-0 right-0 p-4 opacity-10
+                          transition-transform
+                          group-hover:scale-110
+                        "
+                        >
+                          <IconAlertTriangle className="
+                            text-destructive size-12
+                          "
+                          />
                         </div>
                         <div className="space-y-4">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-destructive/60">{t.attendance.status.absent()}</p>
+                          <p className="
+                            text-destructive/60 text-[10px] font-black
+                            tracking-widest uppercase
+                          "
+                          >
+                            {t.attendance.status.absent()}
+                          </p>
                           <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black text-destructive">{stats.absent}</span>
-                            <span className="text-sm font-bold text-destructive/60 uppercase tracking-widest">
+                            <span className="
+                              text-destructive text-4xl font-black
+                            "
+                            >
+                              {stats.absent}
+                            </span>
+                            <span className="
+                              text-destructive/60 text-sm font-bold
+                              tracking-widest uppercase
+                            "
+                            >
                               {((stats.absent / Math.max(1, stats.totalRecords)) * 100).toFixed(1)}
                               %
                             </span>
                           </div>
-                          <div className="h-1 rounded-full bg-destructive/20 overflow-hidden">
-                            <div className="h-full bg-destructive" style={{ width: `${(stats.absent / Math.max(1, stats.totalRecords)) * 100}%` }} />
+                          <div className="
+                            bg-destructive/20 h-1 overflow-hidden rounded-full
+                          "
+                          >
+                            <div className="bg-destructive h-full" style={{ width: `${(stats.absent / Math.max(1, stats.totalRecords)) * 100}%` }} />
                           </div>
                         </div>
                       </Card>
@@ -228,27 +384,58 @@ function StudentAttendanceStatisticsPage() {
                   </div>
 
                   <motion.div variants={item}>
-                    <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+                    <Card className="
+                      border-border/40 bg-card/30 relative overflow-hidden
+                      rounded-3xl shadow-2xl backdrop-blur-xl
+                    "
+                    >
 
-                      <CardHeader className="relative border-b border-border/10 bg-muted/20">
-                        <CardTitle className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                      <CardHeader className="
+                        border-border/10 bg-muted/20 relative border-b
+                      "
+                      >
+                        <CardTitle className="
+                          text-muted-foreground/60 flex items-center gap-2
+                          text-[10px] font-black tracking-[0.2em] uppercase
+                        "
+                        >
                           <IconChartBar className="h-3 w-3" />
                           {t.attendance.breakdown()}
                         </CardTitle>
                       </CardHeader>
-                      <CardContent className="pt-8 grid md:grid-cols-2 gap-12">
+                      <CardContent className="
+                        grid gap-12 pt-8
+                        md:grid-cols-2
+                      "
+                      >
                         <div className="space-y-6">
                           <BreakdownItem label={t.attendance.status.present()} value={stats.present} total={stats.totalRecords} color="bg-success" />
                           <BreakdownItem label={t.attendance.status.late()} value={stats.late} total={stats.totalRecords} color="bg-accent" />
                           <BreakdownItem label={t.attendance.status.absent()} value={stats.absent} total={stats.totalRecords} color="bg-destructive" />
                           <BreakdownItem label={t.attendance.status.excused()} value={stats.excused} total={stats.totalRecords} color="bg-secondary" />
                         </div>
-                        <div className="flex flex-col justify-center items-center text-center p-8 rounded-3xl bg-primary/5 border border-primary/10">
-                          <div className="p-4 rounded-2xl bg-primary/10 mb-4">
-                            <IconChartBar className="size-12 text-primary" />
+                        <div className="
+                          bg-primary/5 border-primary/10 flex flex-col
+                          items-center justify-center rounded-3xl border p-8
+                          text-center
+                        "
+                        >
+                          <div className="bg-primary/10 mb-4 rounded-2xl p-4">
+                            <IconChartBar className="text-primary size-12" />
                           </div>
-                          <h4 className="text-lg font-black uppercase tracking-tight italic">{t.schoolLife.studentAttendance()}</h4>
-                          <p className="text-sm font-medium text-muted-foreground italic mt-2 max-w-xs">{t.schoolLife.studentAttendanceDescription()}</p>
+                          <h4 className="
+                            text-lg font-black tracking-tight uppercase italic
+                          "
+                          >
+                            {t.schoolLife.studentAttendance()}
+                          </h4>
+                          <p className="
+                            text-muted-foreground mt-2 max-w-xs text-sm
+                            font-medium italic
+                          "
+                          >
+                            {t.schoolLife.studentAttendanceDescription()}
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
@@ -266,17 +453,23 @@ function BreakdownItem({ label, value, total, color }: { label: string, value: n
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/80">{label}</span>
+        <span className="
+          text-muted-foreground/80 text-[10px] font-black tracking-widest
+          uppercase
+        "
+        >
+          {label}
+        </span>
         <div className="flex items-baseline gap-1">
           <span className="text-lg font-black">{value}</span>
-          <span className="text-[10px] font-bold text-muted-foreground/60">
+          <span className="text-muted-foreground/60 text-[10px] font-bold">
             (
             {percentage.toFixed(1)}
             %)
           </span>
         </div>
       </div>
-      <div className="h-2 rounded-full bg-muted/20 overflow-hidden">
+      <div className="bg-muted/20 h-2 overflow-hidden rounded-full">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}

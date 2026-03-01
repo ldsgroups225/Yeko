@@ -3,7 +3,7 @@ import { Skeleton } from '@workspace/ui/components/skeleton'
 
 export function AssignmentMatrixSkeleton() {
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+    <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
       <CardHeader>
         <div className="flex items-center justify-between">
           <Skeleton className="h-6 w-48" />

@@ -37,7 +37,7 @@ export function AttendanceStudentRow({
   const currentStatus = student.attendance?.status
 
   return (
-    <div className="flex items-center justify-between p-3 border rounded-lg">
+    <div className="flex items-center justify-between rounded-lg border p-3">
       <div className="flex items-center gap-3">
         <Avatar className="h-10 w-10">
           <AvatarImage src={student.photoUrl ?? undefined} />
@@ -53,7 +53,7 @@ export function AttendanceStudentRow({
             {student.firstName}
           </p>
           {student.matricule && (
-            <p className="text-sm text-muted-foreground">{student.matricule}</p>
+            <p className="text-muted-foreground text-sm">{student.matricule}</p>
           )}
         </div>
       </div>
@@ -66,7 +66,7 @@ export function AttendanceStudentRow({
           onClick={() => onStatusChange('present')}
           disabled={isLoading}
         >
-          <IconCheck className="w-4 h-4 mr-1" />
+          <IconCheck className="mr-1 h-4 w-4" />
           {LL.attendance.status.present()}
         </Button>
         <Button
@@ -76,7 +76,7 @@ export function AttendanceStudentRow({
           onClick={() => onStatusChange('absent')}
           disabled={isLoading}
         >
-          <IconX className="w-4 h-4 mr-1" />
+          <IconX className="mr-1 h-4 w-4" />
           {LL.attendance.status.absent()}
         </Button>
         <Button
@@ -86,7 +86,7 @@ export function AttendanceStudentRow({
           onClick={() => onStatusChange('late')}
           disabled={isLoading}
         >
-          <IconClock className="w-4 h-4 mr-1" />
+          <IconClock className="mr-1 h-4 w-4" />
           {LL.attendance.status.late()}
         </Button>
         <Button
@@ -96,7 +96,7 @@ export function AttendanceStudentRow({
           onClick={() => onStatusChange('excused')}
           disabled={isLoading}
         >
-          <IconUser className="w-4 h-4 mr-1" />
+          <IconUser className="mr-1 h-4 w-4" />
           {LL.attendance.status.excused()}
         </Button>
       </div>

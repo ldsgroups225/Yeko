@@ -36,14 +36,27 @@ export function AutoMatchSuggestionCard({
   const t = useTranslations()
 
   return (
-    <div className={`rounded-xl border p-3 transition-all ${isSelected ? 'border-primary bg-primary/5 shadow-sm' : 'border-border/40 bg-card/30 hover:bg-card/50'}`}>
+    <div className={`
+      rounded-xl border p-3 transition-all
+      ${isSelected
+      ? `border-primary bg-primary/5 shadow-sm`
+      : `
+        border-border/40 bg-card/30
+        hover:bg-card/50
+      `}
+    `}
+    >
       <div className="flex items-start gap-3">
-        <Checkbox checked={isSelected} onCheckedChange={onSelect} className="mt-1" />
+        <Checkbox
+          checked={isSelected}
+          onCheckedChange={onSelect}
+          className="mt-1"
+        />
         <div className="flex-1 space-y-2">
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium">{suggestion.studentName}</p>
-              <p className="text-sm text-muted-foreground">{suggestion.phone}</p>
+              <p className="text-muted-foreground text-sm">{suggestion.phone}</p>
             </div>
             {suggestion.existingParent
               ? (
@@ -56,7 +69,11 @@ export function AutoMatchSuggestionCard({
           </div>
 
           {suggestion.existingParent && (
-            <div className="flex items-center gap-2 rounded-lg bg-card/50 backdrop-blur-sm border border-border/20 p-2">
+            <div className="
+              bg-card/50 border-border/20 flex items-center gap-2 rounded-lg
+              border p-2 backdrop-blur-sm
+            "
+            >
               <Avatar className="h-8 w-8">
                 <AvatarFallback className="text-xs">
                   {suggestion.existingParent.firstName?.[0]}

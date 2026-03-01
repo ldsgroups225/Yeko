@@ -17,7 +17,7 @@ export function ClassCapacityCard({ data }: ClassCapacityCardProps) {
   const t = useTranslations()
 
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+    <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
       <CardHeader>
         <CardTitle>{t.students.enrollmentByClass()}</CardTitle>
         <CardDescription>{t.students.classCapacityOverview()}</CardDescription>
@@ -26,7 +26,7 @@ export function ClassCapacityCard({ data }: ClassCapacityCardProps) {
         <div className="max-h-[300px] space-y-3 overflow-y-auto">
           {data.length === 0
             ? (
-                <p className="text-center text-sm text-muted-foreground">{t.students.noEnrollmentData()}</p>
+                <p className="text-muted-foreground text-center text-sm">{t.students.noEnrollmentData()}</p>
               )
             : (
                 data.map((cls) => {
@@ -38,7 +38,15 @@ export function ClassCapacityCard({ data }: ClassCapacityCardProps) {
                     <div key={cls.classId} className="space-y-1">
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-medium">{cls.className}</span>
-                        <span className={`text-xs ${isOverCapacity ? 'text-destructive' : isNearCapacity ? 'text-accent-foreground' : 'text-muted-foreground'}`}>
+                        <span className={`
+                          text-xs
+                          ${isOverCapacity
+                      ? `text-destructive`
+                      : isNearCapacity
+                        ? `text-accent-foreground`
+                        : `text-muted-foreground`}
+                        `}
+                        >
                           {cls.count}
                           /
                           {cls.maxStudents}
@@ -46,7 +54,14 @@ export function ClassCapacityCard({ data }: ClassCapacityCardProps) {
                       </div>
                       <Progress
                         value={Math.min(fillPercent, 100)}
-                        className={`h-2 ${isOverCapacity ? '[&>div]:bg-destructive' : isNearCapacity ? '[&>div]:bg-accent' : ''}`}
+                        className={`
+                          h-2
+                          ${isOverCapacity
+                      ? `[&>div]:bg-destructive`
+                      : isNearCapacity
+                        ? `[&>div]:bg-accent`
+                        : ''}
+                        `}
                       />
                     </div>
                   )

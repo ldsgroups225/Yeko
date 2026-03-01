@@ -44,14 +44,24 @@ export function CoefficientsForm({
   setNewCoefSeries,
 }: CoefficientsFormProps) {
   return (
-    <Card className="border-primary/20 shadow-lg bg-white/80 dark:bg-card/80 backdrop-blur-md overflow-hidden">
-      <CardHeader className="bg-primary/5 border-b border-primary/10">
+    <Card className="
+      border-primary/20
+      dark:bg-card/80
+      overflow-hidden bg-white/80 shadow-lg backdrop-blur-md
+    "
+    >
+      <CardHeader className="bg-primary/5 border-primary/10 border-b">
         <CardTitle>Créer un Nouveau Coefficient</CardTitle>
         <CardDescription>Ajouter un coefficient pour une matière et une classe</CardDescription>
       </CardHeader>
       <CardContent className="pt-6">
         <form onSubmit={onSubmit} className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="
+            grid gap-6
+            md:grid-cols-2
+            lg:grid-cols-3
+          "
+          >
             <div className="space-y-2">
               <Label htmlFor="coef-year" className="text-sm font-semibold">Année Scolaire *</Label>
               <Select
@@ -60,7 +70,11 @@ export function CoefficientsForm({
                 value={newCoefYear}
                 onValueChange={val => val && setNewCoefYear(val)}
               >
-                <SelectTrigger className="bg-background/50 border-input/50 focus:ring-primary/20">
+                <SelectTrigger className="
+                  bg-background/50 border-input/50
+                  focus:ring-primary/20
+                "
+                >
                   <SelectValue placeholder="Sélectionner l'année">
                     {newCoefYear
                       ? (() => {
@@ -69,7 +83,17 @@ export function CoefficientsForm({
                             ? (
                                 <div className="flex items-center gap-2">
                                   <span className="font-medium">{year.name}</span>
-                                  {year.isActive && <Badge variant="secondary" className="text-[10px] h-4 bg-primary/10 text-primary border-none">Active</Badge>}
+                                  {year.isActive && (
+                                    <Badge
+                                      variant="secondary"
+                                      className="
+                                        bg-primary/10 text-primary h-4
+                                        border-none text-[10px]
+                                      "
+                                    >
+                                      Active
+                                    </Badge>
+                                  )}
                                 </div>
                               )
                             : undefined
@@ -79,10 +103,24 @@ export function CoefficientsForm({
                 </SelectTrigger>
                 <SelectContent>
                   {schoolYears?.map(year => (
-                    <SelectItem key={year.id} value={year.id} className="focus:bg-primary/5 focus:text-primary">
+                    <SelectItem
+                      key={year.id}
+                      value={year.id}
+                      className="focus:bg-primary/5 focus:text-primary"
+                    >
                       <div className="flex items-center gap-2">
                         <span>{year.name}</span>
-                        {year.isActive && <Badge variant="secondary" className="text-[10px] h-4 bg-primary/10 text-primary border-none">Active</Badge>}
+                        {year.isActive && (
+                          <Badge
+                            variant="secondary"
+                            className="
+                              bg-primary/10 text-primary h-4 border-none
+                              text-[10px]
+                            "
+                          >
+                            Active
+                          </Badge>
+                        )}
                       </div>
                     </SelectItem>
                   ))}
@@ -93,7 +131,11 @@ export function CoefficientsForm({
             <div className="space-y-2">
               <Label htmlFor="coef-subject" className="text-sm font-semibold">Matière *</Label>
               <Select name="subjectId" required value={newCoefSubject} onValueChange={val => val && setNewCoefSubject(val)}>
-                <SelectTrigger className="bg-background/50 border-input/50 focus:ring-primary/20">
+                <SelectTrigger className="
+                  bg-background/50 border-input/50
+                  focus:ring-primary/20
+                "
+                >
                   <SelectValue placeholder="Sélectionner la matière">
                     {newCoefSubject
                       ? subjects.find(s => s.id === newCoefSubject)?.name
@@ -102,7 +144,11 @@ export function CoefficientsForm({
                 </SelectTrigger>
                 <SelectContent>
                   {subjects.map(subject => (
-                    <SelectItem key={subject.id} value={subject.id} className="focus:bg-primary/5 focus:text-primary">
+                    <SelectItem
+                      key={subject.id}
+                      value={subject.id}
+                      className="focus:bg-primary/5 focus:text-primary"
+                    >
                       {subject.name}
                     </SelectItem>
                   ))}
@@ -113,7 +159,11 @@ export function CoefficientsForm({
             <div className="space-y-2">
               <Label htmlFor="coef-grade" className="text-sm font-semibold">Classe *</Label>
               <Select name="gradeId" required value={newCoefGrade} onValueChange={val => val && setNewCoefGrade(val)}>
-                <SelectTrigger className="bg-background/50 border-input/50 focus:ring-primary/20">
+                <SelectTrigger className="
+                  bg-background/50 border-input/50
+                  focus:ring-primary/20
+                "
+                >
                   <SelectValue placeholder="Sélectionner la classe">
                     {newCoefGrade
                       ? grades?.find(g => g.id === newCoefGrade)?.name
@@ -122,7 +172,11 @@ export function CoefficientsForm({
                 </SelectTrigger>
                 <SelectContent>
                   {grades?.map(grade => (
-                    <SelectItem key={grade.id} value={grade.id} className="focus:bg-primary/5 focus:text-primary">
+                    <SelectItem
+                      key={grade.id}
+                      value={grade.id}
+                      className="focus:bg-primary/5 focus:text-primary"
+                    >
                       {grade.name}
                     </SelectItem>
                   ))}
@@ -133,7 +187,11 @@ export function CoefficientsForm({
             <div className="space-y-2">
               <Label htmlFor="coef-series" className="text-sm font-semibold">Série (optionnel)</Label>
               <Select name="seriesId" defaultValue="__none__" value={newCoefSeries} onValueChange={val => val && setNewCoefSeries(val)}>
-                <SelectTrigger className="bg-background/50 border-input/50 focus:ring-primary/20">
+                <SelectTrigger className="
+                  bg-background/50 border-input/50
+                  focus:ring-primary/20
+                "
+                >
                   <SelectValue placeholder="Aucune série">
                     {newCoefSeries === '__none__'
                       ? 'Aucune série'
@@ -143,7 +201,11 @@ export function CoefficientsForm({
                 <SelectContent>
                   <SelectItem value="__none__">Aucune série</SelectItem>
                   {seriesData?.map(serie => (
-                    <SelectItem key={serie.id} value={serie.id} className="focus:bg-primary/5 focus:text-primary">
+                    <SelectItem
+                      key={serie.id}
+                      value={serie.id}
+                      className="focus:bg-primary/5 focus:text-primary"
+                    >
                       {serie.name}
                     </SelectItem>
                   ))}
@@ -151,7 +213,11 @@ export function CoefficientsForm({
               </Select>
             </div>
 
-            <div className="space-y-2 lg:col-span-2">
+            <div className="
+              space-y-2
+              lg:col-span-2
+            "
+            >
               <Label htmlFor="coef-weight" className="text-sm font-semibold">Coefficient *</Label>
               <div className="flex items-center gap-4">
                 <Input
@@ -162,28 +228,49 @@ export function CoefficientsForm({
                   max={COEFFICIENT_LIMITS.MAX}
                   required
                   placeholder={String(COEFFICIENT_LIMITS.DEFAULT)}
-                  className="bg-background/50 border-input/50 focus:ring-primary/20 font-bold text-lg max-w-[200px]"
+                  className="
+                    bg-background/50 border-input/50
+                    focus:ring-primary/20
+                    max-w-[200px] text-lg font-bold
+                  "
                 />
-                <p className="text-xs text-muted-foreground italic">
+                <p className="text-muted-foreground text-xs italic">
                   Valeur comprise entre
                   {' '}
-                  <span className="font-semibold text-foreground">{COEFFICIENT_LIMITS.MIN}</span>
+                  <span className="text-foreground font-semibold">{COEFFICIENT_LIMITS.MIN}</span>
                   {' '}
                   et
                   {' '}
-                  <span className="font-semibold text-foreground">{COEFFICIENT_LIMITS.MAX}</span>
+                  <span className="text-foreground font-semibold">{COEFFICIENT_LIMITS.MAX}</span>
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-border/50">
-            <Button type="button" variant="ghost" onClick={onCancel} className="hover:bg-red-500/10 hover:text-red-500 transition-colors">
-              <IconX className="h-4 w-4 mr-2" />
+          <div className="border-border/50 flex justify-end gap-3 border-t pt-4">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onCancel}
+              className="
+                transition-colors
+                hover:bg-red-500/10 hover:text-red-500
+              "
+            >
+              <IconX className="mr-2 h-4 w-4" />
               Annuler
             </Button>
-            <Button type="submit" disabled={isPending} className="px-8 bg-primary hover:bg-primary/90 shadow-md transition-all active:scale-95">
-              <IconDeviceFloppy className="h-4 w-4 mr-2" />
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="
+                bg-primary
+                hover:bg-primary/90
+                px-8 shadow-md transition-all
+                active:scale-95
+              "
+            >
+              <IconDeviceFloppy className="mr-2 h-4 w-4" />
               {isPending ? 'Création...' : 'Créer le coefficient'}
             </Button>
           </div>

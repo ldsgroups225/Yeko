@@ -22,12 +22,16 @@ export function ContactInfoSection() {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-border/20 bg-white/50 backdrop-blur-xl dark:bg-card/20"
+      className="
+        border-border/20
+        dark:bg-card/20
+        rounded-xl border bg-white/50 backdrop-blur-xl
+      "
     >
-      <div className="border-b border-border/10 bg-white/30 px-6 py-4">
+      <div className="border-border/10 border-b bg-white/30 px-6 py-4">
         <h3 className="text-lg font-semibold">{t.students.contactInfo()}</h3>
       </div>
-      <div className="p-6 space-y-6">
+      <div className="space-y-6 p-6">
         <FormField
           control={form.control}
           name="address"
@@ -40,7 +44,11 @@ export function ContactInfoSection() {
           )}
         />
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="
+          grid gap-4
+          sm:grid-cols-2
+        "
+        >
           <FormField
             control={form.control}
             name="emergencyContact"

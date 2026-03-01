@@ -57,18 +57,20 @@ export function SeriesSection({
         <h2 className="text-2xl font-bold">Séries</h2>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={onExport} disabled={!series || series.length === 0}>
-            <IconDownload className="h-4 w-4 mr-2" />
+            <IconDownload className="mr-2 h-4 w-4" />
             Exporter
           </Button>
           <div className="relative">
             <input
               type="file"
               accept=".xlsx,.xls"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              className="
+                absolute inset-0 h-full w-full cursor-pointer opacity-0
+              "
               onChange={onImport}
             />
             <Button variant="outline" size="sm">
-              <IconUpload className="h-4 w-4 mr-2" />
+              <IconUpload className="mr-2 h-4 w-4" />
               Importer
             </Button>
           </div>
@@ -87,7 +89,11 @@ export function SeriesSection({
           </CardHeader>
           <CardContent>
             <form onSubmit={onCreate} className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="
+                grid gap-4
+                md:grid-cols-2
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="serie-name">Nom *</Label>
                   <Input id="serie-name" name="name" placeholder="Série C" required />
@@ -115,11 +121,11 @@ export function SeriesSection({
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreating(false)}>
-                  <IconX className="h-4 w-4 mr-2" />
+                  <IconX className="mr-2 h-4 w-4" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={isPending.create}>
-                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="mr-2 h-4 w-4" />
                   {isPending.create ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -132,8 +138,12 @@ export function SeriesSection({
         <Card key={track.id}>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
-                <IconAward className="h-5 w-5 text-secondary" />
+              <div className="
+                bg-secondary/10 flex h-10 w-10 items-center justify-center
+                rounded-lg
+              "
+              >
+                <IconAward className="text-secondary h-5 w-5" />
               </div>
               <div>
                 <CardTitle>{track.name}</CardTitle>
@@ -155,7 +165,9 @@ export function SeriesSection({
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className="text-sm text-muted-foreground text-center py-4"
+                          className="
+                            text-muted-foreground py-4 text-center text-sm
+                          "
                         >
                           Aucune série pour cette filière
                         </m.p>
@@ -172,8 +184,15 @@ export function SeriesSection({
                           >
                             {editingId === serie.id
                               ? (
-                                  <form onSubmit={e => onUpdate(e, serie.id)} className="border rounded-lg p-4 space-y-4">
-                                    <div className="grid gap-4 md:grid-cols-2">
+                                  <form
+                                    onSubmit={e => onUpdate(e, serie.id)}
+                                    className="space-y-4 rounded-lg border p-4"
+                                  >
+                                    <div className="
+                                      grid gap-4
+                                      md:grid-cols-2
+                                    "
+                                    >
                                       <div className="space-y-2">
                                         <Label htmlFor={`edit-serie-name-${serie.id}`}>Nom *</Label>
                                         <Input id={`edit-serie-name-${serie.id}`} name="name" defaultValue={serie.name} required />
@@ -199,27 +218,47 @@ export function SeriesSection({
                                         </SelectContent>
                                       </Select>
                                     </div>
-                                    <div className="flex nd gap-2">
+                                    <div className="nd flex gap-2">
                                       <Button type="button" variant="outline" onClick={() => setEditingId(null)}>
-                                        <IconX className="h-4 w-4 mr-2" />
+                                        <IconX className="mr-2 h-4 w-4" />
                                         Annuler
                                       </Button>
                                       <Button type="submit" disabled={isPending.update}>
-                                        <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                        <IconDeviceFloppy className="
+                                          mr-2 h-4 w-4
+                                        "
+                                        />
                                         {isPending.update ? 'Enregistrement...' : 'Enregistrer'}
                                       </Button>
                                     </div>
                                   </form>
                                 )
                               : (
-                                  <div className="flex items-center justify-between border rounded-lg p-4 hover:bg-accent/50 transition-colors">
+                                  <div className="
+                                    hover:bg-accent/50
+                                    flex items-center justify-between rounded-lg
+                                    border p-4 transition-colors
+                                  "
+                                  >
                                     <div className="flex items-center gap-4">
-                                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10">
-                                        <IconAward className="h-5 w-5 text-secondary" />
+                                      <div className="
+                                        bg-secondary/10 flex h-10 w-10
+                                        items-center justify-center rounded-lg
+                                      "
+                                      >
+                                        <IconAward className="
+                                          text-secondary h-5 w-5
+                                        "
+                                        />
                                       </div>
                                       <div>
                                         <h3 className="font-semibold">{serie.name}</h3>
-                                        <Badge variant="outline" className="text-xs mt-1">{serie.code}</Badge>
+                                        <Badge
+                                          variant="outline"
+                                          className="mt-1 text-xs"
+                                        >
+                                          {serie.code}
+                                        </Badge>
                                       </div>
                                     </div>
                                     <div className="flex gap-2">

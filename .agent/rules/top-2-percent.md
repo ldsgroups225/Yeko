@@ -1,6 +1,5 @@
 ---
 trigger: always_on
-glob: "**/*.{ts,tsx,js,jsx}"
 description: Enforces elite engineering standards and CoT reasoning
 ---
 
@@ -11,9 +10,9 @@ description: Enforces elite engineering standards and CoT reasoning
 - **Source of Truth:** Adhere to `./.kiro/steering/project_constitution.md`.
 
 <constraints>
-- Use TypeScript Strict mode.
+- Use TypeScript Strict mode, avoid type "any" and avoid force casting (pefer inherit).
 - Use early returns and functional patterns.
-- Ensure all UI text is localized in French (i18n).
+- Ensure all UI text is localized in French/English (i18n).
 - **Data Layer:** Use `ResultAsync` pattern; NEVER throw raw exceptions.
 - **Error Logging:** Always attach `tapLogErr` to data operations.
 </constraints>

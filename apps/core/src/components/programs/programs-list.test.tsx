@@ -85,8 +85,8 @@ interface ProgramsListProps {
 function ProgramsList({ programs, onProgramClick, onEdit, onDelete, onClone }: ProgramsListProps) {
   if (programs.length === 0) {
     return (
-      <div className="text-center py-8">
-        <div className="h-12 w-12 text-muted-foreground mx-auto mb-4" data-testid="database-icon" />
+      <div className="py-8 text-center">
+        <div className="text-muted-foreground mx-auto mb-4 h-12 w-12" data-testid="database-icon" />
         <h3 className="text-lg font-medium">Aucun programme trouvé</h3>
         <p className="text-muted-foreground">
           Commencez par créer votre premier programme.
@@ -105,31 +105,66 @@ function ProgramsList({ programs, onProgramClick, onEdit, onDelete, onClone }: P
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer"
+          className="
+            hover:bg-accent/50
+            flex cursor-pointer items-center justify-between rounded-lg border
+            p-4 transition-colors
+          "
           onClick={() => onProgramClick?.(program.id)}
           data-testid={`program-item-${program.id}`}
         >
-          <div className="flex items-center gap-4 flex-1">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-              <div className="h-5 w-5 text-primary" data-testid="book-icon" />
+          <div className="flex flex-1 items-center gap-4">
+            <div className="
+              bg-primary/10 flex h-10 w-10 items-center justify-center
+              rounded-lg
+            "
+            >
+              <div className="text-primary h-5 w-5" data-testid="book-icon" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold">{program.name}</h3>
                 {program.status === 'published' && (
-                  <span className="text-xs bg-primary hover:bg-primary/90 text-primary-foreground px-2 py-1 rounded">Publié</span>
+                  <span className="
+                    bg-primary
+                    hover:bg-primary/90
+                    text-primary-foreground rounded-sm px-2 py-1 text-xs
+                  "
+                  >
+                    Publié
+                  </span>
                 )}
                 {program.status === 'draft' && (
-                  <span className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded">Brouillon</span>
+                  <span className="
+                    bg-secondary text-secondary-foreground rounded-sm px-2 py-1
+                    text-xs
+                  "
+                  >
+                    Brouillon
+                  </span>
                 )}
                 {program.status === 'archived' && (
-                  <span className="text-xs border border-border px-2 py-1 rounded">Archivé</span>
+                  <span className="
+                    border-border rounded-sm border px-2 py-1 text-xs
+                  "
+                  >
+                    Archivé
+                  </span>
                 )}
                 {program.schoolYearTemplate?.isActive && (
-                  <span className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded">Active</span>
+                  <span className="
+                    bg-primary text-primary-foreground rounded-sm px-2 py-1
+                    text-xs
+                  "
+                  >
+                    Active
+                  </span>
                 )}
               </div>
-              <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+              <div className="
+                text-muted-foreground mt-1 flex items-center gap-2 text-sm
+              "
+              >
                 <span>{program.subject?.name}</span>
                 <span>•</span>
                 <span>{program.grade?.name}</span>
@@ -137,7 +172,7 @@ function ProgramsList({ programs, onProgramClick, onEdit, onDelete, onClone }: P
                 <span>{program.schoolYearTemplate?.name}</span>
               </div>
             </div>
-            <div className="h-5 w-5 text-muted-foreground" data-testid="chevron-icon" />
+            <div className="text-muted-foreground h-5 w-5" data-testid="chevron-icon" />
           </div>
           <div
             className="flex gap-2"

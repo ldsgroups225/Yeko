@@ -1,6 +1,10 @@
-import { IconCalendarStats, IconLayoutDashboard, IconReceipt2, IconReportMoney } from '@tabler/icons-react'
-import { createFileRoute } from '@tanstack/react-router'
-import { TabbedLayout } from '@/components/layout/tabbed-layout'
+import { IconPlus } from '@tabler/icons-react'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
+import { PageHeader } from '@workspace/ui/components/page-header'
+import { useState } from 'react'
+import { PaymentFormDialog } from '@/components/finance'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 
 export const Route = createFileRoute('/_auth/accounting')({
@@ -9,40 +13,28 @@ export const Route = createFileRoute('/_auth/accounting')({
 
 function AccountingLayout() {
   const t = useTranslations()
-
-  const tabs = [
-    {
-      label: t.finance.dashboard.title(),
-      href: '/accounting/dashboard',
-      icon: IconLayoutDashboard,
-      permission: { resource: 'finance', action: 'view' },
-    },
-    {
-      label: t.finance.payments.title(),
-      href: '/accounting/payments',
-      icon: IconReceipt2,
-      permission: { resource: 'finance', action: 'view' },
-    },
-    {
-      label: t.finance.paymentPlans.title(),
-      href: '/accounting/payment-plans',
-      icon: IconCalendarStats,
-      permission: { resource: 'finance', action: 'view' },
-    },
-    {
-      label: t.finance.feeStructures.title(),
-      href: '/accounting/fee-structures',
-      icon: IconReportMoney,
-      permission: { resource: 'finance', action: 'view' },
-    },
-  ]
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false)
 
   return (
-    <TabbedLayout
-      title={t.nav.finance()}
-      description={t.finance.title()}
-      breadcrumbs={[{ label: t.nav.finance() }]}
-      tabs={tabs}
-    />
+    <div className="space-y-8 p-1">
+      <Breadcrumbs items={[{ label: t.nav.finance() }]} />
+
+      <PageHeader
+        title={t.nav.finance()}
+        description={t.finance.title()}
+      >
+        <Button onClick={() => setShowPaymentDialog(true)} className="rounded-xl">
+          <IconPlus className="mr-2 h-4 w-4" />
+          Nouveau Paiement
+        </Button>
+      </PageHeader>
+
+      <Outlet />
+
+      <PaymentFormDialog
+        open={showPaymentDialog}
+        onOpenChange={setShowPaymentDialog}
+      />
+    </div>
   )
 }

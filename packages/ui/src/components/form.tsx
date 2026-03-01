@@ -1,8 +1,20 @@
 'use client'
 
+import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form'
+/**
+ * React Hook Form Compatibility Pieces
+ */
+import { Slot } from '@radix-ui/react-slot'
 import { Label } from '@workspace/ui/components/label'
+
 import { cn } from '@workspace/ui/lib/utils'
 import * as React from 'react'
+import {
+  Controller,
+
+  FormProvider,
+  useFormContext,
+} from 'react-hook-form'
 
 /**
  * FieldGroup provides a consistent layout for grouping form fields.
@@ -79,11 +91,12 @@ interface FieldErrorProps extends React.ComponentProps<'p'> {
 }
 
 function FieldError({ className, errors, children, ...props }: FieldErrorProps) {
-  const errorContent = errors 
+  const errorContent = errors
     ? (Array.isArray(errors) ? errors.join(', ') : String(errors))
     : children
 
-  if (!errorContent) return null
+  if (!errorContent)
+    return null
 
   return (
     <p
@@ -131,19 +144,6 @@ function FieldContent({ className, ...props }: React.ComponentProps<'div'>) {
     />
   )
 }
-
-/**
- * React Hook Form Compatibility Pieces
- */
-import { Slot } from '@radix-ui/react-slot'
-import {
-  Controller,
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
-  FormProvider,
-  useFormContext,
-} from 'react-hook-form'
 
 const Form = FormProvider
 
@@ -207,20 +207,20 @@ const FormDescription = FieldDescription
 const FormMessage = FieldError
 
 export {
-  Form,
-  FormControl,
-  FormField,
-  useFormField,
   Field,
   FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
+  FieldLabel,
   FieldLegend,
   FieldSet,
-  FieldLabel,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
   FormItem,
   FormLabel,
-  FormDescription,
   FormMessage,
+  useFormField,
 }

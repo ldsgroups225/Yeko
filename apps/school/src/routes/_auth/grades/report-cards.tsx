@@ -227,13 +227,24 @@ function ReportCardsPage() {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-3xl border border-border/40 bg-card/30 p-6 backdrop-blur-xl shadow-xl space-y-6"
+        className="
+          border-border/40 bg-card/30 space-y-6 rounded-3xl border p-6 shadow-xl
+          backdrop-blur-xl
+        "
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="
+          grid grid-cols-1 gap-6
+          md:grid-cols-2
+        "
+        >
 
           {/* Term */}
           <div className="space-y-2.5">
-            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            <Label className="
+              text-muted-foreground ml-1 text-xs font-black tracking-widest
+              uppercase
+            "
+            >
               {t.academic.grades.entry.term()}
             </Label>
             {termsPending || contextPending
@@ -246,7 +257,12 @@ function ReportCardsPage() {
                     onValueChange={val => setSelectedTermId(val ?? '')}
                     disabled={!effectiveYearId}
                   >
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                    <SelectTrigger className="
+                      bg-background/50 border-border/40
+                      focus:bg-background
+                      h-11 rounded-xl transition-all
+                    "
+                    >
                       <SelectValue placeholder={t.terms.select()}>
                         {selectedTermId
                           ? (() => {
@@ -254,7 +270,10 @@ function ReportCardsPage() {
                               return selectedItem
                                 ? (
                                     <div className="flex items-center gap-2">
-                                      <IconCalendar className="size-3.5 text-muted-foreground" />
+                                      <IconCalendar className="
+                                        text-muted-foreground size-3.5
+                                      "
+                                      />
                                       <span className="font-semibold">{selectedItem.template.name}</span>
                                     </div>
                                   )
@@ -263,9 +282,17 @@ function ReportCardsPage() {
                           : undefined}
                       </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                    <SelectContent className="
+                      bg-popover/90 border-border/40 rounded-xl
+                      backdrop-blur-2xl
+                    "
+                    >
                       {terms?.map(term => (
-                        <SelectItem key={term.id} value={term.id} className="rounded-lg font-semibold">
+                        <SelectItem
+                          key={term.id}
+                          value={term.id}
+                          className="rounded-lg font-semibold"
+                        >
                           {term.template.name}
                         </SelectItem>
                       ))}
@@ -276,7 +303,11 @@ function ReportCardsPage() {
 
           {/* Class */}
           <div className="space-y-2.5">
-            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground ml-1">
+            <Label className="
+              text-muted-foreground ml-1 text-xs font-black tracking-widest
+              uppercase
+            "
+            >
               {t.academic.grades.entry.class()}
             </Label>
             {classesPending || contextPending
@@ -289,7 +320,12 @@ function ReportCardsPage() {
                     onValueChange={val => setSelectedClassId(val ?? '')}
                     disabled={!effectiveYearId}
                   >
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all">
+                    <SelectTrigger className="
+                      bg-background/50 border-border/40
+                      focus:bg-background
+                      h-11 rounded-xl transition-all
+                    "
+                    >
                       <SelectValue placeholder={t.classes.select()}>
                         {selectedClassId
                           ? (() => {
@@ -297,7 +333,10 @@ function ReportCardsPage() {
                               return selectedItem
                                 ? (
                                     <div className="flex items-center gap-2">
-                                      <IconLayoutGrid className="size-3.5 text-muted-foreground" />
+                                      <IconLayoutGrid className="
+                                        text-muted-foreground size-3.5
+                                      "
+                                      />
                                       <span className="font-semibold">
                                         {selectedItem.grade.name}
                                         {' '}
@@ -310,9 +349,17 @@ function ReportCardsPage() {
                           : undefined}
                       </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+                    <SelectContent className="
+                      bg-popover/90 border-border/40 rounded-xl
+                      backdrop-blur-2xl
+                    "
+                    >
                       {classes?.map(item => (
-                        <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg font-semibold">
+                        <SelectItem
+                          key={item.class.id}
+                          value={item.class.id}
+                          className="rounded-lg font-semibold"
+                        >
                           {item.grade.name}
                           {' '}
                           {item.class.section}
@@ -365,7 +412,12 @@ function ReportCardsPage() {
                     : (
                         <div className="relative">
                           {averagesPending && (
-                            <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-sm rounded-2xl">
+                            <div className="
+                              bg-background/50 absolute inset-0 z-10 flex
+                              items-center justify-center rounded-2xl
+                              backdrop-blur-sm
+                            "
+                            >
                               <Skeleton className="h-full w-full opacity-20" />
                             </div>
                           )}
@@ -379,13 +431,23 @@ function ReportCardsPage() {
               </AnimatePresence>
             )
           : (
-              <Card className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm">
-                <CardContent className="flex flex-col items-center justify-center py-20 text-center">
-                  <div className="p-6 rounded-full bg-background/50 mb-6 shadow-inner">
-                    <IconSchool className="size-16 text-muted-foreground/20" />
+              <Card className="
+                border-border/60 bg-card/20 rounded-3xl border border-dashed
+                backdrop-blur-sm
+              "
+              >
+                <CardContent className="
+                  flex flex-col items-center justify-center py-20 text-center
+                "
+                >
+                  <div className="
+                    bg-background/50 mb-6 rounded-full p-6 shadow-inner
+                  "
+                  >
+                    <IconSchool className="text-muted-foreground/20 size-16" />
                   </div>
-                  <h3 className="text-xl font-bold text-muted-foreground mb-2">{t.reportCards.selectFiltersPrompt()}</h3>
-                  <p className="text-sm text-muted-foreground max-w-xs">{t.academic.grades.statistics.description()}</p>
+                  <h3 className="text-muted-foreground mb-2 text-xl font-bold">{t.reportCards.selectFiltersPrompt()}</h3>
+                  <p className="text-muted-foreground max-w-xs text-sm">{t.academic.grades.statistics.description()}</p>
                 </CardContent>
               </Card>
             )}
@@ -395,7 +457,12 @@ function ReportCardsPage() {
         open={isGenerationDialogOpen}
         onOpenChange={setIsGenerationDialogOpen}
         students={mappedStudents}
-        className={currentClass ? `${currentClass.grade.name} ${currentClass.class.section}` : ''}
+        className={currentClass
+          ? `
+            ${currentClass.grade.name}
+            ${currentClass.class.section}
+          `
+          : ''}
         termName={currentTerm?.template.name || ''}
         onGenerate={async (ids) => {
           const res = await generateMutation.mutateAsync(ids)

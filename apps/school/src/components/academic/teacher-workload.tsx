@@ -36,7 +36,12 @@ const MAX_HOURS_PER_WEEK = 30
 function WorkloadSkeleton() {
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-3
+      "
+      >
         {Array.from({ length: 6 }, (_, i) => (
           <Card key={`skeleton-${i}`}>
             <CardHeader className="pb-2">
@@ -66,21 +71,24 @@ function WorkloadSkeleton() {
 function EmptyState() {
   const t = useTranslations()
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+    <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
       <CardContent className="p-8">
-        <div className="flex flex-col items-center justify-center text-center space-y-4">
-          <div className="rounded-full bg-muted p-4">
-            <IconUsers className="h-8 w-8 text-muted-foreground" />
+        <div className="
+          flex flex-col items-center justify-center space-y-4 text-center
+        "
+        >
+          <div className="bg-muted rounded-full p-4">
+            <IconUsers className="text-muted-foreground h-8 w-8" />
           </div>
           <div className="space-y-2">
             <h3 className="text-lg font-semibold">{t.workload.emptyTitle()}</h3>
-            <p className="text-sm text-muted-foreground max-w-md">
+            <p className="text-muted-foreground max-w-md text-sm">
               {t.workload.emptyDescription()}
             </p>
           </div>
           <Button
             render={(
-              <Link to="/users/teachers" search={{ page: 1 }}>
+              <Link to="/teachers" search={{ page: 1 }}>
                 <IconPlus className="mr-2 h-4 w-4" />
                 {t.teachers.add()}
               </Link>
@@ -168,7 +176,11 @@ export function TeacherWorkload() {
       )}
 
       <div
-        className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        className="
+          grid gap-4
+          md:grid-cols-2
+          lg:grid-cols-3
+        "
         role="list"
         aria-label={t.teachers.list()}
       >
@@ -182,14 +194,21 @@ export function TeacherWorkload() {
             >
               <Card
                 className={cn(
-                  'border-border/40 bg-card/40 backdrop-blur-xl transition-all hover:bg-card/60',
+                  `
+                    border-border/40 bg-card/40
+                    hover:bg-card/60
+                    backdrop-blur-xl transition-all
+                  `,
                   isOverloaded && 'border-destructive/50',
                 )}
                 role="listitem"
                 aria-label={`${teacher.user.name} - ${totalHours}h/${t.common.week()} - ${isOverloaded ? t.workload.overloaded() : 'OK'}`}
               >
                 <CardHeader className="pb-2">
-                  <CardTitle className="flex items-center justify-between text-base">
+                  <CardTitle className="
+                    flex items-center justify-between text-base
+                  "
+                  >
                     <span className="flex items-center gap-2">
                       <IconUser className="h-4 w-4" aria-hidden="true" />
                       {teacher.user.name}
@@ -198,10 +217,12 @@ export function TeacherWorkload() {
                       ? (
                           <Badge
                             variant="destructive"
-                            className="bg-destructive/10 text-destructive border-0"
+                            className="
+                              bg-destructive/10 text-destructive border-0
+                            "
                           >
                             <IconAlertTriangle
-                              className="h-3 w-3 mr-1"
+                              className="mr-1 h-3 w-3"
                               aria-hidden="true"
                             />
                             {t.workload.overloaded()}
@@ -214,7 +235,7 @@ export function TeacherWorkload() {
                               className="bg-primary/10 text-primary border-0"
                             >
                               <IconCircleCheck
-                                className="h-3 w-3 mr-1"
+                                className="mr-1 h-3 w-3"
                                 aria-hidden="true"
                               />
                               OK
@@ -232,12 +253,20 @@ export function TeacherWorkload() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="flex items-center gap-1 text-muted-foreground">
+                    <span className="
+                      text-muted-foreground flex items-center gap-1
+                    "
+                    >
                       <IconClock className="h-4 w-4" aria-hidden="true" />
                       {t.workload.hoursPerWeek()}
                     </span>
                     <span
-                      className={`font-medium ${isOverloaded ? 'text-destructive' : ''}`}
+                      className={`
+                        font-medium
+                        ${isOverloaded
+              ? `text-destructive`
+              : ''}
+                      `}
                     >
                       {totalHours}
                       h /
@@ -253,7 +282,7 @@ export function TeacherWorkload() {
                     )}
                     aria-label={`${t.workload.load()}: ${totalHours} ${t.common.hours()} ${t.common.on()} ${MAX_HOURS_PER_WEEK} ${t.common.maximum()}`}
                   />
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-muted-foreground text-xs">
                     {classCount}
                     {' '}
                     {t.workload.classesAssigned()}

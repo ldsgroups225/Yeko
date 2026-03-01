@@ -42,7 +42,7 @@ export function TabbedLayout({
   }, [tabs, can])
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="animate-in fade-in space-y-8 duration-500">
       {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
 
       <PageHeader
@@ -52,8 +52,11 @@ export function TabbedLayout({
         {actions && <div className="flex items-center gap-3">{actions}</div>}
       </PageHeader>
 
-      <div className="relative border-b border-border/40 pb-px bg-muted/5 rounded-t-2xl px-2">
-        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+      <div className="
+        border-border/40 bg-muted/5 relative rounded-t-2xl border-b px-2 pb-px
+      "
+      >
+        <div className="scrollbar-none flex items-center gap-1 overflow-x-auto">
           {visibleTabs.map((tab) => {
             const isActive = pathname === tab.href || pathname.startsWith(`${tab.href}/`)
             return (
@@ -61,10 +64,18 @@ export function TabbedLayout({
                 key={tab.href}
                 to={tab.href}
                 className={cn(
-                  'relative flex items-center gap-2.5 px-6 py-4 text-xs font-black uppercase tracking-widest transition-all duration-300',
+                  `
+                    relative flex items-center gap-2.5 px-6 py-4 text-xs
+                    font-black tracking-widest uppercase transition-all
+                    duration-300
+                  `,
                   isActive
                     ? 'text-primary'
-                    : 'text-muted-foreground/50 hover:text-foreground hover:bg-muted/50 rounded-t-xl',
+                    : `
+                      text-muted-foreground/50
+                      hover:text-foreground hover:bg-muted/50
+                      rounded-t-xl
+                    `,
                 )}
               >
                 {tab.icon && <tab.icon className="size-4" />}
@@ -72,7 +83,10 @@ export function TabbedLayout({
                 {isActive && (
                   <motion.div
                     layoutId="active-tab-indicator"
-                    className="absolute inset-x-0 -bottom-px h-1 rounded-full bg-primary shadow-[0_0_15px_rgba(59,130,246,0.6)]"
+                    className="
+                      bg-primary absolute inset-x-0 -bottom-px h-1 rounded-full
+                      shadow-[0_0_15px_rgba(59,130,246,0.6)]
+                    "
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                 )}

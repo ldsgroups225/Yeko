@@ -47,7 +47,11 @@ export function useClassesTableColumns({
             checked={table.getIsAllPageRowsSelected()}
             onCheckedChange={value => handleSelectAll(!!value)}
             aria-label={t.common.selectAll()}
-            className="translate-y-[2px] border-primary/50 data-[state=checked]:border-primary"
+            className="
+              border-primary/50
+              data-[state=checked]:border-primary
+              translate-y-[2px]
+            "
           />
         ),
         cell: ({ row }) => (
@@ -56,7 +60,11 @@ export function useClassesTableColumns({
             onCheckedChange={value =>
               handleSelectRow(row.original.class.id, !!value)}
             aria-label={t.common.selectRow()}
-            className="translate-y-[2px] border-primary/50 data-[state=checked]:border-primary"
+            className="
+              border-primary/50
+              data-[state=checked]:border-primary
+              translate-y-[2px]
+            "
           />
         ),
         enableSorting: false,
@@ -89,7 +97,7 @@ export function useClassesTableColumns({
         header: t.classes.students(),
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <IconUsers className="h-3 w-3 text-muted-foreground" />
+            <IconUsers className="text-muted-foreground h-3 w-3" />
             <span>
               {row.original.studentsCount}
               {' '}
@@ -104,7 +112,7 @@ export function useClassesTableColumns({
         header: t.classes.subjects(),
         cell: ({ row }) => (
           <div className="flex items-center gap-1">
-            <IconBook className="h-3 w-3 text-muted-foreground" />
+            <IconBook className="text-muted-foreground h-3 w-3" />
             <span>{row.original.subjectsCount}</span>
           </div>
         ),
@@ -146,7 +154,7 @@ export function useClassesTableColumns({
             />
             <DropdownMenuContent
               align="end"
-              className="backdrop-blur-xl bg-popover/90 border border-border/40"
+              className="bg-popover/90 border-border/40 border backdrop-blur-xl"
             >
               <DropdownMenuItem
                 onClick={(e) => {
@@ -159,7 +167,10 @@ export function useClassesTableColumns({
                 {t.common.edit()}
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
+                className="
+                  text-destructive
+                  focus:text-destructive
+                "
                 onClick={() => setClassToDelete(row.original)}
               >
                 <IconTrash className="mr-2 h-4 w-4" />

@@ -44,16 +44,19 @@ export function ClassSubjectManagerTable() {
                   <TableRow key={`skeleton-${i}`}>
                     <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                     <TableCell><Skeleton className="h-4 w-24" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
-                    <TableCell><Skeleton className="h-4 w-8 mx-auto" /></TableCell>
-                    <TableCell><Skeleton className="h-8 w-8 ml-auto" /></TableCell>
+                    <TableCell><Skeleton className="mx-auto h-4 w-8" /></TableCell>
+                    <TableCell><Skeleton className="mx-auto h-4 w-8" /></TableCell>
+                    <TableCell><Skeleton className="ml-auto h-8 w-8" /></TableCell>
                   </TableRow>
                 ))
               )
             : subjects?.length === 0
               ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
+                    <TableCell
+                      colSpan={5}
+                      className="text-muted-foreground h-24 text-center"
+                    >
                       {t.academic.classes.noSubjects()}
                     </TableCell>
                   </TableRow>
@@ -63,7 +66,7 @@ export function ClassSubjectManagerTable() {
                     <TableRow key={item.classSubject.id}>
                       <TableCell className="font-medium">
                         {item.subject.name}
-                        <span className="text-xs text-muted-foreground ml-2">
+                        <span className="text-muted-foreground ml-2 text-xs">
                           (
                           {item.subject.shortName}
                           )
@@ -87,7 +90,13 @@ export function ClassSubjectManagerTable() {
                             }
                           }}
                         >
-                          <SelectTrigger className="h-8 w-[180px] text-xs border-none bg-transparent hover:bg-white/5 focus:ring-0 px-0 shadow-none">
+                          <SelectTrigger className="
+                            h-8 w-[180px] border-none bg-transparent px-0
+                            text-xs shadow-none
+                            hover:bg-white/5
+                            focus:ring-0
+                          "
+                          >
                             <div className="flex items-center gap-2">
                               {isAssigning
                                 ? (
@@ -98,22 +107,36 @@ export function ClassSubjectManagerTable() {
                                       <span className="font-medium">{item.teacher.name}</span>
                                     )
                                   : (
-                                      <div className="flex items-center gap-2 text-muted-foreground italic">
+                                      <div className="
+                                        text-muted-foreground flex items-center
+                                        gap-2 italic
+                                      "
+                                      >
                                         <IconUserPlus className="size-3" />
                                         <span>{t.academic.classes.unassigned()}</span>
                                       </div>
                                     )}
                             </div>
                           </SelectTrigger>
-                          <SelectContent className="backdrop-blur-xl bg-card/95 border-border/40">
-                            <SelectItem value="none" disabled className="text-xs italic opacity-50">
+                          <SelectContent className="
+                            bg-card/95 border-border/40 backdrop-blur-xl
+                          "
+                          >
+                            <SelectItem
+                              value="none"
+                              disabled
+                              className="text-xs italic opacity-50"
+                            >
                               {t.academic.classes.unassigned()}
                             </SelectItem>
                             {teachers.map(teacher => (
                               <SelectItem
                                 key={teacher.id}
                                 value={teacher.id}
-                                className="text-xs font-medium focus:bg-primary/5 focus:text-primary"
+                                className="
+                                  focus:bg-primary/5 focus:text-primary
+                                  text-xs font-medium
+                                "
                               >
                                 {teacher.user.name}
                               </SelectItem>
@@ -134,7 +157,10 @@ export function ClassSubjectManagerTable() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          className="
+                            text-destructive
+                            hover:text-destructive hover:bg-destructive/10
+                          "
                           onClick={() => setSubjectToDelete({ id: item.subject.id, name: item.subject.name })}
                         >
                           <IconTrash className="h-4 w-4" />

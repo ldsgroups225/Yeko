@@ -1,28 +1,25 @@
 {
   "extends": "@workspace/typescript-config/vite-react-library.json",
   "compilerOptions": {
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/bindings": [
-        "./service-bindings.d.ts"
-      ]
+      "@/*": ["./src/*"],
+      "@/bindings": ["./service-bindings.d.ts"]
     },
-    "types": [
-      "node"
-    ],
-    "declaration": false,
-    "declarationMap": false
+    "types": ["node", "@cloudflare/workers-types", "./worker-configuration.d.ts"],
+    "declarationMap": false,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "outDir": "dist"
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "worker-configuration.d.ts",
-    "service-bindings.d.ts"
+  "references": [
+    { "path": "../../packages/data-ops" }
   ],
-  "exclude": [
-    "test"
-  ]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "worker-configuration.d.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
 }

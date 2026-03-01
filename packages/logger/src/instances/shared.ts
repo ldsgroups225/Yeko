@@ -11,7 +11,7 @@ import { maskSensitiveData, mergeContext, normalizeContext } from '../utils/cont
  * Base Yeko Logger implementation
  */
 export class BaseYekoLogger implements YekoLogger {
-  private readonly logTapeLogger: LogTapeLogger
+  private readonly _category: string[]
   private readonly baseConfig: LoggerConfig
   private readonly baseContext?: YekoLogContext
 
@@ -20,7 +20,7 @@ export class BaseYekoLogger implements YekoLogger {
     config: LoggerConfig,
     baseContext?: YekoLogContext,
   ) {
-    this.logTapeLogger = getLogger(category)
+    this._category = category
     this.baseConfig = config
     this.baseContext = baseContext
 
@@ -139,33 +139,40 @@ export class BaseYekoLogger implements YekoLogger {
   }
 
   /**
+   * Get a fresh LogTape logger for the current request context.
+   * Called per-log to avoid caching I/O objects (SpanParent) across
+   * requests in Cloudflare Workers.
+   */
+  private getLogTapeLogger(): LogTapeLogger {
+    return getLogger(this._category)
+  }
+
+  /**
    * Get the appropriate LogTape method for the log level
    */
   private getLogTapeMethod(level: LogLevel): any {
+    const logger = this.getLogTapeLogger()
     switch (level) {
       case 'debug':
-        return this.logTapeLogger.debug.bind(this.logTapeLogger)
+        return logger.debug.bind(logger)
       case 'info':
-        return this.logTapeLogger.info.bind(this.logTapeLogger)
+        return logger.info.bind(logger)
       case 'warning':
-        return this.logTapeLogger.warn.bind(this.logTapeLogger)
+        return logger.warn.bind(logger)
       case 'error':
-        return this.logTapeLogger.error.bind(this.logTapeLogger)
+        return logger.error.bind(logger)
       case 'fatal':
-        return this.logTapeLogger.error.bind(this.logTapeLogger) // LogTape uses error for fatal
+        return logger.error.bind(logger) // LogTape uses error for fatal
       default:
-        return this.logTapeLogger.info.bind(this.logTapeLogger)
+        return logger.info.bind(logger)
     }
   }
 
   /**
-   * Get the current category from the LogTape logger
+   * Get the current category
    */
   private getCategory(): string[] {
-    // LogTape doesn't expose category directly, so we'll need to track it
-    // This is a simplified approach - in a real implementation,
-    // you might need to store the category separately
-    return ['yeko']
+    return this._category
   }
 }
 

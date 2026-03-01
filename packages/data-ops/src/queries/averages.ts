@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+import type { StudentAverageInsert } from '../drizzle/school-schema'
 import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 import {
@@ -253,13 +255,15 @@ export function calculateAndStoreClassAverages(params: {
         }
 
         // 5. Cleanup existing averages
-        await db.delete(studentAverages).where(and(
-          eq(studentAverages.classId, params.classId),
-          eq(studentAverages.termId, params.termId),
-        ))
+        await db.delete(studentAverages).where(
+          and(
+            eq(studentAverages.classId, params.classId),
+            eq(studentAverages.termId, params.termId),
+          ),
+        )
 
-        const subjectAveragesToInsert: any[] = []
-        const termAveragesToInsert: any[] = []
+        const subjectAveragesToInsert: StudentAverageInsert[] = []
+        const termAveragesToInsert: StudentAverageInsert[] = []
         const now = new Date()
 
         for (const [studentId, subjectsMap] of studentGradesMap.entries()) {

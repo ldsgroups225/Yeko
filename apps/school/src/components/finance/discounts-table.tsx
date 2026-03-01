@@ -65,22 +65,35 @@ export function DiscountsTable({
 
   if (discounts.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconTag className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconTag className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">{t.finance.discounts.noDiscounts()}</p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">{t.finance.discounts.createDescription()}</p>
+        <p className="text-muted-foreground/70 mt-1 max-w-sm text-sm">{t.finance.discounts.createDescription()}</p>
       </div>
     )
   }
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">{t.finance.discounts.code()}</TableHead>
               <TableHead className="font-semibold">{t.common.name()}</TableHead>
               <TableHead className="font-semibold">{t.finance.discounts.type()}</TableHead>
@@ -107,7 +120,11 @@ export function DiscountsTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {discounts.map((discount, index) => (
             <DiscountMobileCard

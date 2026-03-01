@@ -27,11 +27,39 @@ export function StudentAttendanceTable() {
       <div className="overflow-x-auto">
         <Table>
           <TableHeader className="bg-muted/10">
-            <TableRow className="border-border/10 hover:bg-transparent">
-              <TableHead className="w-[60px] text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 text-center py-4">ID</TableHead>
-              <TableHead className="min-w-[200px] text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 py-4">{t.nav.students()}</TableHead>
-              <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 text-center py-4">{t.attendance.status.label()}</TableHead>
-              <TableHead className="min-w-[240px] text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 text-right py-4">{t.common.actions()}</TableHead>
+            <TableRow className="
+              border-border/10
+              hover:bg-transparent
+            "
+            >
+              <TableHead className="
+                text-muted-foreground/40 w-[60px] py-4 text-center text-[10px]
+                font-black tracking-widest uppercase
+              "
+              >
+                ID
+              </TableHead>
+              <TableHead className="
+                text-muted-foreground/40 min-w-[200px] py-4 text-[10px]
+                font-black tracking-widest uppercase
+              "
+              >
+                {t.nav.students()}
+              </TableHead>
+              <TableHead className="
+                text-muted-foreground/40 py-4 text-center text-[10px] font-black
+                tracking-widest uppercase
+              "
+              >
+                {t.attendance.status.label()}
+              </TableHead>
+              <TableHead className="
+                text-muted-foreground/40 min-w-[240px] py-4 text-right
+                text-[10px] font-black tracking-widest uppercase
+              "
+              >
+                {t.common.actions()}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -42,10 +70,17 @@ export function StudentAttendanceTable() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.02 }}
-                  className="border-border/5 hover:bg-primary/5 transition-colors group"
+                  className="
+                    border-border/5
+                    hover:bg-primary/5
+                    group transition-colors
+                  "
                 >
-                  <TableCell className="text-center py-2">
-                    <span className="text-[10px] font-black text-muted-foreground/30">
+                  <TableCell className="py-2 text-center">
+                    <span className="
+                      text-muted-foreground/30 text-[10px] font-black
+                    "
+                    >
                       #
                       {index + 1}
                     </span>
@@ -53,25 +88,53 @@ export function StudentAttendanceTable() {
                   <TableCell className="py-2">
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <Avatar className="h-8 w-8 rounded-xl border border-border/40 shadow-sm group-hover:scale-105 transition-transform duration-500">
+                        <Avatar className="
+                          border-border/40 h-8 w-8 rounded-xl border shadow-sm
+                          transition-transform duration-500
+                          group-hover:scale-105
+                        "
+                        >
                           <AvatarImage src={entry.studentPhoto ?? undefined} alt={entry.studentName} />
-                          <AvatarFallback className="bg-primary/5 text-[10px] font-black">{entry.studentName.charAt(0)}</AvatarFallback>
+                          <AvatarFallback className="
+                            bg-primary/5 text-[10px] font-black
+                          "
+                          >
+                            {entry.studentName.charAt(0)}
+                          </AvatarFallback>
                         </Avatar>
                         <div className={cn(
-                          'absolute -bottom-1 -right-1 size-2.5 rounded-full border-2 border-card',
+                          `
+                            border-card absolute -right-1 -bottom-1 size-2.5
+                            rounded-full border-2
+                          `,
                           STATUS_CONFIG[entry.status].indicatorColor,
                         )}
                         />
                       </div>
                       <div>
-                        <p className="font-black text-sm uppercase tracking-tight italic">{entry.studentName}</p>
-                        <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">{STATUS_CONFIG[entry.status].label(t)}</p>
+                        <p className="
+                          text-sm font-black tracking-tight uppercase italic
+                        "
+                        >
+                          {entry.studentName}
+                        </p>
+                        <p className="
+                          text-muted-foreground/40 text-[9px] font-bold
+                          tracking-widest uppercase italic
+                        "
+                        >
+                          {STATUS_CONFIG[entry.status].label(t)}
+                        </p>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-center py-2">
+                  <TableCell className="py-2 text-center">
                     <div className={cn(
-                      'inline-flex items-center gap-2 px-2.5 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest italic',
+                      `
+                        inline-flex items-center gap-2 rounded-full border
+                        px-2.5 py-1 text-[9px] font-black tracking-widest
+                        uppercase italic
+                      `,
                       STATUS_CONFIG[entry.status].bgColor,
                       STATUS_CONFIG[entry.status].borderColor,
                       STATUS_CONFIG[entry.status].color,
@@ -104,13 +167,25 @@ export function StudentAttendanceTable() {
       </div>
 
       {filteredEntries.length === 0 && (
-        <div className="py-12 flex flex-col items-center text-center space-y-3">
-          <div className="p-3 rounded-full bg-primary/5">
-            <IconSearch className="size-6 text-primary/20" />
+        <div className="flex flex-col items-center space-y-3 py-12 text-center">
+          <div className="bg-primary/5 rounded-full p-3">
+            <IconSearch className="text-primary/20 size-6" />
           </div>
           <div>
-            <h3 className="text-base font-black uppercase tracking-tight text-muted-foreground/40 italic">{t.common.noResults()}</h3>
-            <p className="text-[9px] font-bold text-muted-foreground/20 uppercase tracking-widest italic">{t.common.trySearchingSomethingElse()}</p>
+            <h3 className="
+              text-muted-foreground/40 text-base font-black tracking-tight
+              uppercase italic
+            "
+            >
+              {t.common.noResults()}
+            </h3>
+            <p className="
+              text-muted-foreground/20 text-[9px] font-bold tracking-widest
+              uppercase italic
+            "
+            >
+              {t.common.trySearchingSomethingElse()}
+            </p>
           </div>
         </div>
       )}
@@ -126,15 +201,31 @@ function StatusButton({ active, onClick, config }: { active: boolean, onClick: (
       variant="ghost"
       onClick={onClick}
       className={cn(
-        'h-8 w-8 rounded-xl p-0 transition-all duration-300 relative group overflow-hidden',
-        active ? config.bgColor : 'grayscale hover:grayscale-0 hover:bg-card/40',
+        `
+          group relative h-8 w-8 overflow-hidden rounded-xl p-0 transition-all
+          duration-300
+        `,
+        active
+          ? config.bgColor
+          : `
+            hover:bg-card/40
+            grayscale
+            hover:grayscale-0
+          `,
       )}
     >
-      <Icon className={cn('size-3.5 transition-transform group-hover:scale-110 group-active:scale-90', active ? config.color : 'text-muted-foreground/40')} />
+      <Icon className={cn(`
+        size-3.5 transition-transform
+        group-hover:scale-110
+        group-active:scale-90
+      `, active
+        ? config.color
+        : `text-muted-foreground/40`)}
+      />
       {active && (
         <motion.div
           layoutId="active-indicator"
-          className={cn('absolute inset-0 border-2 rounded-xl', config.borderColor)}
+          className={cn('absolute inset-0 rounded-xl border-2', config.borderColor)}
           initial={false}
           transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
         />

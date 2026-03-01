@@ -34,7 +34,12 @@ export function MobileHeader({
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60',
+        `
+          bg-background/95
+          supports-backdrop-filter:bg-background/60
+          sticky top-0 z-40 flex h-14 items-center justify-between border-b px-4
+          backdrop-blur-sm
+        `,
         className,
       )}
     >
@@ -72,12 +77,17 @@ export function MobileHeader({
             <Button
               variant="ghost"
               size="icon"
-              className="relative touch-target"
+              className="touch-target relative"
               aria-label={LL.notifications.title()}
             >
               <IconBell className="h-5 w-5" />
               {notificationCount > 0 && (
-                <span className="absolute right-1 top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium text-destructive-foreground">
+                <span className="
+                  bg-destructive text-destructive-foreground absolute top-1
+                  right-1 flex h-4 min-w-4 items-center justify-center
+                  rounded-full px-1 text-[10px] font-medium
+                "
+                >
                   {notificationCount > 99
                     ? '99+'
                     : notificationCount}

@@ -518,9 +518,13 @@ type RootTranslation = {
 		 */
 		parents: string
 		/**
-		 * I​n​s​c​r​i​p​t​i​o​n​s
+		 * A​p​p​r​o​b​a​t​i​o​n​s
 		 */
 		enrollments: string
+		/**
+		 * A​p​p​r​o​b​a​t​i​o​n​s
+		 */
+		approbations: string
 		/**
 		 * A​c​a​d​é​m​i​q​u​e
 		 */
@@ -2656,9 +2660,61 @@ type RootTranslation = {
 			 */
 			teacherDetails: string
 			/**
+			 * A​j​o​u​t​e​r​ ​u​n​e​ ​c​l​a​s​s​e
+			 */
+			addClass: string
+			/**
+			 * N​o​u​v​e​l​l​e​ ​a​f​f​e​c​t​a​t​i​o​n
+			 */
+			newAssignment: string
+			/**
+			 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​e​ ​c​l​a​s​s​e
+			 */
+			classPlaceholder: string
+			/**
+			 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​e​ ​m​a​t​i​è​r​e
+			 */
+			subjectPlaceholder: string
+			/**
+			 * C​l​a​s​s​e​ ​a​s​s​i​g​n​é​e​ ​a​v​e​c​ ​s​u​c​c​è​s
+			 */
+			assignSuccess: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​a​s​s​i​g​n​a​t​i​o​n​ ​d​e​ ​l​a​ ​c​l​a​s​s​e
+			 */
+			assignError: string
+			/**
+			 * C​e​t​ ​e​n​s​e​i​g​n​a​n​t​ ​n​'​a​ ​p​a​s​ ​e​n​c​o​r​e​ ​d​e​ ​c​l​a​s​s​e​s​ ​a​s​s​i​g​n​é​e​s​.
+			 */
+			noClassesDescription: string
+			/**
+			 * M​a​t​i​è​r​e​ ​a​j​o​u​t​é​e​ ​a​v​e​c​ ​s​u​c​c​è​s
+			 */
+			addSubjectSuccess: string
+			/**
+			 * E​r​r​e​u​r​ ​l​o​r​s​ ​d​e​ ​l​'​a​j​o​u​t​ ​d​e​ ​l​a​ ​m​a​t​i​è​r​e
+			 */
+			addSubjectError: string
+			/**
+			 * C​h​o​i​s​i​r​ ​u​n​e​ ​m​a​t​i​è​r​e
+			 */
+			chooseSubject: string
+			/**
+			 * A​j​o​u​t​e​r
+			 */
+			add: string
+			/**
+			 * L​'​e​n​s​e​i​g​n​a​n​t​ ​q​u​e​ ​v​o​u​s​ ​r​e​c​h​e​r​c​h​e​z​ ​n​'​e​x​i​s​t​e​ ​p​a​s​ ​o​u​ ​a​ ​é​t​é​ ​s​u​p​p​r​i​m​é​.
+			 */
+			teacherNotFoundDescription: string
+			/**
 			 * A​u​c​u​n​e​ ​s​p​é​c​i​a​l​i​s​a​t​i​o​n
 			 */
 			noSpecialization: string
+			/**
+			 * L​'​e​n​s​e​i​g​n​a​n​t​ ​d​o​i​t​ ​ê​t​r​e​ ​q​u​a​l​i​f​i​é​ ​p​o​u​r​ ​u​n​e​ ​m​a​t​i​è​r​e​ ​d​e​ ​c​e​t​t​e​ ​c​l​a​s​s​e​ ​(​v​o​i​r​ ​l​'​o​n​g​l​e​t​ ​M​a​t​i​è​r​e​s​)​.
+			 */
+			needQualification: string
 		}
 		staff: {
 			/**
@@ -4720,6 +4776,10 @@ type RootTranslation = {
 		 * R​e​v​e​n​u​s​ ​c​e​ ​m​o​i​s
 		 */
 		revenueThisMonth: string
+		/**
+		 * V​a​l​i​d​a​t​i​o​n​s​ ​e​n​ ​a​t​t​e​n​t​e
+		 */
+		pendingEnrollments: string
 		/**
 		 * A​c​t​i​v​i​t​é​ ​R​é​c​e​n​t​e
 		 */
@@ -8966,9 +9026,13 @@ export type TranslationFunctions = {
 		 */
 		parents: () => LocalizedString
 		/**
-		 * Inscriptions
+		 * Approbations
 		 */
 		enrollments: () => LocalizedString
+		/**
+		 * Approbations
+		 */
+		approbations: () => LocalizedString
 		/**
 		 * Académique
 		 */
@@ -11075,9 +11139,61 @@ export type TranslationFunctions = {
 			 */
 			teacherDetails: () => LocalizedString
 			/**
+			 * Ajouter une classe
+			 */
+			addClass: () => LocalizedString
+			/**
+			 * Nouvelle affectation
+			 */
+			newAssignment: () => LocalizedString
+			/**
+			 * Sélectionner une classe
+			 */
+			classPlaceholder: () => LocalizedString
+			/**
+			 * Sélectionner une matière
+			 */
+			subjectPlaceholder: () => LocalizedString
+			/**
+			 * Classe assignée avec succès
+			 */
+			assignSuccess: () => LocalizedString
+			/**
+			 * Erreur lors de l'assignation de la classe
+			 */
+			assignError: () => LocalizedString
+			/**
+			 * Cet enseignant n'a pas encore de classes assignées.
+			 */
+			noClassesDescription: () => LocalizedString
+			/**
+			 * Matière ajoutée avec succès
+			 */
+			addSubjectSuccess: () => LocalizedString
+			/**
+			 * Erreur lors de l'ajout de la matière
+			 */
+			addSubjectError: () => LocalizedString
+			/**
+			 * Choisir une matière
+			 */
+			chooseSubject: () => LocalizedString
+			/**
+			 * Ajouter
+			 */
+			add: () => LocalizedString
+			/**
+			 * L'enseignant que vous recherchez n'existe pas ou a été supprimé.
+			 */
+			teacherNotFoundDescription: () => LocalizedString
+			/**
 			 * Aucune spécialisation
 			 */
 			noSpecialization: () => LocalizedString
+			/**
+			 * L'enseignant doit être qualifié pour une matière de cette classe (voir l'onglet Matières).
+			 */
+			needQualification: () => LocalizedString
 		}
 		staff: {
 			/**
@@ -13129,6 +13245,10 @@ export type TranslationFunctions = {
 		 * Revenus ce mois
 		 */
 		revenueThisMonth: () => LocalizedString
+		/**
+		 * Validations en attente
+		 */
+		pendingEnrollments: () => LocalizedString
 		/**
 		 * Activité Récente
 		 */
@@ -15757,7 +15877,7 @@ export type TranslationFunctions = {
 			 */
 			attendanceAndConduct: () => LocalizedString
 			/**
-			 * Comptabilité & Finances
+			 * Comptabilité.
 			 */
 			accountingAndFinance: () => LocalizedString
 			/**

@@ -40,11 +40,15 @@ export function SchoolUsersTab({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="
+            grid gap-4
+            md:grid-cols-3
+          "
+          >
             {[1, 2, 3].map(i => (
               <Card key={i}>
                 <CardContent className="pt-6">
-                  <Skeleton className="h-8 w-16 mb-2" />
+                  <Skeleton className="mb-2 h-8 w-16" />
                   <Skeleton className="h-4 w-24" />
                 </CardContent>
               </Card>
@@ -52,9 +56,12 @@ export function SchoolUsersTab({
           </div>
           <Separator />
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="flex items-center gap-4 p-4 border rounded-lg">
+            <div
+              key={i}
+              className="flex items-center gap-4 rounded-lg border p-4"
+            >
               <Skeleton className="h-10 w-10 rounded-full" />
-              <div className="space-y-2 flex-1">
+              <div className="flex-1 space-y-2">
                 <Skeleton className="h-4 w-32" />
                 <Skeleton className="h-3 w-48" />
               </div>
@@ -79,23 +86,27 @@ export function SchoolUsersTab({
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="
+            grid gap-4
+            md:grid-cols-3
+          "
+          >
             <Card>
               <CardContent className="pt-6">
                 <div className="text-2xl font-bold">{adminCount}</div>
-                <p className="text-xs text-muted-foreground">Administrateurs</p>
+                <p className="text-muted-foreground text-xs">Administrateurs</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-6">
                 <div className="text-2xl font-bold">{teacherCount}</div>
-                <p className="text-xs text-muted-foreground">Enseignants</p>
+                <p className="text-muted-foreground text-xs">Enseignants</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="pt-6">
                 <div className="text-2xl font-bold">{staffCount}</div>
-                <p className="text-xs text-muted-foreground">Personnel</p>
+                <p className="text-muted-foreground text-xs">Personnel</p>
               </CardContent>
             </Card>
           </div>
@@ -104,8 +115,12 @@ export function SchoolUsersTab({
 
           {users.length === 0
             ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
-                  <IconUsers className="h-12 w-12 mb-4 opacity-20" />
+                <div className="
+                  text-muted-foreground flex flex-col items-center
+                  justify-center py-8 text-center
+                "
+                >
+                  <IconUsers className="mb-4 h-12 w-12 opacity-20" />
                   <p className="font-medium">Aucun utilisateur pour le moment</p>
                   <p className="text-sm">Commencez par ajouter des administrateurs et enseignants</p>
                 </div>
@@ -113,22 +128,40 @@ export function SchoolUsersTab({
             : (
                 <div className="space-y-2">
                   {users.map(user => (
-                    <div key={user.id} className="flex items-center gap-4 p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                        <span className="text-sm font-medium text-primary">
+                    <div
+                      key={user.id}
+                      className="
+                        hover:bg-muted/50
+                        flex items-center gap-4 rounded-lg border p-4
+                        transition-colors
+                      "
+                    >
+                      <div className="
+                        bg-primary/10 flex h-10 w-10 items-center justify-center
+                        rounded-full
+                      "
+                      >
+                        <span className="text-primary text-sm font-medium">
                           {user.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
                         </span>
                       </div>
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
-                          <p className="text-sm font-medium truncate">{user.name}</p>
+                          <p className="truncate text-sm font-medium">{user.name}</p>
                           <Badge variant="outline" className="text-xs">{user.roles?.[0] || 'Utilisateur'}</Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground truncate">{user.email}</p>
-                        {user.phone && <p className="text-xs text-muted-foreground">{user.phone}</p>}
+                        <p className="text-muted-foreground truncate text-sm">{user.email}</p>
+                        {user.phone && (
+                          <p className="text-muted-foreground text-xs">
+                            {user.phone}
+                          </p>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant={user.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                        <Badge
+                          variant={user.status === 'active' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
                           {user.status === 'active' ? 'Actif' : user.status === 'inactive' ? 'Inactif' : 'Suspendu'}
                         </Badge>
                         <DropdownMenu>
@@ -144,7 +177,13 @@ export function SchoolUsersTab({
                               Suspendre
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => onRemove({ id: user.id, name: user.name })} className="text-destructive focus:text-destructive">
+                            <DropdownMenuItem
+                              onClick={() => onRemove({ id: user.id, name: user.name })}
+                              className="
+                                text-destructive
+                                focus:text-destructive
+                              "
+                            >
                               Supprimer
                             </DropdownMenuItem>
                           </DropdownMenuContent>

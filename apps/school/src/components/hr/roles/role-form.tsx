@@ -62,18 +62,34 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+        className="
+          border-border/40 bg-card/50 rounded-xl border p-8 shadow-sm
+          backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-6">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="mb-6 flex items-center gap-2">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconInfoCircle className="h-4 w-4" />
           </div>
-          <h2 className="text-xl font-serif font-semibold">{t.hr.roles.basicInfo()}</h2>
+          <h2 className="font-serif text-xl font-semibold">{t.hr.roles.basicInfo()}</h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="
+          grid gap-6
+          md:grid-cols-2
+        "
+        >
           <div className="space-y-2">
-            <Label htmlFor="name" className="flex items-center gap-1.5 font-semibold text-foreground">
+            <Label
+              htmlFor="name"
+              className="
+                text-foreground flex items-center gap-1.5 font-semibold
+              "
+            >
               {t.hr.roles.name()}
               <span className="text-destructive">*</span>
             </Label>
@@ -81,16 +97,31 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
               id="name"
               {...register('name')}
               placeholder={t.hr.roles.namePlaceholder()}
-              className="rounded-xl border-border/40 bg-background/50 focus:bg-background transition-all h-11"
+              className="
+                border-border/40 bg-background/50
+                focus:bg-background
+                h-11 rounded-xl transition-all
+              "
               aria-invalid={!!errors.name}
             />
             {errors.name && (
-              <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.name.message)}</motion.p>
+              <motion.p
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-destructive text-xs font-medium"
+              >
+                {String(errors.name.message)}
+              </motion.p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="slug" className="flex items-center gap-1.5 font-semibold text-foreground">
+            <Label
+              htmlFor="slug"
+              className="
+                text-foreground flex items-center gap-1.5 font-semibold
+              "
+            >
               {t.hr.roles.slug()}
               <span className="text-destructive">*</span>
             </Label>
@@ -100,28 +131,61 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
                 {...register('slug')}
                 placeholder={t.hr.roles.slugPlaceholder()}
                 disabled={isEditing}
-                className="font-mono rounded-xl border-border/40 bg-background/50 focus:bg-background transition-all h-11 pl-4"
+                className="
+                  border-border/40 bg-background/50
+                  focus:bg-background
+                  h-11 rounded-xl pl-4 font-mono transition-all
+                "
                 aria-invalid={!!errors.slug}
               />
-              {isEditing && <LockIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />}
+              {isEditing && (
+                <LockIcon className="
+                  text-muted-foreground/50 absolute top-1/2 right-3 h-4 w-4
+                  -translate-y-1/2
+                "
+                />
+              )}
             </div>
             {errors.slug && (
-              <motion.p initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="text-xs font-medium text-destructive">{String(errors.slug.message)}</motion.p>
+              <motion.p
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="text-destructive text-xs font-medium"
+              >
+                {String(errors.slug.message)}
+              </motion.p>
             )}
             {!isEditing && (
-              <p className="text-[10px] text-muted-foreground bg-muted/30 p-1.5 rounded-lg inline-block">
+              <p className="
+                text-muted-foreground bg-muted/30 inline-block rounded-lg p-1.5
+                text-[10px]
+              "
+              >
                 {t.hr.roles.slugHelp()}
               </p>
             )}
           </div>
 
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="description" className="font-semibold text-foreground">{t.hr.roles.description()}</Label>
+          <div className="
+            space-y-2
+            md:col-span-2
+          "
+          >
+            <Label
+              htmlFor="description"
+              className="text-foreground font-semibold"
+            >
+              {t.hr.roles.description()}
+            </Label>
             <Textarea
               id="description"
               {...register('description')}
               placeholder={t.hr.roles.descriptionPlaceholder()}
-              className="rounded-xl border-border/40 bg-background/50 focus:bg-background transition-all resize-none min-h-[100px]"
+              className="
+                border-border/40 bg-background/50
+                focus:bg-background
+                min-h-[100px] resize-none rounded-xl transition-all
+              "
               rows={3}
             />
           </div>
@@ -132,15 +196,22 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+        className="
+          border-border/40 bg-card/50 rounded-xl border p-8 shadow-sm
+          backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <div className="mb-2 flex items-center gap-2">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconKey className="h-4 w-4" />
           </div>
-          <h2 className="text-xl font-serif font-semibold">{t.hr.roles.permissions()}</h2>
+          <h2 className="font-serif text-xl font-semibold">{t.hr.roles.permissions()}</h2>
         </div>
-        <p className="mb-8 text-sm text-muted-foreground leading-relaxed">
+        <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
           {t.hr.roles.permissionsDescription()}
         </p>
         <PermissionsMatrix
@@ -149,19 +220,27 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
         />
       </motion.div>
 
-      <div className="flex justify-end items-center gap-4">
+      <div className="flex items-center justify-end gap-4">
         <Button
           type="button"
           variant="ghost"
           disabled={isSubmitting}
-          className="rounded-xl px-6 hover:bg-muted font-medium"
+          className="
+            hover:bg-muted
+            rounded-xl px-6 font-medium
+          "
         >
           {t.common.cancel()}
         </Button>
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-xl px-8 min-w-[140px] font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20"
+          className="
+            shadow-primary/20 min-w-[140px] rounded-xl px-8 font-semibold
+            shadow-lg transition-all
+            hover:scale-[1.02]
+            active:scale-[0.98]
+          "
         >
           {isSubmitting
             ? (

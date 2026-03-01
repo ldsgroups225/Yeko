@@ -12,43 +12,80 @@ export function ClassDetailStats({ totalStudents, classAverage }: ClassDetailSta
   const { LL } = useI18nContext()
 
   return (
-    <div className="grid grid-cols-2 gap-3 mb-8">
-      <Card className="flex flex-col p-4 rounded-3xl border-border/50 bg-card/80 backdrop-blur-sm shadow-sm">
-        <div className="flex items-center justify-between mb-4">
-          <div className="p-2 rounded-xl bg-primary/10 text-primary">
-            <IconUsers className="w-5 h-5" />
+    <div className="mb-8 grid grid-cols-2 gap-3">
+      <Card className="
+        border-border/50 bg-card/80 flex flex-col rounded-3xl p-4 shadow-sm
+        backdrop-blur-sm
+      "
+      >
+        <div className="mb-4 flex items-center justify-between">
+          <div className="bg-primary/10 text-primary rounded-xl p-2">
+            <IconUsers className="h-5 w-5" />
           </div>
           <Tooltip>
             <TooltipTrigger>
-              <div className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-[10px] text-muted-foreground">?</div>
+              <div className="
+                border-border text-muted-foreground flex h-6 w-6 items-center
+                justify-center rounded-full border text-[10px]
+              "
+              >
+                ?
+              </div>
             </TooltipTrigger>
             <TooltipContent>{LL.class_details.totalStudentsHelp()}</TooltipContent>
           </Tooltip>
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{LL.common.student_plural()}</p>
-          <p className="text-3xl font-black text-foreground lining-nums">{totalStudents}</p>
+          <p className="
+            text-muted-foreground mb-1 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
+            {LL.common.student_plural()}
+          </p>
+          <p className="text-foreground text-3xl font-black lining-nums">{totalStudents}</p>
         </div>
       </Card>
 
-      <Card className="flex flex-col p-4 rounded-3xl border-border/50 bg-card/80 backdrop-blur-sm shadow-sm overflow-hidden relative group">
-        <div className="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
-        <div className="flex items-center justify-between mb-4 relative z-10">
-          <div className="p-2 rounded-xl bg-success/10 text-success">
-            <IconChartBar className="w-5 h-5" />
+      <Card className="
+        border-border/50 bg-card/80 group relative flex flex-col overflow-hidden
+        rounded-3xl p-4 shadow-sm backdrop-blur-sm
+      "
+      >
+        <div className="
+          bg-primary/5
+          group-hover:bg-primary/10
+          absolute -top-4 -right-4 h-24 w-24 rounded-full blur-2xl
+          transition-colors
+        "
+        />
+        <div className="relative z-10 mb-4 flex items-center justify-between">
+          <div className="bg-success/10 text-success rounded-xl p-2">
+            <IconChartBar className="h-5 w-5" />
           </div>
           <div className="flex items-center gap-1">
-            <div className="w-1 h-1 rounded-full bg-success animate-pulse" />
-            <span className="text-[10px] font-black text-success uppercase tracking-tighter">{LL.common.active()}</span>
+            <div className="bg-success h-1 w-1 animate-pulse rounded-full" />
+            <span className="
+              text-success text-[10px] font-black tracking-tighter uppercase
+            "
+            >
+              {LL.common.active()}
+            </span>
           </div>
         </div>
         <div className="relative z-10">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">{LL.common.classAverage()}</p>
+          <p className="
+            text-muted-foreground mb-1 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
+            {LL.common.classAverage()}
+          </p>
           <div className="flex items-baseline gap-1">
-            <p className="text-3xl font-black text-foreground lining-nums">
+            <p className="text-foreground text-3xl font-black lining-nums">
               {classAverage !== null ? classAverage.toFixed(1) : '-'}
             </p>
-            <span className="text-xs font-bold text-muted-foreground italic">/20</span>
+            <span className="text-muted-foreground text-xs font-bold italic">/20</span>
           </div>
         </div>
       </Card>

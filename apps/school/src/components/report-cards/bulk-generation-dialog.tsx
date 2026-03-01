@@ -147,7 +147,10 @@ export function BulkGenerationDialog({
                   {students.map(student => (
                     <div
                       key={student.id}
-                      className="flex items-center gap-3 rounded-md p-2 hover:bg-muted"
+                      className="
+                        hover:bg-muted
+                        flex items-center gap-3 rounded-md p-2
+                      "
                     >
                       <Checkbox
                         id={`student-${student.id}`}
@@ -160,7 +163,7 @@ export function BulkGenerationDialog({
                       >
                         <span className="font-medium">{student.name}</span>
                         {student.matricule && (
-                          <span className="ml-2 text-muted-foreground text-sm">
+                          <span className="text-muted-foreground ml-2 text-sm">
                             (
                             {student.matricule}
                             )
@@ -194,10 +197,10 @@ export function BulkGenerationDialog({
         {state === 'generating' && (
           <div className="space-y-4 py-4">
             <div className="flex items-center justify-center">
-              <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
+              <IconLoader2 className="text-primary h-8 w-8 animate-spin" />
             </div>
             <Progress value={progress} className="w-full" />
-            <p className="text-center text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-center text-sm">
               {t.reportCards.generatingProgress({ progress: Math.round(progress) })}
             </p>
           </div>
@@ -211,15 +214,15 @@ export function BulkGenerationDialog({
                     <IconCircleCheck className="h-12 w-12 text-green-500" />
                   )
                 : (
-                    <IconAlertCircle className="h-12 w-12 text-accent" />
+                    <IconAlertCircle className="text-accent h-12 w-12" />
                   )}
             </div>
 
-            <div className="text-center space-y-1">
+            <div className="space-y-1 text-center">
               <p className="font-semibold">
                 {t.reportCards.generationComplete()}
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {t.reportCards.generationSummary({
                   success: result.success,
                   total: result.total,
@@ -228,11 +231,11 @@ export function BulkGenerationDialog({
             </div>
 
             {result.errors.length > 0 && (
-              <div className="rounded-md bg-destructive/10 p-3">
-                <p className="text-sm font-medium text-destructive mb-2">
+              <div className="bg-destructive/10 rounded-md p-3">
+                <p className="text-destructive mb-2 text-sm font-medium">
                   {t.reportCards.generationErrors({ count: result.failed })}
                 </p>
-                <ul className="text-sm text-destructive/80 space-y-1">
+                <ul className="text-destructive/80 space-y-1 text-sm">
                   {result.errors.slice(0, 3).map(err => (
                     <li key={generateUUID()}>
                       •

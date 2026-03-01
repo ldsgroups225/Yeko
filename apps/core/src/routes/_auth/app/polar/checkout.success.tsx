@@ -26,21 +26,27 @@ export const Route = createFileRoute('/_auth/app/polar/checkout/success')({
   },
   errorComponent: ({ error }) => {
     return (
-      <div className="h-ful flex flex-col items-center justify-center bg-background px-6 py-12">
-        <div className="max-w-lg w-full text-center space-y-8">
+      <div className="
+        h-ful bg-background flex flex-col items-center justify-center px-6 py-12
+      "
+      >
+        <div className="w-full max-w-lg space-y-8 text-center">
           <div className="flex justify-center">
-            <IconAlertCircle className="w-16 h-16 text-destructive" />
+            <IconAlertCircle className="text-destructive h-16 w-16" />
           </div>
 
           <div className="space-y-4">
             <h1 className="text-4xl font-bold tracking-tight">Payment Error</h1>
-            <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
+            <p className="
+              text-muted-foreground mx-auto max-w-md text-lg leading-relaxed
+            "
+            >
               An error occurred while processing your payment.
             </p>
           </div>
 
           <div className="pt-8">
-            <p className="text-sm text-muted-foreground font-mono">
+            <p className="text-muted-foreground font-mono text-sm">
               {error.message}
             </p>
           </div>
@@ -80,11 +86,11 @@ function RouteComponent() {
   const getStatusIcon = () => {
     switch (status) {
       case 'success':
-        return <IconCircleCheck className="w-16 h-16 text-primary" />
+        return <IconCircleCheck className="text-primary h-16 w-16" />
       case 'error':
-        return <IconAlertCircle className="w-16 h-16 text-destructive" />
+        return <IconAlertCircle className="text-destructive h-16 w-16" />
       default:
-        return <IconLoader2 className="w-12 h-12 text-primary animate-spin" />
+        return <IconLoader2 className="text-primary h-12 w-12 animate-spin" />
     }
   }
 
@@ -113,13 +119,19 @@ function RouteComponent() {
   const { title, description } = getStatusMessage()
 
   return (
-    <div className="h-full flex flex-col items-center justify-center bg-background px-6 py-12">
-      <div className="max-w-lg w-full text-center space-y-8">
+    <div className="
+      bg-background flex h-full flex-col items-center justify-center px-6 py-12
+    "
+    >
+      <div className="w-full max-w-lg space-y-8 text-center">
         <div className="flex justify-center">{getStatusIcon()}</div>
 
         <div className="space-y-4">
           <h1 className="text-4xl font-bold tracking-tight">{title}</h1>
-          <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
+          <p className="
+            text-muted-foreground mx-auto max-w-md text-lg leading-relaxed
+          "
+          >
             {description}
           </p>
         </div>
@@ -136,7 +148,11 @@ function RouteComponent() {
           )}
 
           {status === 'error' && (
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <div className="
+              flex flex-col justify-center gap-3
+              sm:flex-row
+            "
+            >
               <Button
                 onClick={() => window.location.reload()}
                 variant="outline"
@@ -157,10 +173,10 @@ function RouteComponent() {
         </div>
 
         <div className="pt-8">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Transaction ID:
             {' '}
-            <span className="font-mono text-foreground">
+            <span className="text-foreground font-mono">
               {loaderData.checkoutId.slice(-8)}
             </span>
           </p>

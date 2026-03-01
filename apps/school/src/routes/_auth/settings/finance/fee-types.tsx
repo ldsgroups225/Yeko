@@ -1,0 +1,183 @@
+import type { feeCategories } from '@/schemas/fee-type'
+import { IconPlus } from '@tabler/icons-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@workspace/ui/components/button'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@workspace/ui/components/card'
+import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
+import { motion } from 'motion/react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { FeeTypeFormDialog, FeeTypesTable } from '@/components/finance'
+import { FinanceSubpageToolbar } from '@/components/finance/finance-subpage-toolbar'
+import { useTranslations } from '@/i18n'
+import { feeTypesKeys, feeTypesOptions } from '@/lib/queries/fee-types'
+import { schoolMutationKeys } from '@/lib/queries/keys'
+import { deleteExistingFeeType } from '@/school/functions/fee-types'
+
+export const Route = createFileRoute('/_auth/settings/finance/fee-types')({
+  component: FeeTypesPage,
+})
+
+interface FeeTypeItem {
+  id: string
+  code: string
+  name: string
+  category: string
+  isMandatory: boolean
+  isRecurring: boolean
+  status: string
+}
+
+interface FeeTypeEditData {
+  id: string
+  code: string
+  name: string
+  nameEn?: string
+  category: (typeof feeCategories)[number]
+  isMandatory: boolean
+  isRecurring: boolean
+  displayOrder: number
+}
+
+function FeeTypesPage() {
+  const t = useTranslations()
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
+  const [editData, setEditData] = useState<FeeTypeEditData | null>(null)
+  const [deleteData, setDeleteData] = useState<{
+    id: string
+    name: string
+  } | null>(null)
+
+  const {
+    data: feeTypes,
+    isPending,
+  } = useQuery(feeTypesOptions.list())
+
+  const queryClient = useQueryClient()
+  const deleteMutation = useMutation({
+    mutationKey: schoolMutationKeys.feeTypes.delete,
+    mutationFn: (id: string) => deleteExistingFeeType({ data: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
+      toast.success('Type de frais supprimé')
+      setDeleteData(null)
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : 'Une erreur est survenue',
+      )
+    },
+  })
+
+  const feeTypesList
+    = feeTypes?.map(ft => ({
+      id: ft.id,
+      code: ft.code,
+      name: ft.name,
+      category: ft.category,
+      isMandatory: ft.isMandatory ?? true,
+      isRecurring: ft.isRecurring ?? true,
+      status: ft.status ?? 'active',
+    })) ?? []
+
+  const handleEdit = (feeType: FeeTypeItem) => {
+    setEditData({
+      id: feeType.id,
+      code: feeType.code,
+      name: feeType.name,
+      category: feeType.category as (typeof feeCategories)[number],
+      isMandatory: feeType.isMandatory,
+      isRecurring: feeType.isRecurring,
+      displayOrder: 0,
+    })
+  }
+
+  const handleDeleteClick = (feeType: FeeTypeItem) => {
+    setDeleteData({ id: feeType.id, name: feeType.name })
+  }
+
+  const handleDeleteConfirm = () => {
+    if (!deleteData)
+      return
+    deleteMutation.mutate(deleteData.id)
+  }
+
+  return (
+    <div className="space-y-8 p-1">
+      <FinanceSubpageToolbar
+        actions={(
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <Button
+              onClick={() => setIsCreateOpen(true)}
+              className="shadow-primary/20 shadow-lg"
+            >
+              <IconPlus className="mr-2 h-4 w-4" />
+              {t.finance.feeTypes.create()}
+            </Button>
+          </motion.div>
+        )}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card className="
+          border-border/40 bg-card/40 overflow-hidden shadow-sm backdrop-blur-xl
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
+            <CardTitle className="text-lg font-bold">
+              {t.finance.feeTypes.title()}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <FeeTypesTable
+              feeTypes={feeTypesList}
+              isPending={isPending}
+              onEdit={handleEdit}
+              onDelete={handleDeleteClick}
+            />
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <FeeTypeFormDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+
+      {editData && (
+        <FeeTypeFormDialog
+          open={true}
+          onOpenChange={open => !open && setEditData(null)}
+          editData={editData}
+        />
+      )}
+
+      <DeleteConfirmationDialog
+        open={!!deleteData}
+        onOpenChange={open => !open && setDeleteData(null)}
+        onConfirm={handleDeleteConfirm}
+        isPending={deleteMutation.isPending}
+        title={t.accounting.feeTypes.deleteConfirmTitle()}
+        description={
+          deleteData
+            ? t.accounting.feeTypes.deleteConfirmDescription({
+                name: deleteData.name,
+              })
+            : ''
+        }
+        confirmText={t.common.delete()}
+        cancelText={t.common.cancel()}
+      />
+    </div>
+  )
+}

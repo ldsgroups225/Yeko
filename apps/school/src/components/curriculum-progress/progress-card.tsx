@@ -53,7 +53,12 @@ export function ProgressCard({
     <Card
       className={cn(
         'transition-shadow',
-        onClick && 'cursor-pointer hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+        onClick && `
+          focus:ring-ring
+          cursor-pointer
+          hover:shadow-md
+          focus:ring-2 focus:ring-offset-2 focus:outline-none
+        `,
         className,
       )}
       onClick={onClick}
@@ -65,11 +70,11 @@ export function ProgressCard({
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
-            <IconBook className="h-5 w-5 text-muted-foreground" />
+            <IconBook className="text-muted-foreground h-5 w-5" />
             <div>
               <CardTitle className="text-base">{subjectName}</CardTitle>
               {teacherName && (
-                <p className="text-sm text-muted-foreground">{teacherName}</p>
+                <p className="text-muted-foreground text-sm">{teacherName}</p>
               )}
             </div>
           </div>
@@ -95,9 +100,18 @@ export function ProgressCard({
             <span
               className={cn(
                 'flex items-center gap-1 font-medium',
-                isAhead && 'text-secondary dark:text-secondary/80',
-                isBehind && 'text-destructive dark:text-destructive/80',
-                !isAhead && !isBehind && 'text-success dark:text-success/80',
+                isAhead && `
+                  text-secondary
+                  dark:text-secondary/80
+                `,
+                isBehind && `
+                  text-destructive
+                  dark:text-destructive/80
+                `,
+                !isAhead && !isBehind && `
+                  text-success
+                  dark:text-success/80
+                `,
               )}
             >
               {isAhead && <IconTrendingUp className="h-4 w-4" />}
@@ -110,7 +124,7 @@ export function ProgressCard({
         </div>
 
         {expectedPercentage !== undefined && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             {t.curriculum.expectedProgress()}
             :
             {expectedPercentage.toFixed(0)}

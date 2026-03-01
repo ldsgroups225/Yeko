@@ -44,7 +44,10 @@ export function EmailLogin() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className="
+      bg-background flex min-h-screen items-center justify-center p-4
+    "
+    >
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">{LL.auth.welcomeBack()}</CardTitle>
@@ -75,7 +78,7 @@ export function EmailLogin() {
               />
             </div>
             {error && (
-              <div className="text-sm text-destructive text-center">
+              <div className="text-destructive text-center text-sm">
                 {error}
               </div>
             )}
@@ -101,14 +104,14 @@ export function EmailLogin() {
                 <span className="w-full border-t" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-background text-muted-foreground px-2">
                   {LL.auth.orContinueWith()}
                 </span>
               </div>
             </div>
             <Button
               variant="outline"
-              className="w-full mt-4"
+              className="mt-4 w-full"
               onClick={() => {
                 authClient.signIn.social({
                   provider: 'google',

@@ -46,15 +46,26 @@ export function TimetableFilters({
     <div className="flex flex-col gap-6">
       <TimetableViewSwitcher value={viewMode} onChange={onViewModeChange} />
 
-      <div className="flex flex-col sm:flex-row gap-4 items-end">
+      <div className="
+        flex flex-col items-end gap-4
+        sm:flex-row
+      "
+      >
         {/* Class selector (for class view) */}
         {viewMode === 'class' && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full sm:w-[240px] space-y-1.5"
+            className="
+              w-full space-y-1.5
+              sm:w-[240px]
+            "
           >
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
+            <label className="
+              text-muted-foreground/60 ml-1 text-[10px] font-black
+              tracking-widest uppercase
+            "
+            >
               {t.classes.title()}
             </label>
             {classesPending || contextPending
@@ -67,7 +78,12 @@ export function TimetableFilters({
                     onValueChange={val => onClassChange(val ?? '')}
                     disabled={!effectiveYearId}
                   >
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                    <SelectTrigger className="
+                      bg-background/50 border-border/40
+                      focus:ring-primary/20
+                      h-11 rounded-xl font-bold transition-all
+                    "
+                    >
                       <SelectValue placeholder={t.classes.select()}>
                         {selectedClassId
                           ? (() => {
@@ -75,7 +91,10 @@ export function TimetableFilters({
                               return item
                                 ? (
                                     <div className="flex items-center gap-2">
-                                      <div className="size-2 rounded-full bg-primary" />
+                                      <div className="
+                                        bg-primary size-2 rounded-full
+                                      "
+                                      />
                                       <span>
                                         {item.grade.name}
                                         {' '}
@@ -88,9 +107,19 @@ export function TimetableFilters({
                           : undefined}
                       </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                    <SelectContent className="
+                      bg-popover/90 border-border/40 rounded-xl backdrop-blur-xl
+                    "
+                    >
                       {classes?.map(item => (
-                        <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                        <SelectItem
+                          key={item.class.id}
+                          value={item.class.id}
+                          className="
+                            focus:bg-primary/10
+                            rounded-lg font-medium
+                          "
+                        >
                           {item.grade.name}
                           {' '}
                           {item.class.section}
@@ -107,9 +136,16 @@ export function TimetableFilters({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full sm:w-[240px] space-y-1.5"
+            className="
+              w-full space-y-1.5
+              sm:w-[240px]
+            "
           >
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
+            <label className="
+              text-muted-foreground/60 ml-1 text-[10px] font-black
+              tracking-widest uppercase
+            "
+            >
               {t.teachers.title()}
             </label>
             {teachersPending
@@ -121,7 +157,12 @@ export function TimetableFilters({
                     value={selectedTeacherId}
                     onValueChange={val => onTeacherChange(val ?? '')}
                   >
-                    <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+                    <SelectTrigger className="
+                      bg-background/50 border-border/40
+                      focus:ring-primary/20
+                      h-11 rounded-xl font-bold transition-all
+                    "
+                    >
                       <SelectValue placeholder={t.teachers.select()}>
                         {selectedTeacherId
                           ? (() => {
@@ -129,7 +170,10 @@ export function TimetableFilters({
                               return teacher
                                 ? (
                                     <div className="flex items-center gap-2">
-                                      <div className="size-2 rounded-full bg-success" />
+                                      <div className="
+                                        bg-success size-2 rounded-full
+                                      "
+                                      />
                                       <span>{teacher.user?.name}</span>
                                     </div>
                                   )
@@ -138,9 +182,19 @@ export function TimetableFilters({
                           : undefined}
                       </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                    <SelectContent className="
+                      bg-popover/90 border-border/40 rounded-xl backdrop-blur-xl
+                    "
+                    >
                       {teachers?.map(teacher => (
-                        <SelectItem key={teacher.id} value={teacher.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                        <SelectItem
+                          key={teacher.id}
+                          value={teacher.id}
+                          className="
+                            focus:bg-primary/10
+                            rounded-lg font-medium
+                          "
+                        >
                           {teacher.user?.name}
                         </SelectItem>
                       ))}
@@ -154,16 +208,28 @@ export function TimetableFilters({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full sm:w-[240px] space-y-1.5"
+            className="
+              w-full space-y-1.5
+              sm:w-[240px]
+            "
           >
-            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1">
+            <label className="
+              text-muted-foreground/60 ml-1 text-[10px] font-black
+              tracking-widest uppercase
+            "
+            >
               {t.spaces.title()}
             </label>
             <Select
               value={selectedClassroomId}
               onValueChange={val => onClassroomChange(val ?? '')}
             >
-              <SelectTrigger className="h-11 rounded-xl bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-bold">
+              <SelectTrigger className="
+                bg-background/50 border-border/40
+                focus:ring-primary/20
+                h-11 rounded-xl font-bold transition-all
+              "
+              >
                 <SelectValue placeholder={t.spaces.availability.title()}>
                   {selectedClassroomId
                     ? (() => {
@@ -171,7 +237,7 @@ export function TimetableFilters({
                         return classroom
                           ? (
                               <div className="flex items-center gap-2">
-                                <div className="size-2 rounded-full bg-primary" />
+                                <div className="bg-primary size-2 rounded-full" />
                                 <span>{classroom.name}</span>
                               </div>
                             )
@@ -180,9 +246,19 @@ export function TimetableFilters({
                     : undefined}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+              <SelectContent className="
+                bg-popover/90 border-border/40 rounded-xl backdrop-blur-xl
+              "
+              >
                 {classrooms?.map(classroom => (
-                  <SelectItem key={classroom.id} value={classroom.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                  <SelectItem
+                    key={classroom.id}
+                    value={classroom.id}
+                    className="
+                      focus:bg-primary/10
+                      rounded-lg font-medium
+                    "
+                  >
                     {classroom.name}
                   </SelectItem>
                 ))}

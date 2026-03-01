@@ -79,16 +79,27 @@ export function GradeFilters({
           <Button
             variant="outline"
             size="sm"
-            className="h-10 rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all shadow-sm group"
+            className="
+              border-border/40 bg-background/50
+              hover:bg-background
+              group h-10 rounded-xl shadow-sm transition-all
+            "
           >
-            <IconFilter className="mr-2 size-4 transition-transform group-hover:rotate-12" />
+            <IconFilter className="
+              mr-2 size-4 transition-transform
+              group-hover:rotate-12
+            "
+            />
             <span className="font-semibold">
               {t.academic.grades.filters.title()}
             </span>
             {activeFilters > 0 && (
               <Badge
                 variant="secondary"
-                className="ml-2 rounded-full px-1.5 h-5 min-w-[20px] bg-primary text-primary-foreground font-bold text-[10px]"
+                className="
+                  bg-primary text-primary-foreground ml-2 h-5 min-w-[20px]
+                  rounded-full px-1.5 text-[10px] font-bold
+                "
               >
                 {activeFilters}
               </Badge>
@@ -97,16 +108,26 @@ export function GradeFilters({
         )}
       />
       <PopoverContent
-        className="w-80 rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40 p-5 shadow-xl"
+        className="
+          bg-popover/90 border-border/40 w-80 rounded-xl p-5 shadow-xl
+          backdrop-blur-2xl
+        "
         align="end"
       >
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <div className="
+                bg-primary/10 text-primary flex h-7 w-7 items-center
+                justify-center rounded-lg
+              "
+              >
                 <IconFilter className="h-3.5 w-3.5" />
               </div>
-              <h4 className="text-sm font-bold uppercase tracking-wider text-foreground">
+              <h4 className="
+                text-foreground text-sm font-bold tracking-wider uppercase
+              "
+              >
                 {t.academic.grades.filters.title()}
               </h4>
             </div>
@@ -115,7 +136,12 @@ export function GradeFilters({
                 variant="ghost"
                 size="sm"
                 onClick={onClear}
-                className="h-7 px-2 text-[10px] font-bold uppercase tracking-widest text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                className="
+                  text-destructive
+                  hover:bg-destructive/10
+                  h-7 rounded-lg px-2 text-[10px] font-bold tracking-widest
+                  uppercase transition-colors
+                "
               >
                 <IconX className="mr-1 size-3" />
                 {t.academic.grades.filters.clear()}
@@ -126,7 +152,10 @@ export function GradeFilters({
           <div className="space-y-3">
             <Label
               htmlFor="grade-status-filter"
-              className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1"
+              className="
+                text-muted-foreground ml-1 text-[11px] font-bold tracking-widest
+                uppercase
+              "
             >
               {t.academic.grades.filters.status()}
             </Label>
@@ -137,16 +166,27 @@ export function GradeFilters({
             >
               <SelectTrigger
                 id="grade-status-filter"
-                className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all"
+                className="
+                  border-border/40 bg-background/50
+                  focus:bg-background
+                  h-11 rounded-xl transition-all
+                "
               >
                 <SelectValue
                   placeholder={t.academic.grades.filters.allStatuses()}
                 />
               </SelectTrigger>
-              <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+              <SelectContent className="
+                bg-popover/90 border-border/40 rounded-xl backdrop-blur-2xl
+              "
+              >
                 <SelectItem value="all" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                    <div className="
+                      bg-muted text-muted-foreground flex h-6 w-6 items-center
+                      justify-center rounded-md
+                    "
+                    >
                       <IconLayoutDashboard className="h-3.5 w-3.5" />
                     </div>
                     <span className="font-medium">
@@ -161,15 +201,26 @@ export function GradeFilters({
                       <div className="flex items-center gap-2">
                         <div
                           className={cn(
-                            'flex h-6 w-6 items-center justify-center rounded-md border',
+                            `
+                              flex h-6 w-6 items-center justify-center
+                              rounded-md border
+                            `,
                             s === 'draft'
-                            && 'bg-slate-500/10 text-slate-600 border-slate-500/20',
+                            && `
+                              border-slate-500/20 bg-slate-500/10 text-slate-600
+                            `,
                             s === 'submitted'
-                            && 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+                            && 'border-blue-500/20 bg-blue-500/10 text-blue-600',
                             s === 'validated'
-                            && 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+                            && `
+                              border-emerald-500/20 bg-emerald-500/10
+                              text-emerald-600
+                            `,
                             s === 'rejected'
-                            && 'bg-destructive/10 text-destructive border-destructive/20',
+                            && `
+                              bg-destructive/10 text-destructive
+                              border-destructive/20
+                            `,
                           )}
                         >
                           <Icon className="h-3.5 w-3.5" />
@@ -188,7 +239,10 @@ export function GradeFilters({
           <div className="space-y-3">
             <Label
               htmlFor="grade-type-filter"
-              className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground ml-1"
+              className="
+                text-muted-foreground ml-1 text-[11px] font-bold tracking-widest
+                uppercase
+              "
             >
               {t.academic.grades.filters.gradeType()}
             </Label>
@@ -199,16 +253,27 @@ export function GradeFilters({
             >
               <SelectTrigger
                 id="grade-type-filter"
-                className="rounded-xl h-11 border-border/40 bg-background/50 focus:bg-background transition-all"
+                className="
+                  border-border/40 bg-background/50
+                  focus:bg-background
+                  h-11 rounded-xl transition-all
+                "
               >
                 <SelectValue
                   placeholder={t.academic.grades.filters.allTypes()}
                 />
               </SelectTrigger>
-              <SelectContent className="rounded-xl backdrop-blur-2xl bg-popover/90 border-border/40">
+              <SelectContent className="
+                bg-popover/90 border-border/40 rounded-xl backdrop-blur-2xl
+              "
+              >
                 <SelectItem value="all" className="rounded-lg py-2.5">
                   <div className="flex items-center gap-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                    <div className="
+                      bg-muted text-muted-foreground flex h-6 w-6 items-center
+                      justify-center rounded-md
+                    "
+                    >
                       <IconLayoutDashboard className="h-3.5 w-3.5" />
                     </div>
                     <span className="font-medium">
@@ -225,7 +290,11 @@ export function GradeFilters({
                       className="rounded-lg py-2.5"
                     >
                       <div className="flex items-center gap-2">
-                        <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary/10 text-primary border border-primary/20">
+                        <div className="
+                          bg-primary/10 text-primary border-primary/20 flex h-6
+                          w-6 items-center justify-center rounded-md border
+                        "
+                        >
                           <Icon className="h-3.5 w-3.5" />
                         </div>
                         <span className="font-medium">

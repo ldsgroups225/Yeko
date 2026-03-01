@@ -29,7 +29,10 @@ function RolesTableContainer() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm overflow-hidden">
+      <Card className="
+        border-border/40 bg-card/50 overflow-hidden shadow-sm backdrop-blur-xl
+      "
+      >
         <RolesTableHeader />
         <CardContent>
           <RolesTableContent />

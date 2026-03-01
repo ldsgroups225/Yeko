@@ -69,7 +69,11 @@ export function ForgotPasswordView({
         <button
           type="button"
           onClick={onBackToLogin}
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+          className="
+            text-muted-foreground
+            hover:text-foreground
+            mb-6 inline-flex items-center gap-2 text-sm transition-colors
+          "
         >
           <IconArrowLeft className="size-4" />
           {t.auth.forgotPassword.backToLogin()}
@@ -77,7 +81,11 @@ export function ForgotPasswordView({
       </motion.div>
 
       <motion.div variants={itemVariants} className="space-y-2">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        <h2 className="
+          text-2xl font-bold tracking-tight
+          sm:text-3xl
+        "
+        >
           {t.auth.forgotPassword.title()}
         </h2>
         <p className="text-muted-foreground">
@@ -101,7 +109,7 @@ export function ForgotPasswordView({
             {...forgotForm.register('email')}
           />
           {forgotForm.formState.errors.email && (
-            <p className="text-sm text-destructive">
+            <p className="text-destructive text-sm">
               {forgotForm.formState.errors.email.message}
             </p>
           )}
@@ -109,7 +117,7 @@ export function ForgotPasswordView({
 
         <Button
           type="submit"
-          className="w-full h-12 text-base"
+          className="h-12 w-full text-base"
           disabled={isPending}
         >
           {isPending

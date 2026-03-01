@@ -1,8 +1,1 @@
-import config from '@yeko/eslint-config'
-
-/** @type {import("eslint").Linter.Config} */
-export default config.append({
-  ignores: [
-    'src',
-  ],
-})
+export { default } from '../../eslint.config.mjs'

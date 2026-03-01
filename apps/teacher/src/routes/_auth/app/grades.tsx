@@ -47,7 +47,7 @@ function GradesPage() {
         <SyncStatusContainer />
       </div>
 
-      <p className="text-sm text-muted-foreground">{LL.grades.selectClass()}</p>
+      <p className="text-muted-foreground text-sm">{LL.grades.selectClass()}</p>
 
       {isPending
         ? (
@@ -90,7 +90,7 @@ function ClassCard({ classData }: ClassCardProps) {
         <div className="mb-3 flex items-center justify-between">
           <div>
             <h3 className="font-semibold">{classData.name}</h3>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {classData.studentCount}
               {' '}
               {LL.common.students()}
@@ -109,17 +109,23 @@ function ClassCard({ classData }: ClassCardProps) {
               key={subject.id}
               to="/app/grades/$classId/$subjectId"
               params={{ classId: classData.id, subjectId: subject.id }}
-              className="flex w-full items-center justify-between rounded-lg bg-muted/50 p-3 text-left transition-colors hover:bg-muted active:scale-[0.98]"
+              className="
+                bg-muted/50
+                hover:bg-muted
+                flex w-full items-center justify-between rounded-lg p-3
+                text-left transition-colors
+                active:scale-[0.98]
+              "
             >
               <div>
                 <p className="text-sm font-medium">{subject.name}</p>
                 {subject.shortName && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {subject.shortName}
                   </p>
                 )}
               </div>
-              <IconChevronRight className="h-4 w-4 text-muted-foreground" />
+              <IconChevronRight className="text-muted-foreground h-4 w-4" />
             </Link>
           ))}
         </div>
@@ -134,8 +140,8 @@ function EmptyClasses() {
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <IconSchool className="h-12 w-12 text-muted-foreground/50" />
-        <p className="mt-4 text-sm text-muted-foreground">
+        <IconSchool className="text-muted-foreground/50 h-12 w-12" />
+        <p className="text-muted-foreground mt-4 text-sm">
           {LL.grades.noClasses()}
         </p>
       </CardContent>

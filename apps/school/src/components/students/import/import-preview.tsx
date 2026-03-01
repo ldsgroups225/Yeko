@@ -14,8 +14,8 @@ export function ImportPreview({ preview, totalItems }: ImportPreviewProps) {
     return null
 
   return (
-    <div className="rounded border">
-      <div className="border-b bg-muted/50 px-3 py-2 text-sm font-medium">
+    <div className="rounded-sm border">
+      <div className="bg-muted/50 border-b px-3 py-2 text-sm font-medium">
         {t.students.importPreview()}
       </div>
       <div className="max-h-40 overflow-auto p-2">
@@ -32,7 +32,10 @@ export function ImportPreview({ preview, totalItems }: ImportPreviewProps) {
             {preview.map(s => (
               <tr
                 key={`preview-${generateUUID()}-${s.lastName}-${s.firstName}`}
-                className="border-b last:border-0"
+                className="
+                  border-b
+                  last:border-0
+                "
               >
                 <td className="px-2 py-1">{s.lastName}</td>
                 <td className="px-2 py-1">{s.firstName}</td>
@@ -44,7 +47,11 @@ export function ImportPreview({ preview, totalItems }: ImportPreviewProps) {
         </table>
       </div>
       {totalItems > 5 && (
-        <div className="border-t bg-muted/30 px-3 py-2 text-center text-sm text-muted-foreground">
+        <div className="
+          bg-muted/30 text-muted-foreground border-t px-3 py-2 text-center
+          text-sm
+        "
+        >
           {t.students.importAndMoreRows({ count: totalItems - 5 })}
         </div>
       )}

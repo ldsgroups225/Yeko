@@ -46,19 +46,33 @@ export function BulkImportPreview() {
       initial="initial"
       animate="animate"
       exit="exit"
-      className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+      className="
+        border-border/40 bg-card/50 rounded-xl border p-8 shadow-sm
+        backdrop-blur-xl
+      "
     >
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="
+        mb-8 flex flex-col justify-between gap-4
+        sm:flex-row sm:items-center
+      "
+      >
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <div className="
+            bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+            rounded-lg
+          "
+          >
             <IconDatabase className="h-4 w-4" />
           </div>
-          <h2 className="text-xl font-serif font-semibold">{t.hr.users.step3()}</h2>
+          <h2 className="font-serif text-xl font-semibold">{t.hr.users.step3()}</h2>
         </div>
         <div className="flex flex-wrap gap-2">
           <Badge
             variant="outline"
-            className="rounded-full px-3 py-1 bg-muted/50 border-border/40 font-semibold uppercase text-[10px] tracking-wider"
+            className="
+              bg-muted/50 border-border/40 rounded-full px-3 py-1 text-[10px]
+              font-semibold tracking-wider uppercase
+            "
           >
             {preview.length}
             {' '}
@@ -66,7 +80,10 @@ export function BulkImportPreview() {
           </Badge>
           <Badge
             variant="outline"
-            className="rounded-full px-3 py-1 bg-success/10 text-success border-success/20 font-semibold uppercase text-[10px] tracking-wider"
+            className="
+              bg-success/10 text-success border-success/20 rounded-full px-3
+              py-1 text-[10px] font-semibold tracking-wider uppercase
+            "
           >
             {preview.filter(r => !r.error).length}
             {' '}
@@ -75,7 +92,11 @@ export function BulkImportPreview() {
           {preview.filter(r => r.error).length > 0 && (
             <Badge
               variant="outline"
-              className="rounded-full px-3 py-1 bg-destructive/10 text-destructive border-destructive/20 font-semibold uppercase text-[10px] tracking-wider"
+              className="
+                bg-destructive/10 text-destructive border-destructive/20
+                rounded-full px-3 py-1 text-[10px] font-semibold tracking-wider
+                uppercase
+              "
             >
               {preview.filter(r => r.error).length}
               {' '}
@@ -85,26 +106,52 @@ export function BulkImportPreview() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden mb-8 shadow-inner">
+      <div className="
+        border-border/40 bg-background/30 mb-8 overflow-hidden rounded-xl border
+        shadow-inner
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50 backdrop-blur-md">
-            <TableRow className="hover:bg-transparent border-border/40">
-              <TableHead className="w-[80px] text-xs uppercase tracking-wider font-bold py-4">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
+              <TableHead className="
+                w-[80px] py-4 text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.hr.users.status()}
               </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider font-bold py-4">
+              <TableHead className="
+                py-4 text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.hr.common.name()}
               </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider font-bold py-4">
+              <TableHead className="
+                py-4 text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.hr.common.email()}
               </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider font-bold py-4">
+              <TableHead className="
+                py-4 text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.hr.common.phone()}
               </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider font-bold py-4">
+              <TableHead className="
+                py-4 text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.hr.common.roles()}
               </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider font-bold py-4">
+              <TableHead className="
+                py-4 text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.hr.users.error()}
               </TableHead>
             </TableRow>
@@ -116,31 +163,46 @@ export function BulkImportPreview() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.02 }}
-                className="border-border/40 hover:bg-primary/5 transition-colors"
+                className="
+                  border-border/40
+                  hover:bg-primary/5
+                  transition-colors
+                "
               >
                 <TableCell className="py-4">
                   {row.error
                     ? (
-                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+                        <div className="
+                          bg-destructive/10 text-destructive flex h-7 w-7
+                          items-center justify-center rounded-full
+                        "
+                        >
                           <IconAlertCircle className="h-4 w-4" />
                         </div>
                       )
                     : (
-                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-success/10 text-success">
+                        <div className="
+                          bg-success/10 text-success flex h-7 w-7 items-center
+                          justify-center rounded-full
+                        "
+                        >
                           <IconCircleCheck className="h-4 w-4" />
                         </div>
                       )}
                 </TableCell>
-                <TableCell className="font-semibold text-foreground py-4">
+                <TableCell className="text-foreground py-4 font-semibold">
                   {row.name}
                 </TableCell>
-                <TableCell className="py-4 font-medium text-muted-foreground">
+                <TableCell className="text-muted-foreground py-4 font-medium">
                   <div className="flex items-center gap-1.5">
                     <IconMail className="h-3 w-3" />
                     {row.email}
                   </div>
                 </TableCell>
-                <TableCell className="py-4 text-muted-foreground whitespace-nowrap">
+                <TableCell className="
+                  text-muted-foreground py-4 whitespace-nowrap
+                "
+                >
                   {row.phone
                     ? (
                         <div className="flex items-center gap-1.5">
@@ -152,13 +214,17 @@ export function BulkImportPreview() {
                 </TableCell>
                 <TableCell className="py-4">
                   <div className="flex items-center gap-1.5">
-                    <IconShield className="h-3 w-3 text-primary/60" />
-                    <span className="font-medium text-foreground">{row.roles}</span>
+                    <IconShield className="text-primary/60 h-3 w-3" />
+                    <span className="text-foreground font-medium">{row.roles}</span>
                   </div>
                 </TableCell>
                 <TableCell className="py-4">
                   {row.error && (
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-destructive uppercase tracking-tight">
+                    <div className="
+                      text-destructive flex items-center gap-1.5 text-xs
+                      font-bold tracking-tight uppercase
+                    "
+                    >
                       <IconInfoCircle className="h-3 w-3" />
                       {row.error}
                     </div>
@@ -170,10 +236,14 @@ export function BulkImportPreview() {
         </Table>
       </div>
 
-      <div className="flex justify-end items-center gap-4">
+      <div className="flex items-center justify-end gap-4">
         <Button
           variant="ghost"
-          className="rounded-xl px-6 font-medium bg-muted hover:bg-muted/80 transition-colors"
+          className="
+            bg-muted
+            hover:bg-muted/80
+            rounded-xl px-6 font-medium transition-colors
+          "
           onClick={reset}
         >
           {t.common.cancel()}
@@ -181,18 +251,30 @@ export function BulkImportPreview() {
         <Button
           onClick={handleImport}
           disabled={isProcessing || preview.filter(r => !r.error).length === 0}
-          className="rounded-xl px-8 min-w-[160px] font-bold shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+          className="
+            shadow-primary/20 min-w-[160px] rounded-xl px-8 font-bold shadow-lg
+            transition-all
+            hover:scale-[1.02]
+            active:scale-[0.98]
+          "
         >
           {isProcessing
             ? (
                 <>
-                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin text-primary-foreground/80" />
+                  <IconLoader2 className="
+                    text-primary-foreground/80 mr-2 h-4 w-4 animate-spin
+                  "
+                  />
                   {t.hr.users.importing()}
                 </>
               )
             : (
                 <>
-                  <IconUpload className="mr-2 h-4 w-4 group-hover:-translate-y-0.5" />
+                  <IconUpload className="
+                    mr-2 h-4 w-4
+                    group-hover:-translate-y-0.5
+                  "
+                  />
                   {t.hr.users.importUsers()}
                 </>
               )}

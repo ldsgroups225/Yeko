@@ -12,17 +12,33 @@ export function RolesTableHeader() {
 
   return (
     <CardHeader className="pb-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <CardTitle className="text-2xl font-serif">
+      <div className="
+        flex flex-col gap-4
+        sm:flex-row sm:items-center sm:justify-between
+      "
+      >
+        <CardTitle className="font-serif text-2xl">
           {t.hr.roles.listTitle()}
         </CardTitle>
-        <div className="relative w-full sm:w-72">
-          <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <div className="
+          relative w-full
+          sm:w-72
+        "
+        >
+          <IconSearch className="
+            text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+            -translate-y-1/2
+          "
+          />
           <Input
             placeholder={t.hr.roles.searchPlaceholder()}
             value={searchInput}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
-            className="pl-10 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all"
+            className="
+              bg-background/50 border-border/40
+              focus:bg-background
+              rounded-xl pl-10 transition-all
+            "
           />
         </div>
       </div>

@@ -21,27 +21,35 @@ export function GradeEntryTableContent() {
   const { handleGradeChange } = actions
 
   return (
-    <div className="rounded-2xl border border-border/40 bg-card/30 backdrop-blur-xl shadow-xl overflow-hidden overflow-x-auto">
+    <div className="
+      border-border/40 bg-card/30 overflow-hidden overflow-x-auto rounded-2xl
+      border shadow-xl backdrop-blur-xl
+    "
+    >
       <Table>
         <TableHeader>
-          <TableRow className="bg-muted/30 border-b-border/40 hover:bg-muted/30">
+          <TableRow className="
+            bg-muted/30 border-b-border/40
+            hover:bg-muted/30
+          "
+          >
             <TableHead className="min-w-[240px]">
               <div className="flex items-center gap-2">
-                <IconUser className="size-4 text-muted-foreground" />
-                <span className="font-bold uppercase tracking-tight text-xs">{t.academic.grades.averages.student()}</span>
+                <IconUser className="text-muted-foreground size-4" />
+                <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.student()}</span>
               </div>
             </TableHead>
             <TableHead className="w-24">
               <div className="flex items-center gap-1.5">
-                <IconHash className="size-3.5 text-muted-foreground" />
-                <span className="font-bold uppercase tracking-tight text-xs">{t.academic.grades.averages.matricule()}</span>
+                <IconHash className="text-muted-foreground size-3.5" />
+                <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.matricule()}</span>
               </div>
             </TableHead>
             <TableHead className="w-32 text-center">
-              <span className="font-bold uppercase tracking-tight text-xs">{t.academic.grades.averages.average()}</span>
+              <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.average()}</span>
             </TableHead>
             <TableHead className="w-32 text-center">
-              <span className="font-bold uppercase tracking-tight text-xs">{t.common.status()}</span>
+              <span className="text-xs font-bold tracking-tight uppercase">{t.common.status()}</span>
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -59,11 +67,21 @@ export function GradeEntryTableContent() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className="group border-b border-border/20 last:border-0 hover:bg-primary/5 transition-colors"
+                  className="
+                    group border-border/20
+                    hover:bg-primary/5
+                    border-b transition-colors
+                    last:border-0
+                  "
                 >
                   <TableCell className="py-4">
                     <div className="flex flex-col">
-                      <span className="font-bold text-foreground group-hover:text-primary transition-colors">
+                      <span className="
+                        text-foreground
+                        group-hover:text-primary
+                        font-bold transition-colors
+                      "
+                      >
                         {student.lastName}
                         {' '}
                         {student.firstName}
@@ -71,7 +89,13 @@ export function GradeEntryTableContent() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="font-mono text-[10px] font-bold tracking-widest bg-muted/50 border-border/40 px-2 rounded-md">
+                    <Badge
+                      variant="outline"
+                      className="
+                        bg-muted/50 border-border/40 rounded-md px-2 font-mono
+                        text-[10px] font-bold tracking-widest
+                      "
+                    >
                       {student.matricule}
                     </Badge>
                   </TableCell>

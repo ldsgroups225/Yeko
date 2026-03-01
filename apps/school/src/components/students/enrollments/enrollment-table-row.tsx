@@ -63,13 +63,16 @@ export function EnrollmentTableRow({
             <Link
               to="/students/$studentId"
               params={{ studentId: item.student?.id }}
-              className="font-medium hover:underline"
+              className="
+                font-medium
+                hover:underline
+              "
             >
               {item.student?.lastName}
               {' '}
               {item.student?.firstName}
             </Link>
-            <p className="text-sm text-muted-foreground font-mono">
+            <p className="text-muted-foreground font-mono text-sm">
               {item.student?.matricule}
             </p>
           </div>
@@ -144,7 +147,7 @@ export function EnrollmentTableRow({
                   onClick={() => onConfirm(item.enrollment.id)}
                   disabled={isConfirming}
                 >
-                  <IconCheck className="mr-2 h-4 w-4 text-success" />
+                  <IconCheck className="text-success mr-2 h-4 w-4" />
                   {t.enrollments.confirm()}
                 </DropdownMenuItem>
                 <DropdownMenuItem

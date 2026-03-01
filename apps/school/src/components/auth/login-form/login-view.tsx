@@ -92,7 +92,10 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
       {/* Mobile Logo */}
       <motion.div
         variants={itemVariants}
-        className="lg:hidden text-center mb-8"
+        className="
+          mb-8 text-center
+          lg:hidden
+        "
       >
         <div className="inline-flex items-center gap-3">
           <img
@@ -101,10 +104,17 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
             className="size-12 rounded-xl object-contain shadow-lg"
           />
           <div className="flex flex-col text-left">
-            <span className="text-xl font-black tracking-tighter uppercase font-outfit">
+            <span className="
+              font-outfit text-xl font-black tracking-tighter uppercase
+            "
+            >
               {appName}
             </span>
-            <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-muted-foreground">
+            <span className="
+              text-muted-foreground text-[8px] font-bold tracking-[0.3em]
+              uppercase
+            "
+            >
               Administration
             </span>
           </div>
@@ -112,7 +122,11 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
       </motion.div>
 
       <motion.div variants={itemVariants} className="space-y-2">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+        <h2 className="
+          text-2xl font-bold tracking-tight
+          sm:text-3xl
+        "
+        >
           {t.auth.login.title()}
         </h2>
         <p className="text-muted-foreground">
@@ -125,7 +139,7 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
         <Button
           onClick={handleGoogleSignIn}
           disabled={isGooglePending || isPending}
-          className="w-full h-12 text-base"
+          className="h-12 w-full text-base"
           variant="outline"
           type="button"
         >
@@ -166,7 +180,7 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
           <Separator />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-3 text-muted-foreground">
+          <span className="bg-background text-muted-foreground px-3">
             {t.auth.login.orContinueWith()}
           </span>
         </div>
@@ -189,7 +203,7 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
             {...loginForm.register('email')}
           />
           {loginForm.formState.errors.email && (
-            <p className="text-sm text-destructive">
+            <p className="text-destructive text-sm">
               {loginForm.formState.errors.email.message}
             </p>
           )}
@@ -201,7 +215,11 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
             <button
               type="button"
               onClick={onForgotPassword}
-              className="text-sm text-primary hover:text-primary/80 transition-colors"
+              className="
+                text-primary
+                hover:text-primary/80
+                text-sm transition-colors
+              "
             >
               {t.auth.login.forgotPassword()}
             </button>
@@ -215,7 +233,7 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
             {...loginForm.register('password')}
           />
           {loginForm.formState.errors.password && (
-            <p className="text-sm text-destructive">
+            <p className="text-destructive text-sm">
               {loginForm.formState.errors.password.message}
             </p>
           )}
@@ -223,7 +241,7 @@ export function LoginView({ onForgotPassword, containerVariants, itemVariants }:
 
         <Button
           type="submit"
-          className="w-full h-12 text-base"
+          className="h-12 w-full text-base"
           disabled={isPending || isGooglePending}
         >
           {isPending

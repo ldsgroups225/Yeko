@@ -51,7 +51,7 @@ export function TeachersTableProvider({ children, filters }: TeachersTableProvid
           setSearchInput,
           handlePageChange: (page: number) => {
             navigate({
-              to: '/users/teachers',
+              to: '/teachers',
               search: { ...filters, page },
             })
           },

@@ -52,7 +52,11 @@ export function FeeTypeForm({
             name="templateId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground flex items-center gap-2">
+                <FormLabel className="
+                  text-muted-foreground flex items-center gap-2 text-xs
+                  font-bold tracking-wider uppercase
+                "
+                >
                   <IconCopy className="h-3 w-3" />
                   Import from template
                 </FormLabel>
@@ -66,7 +70,12 @@ export function FeeTypeForm({
                   value={field.value || ''}
                 >
                   <FormControl>
-                    <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                    <SelectTrigger className="
+                      border-border/40 bg-muted/20
+                      focus:bg-background
+                      rounded-xl transition-colors
+                    "
+                    >
                       <SelectValue placeholder="Sélectionner un modèle...">
                         {field.value
                           ? (() => {
@@ -75,7 +84,10 @@ export function FeeTypeForm({
                                 ? (
                                     <div className="flex items-center gap-2">
                                       <span className="font-medium">{tpl.name}</span>
-                                      <span className="text-muted-foreground text-xs">
+                                      <span className="
+                                        text-muted-foreground text-xs
+                                      "
+                                      >
                                         (
                                         {tpl.code}
                                         )
@@ -88,12 +100,19 @@ export function FeeTypeForm({
                       </SelectValue>
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+                  <SelectContent className="
+                    bg-popover/95 border-border/40 rounded-xl shadow-xl
+                    backdrop-blur-xl
+                  "
+                  >
                     {templates?.map(template => (
                       <SelectItem
                         key={template.id}
                         value={template.id}
-                        className="rounded-lg cursor-pointer focus:bg-primary/10"
+                        className="
+                          focus:bg-primary/10
+                          cursor-pointer rounded-lg
+                        "
                       >
                         <span className="font-medium">{template.name}</span>
                         <span className="text-muted-foreground ml-2 text-xs">
@@ -113,13 +132,21 @@ export function FeeTypeForm({
           />
         )}
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="
+          grid gap-4
+          md:grid-cols-2
+        "
+        >
           <FormField
             control={form.control}
             name="code"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                <FormLabel className="
+                  text-muted-foreground text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.common.code()}
                   {' '}
                   *
@@ -128,7 +155,11 @@ export function FeeTypeForm({
                   <Input
                     {...field}
                     placeholder={t.finance.feeTypes.placeholders.code()}
-                    className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                    className="
+                      border-border/40 bg-muted/20
+                      focus:bg-background
+                      rounded-xl transition-colors
+                    "
                   />
                 </FormControl>
                 <FormMessage />
@@ -141,25 +172,41 @@ export function FeeTypeForm({
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                <FormLabel className="
+                  text-muted-foreground text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.finance.feeTypes.category()}
                   {' '}
                   *
                 </FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                    <SelectTrigger className="
+                      border-border/40 bg-muted/20
+                      focus:bg-background
+                      rounded-xl transition-colors
+                    "
+                    >
                       <SelectValue placeholder={t.finance.feeTypes.category()}>
                         {field.value ? feeCategoryLabels[field.value as keyof typeof feeCategoryLabels] : null}
                       </SelectValue>
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+                  <SelectContent className="
+                    bg-popover/95 border-border/40 rounded-xl shadow-xl
+                    backdrop-blur-xl
+                  "
+                  >
                     {feeCategories.map(cat => (
                       <SelectItem
                         key={cat}
                         value={cat}
-                        className="rounded-lg cursor-pointer focus:bg-primary/10"
+                        className="
+                          focus:bg-primary/10
+                          cursor-pointer rounded-lg
+                        "
                       >
                         {feeCategoryLabels[cat]}
                       </SelectItem>
@@ -177,7 +224,10 @@ export function FeeTypeForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.common.name()}
                 {' '}
                 *
@@ -186,7 +236,11 @@ export function FeeTypeForm({
                 <Input
                   {...field}
                   placeholder={t.finance.feeTypes.placeholders.name()}
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormMessage />
@@ -199,14 +253,21 @@ export function FeeTypeForm({
           name="nameEn"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.common.nameEn()}
               </FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   placeholder={t.finance.feeTypes.placeholders.nameEn()}
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormDescription className="text-[11px]">
@@ -222,7 +283,10 @@ export function FeeTypeForm({
           name="displayOrder"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.common.displayOrder()}
               </FormLabel>
               <FormControl>
@@ -230,7 +294,11 @@ export function FeeTypeForm({
                   type="number"
                   min={0}
                   {...field}
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormMessage />
@@ -243,15 +311,23 @@ export function FeeTypeForm({
             control={form.control}
             name="isMandatory"
             render={({ field }) => (
-              <FormItem className="flex items-center gap-3 space-y-0 rounded-xl border border-border/40 p-3 bg-muted/10">
+              <FormItem className="
+                border-border/40 bg-muted/10 flex items-center gap-3 space-y-0
+                rounded-xl border p-3
+              "
+              >
                 <FormControl>
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-border/60 rounded-md"
+                    className="
+                      data-[state=checked]:bg-primary
+                      data-[state=checked]:text-primary-foreground
+                      border-border/60 rounded-md
+                    "
                   />
                 </FormControl>
-                <FormLabel className="font-medium cursor-pointer">
+                <FormLabel className="cursor-pointer font-medium">
                   {t.finance.feeTypes.mandatory()}
                 </FormLabel>
               </FormItem>
@@ -262,15 +338,23 @@ export function FeeTypeForm({
             control={form.control}
             name="isRecurring"
             render={({ field }) => (
-              <FormItem className="flex items-center gap-3 space-y-0 rounded-xl border border-border/40 p-3 bg-muted/10">
+              <FormItem className="
+                border-border/40 bg-muted/10 flex items-center gap-3 space-y-0
+                rounded-xl border p-3
+              "
+              >
                 <FormControl>
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground border-border/60 rounded-md"
+                    className="
+                      data-[state=checked]:bg-primary
+                      data-[state=checked]:text-primary-foreground
+                      border-border/60 rounded-md
+                    "
                   />
                 </FormControl>
-                <FormLabel className="font-medium cursor-pointer">
+                <FormLabel className="cursor-pointer font-medium">
                   {t.finance.feeTypes.recurring()}
                 </FormLabel>
               </FormItem>
@@ -283,14 +367,14 @@ export function FeeTypeForm({
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="rounded-xl border-border/40"
+            className="border-border/40 rounded-xl"
           >
             {t.common.cancel()}
           </Button>
           <Button
             type="submit"
             disabled={isPending}
-            className="rounded-xl shadow-lg shadow-primary/20"
+            className="shadow-primary/20 rounded-xl shadow-lg"
           >
             {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isEditMode ? t.common.save() : t.finance.feeTypes.create()}

@@ -23,18 +23,29 @@ function TimetableSessionDialogInner() {
   const { form, handleSubmit } = actions
 
   return (
-    <DialogContent className="max-w-md sm:max-w-lg backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl p-6">
+    <DialogContent className="
+      bg-card/95 border-border/40 max-w-md rounded-3xl p-6 shadow-2xl
+      backdrop-blur-xl
+      sm:max-w-lg
+    "
+    >
       <DialogHeader>
-        <DialogTitle className="text-xl font-black uppercase tracking-tight italic">
+        <DialogTitle className="
+          text-xl font-black tracking-tight uppercase italic
+        "
+        >
           {mode === 'create' ? t.timetables.addSession() : t.timetables.editSession()}
         </DialogTitle>
-        <DialogDescription className="text-base font-medium text-muted-foreground/60 italic">
+        <DialogDescription className="
+          text-muted-foreground/60 text-base font-medium italic
+        "
+        >
           {mode === 'create' ? t.timetables.addSessionDescription() : t.timetables.editSessionDescription()}
         </DialogDescription>
       </DialogHeader>
 
       {conflicts && conflicts.length > 0 && (
-        <ConflictIndicator conflicts={conflicts} className="w-fit mb-4" />
+        <ConflictIndicator conflicts={conflicts} className="mb-4 w-fit" />
       )}
 
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">

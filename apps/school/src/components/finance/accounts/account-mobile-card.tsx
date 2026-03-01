@@ -27,7 +27,7 @@ export function AccountMobileCard({ account, index, onEdit, onDelete, t }: Accou
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       className={cn(
-        'p-4 rounded-2xl border border-border/40 backdrop-blur-md space-y-3',
+        'border-border/40 space-y-3 rounded-2xl border p-4 backdrop-blur-md',
         {
           'bg-muted/10': account.isHeader,
           'bg-card/50': !account.isHeader,
@@ -35,15 +35,19 @@ export function AccountMobileCard({ account, index, onEdit, onDelete, t }: Accou
       )}
       style={{ marginLeft: `${(account.level - 1) * 16}px` }}
     >
-      <div className="flex justify-between items-start">
+      <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
-          <div className="font-mono text-xs font-bold text-muted-foreground bg-muted/20 px-2 py-1 rounded-md">
+          <div className="
+            text-muted-foreground bg-muted/20 rounded-md px-2 py-1 font-mono
+            text-xs font-bold
+          "
+          >
             {account.code}
           </div>
           <Badge
             variant="outline"
             className={cn(
-              'font-medium border text-[10px]',
+              'border text-[10px] font-medium',
               getTypeColor(account.type),
             )}
           >
@@ -56,7 +60,7 @@ export function AccountMobileCard({ account, index, onEdit, onDelete, t }: Accou
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-lg -mr-2 -mt-2"
+                className="-mt-2 -mr-2 h-8 w-8 rounded-lg"
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()
@@ -68,13 +72,19 @@ export function AccountMobileCard({ account, index, onEdit, onDelete, t }: Accou
           />
           <DropdownMenuContent
             align="end"
-            className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+            className="
+              bg-card/95 border-border/40 rounded-xl p-1 shadow-xl
+              backdrop-blur-xl
+            "
           >
             <DropdownMenuItem
               onClick={() => onEdit?.(account)}
-              className="rounded-lg cursor-pointer focus:bg-primary/10 font-medium"
+              className="
+                focus:bg-primary/10
+                cursor-pointer rounded-lg font-medium
+              "
             >
-              <IconEdit className="mr-2 h-4 w-4 text-muted-foreground" />
+              <IconEdit className="text-muted-foreground mr-2 h-4 w-4" />
               {t.common.edit()}
             </DropdownMenuItem>
             {!account.isHeader && (
@@ -82,7 +92,11 @@ export function AccountMobileCard({ account, index, onEdit, onDelete, t }: Accou
                 <DropdownMenuSeparator className="bg-border/40" />
                 <DropdownMenuItem
                   onClick={() => onDelete?.(account)}
-                  className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-lg cursor-pointer font-medium"
+                  className="
+                    text-destructive
+                    focus:bg-destructive/10 focus:text-destructive
+                    cursor-pointer rounded-lg font-medium
+                  "
                 >
                   <IconTrash className="mr-2 h-4 w-4" />
                   {t.common.delete()}
@@ -93,17 +107,20 @@ export function AccountMobileCard({ account, index, onEdit, onDelete, t }: Accou
         </DropdownMenu>
       </div>
 
-      <div className="font-bold text-lg">{account.name}</div>
+      <div className="text-lg font-bold">{account.name}</div>
 
       {!account.isHeader && (
-        <div className="flex items-center justify-between pt-2 border-t border-border/30">
-          <span className="text-sm text-muted-foreground">
+        <div className="
+          border-border/30 flex items-center justify-between border-t pt-2
+        "
+        >
+          <span className="text-muted-foreground text-sm">
             {t.finance.accounts.balance()}
           </span>
-          <div className="font-bold text-lg">
+          <div className="text-lg font-bold">
             {formatCurrency(account.balance)}
             {' '}
-            <span className="text-sm font-normal text-muted-foreground">
+            <span className="text-muted-foreground text-sm font-normal">
               FCFA
             </span>
           </div>

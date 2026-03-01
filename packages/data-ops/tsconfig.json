@@ -1,6 +1,10 @@
 {
+  "extends": "@workspace/typescript-config/vite-react-library.json",
   "compilerOptions": {
+    "target": "ESNext",
     "baseUrl": ".",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "@repo/data-ops/*": ["./src/*"]
     },
@@ -10,14 +14,7 @@
     "declarationMap": false,
     "noEmit": false,
     "outDir": "./dist",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "target": "ESNext",
-    "jsx": "react-jsx",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "skipLibCheck": true
   },
   "include": ["**/*.ts", "**/*.tsx", "scripts/listUsers.mjs"]
 }

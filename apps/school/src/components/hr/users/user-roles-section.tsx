@@ -19,15 +19,22 @@ export function UserRolesSection({ form, isPending }: UserRolesSectionProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="rounded-xl border border-border/40 bg-card/50 backdrop-blur-xl p-8 shadow-sm"
+      className="
+        border-border/40 bg-card/50 rounded-xl border p-8 shadow-sm
+        backdrop-blur-xl
+      "
     >
-      <div className="flex items-center gap-2 mb-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+      <div className="mb-2 flex items-center gap-2">
+        <div className="
+          bg-primary/10 text-primary flex h-8 w-8 items-center justify-center
+          rounded-lg
+        "
+        >
           <IconShield className="h-4 w-4" />
         </div>
-        <h2 className="text-xl font-serif font-semibold">{t.hr.users.roleAssignment()}</h2>
+        <h2 className="font-serif text-xl font-semibold">{t.hr.users.roleAssignment()}</h2>
       </div>
-      <p className="mb-8 text-sm text-muted-foreground leading-relaxed">
+      <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
         {t.hr.users.roleAssignmentDescription()}
         {' '}
         (

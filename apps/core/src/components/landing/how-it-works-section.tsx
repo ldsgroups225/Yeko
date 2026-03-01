@@ -24,38 +24,70 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section className="py-24 sm:py-32 bg-muted/30">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <section className="
+      bg-muted/30 py-24
+      sm:py-32
+    "
+    >
+      <div className="
+        mx-auto max-w-7xl px-6
+        lg:px-8
+      "
+      >
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+          <h2 className="
+            text-foreground text-3xl font-bold tracking-tight
+            sm:text-4xl
+          "
+          >
             Get Started in 3 Simple Steps
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="text-muted-foreground mt-4 text-lg">
             From signup to full operation in less than a week
           </p>
         </div>
 
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div className="
+          mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8
+          lg:mx-0 lg:max-w-none lg:grid-cols-3
+        "
+        >
           {steps.map((step, index) => {
             const IconComponent = step.icon
             return (
               <div key={step.title} className="relative">
                 {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent -translate-x-1/2" />
+                  <div className="
+                    from-primary/50 absolute top-16 left-full hidden h-0.5
+                    w-full -translate-x-1/2 bg-gradient-to-r to-transparent
+                    lg:block
+                  "
+                  />
                 )}
-                <Card className="relative overflow-hidden border-2 hover:shadow-xl transition-all duration-300">
+                <Card className="
+                  relative overflow-hidden border-2 transition-all duration-300
+                  hover:shadow-xl
+                "
+                >
                   <CardContent className="p-8">
-                    <div className="absolute top-4 right-4 text-6xl font-bold text-primary/5">
+                    <div className="
+                      text-primary/5 absolute top-4 right-4 text-6xl font-bold
+                    "
+                    >
                       {step.step}
                     </div>
-                    <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground mb-6">
+                    <div className="
+                      bg-primary text-primary-foreground mb-6 flex h-14 w-14
+                      items-center justify-center rounded-xl
+                    "
+                    >
                       <IconComponent className="h-7 w-7" />
                     </div>
-                    <div className="text-sm font-semibold text-primary mb-2">
+                    <div className="text-primary mb-2 text-sm font-semibold">
                       Step
                       {step.step}
                     </div>
-                    <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
+                    <h3 className="mb-3 text-xl font-semibold">{step.title}</h3>
                     <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                   </CardContent>
                 </Card>

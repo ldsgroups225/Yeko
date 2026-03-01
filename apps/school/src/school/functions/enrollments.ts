@@ -1,9 +1,11 @@
 import { Result as R } from '@praha/byethrow'
 import * as enrollmentQueries from '@repo/data-ops/queries/enrollments'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
+import { databaseLogger } from '@repo/logger'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
+import { autoAssignFeesForEnrollment } from './fee-calculation/auto-assign'
 
 // ==================== Schemas ====================
 
@@ -116,7 +118,23 @@ export const confirmEnrollment = authServerFn
       recordId: id,
       newValues: { status: 'confirmed' },
     })
-    return { success: true as const, data: _result4.value }
+
+    const enrollment = _result4.value
+    const feeResult = await autoAssignFeesForEnrollment({
+      studentId: enrollment.studentId,
+      schoolId,
+      schoolYearId: enrollment.schoolYearId,
+      userId,
+    })
+    if (!feeResult.success) {
+      databaseLogger.warning(`Auto fee assignment failed for enrollment ${id}: ${feeResult.error}`)
+    }
+
+    return {
+      success: true as const,
+      data: enrollment,
+      feeAssignment: feeResult,
+    }
   })
 
 export const cancelEnrollment = authServerFn

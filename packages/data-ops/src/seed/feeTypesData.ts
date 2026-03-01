@@ -22,7 +22,7 @@ export const feeTypesData: FeeTypeData[] = [
   },
   {
     code: 'REGISTRATION',
-    name: "Frais d'inscription",
+    name: 'Frais d\'inscription',
     nameEn: 'Registration Fee',
     category: 'registration',
     displayOrder: 2,
@@ -31,7 +31,7 @@ export const feeTypesData: FeeTypeData[] = [
   },
   {
     code: 'EXAM',
-    name: "Frais d'examen",
+    name: 'Frais d\'examen',
     nameEn: 'Exam Fee',
     category: 'exam',
     displayOrder: 3,

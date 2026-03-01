@@ -136,7 +136,11 @@ export function TransferDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] backdrop-blur-xl bg-card/95 border-border/40">
+      <DialogContent className="
+        bg-card/95 border-border/40 backdrop-blur-xl
+        sm:max-w-[500px]
+      "
+      >
         <DialogHeader>
           <DialogTitle>{t.students.transferStudent()}</DialogTitle>
           <DialogDescription>
