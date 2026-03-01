@@ -147,7 +147,7 @@ pre-push:
   parallel: true
   jobs:
     - name: Full ESLint Check
-      run: pnpm lint:check
+      run: pnpm lint:ci
       fail_text: Fix lint errors before pushing
     - name: Full TypeScript Check
       run: pnpm typecheck
