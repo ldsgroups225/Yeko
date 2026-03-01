@@ -35,4 +35,10 @@ const authenticatedMiddleware = createMiddleware().server(async ({ next }) => {
   })
 })
 
-export const authServerFn = createServerFn().middleware([authenticatedMiddleware]) as any
+const authServerBuilder = createServerFn({
+  method: 'POST' as const,
+})
+
+type AuthServerFn = ReturnType<typeof authServerBuilder.middleware<[typeof authenticatedMiddleware]>>
+
+export const authServerFn: AuthServerFn = authServerBuilder.middleware([authenticatedMiddleware])

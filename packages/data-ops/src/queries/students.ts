@@ -376,10 +376,15 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
 
           return `${prefix}${year}0001`
         }
-        catch (insertError: any) {
+        catch (insertError) {
           // Check for unique constraint violation (Postgres error code 23505)
           // This happens if another request inserted the sequence between our update attempt and insert attempt.
-          if (insertError.code === '23505') {
+          if (
+            typeof insertError === 'object'
+            && insertError !== null
+            && 'code' in insertError
+            && insertError.code === '23505'
+          ) {
             // Retry the update one more time as the record now exists
             const [retrySequence] = await db
               .update(matriculeSequences)
