@@ -154,7 +154,7 @@ function CoefficientsMatrix({
       <h3>Vue Matrice</h3>
       <p>Cliquez sur un coefficient pour le modifier</p>
 
-      <div className="flex gap-2 mb-4">
+      <div className="mb-4 flex gap-2">
         {onCopyFromPreviousYear && (
           <button type="button" onClick={onCopyFromPreviousYear} data-testid="copy-from-previous">
             Copy from Previous Year
@@ -189,9 +189,9 @@ function CoefficientsMatrix({
         <table className="w-full border-collapse" data-testid="matrix-table">
           <thead>
             <tr className="border-b">
-              <th className="text-left p-3 bg-muted sticky left-0 z-10">Matière</th>
+              <th className="bg-muted sticky left-0 z-10 p-3 text-left">Matière</th>
               {grades?.map(grade => (
-                <th key={grade.id} className="text-center p-3 bg-muted min-w-24">
+                <th key={grade.id} className="bg-muted min-w-24 p-3 text-center">
                   {grade.name}
                 </th>
               ))}
@@ -200,13 +200,16 @@ function CoefficientsMatrix({
           <tbody>
             {Object.entries(matrixData).map(([subjectName, gradeCoefs], index) => (
               <tr key={subjectName} className={index % 2 === 0 ? 'bg-muted/30' : ''} data-testid={`matrix-row-${subjectName}`}>
-                <td className="font-medium p-3 border-r sticky left-0 bg-background">
+                <td className="
+                  bg-background sticky left-0 border-r p-3 font-medium
+                "
+                >
                   {subjectName}
                 </td>
                 {grades?.map((grade) => {
                   const coef = gradeCoefs[grade.name]
                   return (
-                    <td key={grade.id} className="text-center p-3" data-testid={`matrix-cell-${subjectName}-${grade.name}`}>
+                    <td key={grade.id} className="p-3 text-center" data-testid={`matrix-cell-${subjectName}-${grade.name}`}>
                       {coef
                         ? (
                             <div className="flex flex-col items-center gap-1">
@@ -214,13 +217,24 @@ function CoefficientsMatrix({
                                 type="number"
                                 value={editingCells[coef.id] ?? coef.weight}
                                 onChange={e => onCellEdit?.(coef.id, Number.parseInt(e.target.value))}
-                                className={`w-16 mx-auto text-center ${coef.weight === 0 ? 'border-secondary' : ''}`}
+                                className={`
+                                  mx-auto w-16 text-center
+                                  ${coef.weight === 0
+                              ? `border-secondary`
+                              : ''}
+                                `}
                                 min={0}
                                 max={99}
                                 data-testid={`coefficient-input-${coef.id}`}
                               />
                               {coef.weight === 0 && (
-                                <div className="flex items-center gap-1 text-xs text-secondary" data-testid={`zero-warning-${coef.id}`}>
+                                <div
+                                  className="
+                                    text-secondary flex items-center gap-1
+                                    text-xs
+                                  "
+                                  data-testid={`zero-warning-${coef.id}`}
+                                >
                                   <span className="icon-warning">⚠</span>
                                   <span>Coef 0</span>
                                 </div>

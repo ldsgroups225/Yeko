@@ -50,7 +50,7 @@ function StudentNotesPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">{LL.notes.title()}</h1>
         <Button size="sm">
-          <IconPlus className="w-4 h-4 mr-2" />
+          <IconPlus className="mr-2 h-4 w-4" />
           {LL.notes.add()}
         </Button>
       </div>
@@ -71,23 +71,23 @@ function StudentNotesPage() {
               )
             : (
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-destructive/10 rounded-lg">
-                    <p className="text-2xl font-bold text-destructive">
+                  <div className="bg-destructive/10 rounded-lg p-4 text-center">
+                    <p className="text-destructive text-2xl font-bold">
                       {summary?.summary?.behaviorCount ?? 0}
                     </p>
-                    <p className="text-sm text-destructive/80">{LL.notes.behavior()}</p>
+                    <p className="text-destructive/80 text-sm">{LL.notes.behavior()}</p>
                   </div>
-                  <div className="text-center p-4 bg-secondary/10 rounded-lg">
-                    <p className="text-2xl font-bold text-secondary">
+                  <div className="bg-secondary/10 rounded-lg p-4 text-center">
+                    <p className="text-secondary text-2xl font-bold">
                       {summary?.summary?.academicCount ?? 0}
                     </p>
-                    <p className="text-sm text-secondary/80">{LL.notes.academic()}</p>
+                    <p className="text-secondary/80 text-sm">{LL.notes.academic()}</p>
                   </div>
-                  <div className="text-center p-4 bg-accent/10 rounded-lg">
-                    <p className="text-2xl font-bold text-accent-foreground">
+                  <div className="bg-accent/10 rounded-lg p-4 text-center">
+                    <p className="text-accent-foreground text-2xl font-bold">
                       {summary?.summary?.highPriorityCount ?? 0}
                     </p>
-                    <p className="text-sm text-accent-foreground/80">{LL.notes.priority()}</p>
+                    <p className="text-accent-foreground/80 text-sm">{LL.notes.priority()}</p>
                   </div>
                 </div>
               )}
@@ -110,25 +110,25 @@ function StudentNotesPage() {
               )
             : notes?.notes?.length === 0
               ? (
-                  <p className="text-center text-muted-foreground py-8">
+                  <p className="text-muted-foreground py-8 text-center">
                     {LL.notes.noNotes()}
                   </p>
                 )
               : (
                   <div className="space-y-3">
                     {notes?.notes?.map((note: { id: string, title: string, content: string, type: string, priority: string, createdAt: Date }) => (
-                      <div key={note.id} className="p-4 border rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
+                      <div key={note.id} className="rounded-lg border p-4">
+                        <div className="mb-2 flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             {note.type === 'behavior' && (
                               <Badge variant="destructive">
-                                <IconAlertTriangle className="w-3 h-3 mr-1" />
+                                <IconAlertTriangle className="mr-1 h-3 w-3" />
                                 {LL.notes.types.behavior()}
                               </Badge>
                             )}
                             {note.type === 'academic' && (
                               <Badge variant="secondary">
-                                <IconInfoCircle className="w-3 h-3 mr-1" />
+                                <IconInfoCircle className="mr-1 h-3 w-3" />
                                 {LL.notes.types.academic()}
                               </Badge>
                             )}
@@ -140,12 +140,12 @@ function StudentNotesPage() {
                                 )
                               : null}
                           </div>
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-muted-foreground text-sm">
                             {new Date(note.createdAt).toLocaleDateString()}
                           </span>
                         </div>
                         <p className="font-medium">{note.title}</p>
-                        <p className="text-sm text-muted-foreground">{note.content}</p>
+                        <p className="text-muted-foreground text-sm">{note.content}</p>
                       </div>
                     ))}
                   </div>

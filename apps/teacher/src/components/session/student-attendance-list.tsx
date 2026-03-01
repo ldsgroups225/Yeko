@@ -45,17 +45,26 @@ export function StudentAttendanceList({
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex gap-2 text-sm">
-          <Badge variant="outline" className="bg-success/10 text-success border-success/20">
+          <Badge
+            variant="outline"
+            className="bg-success/10 text-success border-success/20"
+          >
             {stats.present}
             {' '}
             P
           </Badge>
-          <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20">
+          <Badge
+            variant="outline"
+            className="bg-destructive/10 text-destructive border-destructive/20"
+          >
             {stats.absent}
             {' '}
             A
           </Badge>
-          <Badge variant="outline" className="bg-warning/10 text-warning border-warning/20">
+          <Badge
+            variant="outline"
+            className="bg-warning/10 text-warning border-warning/20"
+          >
             {stats.late}
             {' '}
             R
@@ -73,7 +82,12 @@ export function StudentAttendanceList({
           return (
             <div
               key={student.id}
-              className={`rounded-lg border p-3 transition-colors ${status === 'absent' ? 'bg-destructive/5' : 'bg-card'}`}
+              className={`
+                rounded-lg border p-3 transition-colors
+                ${status === 'absent'
+              ? `bg-destructive/5`
+              : `bg-card`}
+              `}
             >
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10">
@@ -89,18 +103,26 @@ export function StudentAttendanceList({
                     {' '}
                     {student.firstName}
                   </p>
-                  <p className="text-xs text-muted-foreground">{student.matricule}</p>
+                  <p className="text-muted-foreground text-xs">{student.matricule}</p>
                 </div>
 
                 <div className="flex gap-1">
                   <Button
                     size="icon"
                     variant={status === 'present' ? 'default' : 'outline'}
-                    className={`h-8 w-8 ${status === 'present' ? 'bg-success hover:bg-success/90' : ''}`}
+                    className={`
+                      h-8 w-8
+                      ${status === 'present'
+              ? `
+                bg-success
+                hover:bg-success/90
+              `
+              : ''}
+                    `}
                     onClick={() => onStatusChange(student.id, 'present')}
                     title={LL.attendance.present()}
                   >
-                    <IconCheck className="w-4 h-4" />
+                    <IconCheck className="h-4 w-4" />
                   </Button>
                   <Button
                     size="icon"
@@ -109,16 +131,24 @@ export function StudentAttendanceList({
                     onClick={() => onStatusChange(student.id, 'absent')}
                     title={LL.attendance.absent()}
                   >
-                    <IconX className="w-4 h-4" />
+                    <IconX className="h-4 w-4" />
                   </Button>
                   <Button
                     size="icon"
                     variant={status === 'late' ? 'secondary' : 'outline'}
-                    className={`h-8 w-8 ${status === 'late' ? 'bg-warning/10 text-warning hover:bg-warning/20' : ''}`}
+                    className={`
+                      h-8 w-8
+                      ${status === 'late'
+              ? `
+                bg-warning/10 text-warning
+                hover:bg-warning/20
+              `
+              : ''}
+                    `}
                     onClick={() => onStatusChange(student.id, 'late')}
                     title={LL.attendance.late()}
                   >
-                    <IconClock className="w-4 h-4" />
+                    <IconClock className="h-4 w-4" />
                   </Button>
                 </div>
               </div>

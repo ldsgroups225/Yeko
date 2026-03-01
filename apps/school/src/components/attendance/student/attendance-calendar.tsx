@@ -28,7 +28,11 @@ export function AttendanceCalendar({
       onMonthChange={onMonthChange}
       attendanceData={attendanceData}
     >
-      <Card className="overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+      <Card className="
+        border-border/40 bg-card/30 overflow-hidden rounded-3xl shadow-2xl
+        backdrop-blur-xl
+      "
+      >
         <AttendanceCalendarHeader />
         <CardContent className="p-6">
           <AttendanceCalendarGrid />

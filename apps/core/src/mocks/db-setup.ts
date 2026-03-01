@@ -1,3 +1,4 @@
+import type { Mock } from 'vitest'
 import { vi } from 'vitest'
 
 const queryResult = [
@@ -48,4 +49,4 @@ export const getDb = vi.fn(() => {
   return db
 })
 
-export const initDatabase = vi.fn()
+export const initDatabase = vi.fn() as Mock

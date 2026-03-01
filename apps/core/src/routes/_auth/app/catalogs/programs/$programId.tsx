@@ -215,13 +215,17 @@ function ProgramDetails() {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Skeleton className="h-10 w-10 rounded" />
-          <div className="space-y-2 flex-1">
+          <Skeleton className="h-10 w-10 rounded-sm" />
+          <div className="flex-1 space-y-2">
             <Skeleton className="h-8 w-96" />
             <Skeleton className="h-4 w-64" />
           </div>
         </div>
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="
+          grid gap-4
+          md:grid-cols-3
+        "
+        >
           {Array.from({ length: 3 }).map(() => (
             <Card key={generateUUID()}>
               <CardHeader>
@@ -239,8 +243,8 @@ function ProgramDetails() {
 
   if (!program) {
     return (
-      <div className="text-center py-12">
-        <IconBook className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+      <div className="py-12 text-center">
+        <IconBook className="text-muted-foreground mx-auto mb-4 h-12 w-12" />
         <h3 className="text-lg font-medium">Programme non trouvé</h3>
         <p className="text-muted-foreground mb-4">Le programme demandé n'existe pas.</p>
         <Button onClick={() => navigate({ to: '/app/catalogs/programs' })}>
@@ -269,7 +273,7 @@ function ProgramDetails() {
               onValueChange={val => handleStatusChange(val as 'draft' | 'published' | 'archived')}
               disabled={publishMutation.isPending || updateProgramMutation.isPending}
             >
-              <SelectTrigger className="w-[140px] h-8">
+              <SelectTrigger className="h-8 w-[140px]">
                 <SelectValue placeholder="Statut">
                   {program.status === 'draft' && 'Brouillon'}
                   {program.status === 'published' && 'Publié'}
@@ -283,7 +287,7 @@ function ProgramDetails() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center gap-2 mt-1 text-muted-foreground">
+          <div className="text-muted-foreground mt-1 flex items-center gap-2">
             <span>{program.subject?.name}</span>
             <span>•</span>
             <span>{program.grade?.name}</span>
@@ -293,55 +297,68 @@ function ProgramDetails() {
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setShowHistory(true)}>
-            <IconHistory className="h-4 w-4 mr-2" />
+            <IconHistory className="mr-2 h-4 w-4" />
             Historique
           </Button>
           <Button variant="outline" onClick={() => setShowImport(true)}>
-            <IconUpload className="h-4 w-4 mr-2" />
+            <IconUpload className="mr-2 h-4 w-4" />
             Importer
           </Button>
           <Button onClick={() => setIsCreatingChapter(true)}>
-            <IconPlus className="h-4 w-4 mr-2" />
+            <IconPlus className="mr-2 h-4 w-4" />
             Ajouter
           </Button>
         </div>
       </div>
 
       {/* Stats */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="
+        grid gap-4
+        md:grid-cols-3
+      "
+      >
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Chapitres</CardTitle>
-            <IconFileText className="h-4 w-4 text-muted-foreground" />
+            <IconFileText className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{chapters?.length || 0}</div>
-            <p className="text-xs text-muted-foreground">Total chapitres</p>
+            <p className="text-muted-foreground text-xs">Total chapitres</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Durée Totale</CardTitle>
-            <IconClock className="h-4 w-4 text-muted-foreground" />
+            <IconClock className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {totalDuration}
               h
             </div>
-            <p className="text-xs text-muted-foreground">Heures de cours</p>
+            <p className="text-muted-foreground text-xs">Heures de cours</p>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="
+            flex flex-row items-center justify-between space-y-0 pb-2
+          "
+          >
             <CardTitle className="text-sm font-medium">Année Scolaire</CardTitle>
-            <IconCalendar className="h-4 w-4 text-muted-foreground" />
+            <IconCalendar className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{program.schoolYearTemplate?.name}</div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {program.schoolYearTemplate?.isActive ? 'Active' : 'Inactive'}
             </p>
           </CardContent>
@@ -375,7 +392,11 @@ function ProgramDetails() {
                   rows={4}
                 />
               </div>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="
+                grid gap-4
+                md:grid-cols-2
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="chapter-order">Ordre *</Label>
                   <Input
@@ -400,11 +421,11 @@ function ProgramDetails() {
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsCreatingChapter(false)}>
-                  <IconX className="h-4 w-4 mr-2" />
+                  <IconX className="mr-2 h-4 w-4" />
                   Annuler
                 </Button>
                 <Button type="submit" disabled={createChapterMutation.isPending}>
-                  <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                  <IconDeviceFloppy className="mr-2 h-4 w-4" />
                   {createChapterMutation.isPending ? 'Création...' : 'Créer'}
                 </Button>
               </div>
@@ -424,14 +445,17 @@ function ProgramDetails() {
         <CardContent>
           {!chapters || chapters.length === 0
             ? (
-                <div className="text-center py-8">
-                  <IconFileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <div className="py-8 text-center">
+                  <IconFileText className="
+                    text-muted-foreground mx-auto mb-4 h-12 w-12
+                  "
+                  />
                   <h3 className="text-lg font-medium">Aucun chapitre</h3>
                   <p className="text-muted-foreground mb-4">
                     Commencez par ajouter le premier chapitre de ce programme.
                   </p>
                   <Button onClick={() => setIsCreatingChapter(true)}>
-                    <IconPlus className="h-4 w-4 mr-2" />
+                    <IconPlus className="mr-2 h-4 w-4" />
                     Ajouter un Chapitre
                   </Button>
                 </div>
@@ -453,7 +477,7 @@ function ProgramDetails() {
                             ? (
                                 <form
                                   onSubmit={e => handleUpdateChapter(e, chapter.id)}
-                                  className="border rounded-lg p-4 space-y-4"
+                                  className="space-y-4 rounded-lg border p-4"
                                 >
                                   <div className="space-y-2">
                                     <Label htmlFor={`edit-title-${chapter.id}`}>Titre *</Label>
@@ -473,7 +497,11 @@ function ProgramDetails() {
                                       rows={4}
                                     />
                                   </div>
-                                  <div className="grid gap-4 md:grid-cols-2">
+                                  <div className="
+                                    grid gap-4
+                                    md:grid-cols-2
+                                  "
+                                  >
                                     <div className="space-y-2">
                                       <Label htmlFor={`edit-order-${chapter.id}`}>Ordre *</Label>
                                       <Input
@@ -502,33 +530,57 @@ function ProgramDetails() {
                                       variant="outline"
                                       onClick={() => setEditingChapter(null)}
                                     >
-                                      <IconX className="h-4 w-4 mr-2" />
+                                      <IconX className="mr-2 h-4 w-4" />
                                       Annuler
                                     </Button>
                                     <Button type="submit" disabled={updateChapterMutation.isPending}>
-                                      <IconDeviceFloppy className="h-4 w-4 mr-2" />
+                                      <IconDeviceFloppy className="mr-2 h-4 w-4" />
                                       {updateChapterMutation.isPending ? 'Enregistrement...' : 'Enregistrer'}
                                     </Button>
                                   </div>
                                 </form>
                               )
                             : (
-                                <div className="flex items-start justify-between p-4 border rounded-lg hover:bg-accent/50 transition-colors">
-                                  <div className="flex items-start gap-4 flex-1">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 shrink-0">
-                                      <span className="text-sm font-semibold text-primary">{chapter.order}</span>
+                                <div className="
+                                  hover:bg-accent/50
+                                  flex items-start justify-between rounded-lg
+                                  border p-4 transition-colors
+                                "
+                                >
+                                  <div className="flex flex-1 items-start gap-4">
+                                    <div className="
+                                      bg-primary/10 flex h-10 w-10 shrink-0
+                                      items-center justify-center rounded-lg
+                                    "
+                                    >
+                                      <span className="
+                                        text-primary text-sm font-semibold
+                                      "
+                                      >
+                                        {chapter.order}
+                                      </span>
                                     </div>
                                     <div className="flex-1">
                                       <h3 className="font-semibold">{chapter.title}</h3>
                                       {chapter.objectives && (
-                                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                        <p className="
+                                          text-muted-foreground mt-1
+                                          line-clamp-2 text-sm
+                                        "
+                                        >
                                           {chapter.objectives}
                                         </p>
                                       )}
-                                      <div className="flex items-center gap-2 mt-2">
+                                      <div className="
+                                        mt-2 flex items-center gap-2
+                                      "
+                                      >
                                         {chapter.durationHours && (
-                                          <Badge variant="outline" className="text-xs">
-                                            <IconClock className="h-3 w-3 mr-1" />
+                                          <Badge
+                                            variant="outline"
+                                            className="text-xs"
+                                          >
+                                            <IconClock className="mr-1 h-3 w-3" />
                                             {chapter.durationHours}
                                             h
                                           </Badge>
@@ -565,8 +617,15 @@ function ProgramDetails() {
 
       {/* History Dialog */}
       {showHistory && (
-        <Card className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-background border rounded-lg shadow-lg">
+        <Card className="
+          bg-background/80 fixed inset-0 z-50 flex items-center justify-center
+          overflow-y-auto p-4 backdrop-blur-sm
+        "
+        >
+          <div className="
+            bg-background w-full max-w-2xl rounded-lg border shadow-lg
+          "
+          >
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>Historique des Versions</CardTitle>
@@ -579,23 +638,29 @@ function ProgramDetails() {
             <CardContent>
               {!versions || versions.length === 0
                 ? (
-                    <div className="text-center py-8 text-muted-foreground">
+                    <div className="text-muted-foreground py-8 text-center">
                       Aucune version disponible. Publiez le programme pour créer une version.
                     </div>
                   )
                 : (
                     <div className="space-y-4">
                       {versions.map(version => (
-                        <div key={version.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div
+                          key={version.id}
+                          className="
+                            flex items-center justify-between rounded-lg border
+                            p-4
+                          "
+                        >
                           <div>
                             <div className="font-semibold">
                               Version
                               {version.versionNumber}
                             </div>
-                            <div className="text-sm text-muted-foreground">
+                            <div className="text-muted-foreground text-sm">
                               {new Date(version.createdAt).toLocaleString()}
                             </div>
-                            <div className="text-xs text-muted-foreground mt-1">
+                            <div className="text-muted-foreground mt-1 text-xs">
                               {version.snapshotData.chapters?.length || 0}
                               {' '}
                               chapitres
@@ -620,8 +685,15 @@ function ProgramDetails() {
 
       {/* Import Dialog */}
       {showImport && (
-        <Card className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg bg-background border rounded-lg shadow-lg">
+        <Card className="
+          bg-background/80 fixed inset-0 z-50 flex items-center justify-center
+          p-4 backdrop-blur-sm
+        "
+        >
+          <div className="
+            bg-background w-full max-w-lg rounded-lg border shadow-lg
+          "
+          >
             <CardHeader>
               <CardTitle>Importer des Chapitres</CardTitle>
               <CardDescription>Collez le contenu CSV (Titre, Objectifs, Durée)</CardDescription>

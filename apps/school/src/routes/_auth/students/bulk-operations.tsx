@@ -32,12 +32,16 @@ function BulkOperationsPage() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="
+        grid gap-6
+        md:grid-cols-2
+      "
+      >
         <StudentImportCard />
         <BulkEnrollmentCard />
         <BulkFeeAssignmentCard />
 
-        <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+        <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <IconRefresh className="h-5 w-5" />
@@ -48,7 +52,7 @@ function BulkOperationsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {t.common.comingSoon()}
             </p>
           </CardContent>

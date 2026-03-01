@@ -120,37 +120,92 @@ function UserManagement() {
   const meta = userData?.meta
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div className="animate-in fade-in space-y-8 duration-700">
+      <div className="
+        flex flex-col justify-between gap-4
+        md:flex-row md:items-center
+      "
+      >
         <div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter bg-linear-to-br from-foreground via-foreground to-foreground/40 bg-clip-text text-transparent">
+          <h1 className="
+            from-foreground via-foreground to-foreground/40 bg-linear-to-br
+            bg-clip-text text-4xl font-black tracking-tighter text-transparent
+            md:text-5xl
+          "
+          >
             {t.users.title()}
           </h1>
-          <p className="text-muted-foreground/80 mt-2 text-lg font-medium max-w-2xl">
+          <p className="
+            text-muted-foreground/80 mt-2 max-w-2xl text-lg font-medium
+          "
+          >
             {t.users.subtitle()}
           </p>
         </div>
 
-        <div className="relative w-full md:w-96 group">
-          <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-colors group-focus-within:text-primary" />
+        <div className="
+          group relative w-full
+          md:w-96
+        "
+        >
+          <IconSearch className="
+            text-muted-foreground
+            group-focus-within:text-primary
+            absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 transition-colors
+          "
+          />
           <Input
             placeholder={t.users.search()}
-            className="pl-12 h-12 rounded-full bg-background/50 border-border/40 focus:ring-primary/20 transition-all font-medium shadow-sm"
+            className="
+              bg-background/50 border-border/40
+              focus:ring-primary/20
+              h-12 rounded-full pl-12 font-medium shadow-sm transition-all
+            "
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
       </div>
 
-      <Card className="border-border/40 bg-background/40 backdrop-blur-xl shadow-2xl rounded-[2.5rem] overflow-hidden">
+      <Card className="
+        border-border/40 bg-background/40 overflow-hidden rounded-[2.5rem]
+        shadow-2xl backdrop-blur-xl
+      "
+      >
         <Table>
-          <TableHeader className="bg-muted/30 border-b border-border/20">
+          <TableHeader className="bg-muted/30 border-border/20 border-b">
             <TableRow className="hover:bg-transparent">
-              <TableHead className="w-[300px] h-14 font-black uppercase tracking-widest text-[10px]">{t.users.table.user()}</TableHead>
-              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">{t.users.table.status()}</TableHead>
-              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">{t.users.table.roles()}</TableHead>
-              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px]">{t.users.table.activity()}</TableHead>
-              <TableHead className="h-14 font-black uppercase tracking-widest text-[10px] text-right pr-8">{t.users.table.actions()}</TableHead>
+              <TableHead className="
+                h-14 w-[300px] text-[10px] font-black tracking-widest uppercase
+              "
+              >
+                {t.users.table.user()}
+              </TableHead>
+              <TableHead className="
+                h-14 text-[10px] font-black tracking-widest uppercase
+              "
+              >
+                {t.users.table.status()}
+              </TableHead>
+              <TableHead className="
+                h-14 text-[10px] font-black tracking-widest uppercase
+              "
+              >
+                {t.users.table.roles()}
+              </TableHead>
+              <TableHead className="
+                h-14 text-[10px] font-black tracking-widest uppercase
+              "
+              >
+                {t.users.table.activity()}
+              </TableHead>
+              <TableHead className="
+                h-14 pr-8 text-right text-[10px] font-black tracking-widest
+                uppercase
+              "
+              >
+                {t.users.table.actions()}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -159,8 +214,16 @@ function UserManagement() {
                   <TableRow>
                     <TableCell colSpan={5} className="h-64 text-center">
                       <div className="flex flex-col items-center gap-2">
-                        <IconLoader2 className="h-8 w-8 animate-spin text-primary" />
-                        <span className="text-sm font-bold text-muted-foreground">{t.users.syncing()}</span>
+                        <IconLoader2 className="
+                          text-primary h-8 w-8 animate-spin
+                        "
+                        />
+                        <span className="
+                          text-muted-foreground text-sm font-bold
+                        "
+                        >
+                          {t.users.syncing()}
+                        </span>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -170,30 +233,65 @@ function UserManagement() {
                     <TableRow>
                       <TableCell colSpan={5} className="h-64 text-center">
                         <div className="flex flex-col items-center gap-4">
-                          <div className="p-4 rounded-full bg-muted/20">
-                            <IconUser className="h-12 w-12 text-muted-foreground/30" />
+                          <div className="bg-muted/20 rounded-full p-4">
+                            <IconUser className="
+                              text-muted-foreground/30 h-12 w-12
+                            "
+                            />
                           </div>
                           <div className="space-y-1">
-                            <h3 className="font-bold text-xl">{t.users.none()}</h3>
-                            <p className="text-muted-foreground text-sm max-w-xs mx-auto">{t.users.noneDescription()}</p>
+                            <h3 className="text-xl font-bold">{t.users.none()}</h3>
+                            <p className="
+                              text-muted-foreground mx-auto max-w-xs text-sm
+                            "
+                            >
+                              {t.users.noneDescription()}
+                            </p>
                           </div>
                         </div>
                       </TableCell>
                     </TableRow>
                   )
                 : (users as (User & { systemRoles?: string[] })[]).map(user => (
-                    <TableRow key={user.id} className="group hover:bg-primary/5 transition-all">
+                    <TableRow
+                      key={user.id}
+                      className="
+                        group
+                        hover:bg-primary/5
+                        transition-all
+                      "
+                    >
                       <TableCell className="pl-6">
                         <div className="flex items-center gap-4">
-                          <Avatar className="h-12 w-12 ring-2 ring-primary/5 group-hover:ring-primary/20 transition-all shadow-sm">
+                          <Avatar className="
+                            ring-primary/5
+                            group-hover:ring-primary/20
+                            h-12 w-12 shadow-sm ring-2 transition-all
+                          "
+                          >
                             <AvatarImage src={user.avatarUrl || undefined} />
-                            <AvatarFallback className="bg-linear-to-br from-primary/20 to-primary/5 text-primary font-black text-lg">
+                            <AvatarFallback className="
+                              from-primary/20 to-primary/5 text-primary
+                              bg-linear-to-br text-lg font-black
+                            "
+                            >
                               {user.name?.charAt(0) || 'U'}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex flex-col">
-                            <span className="font-black text-base tracking-tight leading-none group-hover:text-primary transition-colors">{user.name}</span>
-                            <span className="text-xs text-muted-foreground/60 mt-2 flex items-center gap-1.5 font-medium">
+                            <span className="
+                              group-hover:text-primary
+                              text-base leading-none font-black tracking-tight
+                              transition-colors
+                            "
+                            >
+                              {user.name}
+                            </span>
+                            <span className="
+                              text-muted-foreground/60 mt-2 flex items-center
+                              gap-1.5 text-xs font-medium
+                            "
+                            >
                               <IconMail size={14} className="opacity-50" />
                               {user.email}
                             </span>
@@ -203,7 +301,16 @@ function UserManagement() {
                       <TableCell>
                         <Badge
                           variant={user.status === 'active' ? 'default' : 'secondary'}
-                          className={`capitalize rounded-lg px-2.5 py-1 text-[10px] font-bold ${user.status === 'active' ? 'bg-success/10 text-success border-success/20 hover:bg-success/20' : 'bg-muted text-muted-foreground'}`}
+                          className={`
+                            rounded-lg px-2.5 py-1 text-[10px] font-bold
+                            capitalize
+                            ${user.status === 'active'
+                      ? `
+                        bg-success/10 text-success border-success/20
+                        hover:bg-success/20
+                      `
+                      : `bg-muted text-muted-foreground`}
+                          `}
                         >
                           {user.status === 'active' ? t.status.active() : t.status.inactive()}
                         </Badge>
@@ -213,31 +320,56 @@ function UserManagement() {
                           {user.systemRoles && user.systemRoles.length > 0
                             ? (
                                 user.systemRoles.map((role: string) => (
-                                  <Badge key={role} variant="outline" className="bg-primary/5 border-primary/20 text-primary text-[10px] font-black uppercase tracking-tighter px-2 py-0.5 rounded-md shadow-xs">
+                                  <Badge
+                                    key={role}
+                                    variant="outline"
+                                    className="
+                                      bg-primary/5 border-primary/20
+                                      text-primary rounded-md px-2 py-0.5
+                                      text-[10px] font-black tracking-tighter
+                                      uppercase shadow-xs
+                                    "
+                                  >
                                     {role}
                                   </Badge>
                                 ))
                               )
                             : (
-                                <span className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-widest italic">Visiteur</span>
+                                <span className="
+                                  text-muted-foreground/40 text-[10px] font-bold
+                                  tracking-widest uppercase italic
+                                "
+                                >
+                                  Visiteur
+                                </span>
                               )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm font-medium text-muted-foreground/80">
+                      <TableCell className="
+                        text-muted-foreground/80 text-sm font-medium
+                      "
+                      >
                         {user.lastLoginAt
                           ? (
-                              <div className="flex items-center gap-2 capitalize">
+                              <div className="
+                                flex items-center gap-2 capitalize
+                              "
+                              >
                                 <IconClock size={16} className="text-primary/40" />
                                 {formatDate(user.lastLoginAt, 'MEDIUM')}
                               </div>
                             )
                           : <span className="opacity-40">{t.users.neverLoggedIn()}</span>}
                       </TableCell>
-                      <TableCell className="text-right pr-6">
+                      <TableCell className="pr-6 text-right">
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-10 px-4 rounded-xl hover:bg-primary/10 hover:text-primary transition-all gap-2 font-bold text-xs"
+                          className="
+                            hover:bg-primary/10 hover:text-primary
+                            h-10 gap-2 rounded-xl px-4 text-xs font-bold
+                            transition-all
+                          "
                           onClick={() => handleManageRoles(user)}
                         >
                           <IconShieldCheck size={18} />
@@ -250,8 +382,16 @@ function UserManagement() {
         </Table>
 
         {meta && meta.totalPages > 1 && (
-          <div className="p-4 px-8 border-t border-border/20 flex items-center justify-between bg-muted/5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <div className="
+            border-border/20 bg-muted/5 flex items-center justify-between
+            border-t p-4 px-8
+          "
+          >
+            <span className="
+              text-muted-foreground/60 text-[10px] font-black tracking-widest
+              uppercase
+            "
+            >
               {users.length}
               {' '}
               {t.common.details().toLowerCase()}
@@ -264,7 +404,7 @@ function UserManagement() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-xl h-9 px-4 font-bold border-border/40"
+                className="border-border/40 h-9 rounded-xl px-4 font-bold"
                 disabled={!meta.hasPrev}
                 onClick={() => setPage(page - 1)}
               >
@@ -273,7 +413,7 @@ function UserManagement() {
               <Button
                 variant="outline"
                 size="sm"
-                className="rounded-xl h-9 px-4 font-bold border-border/40"
+                className="border-border/40 h-9 rounded-xl px-4 font-bold"
                 disabled={!meta.hasNext}
                 onClick={() => setPage(page + 1)}
               >
@@ -285,15 +425,47 @@ function UserManagement() {
       </Card>
 
       <Dialog open={isRolesDialogOpen} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-lg sm:max-w-2xl max-h-[90vh] p-0 gap-0 overflow-hidden backdrop-blur-xl bg-card/95 border-border/40 shadow-2xl rounded-3xl">
-          <DialogHeader className="p-5 sm:p-8 bg-linear-to-b from-primary/5 to-transparent border-b border-border/20 sticky top-0 bg-background/80 backdrop-blur-md z-20">
-            <div className="flex items-center gap-3 sm:gap-4">
-              <div className="p-2.5 sm:p-3 rounded-2xl bg-primary/10 text-primary shrink-0">
-                <IconShield className="w-5 h-5 sm:w-6 sm:h-6" />
+        <DialogContent className="
+          bg-card/95 border-border/40 max-h-[90vh] max-w-lg gap-0
+          overflow-hidden rounded-3xl p-0 shadow-2xl backdrop-blur-xl
+          sm:max-w-2xl
+        "
+        >
+          <DialogHeader className="
+            from-primary/5 border-border/20 bg-background/80 sticky top-0 z-20
+            border-b bg-linear-to-b to-transparent p-5 backdrop-blur-md
+            sm:p-8
+          "
+          >
+            <div className="
+              flex items-center gap-3
+              sm:gap-4
+            "
+            >
+              <div className="
+                bg-primary/10 text-primary shrink-0 rounded-2xl p-2.5
+                sm:p-3
+              "
+              >
+                <IconShield className="
+                  h-5 w-5
+                  sm:h-6 sm:w-6
+                "
+                />
               </div>
               <div>
-                <DialogTitle className="text-xl sm:text-2xl font-bold tracking-tight">{t.users.permissionsTitle()}</DialogTitle>
-                <DialogDescription className="text-sm sm:text-base line-clamp-1">
+                <DialogTitle className="
+                  text-xl font-bold tracking-tight
+                  sm:text-2xl
+                "
+                >
+                  {t.users.permissionsTitle()}
+                </DialogTitle>
+                <DialogDescription className="
+                  line-clamp-1 text-sm
+                  sm:text-base
+                "
+                >
                   {t.users.permissionsSubtitle({ name: selectedUser?.name || '' })}
                 </DialogDescription>
               </div>
@@ -306,14 +478,22 @@ function UserManagement() {
               e.stopPropagation()
               form.handleSubmit()
             }}
-            className="p-5 sm:p-8 space-y-8 overflow-y-auto max-h-[calc(90vh-120px)] scrollbar-none"
+            className="
+              scrollbar-none max-h-[calc(90vh-120px)] space-y-8 overflow-y-auto
+              p-5
+              sm:p-8
+            "
           >
             <form.Field
               name="roleIds"
               children={field => (
                 <FieldSet>
                   <FieldLegend>{t.users.availableRoles()}</FieldLegend>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="
+                    grid grid-cols-1 gap-3
+                    sm:grid-cols-2
+                  "
+                  >
                     {allRoles.map((role) => {
                       const isChecked = field.state.value.includes(role.id)
                       const toggle = () => {
@@ -333,26 +513,51 @@ function UserManagement() {
                             if (e.key === 'Enter' || e.key === ' ')
                               toggle()
                           }}
-                          className={`flex items-start gap-4 p-4 rounded-2xl border transition-all active:scale-[0.98] cursor-pointer shadow-xs ${
-                            isChecked
-                              ? 'bg-primary/10 border-primary/40 ring-1 ring-primary/20'
-                              : 'bg-background/40 border-border/60 hover:bg-primary/5 hover:border-primary/20'
-                          }`}
+                          className={`
+                            flex cursor-pointer items-start gap-4 rounded-2xl
+                            border p-4 shadow-xs transition-all
+                            active:scale-[0.98]
+                            ${
+                        isChecked
+                          ? `
+                            bg-primary/10 border-primary/40 ring-primary/20
+                            ring-1
+                          `
+                          : `
+                            bg-background/40 border-border/60
+                            hover:bg-primary/5 hover:border-primary/20
+                          `
+                        }
+                          `}
                         >
                           <Checkbox
                             checked={isChecked}
                             onCheckedChange={toggle}
-                            className="mt-1 pointer-events-none"
+                            className="pointer-events-none mt-1"
                           />
                           <div className="flex-1 space-y-1">
-                            <p className={`text-sm font-black tracking-tight leading-none ${isChecked ? 'text-primary' : 'text-foreground'}`}>
+                            <p className={`
+                              text-sm leading-none font-black tracking-tight
+                              ${isChecked
+                          ? `text-primary`
+                          : `text-foreground`}
+                            `}
+                            >
                               {role.name}
                             </p>
-                            <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tighter">
+                            <p className="
+                              text-muted-foreground/60 text-[10px] font-bold
+                              tracking-tighter uppercase
+                            "
+                            >
                               {role.slug}
                             </p>
                             {role.description && (
-                              <p className="text-[11px] text-muted-foreground leading-tight pt-1">
+                              <p className="
+                                text-muted-foreground pt-1 text-[11px]
+                                leading-tight
+                              "
+                              >
                                 {role.description}
                               </p>
                             )}
@@ -365,8 +570,14 @@ function UserManagement() {
               )}
             />
 
-            <DialogFooter className="pt-8 gap-3 border-t border-border/10">
-              <Button type="button" variant="ghost" size="lg" className="rounded-xl font-bold px-6" onClick={() => handleOpenChange(false)}>
+            <DialogFooter className="border-border/10 gap-3 border-t pt-8">
+              <Button
+                type="button"
+                variant="ghost"
+                size="lg"
+                className="rounded-xl px-6 font-bold"
+                onClick={() => handleOpenChange(false)}
+              >
                 {t.common.cancel()}
               </Button>
               <form.Subscribe
@@ -375,7 +586,11 @@ function UserManagement() {
                   <Button
                     type="submit"
                     size="lg"
-                    className="rounded-xl px-10 font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-[1.02]"
+                    className="
+                      shadow-primary/20 rounded-xl px-10 font-black
+                      tracking-widest uppercase shadow-xl transition-all
+                      hover:scale-[1.02]
+                    "
                     disabled={!canSubmit || isSubmitting}
                   >
                     {isSubmitting || assignRolesMutation.isPending ? t.common.loading() : t.common.save()}

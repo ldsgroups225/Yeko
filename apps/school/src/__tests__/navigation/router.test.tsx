@@ -86,79 +86,79 @@ describe('router Navigation', () => {
     })
 
     test('should initialize at roles list path', () => {
-      const { router } = createTestRouter('/_auth/users/roles')
+      const { router } = createTestRouter('/_auth/settings/roles')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/roles')
+      expect(router.state.location.pathname).toBe('/_auth/settings/roles')
     })
 
     test('should initialize at users list path', () => {
-      const { router } = createTestRouter('/_auth/users/users')
+      const { router } = createTestRouter('/_auth/settings/personnel/users')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/users')
+      expect(router.state.location.pathname).toBe('/_auth/settings/personnel/users')
     })
 
     test('should initialize at staff list path', () => {
-      const { router } = createTestRouter('/_auth/users/staff')
+      const { router } = createTestRouter('/_auth/settings/personnel/staff')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/staff')
+      expect(router.state.location.pathname).toBe('/_auth/settings/personnel/staff')
     })
 
     test('should initialize at teachers list path', () => {
-      const { router } = createTestRouter('/_auth/users/teachers')
+      const { router } = createTestRouter('/_auth/teachers')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/teachers')
+      expect(router.state.location.pathname).toBe('/_auth/teachers')
     })
   })
 
   describe('dynamic Routes', () => {
     test('should handle role detail route with ID', () => {
-      const { router } = createTestRouter('/_auth/users/roles/role-123')
+      const { router } = createTestRouter('/_auth/settings/roles/role-123')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/roles/role-123')
+      expect(router.state.location.pathname).toBe('/_auth/settings/roles/role-123')
     })
 
     test('should handle user detail route with ID', () => {
-      const { router } = createTestRouter('/_auth/users/users/user-456')
+      const { router } = createTestRouter('/_auth/settings/personnel/users/user-456')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/users/user-456')
+      expect(router.state.location.pathname).toBe('/_auth/settings/personnel/users/user-456')
     })
 
     test('should handle staff detail route with ID', () => {
-      const { router } = createTestRouter('/_auth/users/staff/staff-789')
+      const { router } = createTestRouter('/_auth/settings/personnel/staff/staff-789')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/staff/staff-789')
+      expect(router.state.location.pathname).toBe('/_auth/settings/personnel/staff/staff-789')
     })
 
     test('should handle teacher detail route with ID', () => {
-      const { router } = createTestRouter('/_auth/users/teachers/teacher-101')
+      const { router } = createTestRouter('/_auth/teachers/teacher-101')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/teachers/teacher-101')
+      expect(router.state.location.pathname).toBe('/_auth/teachers/teacher-101')
     })
   })
 
   describe('new Resource Routes', () => {
     test('should navigate to new role page', () => {
-      const { router } = createTestRouter('/_auth/users/roles/new')
+      const { router } = createTestRouter('/_auth/settings/roles/new')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/roles/new')
+      expect(router.state.location.pathname).toBe('/_auth/settings/roles/new')
     })
 
     test('should navigate to new user page', () => {
-      const { router } = createTestRouter('/_auth/users/users/new')
+      const { router } = createTestRouter('/_auth/settings/personnel/users/new')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/users/new')
+      expect(router.state.location.pathname).toBe('/_auth/settings/personnel/users/new')
     })
 
     test('should navigate to new staff page', () => {
-      const { router } = createTestRouter('/_auth/users/staff/new')
+      const { router } = createTestRouter('/_auth/settings/personnel/staff/new')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/staff/new')
+      expect(router.state.location.pathname).toBe('/_auth/settings/personnel/staff/new')
     })
 
     test('should navigate to new teacher page', () => {
-      const { router } = createTestRouter('/_auth/users/teachers/new')
+      const { router } = createTestRouter('/_auth/teachers/new')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/teachers/new')
+      expect(router.state.location.pathname).toBe('/_auth/teachers/new')
     })
   })
 
@@ -174,9 +174,9 @@ describe('router Navigation', () => {
       expect(router.state.location.pathname).toBe('/dashboard')
 
       // Navigate to HR
-      await router.navigate({ to: '/users/roles' as any })
+      await router.navigate({ to: '/settings/roles' as any })
 
-      expect(router.state.location.pathname).toBe('/users/roles')
+      expect(router.state.location.pathname).toBe('/settings/roles')
     })
 
     test('should handle back navigation', async () => {
@@ -184,9 +184,9 @@ describe('router Navigation', () => {
 
       // Navigate forward
       await router.navigate({ to: '/dashboard' as any })
-      await router.navigate({ to: '/users/roles' as any })
+      await router.navigate({ to: '/settings/roles' as any })
 
-      expect(router.state.location.pathname).toBe('/users/roles')
+      expect(router.state.location.pathname).toBe('/settings/roles')
 
       // Navigate back using router.navigate with history
       await router.navigate({ to: '/dashboard' as any })
@@ -201,11 +201,11 @@ describe('router Navigation', () => {
       await router.navigate({ to: '/dashboard' as any })
       expect(router.state.location.pathname).toBe('/dashboard')
 
-      await router.navigate({ to: '/users/roles' as any })
-      expect(router.state.location.pathname).toBe('/users/roles')
+      await router.navigate({ to: '/settings/roles' as any })
+      expect(router.state.location.pathname).toBe('/settings/roles')
 
-      await router.navigate({ to: '/users/users' as any })
-      expect(router.state.location.pathname).toBe('/users/users')
+      await router.navigate({ to: '/settings/personnel/users' as any })
+      expect(router.state.location.pathname).toBe('/settings/personnel/users')
     })
   })
 
@@ -218,16 +218,16 @@ describe('router Navigation', () => {
     })
 
     test('should have valid nested route path', () => {
-      const { router } = createTestRouter('/_auth/users/roles')
+      const { router } = createTestRouter('/_auth/settings/roles')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/roles')
-      expect(router.state.location.href).toContain('hr/roles')
+      expect(router.state.location.pathname).toBe('/_auth/settings/roles')
+      expect(router.state.location.href).toContain('settings/roles')
     })
 
     test('should preserve dynamic route parameters in path', () => {
-      const { router } = createTestRouter('/_auth/users/roles/role-123')
+      const { router } = createTestRouter('/_auth/settings/roles/role-123')
 
-      expect(router.state.location.pathname).toBe('/_auth/users/roles/role-123')
+      expect(router.state.location.pathname).toBe('/_auth/settings/roles/role-123')
       expect(router.state.location.pathname).toContain('role-123')
     })
 
@@ -235,10 +235,10 @@ describe('router Navigation', () => {
       const { router } = createTestRouter('/')
 
       await router.navigate({
-        to: '/users/roles' as any,
+        to: '/settings/roles' as any,
       })
 
-      expect(router.state.location.pathname).toBe('/users/roles')
+      expect(router.state.location.pathname).toBe('/settings/roles')
     })
   })
 })

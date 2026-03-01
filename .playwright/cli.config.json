@@ -1,0 +1,6 @@
+{
+  "launchOptions": {
+    "args": ["--no-sandbox"],
+    "chromiumSandbox": false
+  }
+}

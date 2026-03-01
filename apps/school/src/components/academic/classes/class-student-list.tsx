@@ -46,10 +46,12 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
         {Array.from({ length: 5 }).map(() => (
           <div
             key={generateUUID()}
-            className="flex items-center gap-4 p-4 border rounded-xl border-border/40"
+            className="
+              border-border/40 flex items-center gap-4 rounded-xl border p-4
+            "
           >
             <Skeleton className="size-10 rounded-full" />
-            <div className="space-y-2 flex-1">
+            <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-1/4" />
               <Skeleton className="h-3 w-1/6" />
             </div>
@@ -64,10 +66,14 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
 
   if (enrollments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center bg-card/50 rounded-xl border border-dashed border-border/40">
-        <IconUsers className="size-12 text-muted-foreground/50 mb-4" />
+      <div className="
+        bg-card/50 border-border/40 flex flex-col items-center justify-center
+        rounded-xl border border-dashed py-12 text-center
+      "
+      >
+        <IconUsers className="text-muted-foreground/50 mb-4 size-12" />
         <h3 className="text-lg font-semibold">{t.classes.noStudents()}</h3>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           This class has no confirmed enrollments yet.
         </p>
       </div>
@@ -75,10 +81,18 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
   }
 
   return (
-    <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden">
+    <div className="
+      border-border/40 bg-card/40 overflow-hidden rounded-xl border
+      backdrop-blur-xl
+    "
+    >
       <Table>
         <TableHeader className="bg-card/20">
-          <TableRow className="hover:bg-transparent border-border/40">
+          <TableRow className="
+            border-border/40
+            hover:bg-transparent
+          "
+          >
             <TableHead className="text-foreground font-semibold">
               {t.enrollments.student()}
             </TableHead>
@@ -98,13 +112,20 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.02 }}
-              className="border-border/10 group hover:bg-card/30 transition-colors"
+              className="
+                border-border/10 group
+                hover:bg-card/30
+                transition-colors
+              "
             >
               <TableCell className="py-3">
                 <div className="flex items-center gap-3">
-                  <Avatar className="size-9 border border-border/40">
+                  <Avatar className="border-border/40 size-9 border">
                     <AvatarImage src={item.student?.photoUrl || undefined} />
-                    <AvatarFallback className="bg-primary/5 text-primary text-xs">
+                    <AvatarFallback className="
+                      bg-primary/5 text-primary text-xs
+                    "
+                    >
                       {item.student?.firstName?.[0]}
                       {item.student?.lastName?.[0]}
                     </AvatarFallback>
@@ -113,13 +134,16 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
                     <Link
                       to="/students/$studentId"
                       params={{ studentId: item.student?.id }}
-                      className="font-medium hover:underline text-sm"
+                      className="
+                        text-sm font-medium
+                        hover:underline
+                      "
                     >
                       {item.student?.lastName}
                       {' '}
                       {item.student?.firstName}
                     </Link>
-                    <p className="text-xs text-muted-foreground font-mono">
+                    <p className="text-muted-foreground font-mono text-xs">
                       {item.student?.matricule}
                     </p>
                   </div>
@@ -133,7 +157,10 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
               <TableCell>
                 <Badge
                   variant="outline"
-                  className="bg-green-500/10 text-green-500 border-green-500/20 text-[10px] uppercase font-bold tracking-wider"
+                  className="
+                    border-green-500/20 bg-green-500/10 text-[10px] font-bold
+                    tracking-wider text-green-500 uppercase
+                  "
                 >
                   {t.enrollments.statusConfirmed()}
                 </Badge>
@@ -157,7 +184,9 @@ export function ClassStudentList({ classId }: ClassStudentListProps) {
                   />
                   <DropdownMenuContent
                     align="end"
-                    className="backdrop-blur-xl bg-popover/90 border border-border/40"
+                    className="
+                      bg-popover/90 border-border/40 border backdrop-blur-xl
+                    "
                   >
                     <DropdownMenuItem
                       render={(

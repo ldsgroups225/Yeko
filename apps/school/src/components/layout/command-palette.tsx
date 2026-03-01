@@ -81,13 +81,13 @@ export function CommandPalette() {
                         {' '}
                         {item.student.lastName}
                       </span>
-                      <span className="ml-2 text-xs text-muted-foreground">
+                      <span className="text-muted-foreground ml-2 text-xs">
                         (
                         {item.student.matricule}
                         )
                       </span>
                       {item.currentClass && (
-                        <span className="ml-auto text-xs text-muted-foreground">
+                        <span className="text-muted-foreground ml-auto text-xs">
                           {item.currentClass.gradeName}
                           {' '}
                           {item.currentClass.section}

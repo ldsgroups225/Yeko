@@ -35,7 +35,7 @@ interface TimetableGridProps {
 function GridSkeleton() {
   return (
     <div className="grid grid-cols-[80px_repeat(6,1fr)] gap-2">
-      <div className="h-12 col-span-7 rounded-xl bg-muted/20" />
+      <div className="bg-muted/20 col-span-7 h-12 rounded-xl" />
       {Array.from({ length: 8 }).map((_, i) => (
         // eslint-disable-next-line react/no-array-index-key
         <Fragment key={i}>
@@ -168,17 +168,28 @@ export function TimetableGrid({
         className="min-w-[800px]"
       >
         <div
-          className="grid gap-1 relative"
+          className="relative grid gap-1"
           style={gridStyle}
         >
           {/* Header row with days */}
-          <div className="h-12 bg-background/80 backdrop-blur-md sticky top-0 z-20 col-start-1 row-start-1" />
+          <div className="
+            bg-background/80 sticky top-0 z-20 col-start-1 row-start-1 h-12
+            backdrop-blur-md
+          "
+          />
           {daysToShow.map((day, idx) => (
             <div
               key={day}
               className={cn(
-                'h-12 flex items-center justify-center bg-card/50 backdrop-blur-md border border-border/40 rounded-xl font-black text-xs uppercase tracking-widest text-muted-foreground shadow-sm sticky top-0 z-20',
-                day === currentDay && 'text-primary ring-1 ring-primary/20 bg-primary/5',
+                `
+                  bg-card/50 border-border/40 text-muted-foreground sticky top-0
+                  z-20 flex h-12 items-center justify-center rounded-xl border
+                  text-xs font-black tracking-widest uppercase shadow-sm
+                  backdrop-blur-md
+                `,
+                day === currentDay && `
+                  text-primary ring-primary/20 bg-primary/5 ring-1
+                `,
               )}
               style={dayHeaderStyle(idx)}
             >
@@ -190,7 +201,11 @@ export function TimetableGrid({
           {timeSlots.map((slot, idx) => (
             <div
               key={`time-${slot.start}`}
-              className="flex items-start justify-center text-[10px] font-bold text-muted-foreground/60 bg-muted/20 rounded-xl border border-border/10 h-full sticky left-0 z-10"
+              className="
+                text-muted-foreground/60 bg-muted/20 border-border/10 sticky
+                left-0 z-10 flex h-full items-start justify-center rounded-xl
+                border text-[10px] font-bold
+              "
               style={timeColumnStyle(idx)}
             >
               {slot.start}
@@ -207,19 +222,36 @@ export function TimetableGrid({
                   type={!readOnly ? 'button' : undefined}
                   onClick={() => handleSlotClick(day, slot)}
                   className={cn(
-                    'w-full h-full rounded-2xl border border-dashed border-border/10 transition-all duration-200 bg-transparent p-0 appearance-none text-left outline-none',
-                    !readOnly && 'hover:bg-primary/5 hover:border-primary/20 cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary',
-                    day === currentDay && 'bg-primary/5 border-primary/10 border-solid',
+                    `
+                      border-border/10 h-full w-full appearance-none rounded-2xl
+                      border border-dashed bg-transparent p-0 text-left
+                      transition-all duration-200 outline-none
+                    `,
+                    !readOnly && `
+                      hover:bg-primary/5 hover:border-primary/20
+                      group
+                      focus-visible:ring-primary
+                      cursor-pointer
+                      focus-visible:ring-2
+                    `,
+                    day === currentDay && `
+                      bg-primary/5 border-primary/10 border-solid
+                    `,
                   )}
                   style={{ gridColumn: colIdx + 2, gridRow: rowIdx + 2 }}
                 >
                   {!readOnly && (
-                    <div className="h-full flex items-center justify-center">
+                    <div className="flex h-full items-center justify-center">
                       <div
-                        className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all scale-90 group-hover:scale-100"
+                        className="
+                          bg-primary/10 text-primary flex h-8 w-8 scale-90
+                          items-center justify-center rounded-full opacity-0
+                          transition-all
+                          group-hover:scale-100 group-hover:opacity-100
+                        "
                         aria-label={t.timetables.addSession()}
                       >
-                        <span className="text-lg font-light leading-none">+</span>
+                        <span className="text-lg leading-none font-light">+</span>
                       </div>
                     </div>
                   )}
@@ -232,7 +264,7 @@ export function TimetableGrid({
           {positionedSessions.map(session => (
             <div
               key={session.id}
-              className="p-0.5 z-10"
+              className="z-10 p-0.5"
               style={{
                 gridRow: session.gridRow,
                 gridColumn: session.gridColumn,
@@ -249,11 +281,19 @@ export function TimetableGrid({
           {/* Current Time Indicator */}
           {timePosition && currentTimeStyle && (
             <div
-              className="z-30 pointer-events-none flex items-center"
+              className="pointer-events-none z-30 flex items-center"
               style={currentTimeStyle}
             >
-              <div className="w-full h-0.5 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)] relative">
-                <div className="absolute -left-1 -top-1 w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm" />
+              <div className="
+                relative h-0.5 w-full bg-red-500
+                shadow-[0_0_8px_rgba(239,68,68,0.4)]
+              "
+              >
+                <div className="
+                  absolute -top-1 -left-1 h-2.5 w-2.5 rounded-full bg-red-500
+                  shadow-sm
+                "
+                />
               </div>
             </div>
           )}

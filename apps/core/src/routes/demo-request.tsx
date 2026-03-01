@@ -57,12 +57,15 @@ function DemoRequest() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-linear-to-b from-background to-muted/20 py-12 px-4">
+      <div className="
+        from-background to-muted/20 min-h-screen bg-linear-to-b px-4 py-12
+      "
+      >
         <div className="container mx-auto max-w-2xl">
           <div className="mb-8">
             <Link to="/">
               <Button variant="ghost" className="mb-4">
-                <IconArrowLeft className="w-4 h-4 mr-2" />
+                <IconArrowLeft className="mr-2 h-4 w-4" />
                 {t.common.back()}
               </Button>
             </Link>
@@ -70,15 +73,15 @@ function DemoRequest() {
 
           <Card className="text-center">
             <CardContent className="pt-6">
-              <IconCircleCheck className="w-16 h-16 text-primary mx-auto mb-4" />
+              <IconCircleCheck className="text-primary mx-auto mb-4 h-16 w-16" />
               <CardTitle className="mb-2">{t.demoRequest.form.success()}</CardTitle>
-              <CardDescription className="text-lg mb-6">
+              <CardDescription className="mb-6 text-lg">
                 {t.demoRequest.form.successDescription()}
               </CardDescription>
               <p className="text-muted-foreground mb-6">
                 {t.demoRequest.form.confirmationEmail({ email: formData.email })}
               </p>
-              <div className="flex gap-4 justify-center">
+              <div className="flex justify-center gap-4">
                 <Link to="/">
                   <Button variant="outline">{t.common.back()}</Button>
                 </Link>
@@ -94,19 +97,22 @@ function DemoRequest() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-background to-muted/20 py-12 px-4">
+    <div className="
+      from-background to-muted/20 min-h-screen bg-linear-to-b px-4 py-12
+    "
+    >
       <div className="container mx-auto max-w-4xl">
         <div className="mb-8">
           <Link to="/">
             <Button variant="ghost" className="mb-4">
-              <IconArrowLeft className="w-4 h-4 mr-2" />
+              <IconArrowLeft className="mr-2 h-4 w-4" />
               {t.common.back()}
             </Button>
           </Link>
 
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold mb-4">{t.demoRequest.title()}</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <div className="mb-8 text-center">
+            <h1 className="mb-4 text-4xl font-bold">{t.demoRequest.title()}</h1>
+            <p className="text-muted-foreground mx-auto max-w-2xl text-xl">
               {t.demoRequest.subtitle()}
             </p>
           </div>
@@ -121,7 +127,11 @@ function DemoRequest() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="
+                grid gap-6
+                md:grid-cols-2
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="name">
                     {t.demoRequest.form.name()}
@@ -155,7 +165,11 @@ function DemoRequest() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="
+                grid gap-6
+                md:grid-cols-2
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="phone">{t.demoRequest.form.phone()}</Label>
                   <Input
@@ -184,7 +198,11 @@ function DemoRequest() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="
+                grid gap-6
+                md:grid-cols-2
+              "
+              >
                 <div className="space-y-2">
                   <Label htmlFor="schoolType">
                     {t.demoRequest.form.schoolType()}

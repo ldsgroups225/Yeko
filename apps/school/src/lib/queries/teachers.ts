@@ -79,22 +79,47 @@ export const teacherOptions = {
 export const teacherMutations = {
   assignSubjects: {
     mutationKey: schoolMutationKeys.teachers.assign,
-    mutationFn: (data: Parameters<typeof assignSubjects>[0]['data']) => assignSubjects({ data }),
+    mutationFn: async (vars: Parameters<typeof assignSubjects>[0]['data']) => {
+      const res = await assignSubjects({ data: vars })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
   },
   create: {
     mutationKey: schoolMutationKeys.teachers.create,
-    mutationFn: (data: Parameters<typeof createNewTeacher>[0]['data']) => createNewTeacher({ data }),
+    mutationFn: async (vars: Parameters<typeof createNewTeacher>[0]['data']) => {
+      const res = await createNewTeacher({ data: vars })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
   },
   delete: {
     mutationKey: schoolMutationKeys.teachers.delete,
-    mutationFn: (id: string) => deleteExistingTeacher({ data: id }),
+    mutationFn: async (id: string) => {
+      const res = await deleteExistingTeacher({ data: id })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
   },
   linkByEmail: {
     mutationKey: schoolMutationKeys.teachers.link,
-    mutationFn: (data: Parameters<typeof linkTeacherByEmailFn>[0]['data']) => linkTeacherByEmailFn({ data }),
+    mutationFn: async (vars: Parameters<typeof linkTeacherByEmailFn>[0]['data']) => {
+      const res = await linkTeacherByEmailFn({ data: vars })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
   },
   update: {
     mutationKey: schoolMutationKeys.teachers.update,
-    mutationFn: (data: Parameters<typeof updateExistingTeacher>[0]['data']) => updateExistingTeacher({ data }),
+    mutationFn: async (vars: Parameters<typeof updateExistingTeacher>[0]['data']) => {
+      const res = await updateExistingTeacher({ data: vars })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
   },
 }

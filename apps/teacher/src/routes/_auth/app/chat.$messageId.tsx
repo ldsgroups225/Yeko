@@ -110,8 +110,11 @@ function MessageDetailPage() {
           : (
               <Card>
                 <CardContent className="py-12 text-center">
-                  <IconMail className="mx-auto h-12 w-12 text-muted-foreground/50" />
-                  <p className="mt-4 text-sm text-muted-foreground">
+                  <IconMail className="
+                    text-muted-foreground/50 mx-auto h-12 w-12
+                  "
+                  />
+                  <p className="text-muted-foreground mt-4 text-sm">
                     {LL.errors.notFound()}
                   </p>
                 </CardContent>
@@ -163,15 +166,18 @@ function MessageContent({ message, teacherId, locale }: MessageContentProps) {
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
-                <IconUser className="h-5 w-5 text-muted-foreground" />
+              <div className="
+                bg-muted flex h-10 w-10 items-center justify-center rounded-full
+              "
+              >
+                <IconUser className="text-muted-foreground h-5 w-5" />
               </div>
               <div>
                 <p className="font-semibold">
                   {senderDisplayName}
                 </p>
                 {message.studentName && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {message.studentName}
                     {message.className && ` • ${message.className}`}
                   </p>
@@ -182,7 +188,7 @@ function MessageContent({ message, teacherId, locale }: MessageContentProps) {
               {message.isStarred && (
                 <IconStar className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               )}
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {format(date, 'd MMM yyyy, HH:mm', { locale })}
               </span>
             </div>
@@ -192,14 +198,14 @@ function MessageContent({ message, teacherId, locale }: MessageContentProps) {
           )}
         </CardHeader>
         <CardContent>
-          <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
         </CardContent>
       </Card>
 
       {/* Thread messages */}
       {message.thread && message.thread.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-muted-foreground text-sm font-medium">
             {LL.messages.thread()}
           </h3>
           {message.thread.map((reply) => {
@@ -214,13 +220,13 @@ function MessageContent({ message, teacherId, locale }: MessageContentProps) {
                     <span className="text-xs font-medium">
                       {replySenderDisplayName}
                     </span>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       {format(new Date(reply.createdAt), 'd MMM, HH:mm', {
                         locale,
                       })}
                     </span>
                   </div>
-                  <p className="whitespace-pre-wrap text-sm">{reply.content}</p>
+                  <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
                 </CardContent>
               </Card>
             )
@@ -229,7 +235,7 @@ function MessageContent({ message, teacherId, locale }: MessageContentProps) {
       )}
 
       {/* Reply button */}
-      <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
+      <div className="bg-background fixed inset-x-0 bottom-16 border-t p-4">
         <Link
           to="/app/chat/compose"
           search={{ replyTo: message.id }}

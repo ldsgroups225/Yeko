@@ -22,22 +22,15 @@ import { requirePermission } from '../../middleware/permissions'
 import { calculateBreakdown } from './logic'
 
 /**
- * Internal logic for student fee calculation
+ * Core fee calculation logic (no permission checks).
+ * Used by both the server function endpoint and auto-assignment on enrollment confirmation.
  */
-async function executeStudentFeeCalculation(params: {
+export async function computeFeesForStudent(params: {
   studentId: string
-  schoolYearId?: string
-  context: any
+  schoolId: string
+  schoolYearId: string
 }) {
-  const { studentId, schoolYearId: providedSchoolYearId, context } = params
-  if (!context?.school)
-    return { success: false as const, error: 'Établissement non sélectionné' }
-
-  await requirePermission('finance', 'view')
-  const { schoolId } = context.school
-  const schoolYearId = providedSchoolYearId ?? context.schoolYear?.schoolYearId
-  if (!schoolYearId)
-    return { success: false as const, error: 'Année scolaire non sélectionnée' }
+  const { studentId, schoolId, schoolYearId } = params
 
   const db = getDb()
 
@@ -67,9 +60,11 @@ async function executeStudentFeeCalculation(params: {
   const previousEnrollments = await db
     .select({ id: enrollments.id })
     .from(enrollments)
+    .innerJoin(classes, eq(enrollments.classId, classes.id))
     .where(and(
       eq(enrollments.studentId, studentId),
       eq(enrollments.status, 'confirmed'),
+      eq(classes.schoolId, schoolId),
     ))
 
   const isNewStudent = previousEnrollments.length <= 1
@@ -140,8 +135,20 @@ export const calculateStudentFees = authServerFn
     schoolYearId: z.string().optional(),
   }))
   .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    await requirePermission('finance', 'view')
+    const schoolYearId = data.schoolYearId ?? context.schoolYear?.schoolYearId
+    if (!schoolYearId)
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
+
     try {
-      return await executeStudentFeeCalculation({ ...data, context })
+      return await computeFeesForStudent({
+        studentId: data.studentId,
+        schoolId: context.school.schoolId,
+        schoolYearId,
+      })
     }
     catch {
       return { success: false as const, error: 'Erreur lors du calcul des frais' }
@@ -161,11 +168,19 @@ export const assignFeesToStudent = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const { schoolId, userId } = context.school
+    const schoolYearId = data.schoolYearId ?? context.schoolYear?.schoolYearId
+    if (!schoolYearId)
+      return { success: false as const, error: 'Année scolaire non sélectionnée' }
+
     try {
       await requirePermission('finance', 'edit')
       const db = getDb()
 
-      const calculation = await executeStudentFeeCalculation({ ...data, context })
+      const calculation = await computeFeesForStudent({
+        studentId: data.studentId,
+        schoolId,
+        schoolYearId,
+      })
       if (!calculation.success || !calculation.data) {
         return calculation
       }

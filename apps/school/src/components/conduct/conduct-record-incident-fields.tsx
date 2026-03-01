@@ -21,21 +21,37 @@ export function ConductRecordIncidentFields({ form }: ConductRecordIncidentField
 
   return (
     <>
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="
+        grid gap-6
+        md:grid-cols-3
+      "
+      >
         <div className="space-y-3">
-          <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          <Label className="
+            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+            font-black tracking-[0.2em] uppercase
+          "
+          >
             <IconCalendar className="size-3.5" />
             {t.conduct.form.incidentDate()}
           </Label>
           <DatePicker
             date={form.watch('incidentDate')}
             onSelect={d => form.setValue('incidentDate', d)}
-            className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 hover:bg-card/70 transition-all"
+            className="
+              bg-card/50 border-border/40
+              hover:bg-card/70
+              h-12 rounded-2xl backdrop-blur-xl transition-all
+            "
           />
         </div>
 
         <div className="space-y-3">
-          <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          <Label className="
+            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+            font-black tracking-[0.2em] uppercase
+          "
+          >
             <IconClock className="size-3.5" />
             {t.conduct.form.incidentTime()}
           </Label>
@@ -43,19 +59,31 @@ export function ConductRecordIncidentFields({ form }: ConductRecordIncidentField
             id="incidentTime"
             type="time"
             {...form.register('incidentTime')}
-            className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all"
+            className="
+              bg-card/50 border-border/40
+              focus:ring-primary/20
+              h-12 rounded-2xl backdrop-blur-xl transition-all
+            "
           />
         </div>
 
         <div className="space-y-3">
-          <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+          <Label className="
+            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+            font-black tracking-[0.2em] uppercase
+          "
+          >
             <IconMapPin className="size-3.5" />
             {t.conduct.form.location()}
           </Label>
           <Input
             id="location"
             {...form.register('location')}
-            className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all"
+            className="
+              bg-card/50 border-border/40
+              focus:ring-primary/20
+              h-12 rounded-2xl backdrop-blur-xl transition-all
+            "
             placeholder={t.conduct.form.location()}
           />
         </div>
@@ -67,14 +95,22 @@ export function ConductRecordIncidentFields({ form }: ConductRecordIncidentField
         transition={{ delay: 0.2 }}
         className="space-y-3"
       >
-        <Label className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-1">
+        <Label className="
+          text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
+          font-black tracking-[0.2em] uppercase
+        "
+        >
           <IconUsers className="size-3.5" />
           {t.conduct.form.witnesses()}
         </Label>
         <Input
           id="witnesses"
           {...form.register('witnesses')}
-          className="h-12 rounded-2xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all"
+          className="
+            bg-card/50 border-border/40
+            focus:ring-primary/20
+            h-12 rounded-2xl backdrop-blur-xl transition-all
+          "
           placeholder={t.conduct.form.witnessesPlaceholder()}
         />
       </motion.div>

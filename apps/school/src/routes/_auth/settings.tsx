@@ -1,4 +1,4 @@
-import { IconBell, IconBuilding, IconCalendar, IconHierarchy, IconWallet } from '@tabler/icons-react'
+import { IconBell, IconBuilding, IconCalendar, IconHierarchy, IconLock, IconUsersGroup, IconWallet } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
 import { TabbedLayout } from '@/components/layout/tabbed-layout'
 import { useTranslations } from '@/i18n'
@@ -30,10 +30,22 @@ function SettingsLayoutRoute() {
       permission: { resource: 'settings', action: 'view' },
     },
     {
+      label: t.sidebar.personnel(),
+      href: '/settings/personnel',
+      icon: IconUsersGroup,
+      permission: { resource: 'users', action: 'view' },
+    },
+    {
       label: t.settings.tabs.accountingAndFinance(),
       href: '/settings/finance',
       icon: IconWallet,
       permission: { resource: 'finance', action: 'view' },
+    },
+    {
+      label: t.nav.roles(),
+      href: '/settings/roles',
+      icon: IconLock,
+      permission: { resource: 'users', action: 'view' },
     },
     {
       label: t.settings.tabs.systemAndNotifications(),

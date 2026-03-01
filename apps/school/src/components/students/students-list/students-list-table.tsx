@@ -20,7 +20,11 @@ export function StudentsListTable() {
 
   return (
     <>
-      <div className="space-y-3 md:hidden">
+      <div className="
+        space-y-3
+        md:hidden
+      "
+      >
         {isPending
           ? (
               Array.from({ length: 5 }, (_, i) => <StudentMobileSkeleton key={`mobile-skeleton-${i}`} />)
@@ -34,18 +38,30 @@ export function StudentsListTable() {
             )}
       </div>
 
-      <div className="hidden rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl md:block overflow-hidden">
+      <div className="
+        border-border/40 bg-card/40 hidden overflow-hidden rounded-xl border
+        backdrop-blur-xl
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-card/20">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="w-[50px]">
                 <Checkbox
                   checked={!!(data?.data && data.data.length > 0 && selectedRows.length === data.data.length)}
                   onCheckedChange={checked => handleSelectAll(!!checked)}
-                  className="border-primary/50 data-[state=checked]:border-primary"
+                  className="
+                    border-primary/50
+                    data-[state=checked]:border-primary
+                  "
                 />
               </TableHead>
-              <TableHead className="w-[250px] text-foreground font-semibold">{t.students.student()}</TableHead>
+              <TableHead className="text-foreground w-[250px] font-semibold">{t.students.student()}</TableHead>
               <TableHead className="text-foreground font-semibold">{t.students.matricule()}</TableHead>
               <TableHead className="text-foreground font-semibold">{t.students.class()}</TableHead>
               <TableHead className="text-foreground font-semibold">{t.students.gender()}</TableHead>

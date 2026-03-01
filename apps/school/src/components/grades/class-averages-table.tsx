@@ -68,23 +68,43 @@ export function ClassAveragesTable({ averages, className, onStudentClick }: Clas
   const passRate = useMemo(() => averages.length > 0 ? (passCount / averages.length) * 100 : 0, [passCount, averages.length])
 
   return (
-    <Card className={cn('overflow-hidden rounded-2xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl', className)}>
-      <CardHeader className="border-b border-border/20 bg-muted/20">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <Card className={cn(`
+      border-border/40 bg-card/30 overflow-hidden rounded-2xl shadow-xl
+      backdrop-blur-xl
+    `, className)}
+    >
+      <CardHeader className="border-border/20 bg-muted/20 border-b">
+        <div className="
+          flex flex-col justify-between gap-4
+          sm:flex-row sm:items-center
+        "
+        >
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+            <div className="
+              bg-primary/10 text-primary flex h-10 w-10 items-center
+              justify-center rounded-xl shadow-inner
+            "
+            >
               <IconTrophy className="size-5" />
             </div>
             <CardTitle className="text-xl font-bold tracking-tight">{t.academic.grades.averages.title()}</CardTitle>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-background/50 border border-border/40 shadow-sm">
-              <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+            <div className="
+              bg-background/50 border-border/40 flex items-center gap-3
+              rounded-xl border px-4 py-2 shadow-sm
+            "
+            >
+              <div className="bg-primary/10 text-primary rounded-lg p-1.5">
                 <IconTrendingUp className="size-3.5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70 leading-none mb-1">
+                <span className="
+                  text-muted-foreground mb-1 text-[10px] leading-none font-bold
+                  tracking-widest uppercase opacity-70
+                "
+                >
                   {t.academic.grades.statistics.classAverage()}
                 </span>
                 <span className={cn('text-sm font-bold tabular-nums', getAverageColor(classAverage))}>
@@ -93,15 +113,26 @@ export function ClassAveragesTable({ averages, className, onStudentClick }: Clas
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-background/50 border border-border/40 shadow-sm">
-              <div className="p-1.5 rounded-lg bg-success/10 text-success">
+            <div className="
+              bg-background/50 border-border/40 flex items-center gap-3
+              rounded-xl border px-4 py-2 shadow-sm
+            "
+            >
+              <div className="bg-success/10 text-success rounded-lg p-1.5">
                 <IconPercentage className="size-3.5" />
               </div>
               <div className="flex flex-col">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70 leading-none mb-1">
+                <span className="
+                  text-muted-foreground mb-1 text-[10px] leading-none font-bold
+                  tracking-widest uppercase opacity-70
+                "
+                >
                   {t.academic.grades.statistics.passRate()}
                 </span>
-                <span className={cn('text-sm font-bold tabular-nums', passRate >= 50 ? 'text-success' : 'text-destructive')}>
+                <span className={cn('text-sm font-bold tabular-nums', passRate >= 50
+                  ? `text-success`
+                  : `text-destructive`)}
+                >
                   {passRate.toFixed(1)}
                   %
                 </span>
@@ -115,30 +146,64 @@ export function ClassAveragesTable({ averages, className, onStudentClick }: Clas
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow className="bg-muted/10 border-b-border/20 hover:bg-muted/10">
+              <TableRow className="
+                bg-muted/10 border-b-border/20
+                hover:bg-muted/10
+              "
+              >
                 <TableHead className="w-20 text-center">
-                  <span className="font-bold uppercase tracking-tight text-[10px]">RANG</span>
+                  <span className="
+                    text-[10px] font-bold tracking-tight uppercase
+                  "
+                  >
+                    RANG
+                  </span>
                 </TableHead>
                 <TableHead>
                   <div className="flex items-center gap-2">
-                    <IconUser className="size-3.5 text-muted-foreground" />
-                    <span className="font-bold uppercase tracking-tight text-[10px]">ELEVE</span>
+                    <IconUser className="text-muted-foreground size-3.5" />
+                    <span className="
+                      text-[10px] font-bold tracking-tight uppercase
+                    "
+                    >
+                      ELEVE
+                    </span>
                   </div>
                 </TableHead>
                 <TableHead className="w-32">
                   <div className="flex items-center gap-2">
-                    <IconHash className="size-3.5 text-muted-foreground" />
-                    <span className="font-bold uppercase tracking-tight text-[10px]">MATRICULE</span>
+                    <IconHash className="text-muted-foreground size-3.5" />
+                    <span className="
+                      text-[10px] font-bold tracking-tight uppercase
+                    "
+                    >
+                      MATRICULE
+                    </span>
                   </div>
                 </TableHead>
-                <TableHead className="w-28 text-center px-6">
-                  <span className="font-bold uppercase tracking-tight text-[10px]">MOYENNE</span>
+                <TableHead className="w-28 px-6 text-center">
+                  <span className="
+                    text-[10px] font-bold tracking-tight uppercase
+                  "
+                  >
+                    MOYENNE
+                  </span>
                 </TableHead>
                 <TableHead className="min-w-[200px]">
-                  <span className="font-bold uppercase tracking-tight text-[10px]">LISTE DES NOTES</span>
+                  <span className="
+                    text-[10px] font-bold tracking-tight uppercase
+                  "
+                  >
+                    LISTE DES NOTES
+                  </span>
                 </TableHead>
-                <TableHead className="w-32 text-center px-6">
-                  <span className="font-bold uppercase tracking-tight text-[10px]">MOY. COEF.</span>
+                <TableHead className="w-32 px-6 text-center">
+                  <span className="
+                    text-[10px] font-bold tracking-tight uppercase
+                  "
+                  >
+                    MOY. COEF.
+                  </span>
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -152,37 +217,71 @@ export function ClassAveragesTable({ averages, className, onStudentClick }: Clas
                     transition={{ delay: index * 0.03 }}
                     onClick={() => onStudentClick?.(student.studentId)}
                     className={cn(
-                      'group border-b border-border/10 last:border-0 hover:bg-primary/5 transition-colors',
-                      onStudentClick && 'cursor-pointer hover:bg-primary/10',
+                      `
+                        group border-border/10
+                        hover:bg-primary/5
+                        border-b transition-colors
+                        last:border-0
+                      `,
+                      onStudentClick && `
+                        hover:bg-primary/10
+                        cursor-pointer
+                      `,
                     )}
                   >
-                    <TableCell className="text-center py-4">
+                    <TableCell className="py-4 text-center">
                       <div
                         className={cn(
-                          'inline-flex size-8 items-center justify-center rounded-xl text-xs font-bold border shadow-sm transition-transform group-hover:scale-110',
+                          `
+                            inline-flex size-8 items-center justify-center
+                            rounded-xl border text-xs font-bold shadow-sm
+                            transition-transform
+                            group-hover:scale-110
+                          `,
                           getRankStyles(student.rank),
                         )}
                       >
                         {student.rank}
                       </div>
                     </TableCell>
-                    <TableCell className="py-4 font-bold text-foreground">
+                    <TableCell className="text-foreground py-4 font-bold">
                       {student.studentName}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="font-mono text-[10px] font-bold tracking-widest bg-muted/40 border-border/20 rounded-md py-0.5 px-2">
+                      <Badge
+                        variant="outline"
+                        className="
+                          bg-muted/40 border-border/20 rounded-md px-2 py-0.5
+                          font-mono text-[10px] font-bold tracking-widest
+                        "
+                      >
                         {student.matricule}
                       </Badge>
                     </TableCell>
-                    <TableCell className={cn('text-center font-bold tabular-nums px-6', getAverageColor(student.average))}>
+                    <TableCell className={cn(`
+                      px-6 text-center font-bold tabular-nums
+                    `, getAverageColor(student.average))}
+                    >
                       {student.average.toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-wrap gap-1.5 min-w-[200px]">
+                      <div className="flex min-w-[200px] flex-wrap gap-1.5">
                         {student.grades?.map(grade => (
-                          <div key={`${student.studentId}-${grade.gradeName}-${grade.value}`} title={`Coef: ${grade.coefficient}, Max: ${grade.max}`} className="flex flex-col items-center justify-center bg-muted/40 border border-border/30 rounded px-1.5 py-0.5 min-w-10">
-                            <span className={cn('text-xs font-bold leading-none', getAverageColor((grade.value / grade.max) * 20))}>{grade.value}</span>
-                            <span className="text-[9px] text-muted-foreground leading-none mt-0.5">
+                          <div
+                            key={`${student.studentId}-${grade.gradeName}-${grade.value}`}
+                            title={`Coef: ${grade.coefficient}, Max: ${grade.max}`}
+                            className="
+                              bg-muted/40 border-border/30 flex min-w-10
+                              flex-col items-center justify-center rounded-sm
+                              border px-1.5 py-0.5
+                            "
+                          >
+                            <span className={cn('text-xs leading-none font-bold', getAverageColor((grade.value / grade.max) * 20))}>{grade.value}</span>
+                            <span className="
+                              text-muted-foreground mt-0.5 text-[9px]
+                              leading-none
+                            "
+                            >
                               /
                               {grade.max}
                             </span>
@@ -190,8 +289,13 @@ export function ClassAveragesTable({ averages, className, onStudentClick }: Clas
                         ))}
                       </div>
                     </TableCell>
-                    <TableCell className={cn('text-center px-6', getAverageColor(student.weightedAverage))}>
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-background/40 border border-border/10 shadow-inner font-bold tabular-nums">
+                    <TableCell className={cn('px-6 text-center', getAverageColor(student.weightedAverage))}>
+                      <div className="
+                        bg-background/40 border-border/10 inline-flex
+                        items-center justify-center rounded-lg border px-3 py-1
+                        font-bold tabular-nums shadow-inner
+                      "
+                      >
                         {student.weightedAverage.toFixed(2)}
                       </div>
                     </TableCell>

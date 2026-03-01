@@ -80,12 +80,17 @@ export function RefundsTable({
 
   if (refunds.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconRotate className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconRotate className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">{t.finance.refunds.noRefunds()}</p>
-        <p className="text-sm max-w-sm mt-1 text-muted-foreground/70">
+        <p className="text-muted-foreground/70 mt-1 max-w-sm text-sm">
           {t.finance.refunds.description()}
         </p>
       </div>
@@ -94,10 +99,18 @@ export function RefundsTable({
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">
                 {t.students.student()}
               </TableHead>
@@ -124,28 +137,38 @@ export function RefundsTable({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-muted/30 border-border/40 transition-colors"
+                  className="
+                    group
+                    hover:bg-muted/30
+                    border-border/40 transition-colors
+                  "
                 >
-                  <TableCell className="font-bold text-foreground">
+                  <TableCell className="text-foreground font-bold">
                     {refund.studentName}
                   </TableCell>
                   <TableCell className="text-right font-bold tabular-nums">
                     {formatCurrency(refund.amount)}
                     {' '}
-                    <span className="text-xs text-muted-foreground ml-1">
+                    <span className="text-muted-foreground ml-1 text-xs">
                       FCFA
                     </span>
                   </TableCell>
-                  <TableCell className="max-w-[200px] truncate font-medium text-muted-foreground">
+                  <TableCell className="
+                    text-muted-foreground max-w-[200px] truncate font-medium
+                  "
+                  >
                     {refund.reason}
                   </TableCell>
-                  <TableCell className="text-sm text-muted-foreground font-medium">
+                  <TableCell className="
+                    text-muted-foreground text-sm font-medium
+                  "
+                  >
                     {formatDate(refund.requestedAt)}
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant={getStatusVariant(refund.status)}
-                      className="capitalize rounded-md"
+                      className="rounded-md capitalize"
                     >
                       {{
                         pending: t.finance.refunds.status.pending,
@@ -164,11 +187,18 @@ export function RefundsTable({
                   {' '}
                   <TableCell className="text-right">
                     {refund.status === 'pending' && (
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="
+                        flex justify-end gap-2 opacity-0 transition-opacity
+                        group-hover:opacity-100
+                      "
+                      >
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-500/10 rounded-lg"
+                          className="
+                            h-8 w-8 rounded-lg text-green-600
+                            hover:bg-green-500/10 hover:text-green-700
+                          "
                           onClick={() => onApprove?.(refund.id)}
                           aria-label={t.finance.refunds.approve()}
                         >
@@ -177,7 +207,10 @@ export function RefundsTable({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-red-600 hover:text-red-700 hover:bg-red-500/10 rounded-lg"
+                          className="
+                            h-8 w-8 rounded-lg text-red-600
+                            hover:bg-red-500/10 hover:text-red-700
+                          "
                           onClick={() => onReject?.(refund.id)}
                           aria-label={t.finance.refunds.reject()}
                         >
@@ -193,7 +226,11 @@ export function RefundsTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {refunds.map((refund, index) => (
             <motion.div
@@ -201,18 +238,21 @@ export function RefundsTable({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-4"
+              className="
+                bg-card/50 border-border/40 space-y-4 rounded-2xl border p-4
+                backdrop-blur-md
+              "
             >
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div>
-                  <div className="font-bold text-lg">{refund.studentName}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">
+                  <div className="text-lg font-bold">{refund.studentName}</div>
+                  <div className="text-muted-foreground mt-0.5 text-xs">
                     {formatDate(refund.requestedAt)}
                   </div>
                 </div>
                 <Badge
                   variant={getStatusVariant(refund.status)}
-                  className="capitalize rounded-md"
+                  className="rounded-md capitalize"
                 >
                   {{
                     pending: t.finance.refunds.status.pending,
@@ -229,21 +269,31 @@ export function RefundsTable({
                 </Badge>
               </div>
 
-              <div className="p-3 rounded-xl bg-muted/20 border border-border/20">
-                <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+              <div className="
+                bg-muted/20 border-border/20 rounded-xl border p-3
+              "
+              >
+                <div className="
+                  text-muted-foreground mb-1 text-xs tracking-wider uppercase
+                "
+                >
                   {t.finance.amount()}
                 </div>
-                <div className="font-bold text-lg">
+                <div className="text-lg font-bold">
                   {formatCurrency(refund.amount)}
                   {' '}
-                  <span className="text-sm font-normal text-muted-foreground">
+                  <span className="text-muted-foreground text-sm font-normal">
                     FCFA
                   </span>
                 </div>
               </div>
 
               {refund.reason && (
-                <div className="text-sm text-muted-foreground italic bg-muted/10 p-3 rounded-lg border border-border/20">
+                <div className="
+                  text-muted-foreground bg-muted/10 border-border/20 rounded-lg
+                  border p-3 text-sm italic
+                "
+                >
                   &quot;
                   {refund.reason}
                   &quot;
@@ -251,10 +301,17 @@ export function RefundsTable({
               )}
 
               {refund.status === 'pending' && (
-                <div className="flex gap-2 pt-2 border-t border-border/30">
+                <div className="border-border/30 flex gap-2 border-t pt-2">
                   <Button
                     variant="outline"
-                    className="flex-1 rounded-xl border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hover:text-green-800 dark:border-green-900/30 dark:bg-green-900/10 dark:text-green-400 dark:hover:bg-green-900/20"
+                    className="
+                      flex-1 rounded-xl border-green-200 bg-green-50
+                      text-green-700
+                      hover:bg-green-100 hover:text-green-800
+                      dark:border-green-900/30 dark:bg-green-900/10
+                      dark:text-green-400
+                      dark:hover:bg-green-900/20
+                    "
                     onClick={() => onApprove?.(refund.id)}
                   >
                     <IconCheck className="mr-2 h-4 w-4" />
@@ -262,7 +319,13 @@ export function RefundsTable({
                   </Button>
                   <Button
                     variant="outline"
-                    className="flex-1 rounded-xl border-red-200 text-red-700 bg-red-50 hover:bg-red-100 hover:text-red-800 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-400 dark:hover:bg-red-900/20"
+                    className="
+                      flex-1 rounded-xl border-red-200 bg-red-50 text-red-700
+                      hover:bg-red-100 hover:text-red-800
+                      dark:border-red-900/30 dark:bg-red-900/10
+                      dark:text-red-400
+                      dark:hover:bg-red-900/20
+                    "
                     onClick={() => onReject?.(refund.id)}
                   >
                     <IconX className="mr-2 h-4 w-4" />

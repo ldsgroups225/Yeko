@@ -2,16 +2,17 @@ import type {
   WorkflowEvent,
   WorkflowStep,
 } from 'cloudflare:workers'
+import type { ExampleWorkflowParams } from 'worker-configuration'
 import {
   WorkflowEntrypoint,
 } from 'cloudflare:workers'
 
 export class ExampleWorkflow extends WorkflowEntrypoint<
   Env,
-  ExampleWorkflowParmas
+  ExampleWorkflowParams
 > {
-  async run(
-    event: Readonly<WorkflowEvent<ExampleWorkflowParmas>>,
+  override async run(
+    event: Readonly<WorkflowEvent<ExampleWorkflowParams>>,
     step: WorkflowStep,
   ) {
     const randomNumber = await step.do('Get random number', async () => {

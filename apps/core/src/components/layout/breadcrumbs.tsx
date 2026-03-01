@@ -64,8 +64,17 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
   }
 
   return (
-    <nav className={cn('flex items-center space-x-1 text-sm text-muted-foreground', className)}>
-      <Link to="/app/dashboard" className="flex items-center hover:text-foreground transition-colors">
+    <nav className={cn(`
+      text-muted-foreground flex items-center space-x-1 text-sm
+    `, className)}
+    >
+      <Link
+        to="/app/dashboard"
+        className="
+          hover:text-foreground
+          flex items-center transition-colors
+        "
+      >
         <IconHome className="h-4 w-4" />
       </Link>
 
@@ -77,7 +86,13 @@ export function Breadcrumbs({ items, className }: BreadcrumbsProps) {
             <IconChevronRight className="h-4 w-4" />
             {item.href && !isLast
               ? (
-                  <Link to={item.href} className="hover:text-foreground transition-colors">
+                  <Link
+                    to={item.href}
+                    className="
+                      hover:text-foreground
+                      transition-colors
+                    "
+                  >
                     {item.label}
                   </Link>
                 )

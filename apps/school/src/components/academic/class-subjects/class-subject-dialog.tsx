@@ -89,16 +89,27 @@ export function ClassSubjectDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md backdrop-blur-xl bg-card/95 border-border/40 p-0 overflow-hidden">
-        <div className="p-6 pb-4 border-b border-border/10">
+      <DialogContent className="
+        bg-card/95 border-border/40 max-w-md overflow-hidden p-0
+        backdrop-blur-xl
+      "
+      >
+        <div className="border-border/10 border-b p-6 pb-4">
           <DialogHeader>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <IconHash className="h-5 w-5 text-primary" />
+            <div className="mb-1 flex items-center gap-3">
+              <div className="
+                bg-primary/10 flex h-10 w-10 items-center justify-center
+                rounded-xl
+              "
+              >
+                <IconHash className="text-primary h-5 w-5" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-bold">{t.academic.classes.addSubjectTitle()}</DialogTitle>
-                <DialogDescription className="text-xs font-semibold opacity-70 uppercase tracking-wider">
+                <DialogDescription className="
+                  text-xs font-semibold tracking-wider uppercase opacity-70
+                "
+                >
                   {className}
                 </DialogDescription>
               </div>
@@ -106,12 +117,20 @@ export function ClassSubjectDialog({
           </DialogHeader>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           <div className="space-y-3">
-            <Label className="text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground ml-1">
+            <Label className="
+              text-muted-foreground ml-1 text-[10px] font-bold tracking-[0.1em]
+              uppercase
+            "
+            >
               {t.academic.classes.selectSubject()}
             </Label>
-            <ScrollArea className="h-[240px] rounded-xl border border-border/10 bg-white/5 overflow-hidden">
+            <ScrollArea className="
+              border-border/10 h-[240px] overflow-hidden rounded-xl border
+              bg-white/5
+            "
+            >
               <AnimatePresence mode="wait">
                 {isPending
                   ? (
@@ -119,17 +138,23 @@ export function ClassSubjectDialog({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="flex flex-col items-center justify-center h-full gap-3 py-10"
+                        className="
+                          flex h-full flex-col items-center justify-center gap-3
+                          py-10
+                        "
                       >
-                        <IconLoader2 className="h-6 w-6 animate-spin text-primary/40" />
-                        <p className="text-xs font-medium text-muted-foreground">{t.common.loading()}</p>
+                        <IconLoader2 className="
+                          text-primary/40 h-6 w-6 animate-spin
+                        "
+                        />
+                        <p className="text-muted-foreground text-xs font-medium">{t.common.loading()}</p>
                       </motion.div>
                     )
                   : (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="p-1.5 space-y-1"
+                        className="space-y-1 p-1.5"
                       >
                         {subjects.map((item) => {
                           const isSelected = selectedSubjectId === item.subjectId
@@ -145,18 +170,33 @@ export function ClassSubjectDialog({
                                 }
                               }}
                               className={cn(
-                                'flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all',
+                                `
+                                  flex cursor-pointer items-center
+                                  justify-between rounded-lg p-3 transition-all
+                                `,
                                 isSelected
-                                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
-                                  : 'hover:bg-white/5 text-foreground',
+                                  ? `
+                                    bg-primary text-primary-foreground
+                                    shadow-primary/20 shadow-lg
+                                  `
+                                  : `
+                                    text-foreground
+                                    hover:bg-white/5
+                                  `,
                               )}
                               onClick={() => {
                                 setSelectedSubjectId(item.subjectId)
                               }}
                             >
                               <div className="flex flex-col">
-                                <span className="font-bold text-sm">{item.subject.name}</span>
-                                <span className={cn('text-[10px] font-semibold uppercase tracking-wider', isSelected ? 'text-primary-foreground/70' : 'text-muted-foreground')}>
+                                <span className="text-sm font-bold">{item.subject.name}</span>
+                                <span className={cn(`
+                                  text-[10px] font-semibold tracking-wider
+                                  uppercase
+                                `, isSelected
+                                  ? `text-primary-foreground/70`
+                                  : `text-muted-foreground`)}
+                                >
                                   {item.subject.shortName}
                                 </span>
                               </div>
@@ -172,7 +212,13 @@ export function ClassSubjectDialog({
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="coeff" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+              <Label
+                htmlFor="coeff"
+                className="
+                  text-muted-foreground ml-1 flex items-center gap-2 text-[10px]
+                  font-bold tracking-wider uppercase
+                "
+              >
                 <IconHash className="h-3 w-3" />
                 {t.academic.classes.coefficient()}
               </Label>
@@ -183,11 +229,21 @@ export function ClassSubjectDialog({
                 step="0.5"
                 value={coefficient}
                 onChange={e => setCoefficient(Number(e.target.value))}
-                className="h-11 bg-white/5 border-border/10 focus:ring-primary/40 font-mono text-center font-bold"
+                className="
+                  border-border/10
+                  focus:ring-primary/40
+                  h-11 bg-white/5 text-center font-mono font-bold
+                "
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="hours" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+              <Label
+                htmlFor="hours"
+                className="
+                  text-muted-foreground ml-1 flex items-center gap-2 text-[10px]
+                  font-bold tracking-wider uppercase
+                "
+              >
                 <IconClock className="h-3 w-3" />
                 {t.academic.classes.hoursPerWeek()}
               </Label>
@@ -198,25 +254,42 @@ export function ClassSubjectDialog({
                 step="0.5"
                 value={hours}
                 onChange={e => setHours(Number(e.target.value))}
-                className="h-11 bg-white/5 border-border/10 focus:ring-primary/40 font-mono text-center font-bold"
+                className="
+                  border-border/10
+                  focus:ring-primary/40
+                  h-11 bg-white/5 text-center font-mono font-bold
+                "
               />
             </div>
           </div>
         </div>
 
-        <div className="p-6 bg-white/5 border-t border-border/10">
-          <DialogFooter className="gap-3 sm:gap-0">
+        <div className="border-border/10 border-t bg-white/5 p-6">
+          <DialogFooter className="
+            gap-3
+            sm:gap-0
+          "
+          >
             <Button
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              className="flex-1 sm:flex-none hover:bg-white/10"
+              className="
+                flex-1
+                hover:bg-white/10
+                sm:flex-none
+              "
             >
               {t.common.cancel()}
             </Button>
             <Button
               onClick={handleSave}
               disabled={!selectedSubjectId || saveMutation.isPending}
-              className="flex-1 sm:min-w-[140px] bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+              className="
+                bg-primary
+                hover:bg-primary/90
+                shadow-primary/20 flex-1 shadow-lg
+                sm:min-w-[140px]
+              "
             >
               {saveMutation.isPending
                 ? (

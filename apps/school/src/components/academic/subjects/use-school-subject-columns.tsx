@@ -59,14 +59,30 @@ export function useSchoolSubjectColumns({ toggleStatus, isPending }: UseSchoolSu
         header: t.academic.subjects.messages.subjectName(),
         cell: ({ row }) => (
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-card border border-border/40 text-primary shadow-sm group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-300">
+            <div className="
+              bg-card border-border/40 text-primary
+              group-hover:bg-primary group-hover:text-primary-foreground
+              group-hover:border-primary
+              flex h-10 w-10 shrink-0 items-center justify-center rounded-xl
+              border shadow-sm transition-all duration-300
+            "
+            >
               <IconBook className="h-5 w-5" />
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="font-bold text-foreground truncate group-hover:text-primary transition-colors">
+            <div className="flex min-w-0 flex-col">
+              <span className="
+                text-foreground
+                group-hover:text-primary
+                truncate font-bold transition-colors
+              "
+              >
                 {row.original.subject.name}
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+              <span className="
+                text-muted-foreground/60 text-[10px] font-bold tracking-widest
+                uppercase
+              "
+              >
                 {row.original.subject.shortName}
               </span>
             </div>
@@ -85,7 +101,11 @@ export function useSchoolSubjectColumns({ toggleStatus, isPending }: UseSchoolSu
             <Badge
               variant="outline"
               className={cn(
-                'rounded-lg px-2.5 py-1 text-[11px] font-semibold border transition-all duration-300 group-hover:shadow-sm',
+                `
+                  rounded-lg border px-2.5 py-1 text-[11px] font-semibold
+                  transition-all duration-300
+                  group-hover:shadow-sm
+                `,
                 style.className,
               )}
             >

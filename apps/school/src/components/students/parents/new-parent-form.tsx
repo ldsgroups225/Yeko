@@ -50,7 +50,11 @@ export function NewParentForm({
 
   return (
     <div className="space-y-4 pt-4">
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="
+        grid gap-4
+        sm:grid-cols-2
+      "
+      >
         <div className="space-y-2">
           <Label>
             {t.parents.lastName()}
@@ -106,7 +110,7 @@ export function NewParentForm({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-6 rounded-lg border bg-muted/50 p-4">
+      <div className="bg-muted/50 flex flex-wrap gap-6 rounded-lg border p-4">
         <div className="flex items-center space-x-2">
           <Switch checked={isPrimary} onCheckedChange={onIsPrimaryChange} />
           <Label className="cursor-pointer" onClick={() => onIsPrimaryChange(!isPrimary)}>Primary contact</Label>

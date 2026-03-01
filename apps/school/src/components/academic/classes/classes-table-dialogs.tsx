@@ -43,7 +43,10 @@ export function ClassesTableDialogs() {
         open={!!classToDelete}
         onOpenChange={open => !open && setClassToDelete(null)}
       >
-        <AlertDialogContent className="backdrop-blur-xl bg-card/95 border-border/40">
+        <AlertDialogContent className="
+          bg-card/95 border-border/40 backdrop-blur-xl
+        "
+        >
           <AlertDialogHeader>
             <AlertDialogTitle>
               {t.dialogs.deleteConfirmation.title()}
@@ -61,7 +64,10 @@ export function ClassesTableDialogs() {
               {t.dialogs.deleteConfirmation.cancel()}
             </AlertDialogCancel>
             <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="
+                bg-destructive text-destructive-foreground
+                hover:bg-destructive/90
+              "
               onClick={handleDelete}
             >
               {t.dialogs.deleteConfirmation.delete()}
@@ -71,7 +77,11 @@ export function ClassesTableDialogs() {
       </AlertDialog>
 
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="max-w-2xl sm:max-w-3xl backdrop-blur-xl bg-card/95 border-border/40">
+        <DialogContent className="
+          bg-card/95 border-border/40 max-w-2xl backdrop-blur-xl
+          sm:max-w-3xl
+        "
+        >
           <DialogHeader>
             <DialogTitle>{t.dialogs.createClass.title()}</DialogTitle>
             <DialogDescription>
@@ -88,7 +98,11 @@ export function ClassesTableDialogs() {
       </Dialog>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl sm:max-w-3xl backdrop-blur-xl bg-card/95 border-border/40">
+        <DialogContent className="
+          bg-card/95 border-border/40 max-w-2xl backdrop-blur-xl
+          sm:max-w-3xl
+        "
+        >
           <DialogHeader>
             <DialogTitle>{t.classes.editClass()}</DialogTitle>
             <DialogDescription>

@@ -16,8 +16,17 @@ export function BottomNavigation() {
   const location = useLocation()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-lg items-center justify-around px-2 pb-[env(safe-area-inset-bottom)]">
+    <nav className="
+      bg-background/95
+      supports-backdrop-filter:bg-background/60
+      fixed right-0 bottom-0 left-0 z-50 border-t backdrop-blur-sm
+    "
+    >
+      <div className="
+        mx-auto flex h-16 max-w-lg items-center justify-around px-2
+        pb-[env(safe-area-inset-bottom)]
+      "
+      >
         {navItems.map((item) => {
           const isActive = item.href === '/app'
             ? location.pathname === '/app' || location.pathname === '/app/'
@@ -30,10 +39,16 @@ export function BottomNavigation() {
               key={item.id}
               to={item.href}
               className={cn(
-                'flex flex-col items-center justify-center gap-0.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors touch-target',
+                `
+                  touch-target flex flex-col items-center justify-center gap-0.5
+                  rounded-lg px-3 py-2 text-xs font-medium transition-colors
+                `,
                 isActive
                   ? 'text-primary'
-                  : 'text-muted-foreground hover:text-foreground',
+                  : `
+                    text-muted-foreground
+                    hover:text-foreground
+                  `,
               )}
               aria-label={label}
               data-nav={item.id}

@@ -55,9 +55,19 @@ function NotificationsSettingsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl shadow-sm hover:shadow-md transition-all duration-300">
-          <CardHeader className="border-b border-border/40 bg-muted/5">
-            <CardTitle className="text-xl font-bold uppercase tracking-wider text-muted-foreground">{t.settings.profile.schoolSettings()}</CardTitle>
+        <Card className="
+          border-border/40 bg-card/40 rounded-3xl border shadow-sm
+          backdrop-blur-xl transition-all duration-300
+          hover:shadow-md
+        "
+        >
+          <CardHeader className="border-border/40 bg-muted/5 border-b">
+            <CardTitle className="
+              text-muted-foreground text-xl font-bold tracking-wider uppercase
+            "
+            >
+              {t.settings.profile.schoolSettings()}
+            </CardTitle>
             <CardDescription>
               {t.settings.profile.schoolSettingsDescription()}
             </CardDescription>

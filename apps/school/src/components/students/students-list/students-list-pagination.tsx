@@ -23,7 +23,7 @@ export function StudentsListPagination() {
         <IconChevronLeft className="h-4 w-4" />
         {t.common.previous()}
       </Button>
-      <span className="text-sm text-muted-foreground">
+      <span className="text-muted-foreground text-sm">
         {t.common.pageOf({ page, totalPages: data.totalPages })}
       </span>
       <Button

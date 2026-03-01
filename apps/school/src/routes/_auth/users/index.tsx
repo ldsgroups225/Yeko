@@ -6,5 +6,5 @@ export const Route = createFileRoute('/_auth/users/')({
 
 function HRIndexPage() {
   // Redirect to users list by default
-  return <Navigate to="/users/users" search={{ page: 1 }} />
+  return <Navigate to="/settings/personnel/users" search={{ page: 1 }} />
 }

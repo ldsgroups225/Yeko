@@ -40,8 +40,11 @@ function ClassSubjectManagerContent() {
     <div className="space-y-6">
       {!isPending && subjects && <ClassCoverageSummary subjects={subjects} />}
 
-      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+      <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
+        <CardHeader className="
+          flex flex-row items-center justify-between space-y-0 pb-4
+        "
+        >
           <div>
             <CardTitle>{t.academic.classes.subjectsTitle()}</CardTitle>
             <CardDescription>
@@ -53,13 +56,30 @@ function ClassSubjectManagerContent() {
           <div className="flex gap-2">
             <button
               onClick={() => setIsCopyDialogOpen(true)}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground h-9 px-3"
+              className="
+                focus-visible:ring-ring
+                border-input
+                hover:bg-accent hover:text-accent-foreground
+                inline-flex h-9 items-center justify-center rounded-md border
+                bg-transparent px-3 text-sm font-medium shadow-sm
+                transition-colors
+                focus-visible:ring-1 focus-visible:outline-none
+                disabled:pointer-events-none disabled:opacity-50
+              "
             >
               {t.academic.classes.copyFrom()}
             </button>
             <button
               onClick={() => setIsDialogOpen(true)}
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-3"
+              className="
+                focus-visible:ring-ring
+                bg-primary text-primary-foreground
+                hover:bg-primary/90
+                inline-flex h-9 items-center justify-center rounded-md px-3
+                text-sm font-medium shadow-sm transition-colors
+                focus-visible:ring-1 focus-visible:outline-none
+                disabled:pointer-events-none disabled:opacity-50
+              "
             >
               {t.academic.classes.addSubject()}
             </button>

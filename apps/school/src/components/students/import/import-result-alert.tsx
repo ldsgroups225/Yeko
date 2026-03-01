@@ -46,14 +46,17 @@ export function ImportResultAlert({ result }: ImportResultAlertProps) {
       </Alert>
 
       {result.errors.length > 0 && (
-        <div className="max-h-40 overflow-y-auto rounded border p-3 text-sm">
+        <div className="max-h-40 overflow-y-auto rounded-sm border p-3 text-sm">
           {result.errors.slice(0, 10).map(err => (
-            <p key={`error-${err.row}-${generateUUID()}`} className="text-destructive">
+            <p
+              key={`error-${err.row}-${generateUUID()}`}
+              className="text-destructive"
+            >
               {t.students.importRowError({ row: err.row, error: err.error })}
             </p>
           ))}
           {result.errors.length > 10 && (
-            <p className="mt-2 text-muted-foreground">
+            <p className="text-muted-foreground mt-2">
               {t.common.andMore({ count: result.errors.length - 10 })}
             </p>
           )}

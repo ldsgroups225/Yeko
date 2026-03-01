@@ -50,7 +50,11 @@ export function PaymentForm({
             name="studentId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                <FormLabel className="
+                  text-muted-foreground text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.students.student()}
                   {' '}
                   *
@@ -60,21 +64,33 @@ export function PaymentForm({
                     value={field.value}
                     onSelect={id => field.onChange(id)}
                     placeholder={t.students.searchPlaceholder()}
+                    requireValidEnrollmentInSchoolYear
                   />
                 </FormControl>
+                <FormDescription className="text-[11px]">
+                  Seuls les élèves inscrits et confirmés dans l'année scolaire active sont affichés.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
         )}
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="
+          grid gap-4
+          md:grid-cols-2
+        "
+        >
           <FormField
             control={form.control}
             name="amount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                <FormLabel className="
+                  text-muted-foreground text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.finance.amount()}
                   {' '}
                   *
@@ -85,10 +101,18 @@ export function PaymentForm({
                       type="text"
                       inputMode="numeric"
                       {...field}
-                      className="pr-16 rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors font-bold text-lg"
+                      className="
+                        border-border/40 bg-muted/20
+                        focus:bg-background
+                        rounded-xl pr-16 text-lg font-bold transition-colors
+                      "
                       placeholder="0"
                     />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+                    <span className="
+                      text-muted-foreground absolute top-1/2 right-3
+                      -translate-y-1/2 text-sm font-medium
+                    "
+                    >
                       FCFA
                     </span>
                   </div>
@@ -103,14 +127,23 @@ export function PaymentForm({
             name="method"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+                <FormLabel className="
+                  text-muted-foreground text-xs font-bold tracking-wider
+                  uppercase
+                "
+                >
                   {t.finance.method()}
                   {' '}
                   *
                 </FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors">
+                    <SelectTrigger className="
+                      border-border/40 bg-muted/20
+                      focus:bg-background
+                      rounded-xl transition-colors
+                    "
+                    >
                       <SelectValue placeholder={t.finance.method()}>
                         {field.value
                           ? paymentMethodLabels[
@@ -120,12 +153,19 @@ export function PaymentForm({
                       </SelectValue>
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent className="rounded-xl backdrop-blur-xl bg-popover/95 border-border/40 shadow-xl">
+                  <SelectContent className="
+                    bg-popover/95 border-border/40 rounded-xl shadow-xl
+                    backdrop-blur-xl
+                  "
+                  >
                     {paymentMethods.map(method => (
                       <SelectItem
                         key={method}
                         value={method}
-                        className="rounded-lg cursor-pointer focus:bg-primary/10"
+                        className="
+                          focus:bg-primary/10
+                          cursor-pointer rounded-lg
+                        "
                       >
                         {paymentMethodLabels[method]}
                       </SelectItem>
@@ -143,14 +183,21 @@ export function PaymentForm({
           name="reference"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.finance.payments.reference()}
               </FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   placeholder={t.finance.payments.referencePlaceholder()}
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormDescription className="text-[11px]">
@@ -166,14 +213,21 @@ export function PaymentForm({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">
+              <FormLabel className="
+                text-muted-foreground text-xs font-bold tracking-wider uppercase
+              "
+              >
                 {t.finance.description()}
               </FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
                   rows={2}
-                  className="rounded-xl border-border/40 bg-muted/20 focus:bg-background transition-colors resize-none"
+                  className="
+                    border-border/40 bg-muted/20
+                    focus:bg-background
+                    resize-none rounded-xl transition-colors
+                  "
                 />
               </FormControl>
               <FormMessage />
@@ -181,19 +235,19 @@ export function PaymentForm({
           )}
         />
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-border/10">
+        <div className="border-border/10 flex justify-end gap-3 border-t pt-4">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="rounded-xl border-border/40"
+            className="border-border/40 rounded-xl"
           >
             {t.common.cancel()}
           </Button>
           <Button
             type="submit"
             disabled={isPending}
-            className="rounded-xl shadow-lg shadow-primary/20"
+            className="shadow-primary/20 rounded-xl shadow-lg"
           >
             {isPending && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
             {t.common.save()}

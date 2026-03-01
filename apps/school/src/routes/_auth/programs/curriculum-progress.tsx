@@ -105,10 +105,23 @@ function CurriculumProgressPage() {
         title={t.curriculum.title()}
         description={t.curriculum.description()}
       >
-        <div className="flex flex-col sm:flex-row gap-4 w-full xl:w-auto items-end">
+        <div className="
+          flex w-full flex-col items-end gap-4
+          sm:flex-row
+          xl:w-auto
+        "
+        >
           {/* Term */}
-          <div className="w-full sm:w-[240px] space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
+          <div className="
+            w-full space-y-1.5
+            sm:w-[240px]
+          "
+          >
+            <span className="
+              text-muted-foreground/60 ml-1 block text-[10px] font-black
+              tracking-widest uppercase
+            "
+            >
               Trimestre
             </span>
             {termsPending || contextPending
@@ -121,7 +134,14 @@ function CurriculumProgressPage() {
                     onValueChange={val => setSelectedTermId(val ?? '')}
                     disabled={!effectiveYearId}
                   >
-                    <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
+                    <SelectTrigger className="
+                      bg-card/50 border-border/40
+                      focus:ring-primary/20
+                      hover:bg-card/80
+                      h-11 rounded-xl font-bold shadow-sm backdrop-blur-xl
+                      transition-all
+                    "
+                    >
                       <SelectValue placeholder={t.terms.select()}>
                         {selectedTermId
                           ? (() => {
@@ -137,9 +157,19 @@ function CurriculumProgressPage() {
                           : undefined}
                       </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                    <SelectContent className="
+                      bg-popover/90 border-border/40 rounded-xl backdrop-blur-xl
+                    "
+                    >
                       {terms?.map(term => (
-                        <SelectItem key={term.id} value={term.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                        <SelectItem
+                          key={term.id}
+                          value={term.id}
+                          className="
+                            focus:bg-primary/10
+                            rounded-lg font-medium
+                          "
+                        >
                           {term.template.name}
                         </SelectItem>
                       ))}
@@ -149,8 +179,16 @@ function CurriculumProgressPage() {
           </div>
 
           {/* Class */}
-          <div className="w-full sm:w-[240px] space-y-1.5">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-1 block">
+          <div className="
+            w-full space-y-1.5
+            sm:w-[240px]
+          "
+          >
+            <span className="
+              text-muted-foreground/60 ml-1 block text-[10px] font-black
+              tracking-widest uppercase
+            "
+            >
               {t.classes.title()}
             </span>
             {classesPending || contextPending
@@ -163,7 +201,14 @@ function CurriculumProgressPage() {
                     onValueChange={val => setSelectedClassId(val ?? '')}
                     disabled={!effectiveYearId}
                   >
-                    <SelectTrigger className="h-11 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold shadow-sm hover:bg-card/80">
+                    <SelectTrigger className="
+                      bg-card/50 border-border/40
+                      focus:ring-primary/20
+                      hover:bg-card/80
+                      h-11 rounded-xl font-bold shadow-sm backdrop-blur-xl
+                      transition-all
+                    "
+                    >
                       <SelectValue placeholder={t.classes.select()}>
                         {selectedClassId
                           ? (() => {
@@ -183,9 +228,19 @@ function CurriculumProgressPage() {
                           : undefined}
                       </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="backdrop-blur-xl bg-popover/90 border-border/40 rounded-xl">
+                    <SelectContent className="
+                      bg-popover/90 border-border/40 rounded-xl backdrop-blur-xl
+                    "
+                    >
                       {classes?.map(item => (
-                        <SelectItem key={item.class.id} value={item.class.id} className="rounded-lg focus:bg-primary/10 font-medium">
+                        <SelectItem
+                          key={item.class.id}
+                          value={item.class.id}
+                          className="
+                            focus:bg-primary/10
+                            rounded-lg font-medium
+                          "
+                        >
                           {item.grade.name}
                           {' '}
                           {item.class.section}
@@ -216,11 +271,19 @@ function CurriculumProgressPage() {
                 )}
 
                 {/* Progress Cards Grid */}
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="
+                  grid gap-6
+                  md:grid-cols-2
+                  lg:grid-cols-3
+                "
+                >
                   {progressPending
                     ? (
                         Array.from({ length: 6 }).map(() => (
-                          <Skeleton key={generateUUID()} className="h-48 rounded-3xl" />
+                          <Skeleton
+                            key={generateUUID()}
+                            className="h-48 rounded-3xl"
+                          />
                         ))
                       )
                     : (
@@ -242,7 +305,12 @@ function CurriculumProgressPage() {
               </div>
             )
           : (
-              <div className="flex flex-col items-center justify-center py-20 text-muted-foreground border-2 border-dashed border-border/30 rounded-3xl bg-card/10">
+              <div className="
+                text-muted-foreground border-border/30 bg-card/10 flex flex-col
+                items-center justify-center rounded-3xl border-2 border-dashed
+                py-20
+              "
+              >
                 <p className="text-lg font-medium">{t.curriculum.selectFiltersPrompt()}</p>
               </div>
             )}

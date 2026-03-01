@@ -69,15 +69,33 @@ function HomeworkPage() {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="active" className="gap-1.5">
             <IconClock className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.homework.status.active()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.homework.status.active()}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="closed" className="gap-1.5">
             <IconCircleCheck className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.homework.status.closed()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.homework.status.closed()}
+            </span>
           </TabsTrigger>
           <TabsTrigger value="draft" className="gap-1.5">
             <IconFileText className="h-4 w-4" />
-            <span className="hidden sm:inline">{LL.homework.status.draft()}</span>
+            <span className="
+              hidden
+              sm:inline
+            "
+            >
+              {LL.homework.status.draft()}
+            </span>
           </TabsTrigger>
         </TabsList>
 
@@ -126,20 +144,35 @@ function HomeworkCard({ homework, locale }: HomeworkCardProps) {
 
   return (
     <Link to="/app/homework/$homeworkId" params={{ homeworkId: homework.id }}>
-      <Card className={`transition-colors hover:bg-muted/50 ${isOverdue ? 'border-destructive/50' : ''}`}>
+      <Card className={`
+        hover:bg-muted/50
+        transition-colors
+        ${isOverdue
+      ? `border-destructive/50`
+      : ''}
+      `}
+      >
         <CardContent className="p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1 space-y-1">
               <h3 className="truncate font-semibold">{homework.title}</h3>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {homework.className}
                 {' '}
                 •
                 {homework.subjectName}
               </p>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="
+                text-muted-foreground flex items-center gap-2 text-xs
+              "
+              >
                 <IconCalendar className="h-3.5 w-3.5" />
-                <span className={isOverdue ? 'text-destructive' : isDueToday ? 'text-warning' : ''}>
+                <span className={isOverdue
+                  ? 'text-destructive'
+                  : isDueToday
+                    ? `text-warning`
+                    : ''}
+                >
                   {format(dueDate, 'd MMM yyyy', { locale })}
                   {homework.dueTime && ` ${LL.common.at()} ${homework.dueTime}`}
                 </span>
@@ -148,7 +181,7 @@ function HomeworkCard({ homework, locale }: HomeworkCardProps) {
             <div className="flex flex-col items-end gap-2">
               <StatusBadge status={homework.status} isOverdue={isOverdue} />
               {homework.status === 'active' && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   {homework.submissionCount}
                   /
                   {homework.totalStudents}
@@ -199,8 +232,8 @@ function EmptyHomework({ status }: { status: string }) {
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <IconBook className="h-12 w-12 text-muted-foreground/50" />
-        <p className="mt-4 text-sm text-muted-foreground">
+        <IconBook className="text-muted-foreground/50 h-12 w-12" />
+        <p className="text-muted-foreground mt-4 text-sm">
           {LL.homework.noHomework()}
         </p>
         {status === 'active' && (

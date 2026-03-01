@@ -120,8 +120,12 @@ function ClassDetailPage() {
 
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-            <IconSchool className="h-8 w-8 text-primary" />
+          <div className="
+            bg-primary/10 flex h-16 w-16 items-center justify-center
+            rounded-full
+          "
+          >
+            <IconSchool className="text-primary h-8 w-8" />
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight">{className}</h1>
@@ -130,7 +134,10 @@ function ClassDetailPage() {
                   <Link
                     to="/spaces/classrooms/$classroomId"
                     params={{ classroomId: classroom.id }}
-                    className="text-muted-foreground hover:underline"
+                    className="
+                      text-muted-foreground
+                      hover:underline
+                    "
                   >
                     {classroom.name}
                   </Link>
@@ -172,34 +179,41 @@ function ClassDetailPage() {
         </TabsList>
 
         <TabsContent value="info" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+          <div className="
+            grid gap-4
+            md:grid-cols-3
+          "
+          >
+            <Card className="
+              border-border/40 bg-card/50 shadow-sm backdrop-blur-xl
+            "
+            >
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-muted-foreground text-sm font-medium">
                   {t.classes.studentCount()}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2">
-                  <IconUsers className="h-5 w-5 text-primary" />
+                  <IconUsers className="text-primary h-5 w-5" />
                   <span className="text-2xl font-bold">{studentsCount}</span>
                   <span className="text-muted-foreground">
                     /
                     {classData.maxStudents}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground italic">
+                <p className="text-muted-foreground mt-1 text-xs italic">
                   {t.classes.boys()}
                   :
                   {' '}
-                  <span className="font-bold text-foreground">{boysCount}</span>
+                  <span className="text-foreground font-bold">{boysCount}</span>
                   {' '}
                   /
                   {' '}
                   {t.classes.girls()}
                   :
                   {' '}
-                  <span className="font-bold text-foreground">
+                  <span className="text-foreground font-bold">
                     {girlsCount}
                   </span>
                 </p>
@@ -208,7 +222,7 @@ function ClassDetailPage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-muted-foreground text-sm font-medium">
                   {t.classes.status()}
                 </CardTitle>
               </CardHeader>
@@ -227,7 +241,7 @@ function ClassDetailPage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-muted-foreground text-sm font-medium">
                   {t.classes.room()}
                 </CardTitle>
               </CardHeader>
@@ -237,7 +251,10 @@ function ClassDetailPage() {
                       <span className="text-lg font-medium">{classroom.name}</span>
                     )
                   : (
-                      <span className="text-lg font-medium text-muted-foreground">
+                      <span className="
+                        text-muted-foreground text-lg font-medium
+                      "
+                      >
                         -
                       </span>
                     )}
@@ -245,34 +262,41 @@ function ClassDetailPage() {
             </Card>
           </div>
 
-          <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+          <Card className="
+            border-border/40 bg-card/50 shadow-sm backdrop-blur-xl
+          "
+          >
             <CardHeader>
               <CardTitle>{t.classes.details()}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="
+                grid gap-6
+                md:grid-cols-2
+              "
+              >
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-muted-foreground text-sm font-medium">
                     {t.classes.grade()}
                   </p>
                   <p className="text-base">{grade.name}</p>
                 </div>
                 {series && (
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">
+                    <p className="text-muted-foreground text-sm font-medium">
                       {t.classes.series()}
                     </p>
                     <p className="text-base">{series.name}</p>
                   </div>
                 )}
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-muted-foreground text-sm font-medium">
                     {t.classes.section()}
                   </p>
                   <p className="text-base">{classData.section}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">
+                  <p className="text-muted-foreground text-sm font-medium">
                     {t.classes.homeroomTeacher()}
                   </p>
                   <p className="text-base">

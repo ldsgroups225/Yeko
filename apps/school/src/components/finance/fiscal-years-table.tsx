@@ -86,9 +86,14 @@ export function FiscalYearsTable({
 
   if (fiscalYears.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconCalendar className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconCalendar className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">{t.finance.fiscalYears.noFiscalYears()}</p>
       </div>
@@ -97,10 +102,18 @@ export function FiscalYearsTable({
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">
                 {t.finance.fiscalYears.title()}
               </TableHead>
@@ -126,7 +139,11 @@ export function FiscalYearsTable({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-muted/30 border-border/40 transition-colors"
+                  className="
+                    group
+                    hover:bg-muted/30
+                    border-border/40 transition-colors
+                  "
                 >
                   <TableCell className="font-bold">
                     {fy.name}
@@ -141,7 +158,7 @@ export function FiscalYearsTable({
                     <Badge
                       variant="outline"
                       className={cn(
-                        'font-medium border',
+                        'border font-medium',
                         getStatusColor(fy.status),
                       )}
                     >
@@ -156,7 +173,10 @@ export function FiscalYearsTable({
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="
+                                h-8 w-8 rounded-lg opacity-0 transition-opacity
+                                group-hover:opacity-100
+                              "
                             >
                               <IconDots className="h-4 w-4" />
                             </Button>
@@ -164,11 +184,17 @@ export function FiscalYearsTable({
                         />
                         <DropdownMenuContent
                           align="end"
-                          className="backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+                          className="
+                            bg-card/95 border-border/40 rounded-xl p-1 shadow-xl
+                            backdrop-blur-xl
+                          "
                         >
                           <DropdownMenuItem
                             onClick={() => onClose?.(fy)}
-                            className="rounded-lg cursor-pointer focus:bg-destructive/10 focus:text-destructive font-medium"
+                            className="
+                              focus:bg-destructive/10 focus:text-destructive
+                              cursor-pointer rounded-lg font-medium
+                            "
                           >
                             <IconLock className="mr-2 h-4 w-4" />
                             {t.finance.fiscalYears.close()}
@@ -184,7 +210,11 @@ export function FiscalYearsTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {fiscalYears.map((fy, index) => (
             <motion.div
@@ -192,14 +222,17 @@ export function FiscalYearsTable({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="p-4 rounded-2xl border border-border/40 backdrop-blur-md bg-card/50 space-y-3"
+              className="
+                border-border/40 bg-card/50 space-y-3 rounded-2xl border p-4
+                backdrop-blur-md
+              "
             >
-              <div className="flex justify-between items-start">
-                <div className="font-bold text-lg">{fy.name}</div>
+              <div className="flex items-start justify-between">
+                <div className="text-lg font-bold">{fy.name}</div>
                 <Badge
                   variant="outline"
                   className={cn(
-                    'font-medium border text-[10px]',
+                    'border text-[10px] font-medium',
                     getStatusColor(fy.status),
                   )}
                 >
@@ -207,7 +240,7 @@ export function FiscalYearsTable({
                 </Badge>
               </div>
 
-              <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+              <div className="text-muted-foreground flex flex-col gap-1 text-sm">
                 <div className="flex justify-between">
                   <span>{t.finance.fiscalYears.startDate()}</span>
                   <span className="text-foreground font-medium">
@@ -223,11 +256,15 @@ export function FiscalYearsTable({
               </div>
 
               {fy.status === 'open' && (
-                <div className="pt-2 border-t border-border/30">
+                <div className="border-border/30 border-t pt-2">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-full text-destructive hover:bg-destructive/10 justify-start h-9"
+                    className="
+                      text-destructive
+                      hover:bg-destructive/10
+                      h-9 w-full justify-start
+                    "
                     onClick={() => onClose?.(fy)}
                   >
                     <IconLock className="mr-2 h-4 w-4" />

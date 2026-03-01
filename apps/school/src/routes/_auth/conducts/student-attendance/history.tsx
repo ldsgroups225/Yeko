@@ -56,7 +56,11 @@ function StudentAttendanceHistoryPage() {
         ]}
       />
 
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div className="
+        flex flex-col justify-between gap-6
+        md:flex-row md:items-end
+      "
+      >
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -65,7 +69,12 @@ function StudentAttendanceHistoryPage() {
 
           <div>
             <h1 className="text-3xl font-black tracking-tight uppercase italic">{t.attendance.history()}</h1>
-            <p className="text-sm font-medium text-muted-foreground italic max-w-md">{t.attendance.historyDescription()}</p>
+            <p className="
+              text-muted-foreground max-w-md text-sm font-medium italic
+            "
+            >
+              {t.attendance.historyDescription()}
+            </p>
           </div>
         </motion.div>
 
@@ -74,7 +83,15 @@ function StudentAttendanceHistoryPage() {
           animate={{ opacity: 1, x: 0 }}
         >
           <Link to="/conducts/student-attendance">
-            <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="
+                hover:bg-primary/10 hover:text-primary
+                rounded-xl text-[10px] font-black tracking-widest uppercase
+                transition-all
+              "
+            >
               <IconArrowLeft className="mr-2 h-4 w-4" />
               {t.common.back()}
             </Button>
@@ -85,11 +102,19 @@ function StudentAttendanceHistoryPage() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-card/20 backdrop-blur-xl border border-border/40 p-6 rounded-3xl"
+        className="
+          bg-card/20 border-border/40 rounded-3xl border p-6 backdrop-blur-xl
+        "
       >
-        <div className="flex items-center gap-2 mb-4 ml-1">
-          <IconSearch className="size-3 text-muted-foreground/60" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.attendance.selectStudent()}</span>
+        <div className="mb-4 ml-1 flex items-center gap-2">
+          <IconSearch className="text-muted-foreground/60 size-3" />
+          <span className="
+            text-muted-foreground/60 text-[10px] font-black tracking-widest
+            uppercase
+          "
+          >
+            {t.attendance.selectStudent()}
+          </span>
         </div>
         <StudentCombobox
           value={studentId}
@@ -110,7 +135,11 @@ function StudentAttendanceHistoryPage() {
               >
                 {isPending
                   ? (
-                      <Card className="w-full max-w-2xl rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl p-8">
+                      <Card className="
+                        border-border/40 bg-card/30 w-full max-w-2xl rounded-3xl
+                        p-8 shadow-2xl backdrop-blur-xl
+                      "
+                      >
                         <Skeleton className="h-[400px] w-full rounded-2xl" />
                       </Card>
                     )
@@ -131,12 +160,28 @@ function StudentAttendanceHistoryPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="rounded-[2.5rem] border border-dashed border-primary/20 bg-primary/5 p-20 flex flex-col items-center text-center space-y-6"
+                className="
+                  border-primary/20 bg-primary/5 flex flex-col items-center
+                  space-y-6 rounded-[2.5rem] border border-dashed p-20
+                  text-center
+                "
               >
 
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black uppercase tracking-tight text-primary/60 italic">{t.attendance.searchStudent()}</h3>
-                  <p className="text-base font-medium text-muted-foreground/40 italic max-w-xs">{t.attendance.selectStudent()}</p>
+                  <h3 className="
+                    text-primary/60 text-2xl font-black tracking-tight uppercase
+                    italic
+                  "
+                  >
+                    {t.attendance.searchStudent()}
+                  </h3>
+                  <p className="
+                    text-muted-foreground/40 max-w-xs text-base font-medium
+                    italic
+                  "
+                  >
+                    {t.attendance.selectStudent()}
+                  </p>
                 </div>
               </motion.div>
             )}

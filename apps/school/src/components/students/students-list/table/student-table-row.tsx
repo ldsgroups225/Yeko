@@ -30,7 +30,11 @@ export function StudentTableRow({ item, index }: StudentTableRowProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ delay: index * 0.02 }}
-      className="border-border/10 group hover:bg-card/30 transition-colors cursor-pointer"
+      className="
+        border-border/10 group
+        hover:bg-card/30
+        cursor-pointer transition-colors
+      "
       onClick={() => navigate({ to: '/students/$studentId', params: { studentId: item.student.id } })}
       onMouseEnter={() => handlePrefetchStudent(item.student.id)}
     >
@@ -38,12 +42,16 @@ export function StudentTableRow({ item, index }: StudentTableRowProps) {
         <Checkbox
           checked={selectedRows.includes(item.student.id)}
           onCheckedChange={checked => handleSelectRow(item.student.id, !!checked)}
-          className="mr-2 border-primary/50 data-[state=checked]:border-primary"
+          className="
+            border-primary/50
+            data-[state=checked]:border-primary
+            mr-2
+          "
         />
       </TableCell>
       <TableCell className="py-3">
         <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 border border-border/20">
+          <Avatar className="border-border/20 h-10 w-10 border">
             <AvatarImage src={item.student.photoUrl || undefined} />
             <AvatarFallback>
               {item.student.firstName[0]}
@@ -54,18 +62,21 @@ export function StudentTableRow({ item, index }: StudentTableRowProps) {
             <Link
               to="/students/$studentId"
               params={{ studentId: item.student.id }}
-              className="font-medium hover:text-primary transition-colors block"
+              className="
+                hover:text-primary
+                block font-medium transition-colors
+              "
               onMouseEnter={() => handlePrefetchStudent(item.student.id)}
             >
               {item.student.lastName}
               {' '}
               {item.student.firstName}
             </Link>
-            <p className="text-xs text-muted-foreground">{formatDate(item.student.dob, 'MEDIUM')}</p>
+            <p className="text-muted-foreground text-xs">{formatDate(item.student.dob, 'MEDIUM')}</p>
           </div>
         </div>
       </TableCell>
-      <TableCell className="font-mono text-sm text-muted-foreground">{item.student.matricule}</TableCell>
+      <TableCell className="text-muted-foreground font-mono text-sm">{item.student.matricule}</TableCell>
       <TableCell>
         {item.currentClass?.gradeName && item.currentClass?.section
           ? (
@@ -81,7 +92,11 @@ export function StudentTableRow({ item, index }: StudentTableRowProps) {
       <TableCell>{item.student.gender === 'M' ? t.students.male() : item.student.gender === 'F' ? t.students.female() : '-'}</TableCell>
       <TableCell><StudentStatusBadge status={item.student.status} /></TableCell>
       <TableCell className="text-center">
-        <span className="inline-flex items-center justify-center rounded-full bg-card/20 px-2 py-0.5 text-xs font-medium w-6 h-6">
+        <span className="
+          bg-card/20 inline-flex h-6 w-6 items-center justify-center
+          rounded-full px-2 py-0.5 text-xs font-medium
+        "
+        >
           {item.parentsCount}
         </span>
       </TableCell>
@@ -102,7 +117,10 @@ export function StudentTableRow({ item, index }: StudentTableRowProps) {
               </Button>
             )}
           />
-          <DropdownMenuContent align="end" className="backdrop-blur-xl bg-popover/90 border border-border/40">
+          <DropdownMenuContent
+            align="end"
+            className="bg-popover/90 border-border/40 border backdrop-blur-xl"
+          >
             <DropdownMenuItem
               render={(
                 <Link to="/students/$studentId/edit" params={{ studentId: item.student.id }}>
@@ -115,7 +133,13 @@ export function StudentTableRow({ item, index }: StudentTableRowProps) {
               <IconEdit className="mr-2 h-4 w-4" />
               {t.students.changeStatus()}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDelete(item)} className="text-destructive focus:text-destructive">
+            <DropdownMenuItem
+              onClick={() => handleDelete(item)}
+              className="
+                text-destructive
+                focus:text-destructive
+              "
+            >
               <IconTrash className="mr-2 h-4 w-4" />
               {t.common.delete()}
             </DropdownMenuItem>

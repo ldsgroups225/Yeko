@@ -18,7 +18,7 @@ interface ReportCardListProps {
 
 function ReportCardSkeleton() {
   return (
-    <div className="rounded-lg border p-4 space-y-3">
+    <div className="space-y-3 rounded-lg border p-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-2">
           <Skeleton className="h-5 w-5" />
@@ -54,7 +54,12 @@ export function ReportCardList({
 
   if (isPending) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="
+        grid gap-4
+        md:grid-cols-2
+        lg:grid-cols-3
+      "
+      >
         {Array.from({ length: 6 }).map(() => (
           <ReportCardSkeleton key={generateUUID()} />
         ))}
@@ -68,9 +73,12 @@ export function ReportCardList({
 
   if (filteredCards.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <IconFileX className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="font-semibold text-lg">{t.reportCards.noReportCards()}</h3>
+      <div className="
+        flex flex-col items-center justify-center py-12 text-center
+      "
+      >
+        <IconFileX className="text-muted-foreground mb-4 h-12 w-12" />
+        <h3 className="text-lg font-semibold">{t.reportCards.noReportCards()}</h3>
         <p className="text-muted-foreground text-sm">
           {t.reportCards.noReportCardsDescription()}
         </p>
@@ -79,7 +87,12 @@ export function ReportCardList({
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="
+      grid gap-4
+      md:grid-cols-2
+      lg:grid-cols-3
+    "
+    >
       {filteredCards.map(reportCard => (
         <ReportCardCard
           key={reportCard.id}

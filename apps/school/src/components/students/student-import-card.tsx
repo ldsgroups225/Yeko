@@ -167,7 +167,7 @@ export function StudentImportCard() {
   }
 
   return (
-    <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm">
+    <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <IconFileSpreadsheet className="h-5 w-5" />
@@ -203,10 +203,16 @@ export function StudentImportCard() {
         </div>
 
         {validationResult && (
-          <div className="space-y-2 rounded-xl border border-border/40 bg-card/30 p-4">
+          <div className="
+            border-border/40 bg-card/30 space-y-2 rounded-xl border p-4
+          "
+          >
             <div className="flex justify-between text-sm">
               <span>{t.students.importPreviewCount({ count: validationResult.totalRows })}</span>
-              <span className={validationResult.isValid ? 'text-green-600' : 'text-red-600'}>
+              <span className={validationResult.isValid
+                ? 'text-green-600'
+                : `text-red-600`}
+              >
                 {validationResult.validRows}
                 {' '}
                 /
@@ -217,7 +223,10 @@ export function StudentImportCard() {
               value={(validationResult.validRows / validationResult.totalRows) * 100}
             />
             {validationResult.errors.length > 0 && (
-              <div className="mt-2 max-h-32 overflow-y-auto text-sm text-red-600">
+              <div className="
+                mt-2 max-h-32 overflow-y-auto text-sm text-red-600
+              "
+              >
                 {validationResult.errors.slice(0, 5).map(err => (
                   <p key={generateUUID()}>
                     {t.students.importRowError({ row: err.row, error: err.message })}

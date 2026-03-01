@@ -37,7 +37,12 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
           <Skeleton className="h-4 w-64" />
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="
+            grid gap-4
+            md:grid-cols-2
+            lg:grid-cols-4
+          "
+          >
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="space-y-2">
                 <Skeleton className="h-4 w-24" />
@@ -52,9 +57,13 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
 
   if (error || !health) {
     return (
-      <Card className="border-destructive/20 bg-destructive/10 dark:border-destructive/40 dark:bg-destructive/20">
+      <Card className="
+        border-destructive/20 bg-destructive/10
+        dark:border-destructive/40 dark:bg-destructive/20
+      "
+      >
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
+          <CardTitle className="text-destructive flex items-center gap-2">
             <IconAlertCircle className="h-5 w-5" />
             Santé du système
           </CardTitle>
@@ -69,13 +78,13 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'healthy':
-        return <IconCircleCheck className="h-4 w-4 text-primary" />
+        return <IconCircleCheck className="text-primary h-4 w-4" />
       case 'warning':
-        return <IconAlertTriangle className="h-4 w-4 text-secondary" />
+        return <IconAlertTriangle className="text-secondary h-4 w-4" />
       case 'error':
-        return <IconAlertCircle className="h-4 w-4 text-destructive" />
+        return <IconAlertCircle className="text-destructive h-4 w-4" />
       default:
-        return <IconActivity className="h-4 w-4 text-muted-foreground" />
+        return <IconActivity className="text-muted-foreground h-4 w-4" />
     }
   }
 
@@ -137,19 +146,34 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
 
   return (
     <Card className={cn('transition-all duration-300', isCollapsed ? 'pb-0' : '')}>
-      <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2">
+      <CardHeader className="
+        flex flex-row items-start justify-between space-y-0 pb-2
+      "
+      >
         <div className="space-y-1">
           <CardTitle className="flex items-center gap-2">
             <IconActivity className="h-5 w-5" />
             Santé du système
             {isCollapsed && (
               <span className={cn(
-                'ml-2 text-sm font-normal px-2 py-0.5 rounded-full flex items-center gap-1',
+                `
+                  ml-2 flex items-center gap-1 rounded-full px-2 py-0.5 text-sm
+                  font-normal
+                `,
                 overallStatus === 'healthy'
-                  ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary'
+                  ? `
+                    bg-primary/10 text-primary
+                    dark:bg-primary/20 dark:text-primary
+                  `
                   : overallStatus === 'warning'
-                    ? 'bg-secondary/10 text-secondary dark:bg-secondary/20 dark:text-secondary'
-                    : 'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive',
+                    ? `
+                      bg-secondary/10 text-secondary
+                      dark:bg-secondary/20 dark:text-secondary
+                    `
+                    : `
+                      bg-destructive/10 text-destructive
+                      dark:bg-destructive/20 dark:text-destructive
+                    `,
               )}
               >
                 {getStatusIcon(overallStatus)}
@@ -169,24 +193,36 @@ export function SystemHealth({ health, isLoading, error, collapsedByDefault = fa
           className="h-8 w-8 p-0"
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          {isCollapsed ? <IconChevronDown className="h-4 w-4" /> : <IconChevronUp className="h-4 w-4" />}
+          {isCollapsed
+            ? <IconChevronDown className="h-4 w-4" />
+            : (
+                <IconChevronUp className="h-4 w-4" />
+              )}
         </Button>
       </CardHeader>
       {!isCollapsed && (
         <CardContent className="pt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="
+            grid gap-4
+            md:grid-cols-2
+            lg:grid-cols-4
+          "
+          >
             {healthMetrics.map(item => (
               <div key={item.metric} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">{item.metric}</span>
                   <div className="flex items-center gap-2">
                     {getStatusIcon(item.status)}
-                    <span className="text-sm text-muted-foreground">{item.value}</span>
+                    <span className="text-muted-foreground text-sm">{item.value}</span>
                   </div>
                 </div>
-                <div className="w-full bg-secondary rounded-full h-2">
+                <div className="bg-secondary h-2 w-full rounded-full">
                   <div
-                    className={`h-2 rounded-full transition-all duration-300 ${getProgressBarColor(item.status)}`}
+                    className={`
+                      h-2 rounded-full transition-all duration-300
+                      ${getProgressBarColor(item.status)}
+                    `}
                     style={{
                       width: getProgressWidth(item.status),
                     }}

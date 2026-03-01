@@ -24,12 +24,22 @@ function DashboardPage() {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-48" />
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="
+          grid gap-4
+          md:grid-cols-2
+          lg:grid-cols-4
+        "
+        >
           {Array.from({ length: 4 }, (_, i) => `skeleton-${i}`).map(key => (
             <Skeleton key={key} className="h-32 rounded-xl" />
           ))}
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <div className="
+          grid gap-4
+          md:grid-cols-2
+          lg:grid-cols-7
+        "
+        >
           <Skeleton className="col-span-4 h-[400px] rounded-xl" />
           <Skeleton className="col-span-3 h-[400px] rounded-xl" />
         </div>
@@ -64,7 +74,7 @@ function DashboardPage() {
             <p className="text-lg font-medium">
               {t.dashboard.noRoleAssigned()}
             </p>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-2 text-sm">
               {t.dashboard.contactAdmin()}
             </p>
           </div>

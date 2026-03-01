@@ -152,7 +152,7 @@ export function ClassDetailPage({
     return <ClassNotFound schoolId={schoolId} />
 
   return (
-    <div className="min-h-screen pb-20 animate-in fade-in duration-500">
+    <div className="animate-in fade-in min-h-screen pb-20 duration-500">
       <ClassDetailHeader
         schoolId={schoolId}
         className={classInfo.name}

@@ -32,20 +32,26 @@ function ConductItem({
   }
 
   return (
-    <div className="space-y-2 rounded-md border border-border/40 bg-background p-4">
+    <div className="
+      border-border/40 bg-background space-y-2 rounded-md border p-4
+    "
+    >
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-sm font-medium">{name}</p>
-          <p className="text-xs text-muted-foreground">{className}</p>
+          <p className="text-muted-foreground text-xs">{className}</p>
         </div>
         <span
-          className={`rounded-full px-2 py-1 text-xs font-medium ${severityConfig[severity].color}`}
+          className={`
+            rounded-full px-2 py-1 text-xs font-medium
+            ${severityConfig[severity].color}
+          `}
         >
           {severityConfig[severity].label}
         </span>
       </div>
       <p className="text-sm">{incident}</p>
-      <p className="text-xs text-muted-foreground">{date}</p>
+      <p className="text-muted-foreground text-xs">{date}</p>
     </div>
   )
 }
@@ -62,7 +68,7 @@ function LateItem({ name, class: className, count, period }: LateItemProps) {
     <div className="flex items-center justify-between">
       <div className="space-y-1">
         <p className="text-sm font-medium">{name}</p>
-        <p className="text-xs text-muted-foreground">{className}</p>
+        <p className="text-muted-foreground text-xs">{className}</p>
       </div>
       <div className="text-right">
         <p className="text-sm font-bold">
@@ -70,7 +76,7 @@ function LateItem({ name, class: className, count, period }: LateItemProps) {
           {' '}
           retards
         </p>
-        <p className="text-xs text-muted-foreground">{period}</p>
+        <p className="text-muted-foreground text-xs">{period}</p>
       </div>
     </div>
   )
@@ -78,10 +84,14 @@ function LateItem({ name, class: className, count, period }: LateItemProps) {
 
 export function ConductLateSection() {
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="
+      grid gap-4
+      lg:grid-cols-2
+    "
+    >
       <motion.div
         variants={item}
-        className="rounded-lg border border-border/40 bg-card p-6"
+        className="border-border/40 bg-card rounded-lg border p-6"
       >
         <h2 className="mb-4 text-lg font-semibold">Incidents de Conduite</h2>
         <div className="space-y-3">
@@ -111,7 +121,7 @@ export function ConductLateSection() {
 
       <motion.div
         variants={item}
-        className="rounded-lg border border-border/40 bg-card p-6"
+        className="border-border/40 bg-card rounded-lg border p-6"
       >
         <h2 className="mb-4 text-lg font-semibold">Retards Fréquents</h2>
         <div className="space-y-3">

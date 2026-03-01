@@ -6,7 +6,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
-    "noEmit": true,
+    "erasableSyntaxOnly": false,
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo",
     "types": ["vite/client"]
   }
 }

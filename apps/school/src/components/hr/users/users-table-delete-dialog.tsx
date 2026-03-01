@@ -31,9 +31,12 @@ export function UsersTableDeleteDialog({
       open={!!userToDelete}
       onOpenChange={open => !open && setUserToDelete(null)}
     >
-      <AlertDialogContent className="rounded-2xl border-border/40 bg-card/95 backdrop-blur-2xl">
+      <AlertDialogContent className="
+        border-border/40 bg-card/95 rounded-2xl backdrop-blur-2xl
+      "
+      >
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-xl font-serif">
+          <AlertDialogTitle className="font-serif text-xl">
             {t.common.deleteConfirmTitle()}
           </AlertDialogTitle>
           <AlertDialogDescription className="text-muted-foreground">
@@ -41,11 +44,20 @@ export function UsersTableDeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="gap-2">
-          <AlertDialogCancel className="rounded-xl border-border/40 bg-background/50 hover:bg-background">
+          <AlertDialogCancel className="
+            border-border/40 bg-background/50
+            hover:bg-background
+            rounded-xl
+          "
+          >
             {t.common.cancel()}
           </AlertDialogCancel>
           <AlertDialogAction
-            className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20"
+            className="
+              bg-destructive text-destructive-foreground
+              hover:bg-destructive/90
+              shadow-destructive/20 rounded-xl shadow-lg
+            "
             disabled={deleteMutation.isPending}
             onClick={() => {
               if (userToDelete) {

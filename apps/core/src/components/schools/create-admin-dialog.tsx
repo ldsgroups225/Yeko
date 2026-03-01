@@ -152,7 +152,7 @@ export function CreateAdminDialog({
                       {...register('name')}
                     />
                     {errors.name && (
-                      <p className="text-sm text-destructive">
+                      <p className="text-destructive text-sm">
                         {errors.name.message}
                       </p>
                     )}
@@ -168,7 +168,7 @@ export function CreateAdminDialog({
                       {...register('email')}
                     />
                     {errors.email && (
-                      <p className="text-sm text-destructive">
+                      <p className="text-destructive text-sm">
                         {errors.email.message}
                       </p>
                     )}
@@ -243,7 +243,7 @@ export function CreateAdminDialog({
                         >
                           {copiedField === 'email'
                             ? (
-                                <IconCheck className="h-4 w-4 text-success" />
+                                <IconCheck className="text-success h-4 w-4" />
                               )
                             : (
                                 <IconCopy className="h-4 w-4" />
@@ -270,7 +270,7 @@ export function CreateAdminDialog({
                         >
                           {copiedField === 'password'
                             ? (
-                                <IconCheck className="h-4 w-4 text-success" />
+                                <IconCheck className="text-success h-4 w-4" />
                               )
                             : (
                                 <IconCopy className="h-4 w-4" />

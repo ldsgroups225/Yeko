@@ -60,16 +60,22 @@ export default function MobileMenuContent({ navigationItems, setIsOpen }: Mobile
   return (
     <SheetContent
       side="right"
-      className="w-[300px] bg-background/95 backdrop-blur-xl border-l border-border/50"
+      className="
+        bg-background/95 border-border/50 w-[300px] border-l backdrop-blur-xl
+      "
     >
-      <SheetHeader className="text-left space-y-1 pb-6">
-        <div className="flex items-center gap-3 mb-2">
+      <SheetHeader className="space-y-1 pb-6 text-left">
+        <div className="mb-2 flex items-center gap-3">
           <img
             src="/icon.png"
             alt={LL.nav.logoAlt()}
             className="h-10 w-10 object-contain"
           />
-          <SheetTitle className="text-xl font-bold bg-linear-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+          <SheetTitle className="
+            from-primary to-primary/80 bg-linear-to-r bg-clip-text text-xl
+            font-bold text-transparent
+          "
+          >
             {LL.nav.menuTitle()}
           </SheetTitle>
         </div>
@@ -80,14 +86,19 @@ export default function MobileMenuContent({ navigationItems, setIsOpen }: Mobile
 
       <div className="flex flex-col space-y-2 pb-6">
         {navigationItems.map(item => (
-          <div key={item.label} className="relative group">
+          <div key={item.label} className="group relative">
             {item.isExternal
               ? (
                   <a
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50"
+                    className="
+                      text-muted-foreground
+                      hover:text-foreground hover:bg-accent/50
+                      flex w-full items-center justify-between rounded-lg px-4
+                      py-3 text-sm font-medium transition-all duration-300
+                    "
                     onClick={() => setIsOpen(false)}
                   >
                     <span>{item.label}</span>
@@ -104,7 +115,12 @@ export default function MobileMenuContent({ navigationItems, setIsOpen }: Mobile
                   <Link
                     to={item.href}
                     onClick={() => handleNavClick(item)}
-                    className="flex items-center w-full px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground transition-all duration-300 hover:bg-accent/50 text-left"
+                    className="
+                      text-muted-foreground
+                      hover:text-foreground hover:bg-accent/50
+                      flex w-full items-center rounded-lg px-4 py-3 text-left
+                      text-sm font-medium transition-all duration-300
+                    "
                   >
                     {item.label}
                   </Link>
@@ -114,16 +130,22 @@ export default function MobileMenuContent({ navigationItems, setIsOpen }: Mobile
       </div>
 
       {/* Mobile Actions */}
-      <div className="pt-4 border-t border-border/50">
+      <div className="border-border/50 border-t pt-4">
         {session
           ? (
-              <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-accent/30">
+              <div className="
+                bg-accent/30 flex items-center gap-3 rounded-lg px-4 py-3
+              "
+              >
                 <Avatar className="h-10 w-10">
                   <AvatarImage
                     src={user?.image || undefined}
                     alt={user?.name || LL.nav.userLabel()}
                   />
-                  <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                  <AvatarFallback className="
+                    bg-primary text-primary-foreground text-sm
+                  "
+                  >
                     {fallbackText}
                   </AvatarFallback>
                 </Avatar>
@@ -131,7 +153,7 @@ export default function MobileMenuContent({ navigationItems, setIsOpen }: Mobile
                   <p className="text-sm font-medium">
                     {user?.name || LL.nav.userLabel()}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {user?.email}
                   </p>
                 </div>

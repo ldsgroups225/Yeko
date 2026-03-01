@@ -234,7 +234,7 @@ function AttendancePage() {
               {LL.attendance.studentList()}
             </CardTitle>
             <Button variant="outline" size="sm" onClick={handleMarkAllPresent}>
-              <IconCheck className="w-4 h-4 mr-2" />
+              <IconCheck className="mr-2 h-4 w-4" />
               {LL.attendance.markAllPresent()}
             </Button>
           </CardHeader>
@@ -249,7 +249,7 @@ function AttendancePage() {
                 )
               : rosterData.length === 0
                 ? (
-                    <p className="text-center text-muted-foreground py-8">
+                    <p className="text-muted-foreground py-8 text-center">
                       {LL.attendance.noStudents()}
                     </p>
                   )

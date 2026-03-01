@@ -12,8 +12,12 @@ export function TimetableImportPreview() {
     return null
 
   return (
-    <div className="rounded-xl border border-border/40 overflow-hidden">
-      <div className="bg-muted/30 px-4 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground border-b border-border/40">
+    <div className="border-border/40 overflow-hidden rounded-xl border">
+      <div className="
+        bg-muted/30 text-muted-foreground border-border/40 border-b px-4 py-2
+        text-xs font-bold tracking-wider uppercase
+      "
+      >
         {t.timetables.preview.title()}
         {' '}
         (
@@ -38,22 +42,48 @@ export function TimetableImportPreview() {
               <th className="px-3 py-2 text-left">{t.timetables.columns.status()}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/20">
+          <tbody className="divide-border/20 divide-y">
             {allParsed.slice(0, 100).map((row) => {
               const isValid = row.classId && row.subjectId && row.teacherId && row.dayOfWeek > 0
               return (
-                <tr key={generateUUID()} className={!isValid ? 'bg-destructive/10' : ''}>
+                <tr
+                  key={generateUUID()}
+                  className={!isValid
+                    ? `bg-destructive/10`
+                    : ''}
+                >
                   <td className="px-3 py-2">
                     {row.className}
-                    {!row.classId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                    {!row.classId && (
+                      <span className="
+                        text-destructive block text-[10px] font-bold
+                      "
+                      >
+                        {t.timetables.status.notFound()}
+                      </span>
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     {row.subjectName}
-                    {!row.subjectId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                    {!row.subjectId && (
+                      <span className="
+                        text-destructive block text-[10px] font-bold
+                      "
+                      >
+                        {t.timetables.status.notFound()}
+                      </span>
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     {row.teacherName}
-                    {!row.teacherId && <span className="block text-[10px] text-destructive font-bold">{t.timetables.status.notFound()}</span>}
+                    {!row.teacherId && (
+                      <span className="
+                        text-destructive block text-[10px] font-bold
+                      "
+                      >
+                        {t.timetables.status.notFound()}
+                      </span>
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     {dayOfWeekLabels[row.dayOfWeek] || row.dayOfWeek || t.timetables.status.error()}
@@ -66,7 +96,13 @@ export function TimetableImportPreview() {
                     {row.endTime}
                   </td>
                   <td className="px-3 py-2 font-bold">
-                    {isValid ? <span className="text-green-500">{t.timetables.status.ok()}</span> : <span className="text-destructive">{t.timetables.status.error()}</span>}
+                    {isValid
+                      ? <span className="text-green-500">{t.timetables.status.ok()}</span>
+                      : (
+                          <span className="text-destructive">
+                            {t.timetables.status.error()}
+                          </span>
+                        )}
                   </td>
                 </tr>
               )

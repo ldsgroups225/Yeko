@@ -45,11 +45,11 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
 
   if (isPending) {
     return (
-      <div className="space-y-6 relative pl-4">
-        <div className="absolute left-0 top-0 h-full w-px bg-border/20" />
+      <div className="relative space-y-6 pl-4">
+        <div className="bg-border/20 absolute top-0 left-0 h-full w-px" />
         {[1, 2, 3].map(id => (
           <div key={id} className="relative flex gap-4">
-            <Skeleton className="size-8 rounded-full z-10 shrink-0" />
+            <Skeleton className="z-10 size-8 shrink-0 rounded-full" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-5 w-40" />
               <Skeleton className="h-4 w-full max-w-sm" />
@@ -65,7 +65,10 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex flex-col items-center justify-center py-12 text-muted-foreground bg-muted/20 rounded-xl border border-dashed border-border/40"
+        className="
+          text-muted-foreground bg-muted/20 border-border/40 flex flex-col
+          items-center justify-center rounded-xl border border-dashed py-12
+        "
       >
         <IconClock className="mb-2 size-8 opacity-20" />
         <p className="text-sm font-medium italic">{t.academic.grades.history.empty()}</p>
@@ -76,7 +79,11 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
   return (
     <div className="relative space-y-6">
       {/* Timeline line */}
-      <div className="absolute left-[15px] top-2 bottom-2 w-px bg-linear-to-b from-primary/5 via-primary/20 to-primary/5" />
+      <div className="
+        from-primary/5 via-primary/20 to-primary/5 absolute top-2 bottom-2
+        left-[15px] w-px bg-linear-to-b
+      "
+      />
 
       <div className="space-y-8">
         {history.map((entry: ValidationEntry, index: number) => {
@@ -89,12 +96,17 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
               initial={{ opacity: 0, x: -15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="relative flex gap-4 group"
+              className="group relative flex gap-4"
             >
               {/* Icon Container */}
               <div
                 className={cn(
-                  'relative z-10 flex size-8 shrink-0 items-center justify-center rounded-xl border shadow-sm transition-transform group-hover:scale-110',
+                  `
+                    relative z-10 flex size-8 shrink-0 items-center
+                    justify-center rounded-xl border shadow-sm
+                    transition-transform
+                    group-hover:scale-110
+                  `,
                   colorClass,
                 )}
               >
@@ -103,8 +115,14 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
 
               {/* Content */}
               <div className="flex-1 pt-0.5">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">
-                  <span className="text-sm font-bold uppercase tracking-tight text-foreground">
+                <div className="
+                  mb-1 flex flex-wrap items-center gap-x-3 gap-y-1
+                "
+                >
+                  <span className="
+                    text-foreground text-sm font-bold tracking-tight uppercase
+                  "
+                  >
                     {{
                       submitted: t.academic.grades.history.actions.submitted,
                       validated: t.academic.grades.history.actions.validated,
@@ -112,7 +130,12 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
                       edited: t.academic.grades.history.actions.edited,
                     }[entry.action]()}
                   </span>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 bg-muted/30 px-2 py-0.5 rounded border border-border/5">
+                  <span className="
+                    text-muted-foreground/60 bg-muted/30 border-border/5
+                    rounded-sm border px-2 py-0.5 text-[10px] font-bold
+                    tracking-widest uppercase
+                  "
+                  >
                     {new Date(entry.createdAt).toLocaleDateString('fr-FR', {
                       day: 'numeric',
                       month: 'short',
@@ -123,31 +146,62 @@ export function GradeHistoryTimeline({ gradeId }: GradeHistoryTimelineProps) {
                   </span>
                 </div>
 
-                <div className="flex items-center gap-1.5 mb-2">
-                  <div className="size-4 rounded-full bg-muted flex items-center justify-center">
-                    <IconUser className="size-2.5 text-muted-foreground" />
+                <div className="mb-2 flex items-center gap-1.5">
+                  <div className="
+                    bg-muted flex size-4 items-center justify-center
+                    rounded-full
+                  "
+                  >
+                    <IconUser className="text-muted-foreground size-2.5" />
                   </div>
-                  <p className="text-xs font-semibold text-muted-foreground italic">
+                  <p className="
+                    text-muted-foreground text-xs font-semibold italic
+                  "
+                  >
                     {t.academic.grades.history.by({ name: entry.validator.name })}
                   </p>
                 </div>
 
                 {entry.action === 'edited' && entry.previousValue && entry.newValue && (
-                  <div className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-background/50 border border-border/10 text-xs shadow-inner">
-                    <span className="text-muted-foreground line-through decoration-destructive/30">
+                  <div className="
+                    bg-background/50 border-border/10 mt-2 inline-flex
+                    items-center gap-2 rounded-lg border px-3 py-1.5 text-xs
+                    shadow-inner
+                  "
+                  >
+                    <span className="
+                      text-muted-foreground decoration-destructive/30
+                      line-through
+                    "
+                    >
                       {entry.previousValue}
                     </span>
                     <span className="text-primary/40 font-bold">→</span>
-                    <span className="font-bold text-foreground">{entry.newValue}</span>
+                    <span className="text-foreground font-bold">{entry.newValue}</span>
                   </div>
                 )}
 
                 {entry.comment && (
-                  <div className="mt-3 relative">
-                    <div className="absolute -left-2 top-0 h-full w-0.5 bg-primary/20 rounded-full" />
-                    <div className="rounded-xl bg-card/30 backdrop-blur-sm border border-border/40 p-3 shadow-sm">
-                      <div className="flex gap-2 text-xs italic text-muted-foreground leading-relaxed">
-                        <IconMessageCircle className="size-3 shrink-0 mt-0.5 opacity-50" />
+                  <div className="relative mt-3">
+                    <div className="
+                      bg-primary/20 absolute top-0 -left-2 h-full w-0.5
+                      rounded-full
+                    "
+                    />
+                    <div className="
+                      bg-card/30 border-border/40 rounded-xl border p-3
+                      shadow-sm backdrop-blur-sm
+                    "
+                    >
+                      <div className="
+                        text-muted-foreground flex gap-2 text-xs leading-relaxed
+                        italic
+                      "
+                      >
+                        <IconMessageCircle className="
+                          mt-0.5 size-3 shrink-0 opacity-50
+                        "
+                        />
                         "
                         {entry.comment}
                         "

@@ -38,11 +38,20 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-12 md:flex md:items-center md:justify-between lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center md:space-x-8 space-y-6 md:space-y-0">
+    <footer className="bg-background border-t">
+      <div className="
+        mx-auto max-w-7xl px-6 py-12
+        md:flex md:items-center md:justify-between
+        lg:px-8
+      "
+      >
+        <div className="
+          flex flex-col space-y-6
+          md:flex-row md:items-center md:space-y-0 md:space-x-8
+        "
+        >
           <div>
-            <h3 className="text-sm font-semibold text-foreground">
+            <h3 className="text-foreground text-sm font-semibold">
               {LL.footerNav.product.title()}
             </h3>
             <ul className="mt-2 space-y-1">
@@ -50,7 +59,11 @@ export function Footer() {
                 <li key={item.name}>
                   <Link
                     to={item.href}
-                    className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center group"
+                    className="
+                      text-muted-foreground
+                      hover:text-foreground
+                      group inline-flex items-center text-sm
+                    "
                   >
                     {item.name}
                   </Link>
@@ -60,7 +73,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-foreground">
+            <h3 className="text-foreground text-sm font-semibold">
               {LL.footerNav.resources.title()}
             </h3>
             <ul className="mt-2 space-y-1">
@@ -68,7 +81,11 @@ export function Footer() {
                 <li key={item.name}>
                   <Link
                     to={item.href}
-                    className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center group"
+                    className="
+                      text-muted-foreground
+                      hover:text-foreground
+                      group inline-flex items-center text-sm
+                    "
                   >
                     {item.name}
                   </Link>
@@ -78,7 +95,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 md:mt-0 flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
+        <div className="
+          mt-8 flex flex-col space-y-4
+          md:mt-0 md:flex-row md:items-center md:space-y-0 md:space-x-6
+        "
+        >
           <div className="flex space-x-6">
             {navigation.social.map((item) => {
               const IconComponent = item.icon
@@ -88,7 +109,11 @@ export function Footer() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="
+                    text-muted-foreground
+                    hover:text-foreground
+                    transition-colors
+                  "
                 >
                   <span className="sr-only">{item.name}</span>
                   <IconComponent className="h-5 w-5" />
@@ -97,11 +122,15 @@ export function Footer() {
             })}
           </div>
 
-          <div className="text-center md:text-right">
-            <p className="text-xs text-muted-foreground">
+          <div className="
+            text-center
+            md:text-right
+          "
+          >
+            <p className="text-muted-foreground text-xs">
               {LL.footerNav.tagline()}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-muted-foreground mt-1 text-xs">
               {LL.footerNav.copyright({ year: new Date().getFullYear() })}
             </p>
           </div>

@@ -67,9 +67,12 @@ function ConductRecordDetailPage() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="rounded-3xl border border-dashed border-border/60 bg-card/20 backdrop-blur-sm p-20 flex flex-col items-center text-center"
+          className="
+            border-border/60 bg-card/20 flex flex-col items-center rounded-3xl
+            border border-dashed p-20 text-center backdrop-blur-sm
+          "
         >
-          <p className="text-xl font-bold text-muted-foreground">{t.conduct.notFound()}</p>
+          <p className="text-muted-foreground text-xl font-bold">{t.conduct.notFound()}</p>
         </motion.div>
       </div>
     )
@@ -98,39 +101,113 @@ function ConductRecordDetailPage() {
         className="flex items-center justify-between gap-4"
       >
         <Link to="/conducts/conduct">
-          <Button variant="ghost" size="sm" className="rounded-xl hover:bg-primary/10 hover:text-primary transition-all font-black uppercase tracking-widest text-[10px]">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="
+              hover:bg-primary/10 hover:text-primary
+              rounded-xl text-[10px] font-black tracking-widest uppercase
+              transition-all
+            "
+          >
             <IconArrowLeft className="mr-2 h-4 w-4" />
             {t.common.back()}
           </Button>
         </Link>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 hidden md:block">
+          <span className="
+            text-muted-foreground/40 hidden text-[10px] font-black
+            tracking-widest uppercase
+            md:block
+          "
+          >
             {t.common.status()}
             :
           </span>
           <Select value={record.status} onValueChange={v => handleStatusChange(v ?? 'open')}>
-            <SelectTrigger className="w-[180px] h-10 rounded-xl bg-card/50 backdrop-blur-xl border-border/40 focus:ring-primary/20 transition-all font-bold">
+            <SelectTrigger className="
+              bg-card/50 border-border/40
+              focus:ring-primary/20
+              h-10 w-[180px] rounded-xl font-bold backdrop-blur-xl
+              transition-all
+            "
+            >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl backdrop-blur-2xl bg-popover/90 border-border/40">
-              <SelectItem value="open" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">{t.conduct.status.open()}</SelectItem>
-              <SelectItem value="investigating" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">{t.conduct.status.investigating()}</SelectItem>
-              <SelectItem value="pending_decision" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">{t.conduct.status.pending_decision()}</SelectItem>
-              <SelectItem value="resolved" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">{t.conduct.status.resolved()}</SelectItem>
-              <SelectItem value="closed" className="rounded-xl font-bold uppercase tracking-widest text-[10px] py-2">{t.conduct.status.closed()}</SelectItem>
+            <SelectContent className="
+              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
+            "
+            >
+              <SelectItem
+                value="open"
+                className="
+                  rounded-xl py-2 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.status.open()}
+              </SelectItem>
+              <SelectItem
+                value="investigating"
+                className="
+                  rounded-xl py-2 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.status.investigating()}
+              </SelectItem>
+              <SelectItem
+                value="pending_decision"
+                className="
+                  rounded-xl py-2 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.status.pending_decision()}
+              </SelectItem>
+              <SelectItem
+                value="resolved"
+                className="
+                  rounded-xl py-2 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.status.resolved()}
+              </SelectItem>
+              <SelectItem
+                value="closed"
+                className="
+                  rounded-xl py-2 text-[10px] font-bold tracking-widest
+                  uppercase
+                "
+              >
+                {t.conduct.status.closed()}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
       </motion.div>
 
-      <div className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-8">
+      <div className="
+        grid gap-8
+        md:grid-cols-3
+      "
+      >
+        <div className="
+          space-y-8
+          md:col-span-2
+        "
+        >
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="relative overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+            <Card className="
+              border-border/40 bg-card/30 relative overflow-hidden rounded-3xl
+              shadow-2xl backdrop-blur-xl
+            "
+            >
 
               <CardHeader className="relative pb-0">
                 <div className="space-y-4">
@@ -141,24 +218,59 @@ function ConductRecordDetailPage() {
                     )}
                     <ConductStatusBadge status={record.status as 'open' | 'investigating' | 'pending_decision' | 'resolved' | 'closed' | 'appealed'} />
                   </div>
-                  <CardTitle className="text-4xl font-black tracking-tight uppercase leading-tight">{record.title}</CardTitle>
+                  <CardTitle className="
+                    text-4xl leading-tight font-black tracking-tight uppercase
+                  "
+                  >
+                    {record.title}
+                  </CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-8 pt-8">
-                <div className="p-6 rounded-2xl bg-muted/20 border border-border/10 italic text-lg leading-relaxed text-muted-foreground/80 relative">
-                  <span className="absolute -top-4 -left-2 text-6xl text-primary/10 font-serif">"</span>
+                <div className="
+                  bg-muted/20 border-border/10 text-muted-foreground/80 relative
+                  rounded-2xl border p-6 text-lg leading-relaxed italic
+                "
+                >
+                  <span className="
+                    text-primary/10 absolute -top-4 -left-2 font-serif text-6xl
+                  "
+                  >
+                    "
+                  </span>
                   {record.description}
-                  <span className="absolute -bottom-10 -right-2 text-6xl text-primary/10 font-serif rotate-180">"</span>
+                  <span className="
+                    text-primary/10 absolute -right-2 -bottom-10 rotate-180
+                    font-serif text-6xl
+                  "
+                  >
+                    "
+                  </span>
                 </div>
 
-                <div className="grid sm:grid-cols-2 gap-6 pt-4">
+                <div className="
+                  grid gap-6 pt-4
+                  sm:grid-cols-2
+                "
+                >
                   {record.incidentDate && (
-                    <div className="flex items-center gap-4 group">
-                      <div className="p-3 rounded-2xl bg-primary/5 border border-primary/10 group-hover:bg-primary/10 transition-colors">
-                        <IconCalendar className="size-5 text-primary" />
+                    <div className="group flex items-center gap-4">
+                      <div className="
+                        bg-primary/5 border-primary/10
+                        group-hover:bg-primary/10
+                        rounded-2xl border p-3 transition-colors
+                      "
+                      >
+                        <IconCalendar className="text-primary size-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">{t.conduct.form.incidentDate()}</div>
+                        <div className="
+                          text-muted-foreground/40 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.conduct.form.incidentDate()}
+                        </div>
                         <div className="font-bold">
                           {new Date(record.incidentDate).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
                           {record.incidentTime && (
@@ -172,12 +284,23 @@ function ConductRecordDetailPage() {
                     </div>
                   )}
                   {record.location && (
-                    <div className="flex items-center gap-4 group">
-                      <div className="p-3 rounded-2xl bg-primary/5 border border-primary/10 group-hover:bg-primary/10 transition-colors">
-                        <IconMapPin className="size-5 text-primary" />
+                    <div className="group flex items-center gap-4">
+                      <div className="
+                        bg-primary/5 border-primary/10
+                        group-hover:bg-primary/10
+                        rounded-2xl border p-3 transition-colors
+                      "
+                      >
+                        <IconMapPin className="text-primary size-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">{t.conduct.form.location()}</div>
+                        <div className="
+                          text-muted-foreground/40 text-[10px] font-black
+                          tracking-widest uppercase
+                        "
+                        >
+                          {t.conduct.form.location()}
+                        </div>
                         <div className="font-bold">{record.location}</div>
                       </div>
                     </div>
@@ -189,15 +312,27 @@ function ConductRecordDetailPage() {
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      className="pt-6 border-t border-border/10"
+                      className="border-border/10 border-t pt-6"
                     >
-                      <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-4 ml-1">
-                        <IconUser className="inline-block size-3 mr-1" />
+                      <h4 className="
+                        text-muted-foreground/40 mb-4 ml-1 text-[10px]
+                        font-black tracking-widest uppercase
+                      "
+                      >
+                        <IconUser className="mr-1 inline-block size-3" />
                         {t.conduct.form.witnesses()}
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {record.witnesses.map((witness: string) => (
-                          <span key={witness} className="px-3 py-1.5 rounded-xl bg-card border border-border/40 text-xs font-bold uppercase tracking-widest hover:bg-muted/50 transition-colors">
+                          <span
+                            key={witness}
+                            className="
+                              bg-card border-border/40
+                              hover:bg-muted/50
+                              rounded-xl border px-3 py-1.5 text-xs font-bold
+                              tracking-widest uppercase transition-colors
+                            "
+                          >
                             {witness}
                           </span>
                         ))}
@@ -216,15 +351,29 @@ function ConductRecordDetailPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="space-y-4"
               >
-                <div className="flex items-center gap-2 ml-1">
-                  <div className="h-px flex-1 bg-border/20" />
-                  <IconHistory className="size-4 text-success" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-success/60">{t.conduct.resolution()}</span>
-                  <div className="h-px flex-1 bg-border/20" />
+                <div className="ml-1 flex items-center gap-2">
+                  <div className="bg-border/20 h-px flex-1" />
+                  <IconHistory className="text-success size-4" />
+                  <span className="
+                    text-success/60 text-[10px] font-black tracking-widest
+                    uppercase
+                  "
+                  >
+                    {t.conduct.resolution()}
+                  </span>
+                  <div className="bg-border/20 h-px flex-1" />
                 </div>
-                <Card className="rounded-3xl border-success/20 bg-success/5 backdrop-blur-xl">
+                <Card className="
+                  border-success/20 bg-success/5 rounded-3xl backdrop-blur-xl
+                "
+                >
                   <CardContent className="p-8">
-                    <p className="font-medium text-success tracking-tight leading-relaxed">{record.resolutionNotes}</p>
+                    <p className="
+                      text-success leading-relaxed font-medium tracking-tight
+                    "
+                    >
+                      {record.resolutionNotes}
+                    </p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -238,24 +387,66 @@ function ConductRecordDetailPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="overflow-hidden rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl group">
-              <CardHeader className="bg-muted/20 border-b border-border/20">
-                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.conduct.student()}</CardTitle>
+            <Card className="
+              border-border/40 bg-card/30 group overflow-hidden rounded-3xl
+              shadow-xl backdrop-blur-xl
+            "
+            >
+              <CardHeader className="bg-muted/20 border-border/20 border-b">
+                <CardTitle className="
+                  text-muted-foreground/60 text-[10px] font-black
+                  tracking-widest uppercase
+                "
+                >
+                  {t.conduct.student()}
+                </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16 border-4 border-primary/10 shadow-xl group-hover:scale-110 transition-transform duration-500">
+                  <Avatar className="
+                    border-primary/10 h-16 w-16 border-4 shadow-xl
+                    transition-transform duration-500
+                    group-hover:scale-110
+                  "
+                  >
                     <AvatarImage src={record.studentPhoto ?? undefined} />
-                    <AvatarFallback className="bg-primary/5 text-primary text-lg font-black">{initials}</AvatarFallback>
+                    <AvatarFallback className="
+                      bg-primary/5 text-primary text-lg font-black
+                    "
+                    >
+                      {initials}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-black tracking-tight text-xl leading-none mb-1 group-hover:text-primary transition-colors">{record.studentName ?? 'Unknown'}</div>
-                    <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">{record.studentMatricule}</div>
+                    <div className="
+                      group-hover:text-primary
+                      mb-1 text-xl leading-none font-black tracking-tight
+                      transition-colors
+                    "
+                    >
+                      {record.studentName ?? 'Unknown'}
+                    </div>
+                    <div className="
+                      text-muted-foreground/40 text-[10px] font-black
+                      tracking-widest uppercase
+                    "
+                    >
+                      {record.studentMatricule}
+                    </div>
                   </div>
                 </div>
                 <div className="mt-6">
                   <Link to="/students/$studentId" params={{ studentId: record.studentId }}>
-                    <Button variant="outline" className="w-full rounded-2xl border-border/40 font-black uppercase tracking-widest text-[10px] h-12 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all">
+                    <Button
+                      variant="outline"
+                      className="
+                        border-border/40
+                        hover:bg-primary hover:text-primary-foreground
+                        hover:border-primary
+                        h-12 w-full rounded-2xl text-[10px] font-black
+                        tracking-widest uppercase transition-all
+                      "
+                    >
                       {t.common.view()}
                     </Button>
                   </Link>
@@ -269,22 +460,31 @@ function ConductRecordDetailPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="rounded-3xl border-border/40 bg-card/30 backdrop-blur-xl shadow-xl">
-              <CardHeader className="bg-muted/20 border-b border-border/20">
-                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">{t.conduct.recordedBy()}</CardTitle>
+            <Card className="
+              border-border/40 bg-card/30 rounded-3xl shadow-xl backdrop-blur-xl
+            "
+            >
+              <CardHeader className="bg-muted/20 border-border/20 border-b">
+                <CardTitle className="
+                  text-muted-foreground/60 text-[10px] font-black
+                  tracking-widest uppercase
+                "
+                >
+                  {t.conduct.recordedBy()}
+                </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6 space-y-4">
+              <CardContent className="space-y-4 pt-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-primary/5">
-                    <IconUser className="size-4 text-primary" />
+                  <div className="bg-primary/5 rounded-xl p-2">
+                    <IconUser className="text-primary size-4" />
                   </div>
                   <span className="font-bold tracking-tight">{record.recordedByName ?? 'Unknown'}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-primary/5">
-                    <IconClock className="size-4 text-primary" />
+                  <div className="bg-primary/5 rounded-xl p-2">
+                    <IconClock className="text-primary size-4" />
                   </div>
-                  <div className="text-xs font-medium text-muted-foreground">
+                  <div className="text-muted-foreground text-xs font-medium">
                     {new Date(record.createdAt).toLocaleDateString(undefined, {
                       day: 'numeric',
                       month: 'long',
@@ -306,13 +506,21 @@ function ConductRecordDetailPage() {
 function ConductRecordDetailSkeleton() {
   return (
     <div className="space-y-8 p-1">
-      <Skeleton className="h-6 w-48 mb-6" />
-      <div className="flex justify-between items-center">
+      <Skeleton className="mb-6 h-6 w-48" />
+      <div className="flex items-center justify-between">
         <Skeleton className="h-10 w-24" />
         <Skeleton className="h-10 w-48" />
       </div>
-      <div className="grid gap-8 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-8">
+      <div className="
+        grid gap-8
+        md:grid-cols-3
+      "
+      >
+        <div className="
+          space-y-8
+          md:col-span-2
+        "
+        >
           <Skeleton className="h-[400px] w-full rounded-3xl" />
           <Skeleton className="h-[150px] w-full rounded-3xl" />
         </div>

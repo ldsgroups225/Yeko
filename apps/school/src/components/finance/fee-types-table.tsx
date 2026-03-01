@@ -76,12 +76,17 @@ export function FeeTypesTable({
 
   if (feeTypes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground border-2 border-dashed border-border/30 rounded-xl bg-card/10 m-4">
-        <div className="p-4 rounded-full bg-muted/20 mb-4">
-          <IconTag className="h-8 w-8 text-muted-foreground/50" />
+      <div className="
+        text-muted-foreground border-border/30 bg-card/10 m-4 flex flex-col
+        items-center justify-center rounded-xl border-2 border-dashed py-16
+        text-center
+      "
+      >
+        <div className="bg-muted/20 mb-4 rounded-full p-4">
+          <IconTag className="text-muted-foreground/50 h-8 w-8" />
         </div>
         <p className="text-lg font-medium">{t.finance.feeTypes.noFeeTypes()}</p>
-        <p className="text-sm max-w-sm mt-1">
+        <p className="mt-1 max-w-sm text-sm">
           {t.finance.feeTypes.description()}
         </p>
       </div>
@@ -90,10 +95,18 @@ export function FeeTypesTable({
 
   return (
     <>
-      <div className="hidden md:block">
+      <div className="
+        hidden
+        md:block
+      "
+      >
         <Table>
           <TableHeader className="bg-muted/50">
-            <TableRow className="hover:bg-transparent border-border/40">
+            <TableRow className="
+              border-border/40
+              hover:bg-transparent
+            "
+            >
               <TableHead className="font-semibold">
                 {t.finance.feeTypes.code()}
               </TableHead>
@@ -117,21 +130,32 @@ export function FeeTypesTable({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="group hover:bg-muted/30 border-border/40 transition-colors"
+                  className="
+                    group
+                    hover:bg-muted/30
+                    border-border/40 transition-colors
+                  "
                 >
-                  <TableCell className="font-mono text-sm font-medium text-muted-foreground">
+                  <TableCell className="
+                    text-muted-foreground font-mono text-sm font-medium
+                  "
+                  >
                     {feeType.code}
                   </TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-bold text-foreground">
+                      <div className="text-foreground font-bold">
                         {feeType.name}
                       </div>
-                      <div className="flex gap-1 mt-1.5">
+                      <div className="mt-1.5 flex gap-1">
                         {feeType.isMandatory && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] uppercase font-bold tracking-wider bg-destructive/5 text-destructive border-destructive/20"
+                            className="
+                              bg-destructive/5 text-destructive
+                              border-destructive/20 text-[10px] font-bold
+                              tracking-wider uppercase
+                            "
                           >
                             Obligatoire
                           </Badge>
@@ -139,7 +163,10 @@ export function FeeTypesTable({
                         {feeType.isRecurring && (
                           <Badge
                             variant="outline"
-                            className="text-[10px] uppercase font-bold tracking-wider bg-secondary/5 text-secondary border-secondary/20"
+                            className="
+                              bg-secondary/5 text-secondary border-secondary/20
+                              text-[10px] font-bold tracking-wider uppercase
+                            "
                           >
                             Récurrent
                           </Badge>
@@ -174,7 +201,10 @@ export function FeeTypesTable({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 rounded-lg hover:bg-muted"
+                            className="
+                              hover:bg-muted
+                              h-8 w-8 rounded-lg
+                            "
                             onClick={(e) => {
                               e.stopPropagation()
                               e.preventDefault()
@@ -186,11 +216,17 @@ export function FeeTypesTable({
                       />
                       <DropdownMenuContent
                         align="end"
-                        className="w-48 backdrop-blur-xl bg-card/95 border-border/40 shadow-xl rounded-xl p-1"
+                        className="
+                          bg-card/95 border-border/40 w-48 rounded-xl p-1
+                          shadow-xl backdrop-blur-xl
+                        "
                       >
                         <DropdownMenuItem
                           onClick={() => onEdit?.(feeType)}
-                          className="rounded-lg cursor-pointer focus:bg-primary/10 focus:text-primary font-medium"
+                          className="
+                            focus:bg-primary/10 focus:text-primary
+                            cursor-pointer rounded-lg font-medium
+                          "
                         >
                           <IconEdit className="mr-2 h-4 w-4" />
                           {t.common.edit()}
@@ -198,7 +234,11 @@ export function FeeTypesTable({
                         <DropdownMenuSeparator className="bg-border/40" />
                         <DropdownMenuItem
                           onClick={() => onDelete?.(feeType)}
-                          className="text-destructive rounded-lg cursor-pointer focus:bg-destructive/10 focus:text-destructive font-medium"
+                          className="
+                            text-destructive
+                            focus:bg-destructive/10 focus:text-destructive
+                            cursor-pointer rounded-lg font-medium
+                          "
                         >
                           <IconTrash className="mr-2 h-4 w-4" />
                           {t.common.delete()}
@@ -213,7 +253,11 @@ export function FeeTypesTable({
         </Table>
       </div>
 
-      <div className="md:hidden space-y-4 p-4">
+      <div className="
+        space-y-4 p-4
+        md:hidden
+      "
+      >
         <AnimatePresence>
           {feeTypes.map((feeType, index) => (
             <motion.div
@@ -221,12 +265,18 @@ export function FeeTypesTable({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="p-4 rounded-2xl bg-card/50 border border-border/40 backdrop-blur-md space-y-3"
+              className="
+                bg-card/50 border-border/40 space-y-3 rounded-2xl border p-4
+                backdrop-blur-md
+              "
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="font-bold text-lg">{feeType.name}</div>
-                  <div className="text-xs font-mono text-muted-foreground mt-0.5">
+                  <div className="text-lg font-bold">{feeType.name}</div>
+                  <div className="
+                    text-muted-foreground mt-0.5 font-mono text-xs
+                  "
+                  >
                     {feeType.code}
                   </div>
                 </div>
@@ -252,7 +302,10 @@ export function FeeTypesTable({
                 {feeType.isMandatory && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] uppercase font-bold tracking-wider bg-destructive/5 text-destructive border-destructive/20"
+                    className="
+                      bg-destructive/5 text-destructive border-destructive/20
+                      text-[10px] font-bold tracking-wider uppercase
+                    "
                   >
                     Obligatoire
                   </Badge>
@@ -260,14 +313,20 @@ export function FeeTypesTable({
                 {feeType.isRecurring && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] uppercase font-bold tracking-wider bg-secondary/5 text-secondary border-secondary/20"
+                    className="
+                      bg-secondary/5 text-secondary border-secondary/20
+                      text-[10px] font-bold tracking-wider uppercase
+                    "
                   >
                     Récurrent
                   </Badge>
                 )}
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-border/30">
+              <div className="
+                border-border/30 flex justify-end gap-2 border-t pt-2
+              "
+              >
                 <Button
                   size="sm"
                   variant="ghost"
@@ -280,7 +339,11 @@ export function FeeTypesTable({
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-8 rounded-lg text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="
+                    text-destructive
+                    hover:text-destructive hover:bg-destructive/10
+                    h-8 rounded-lg
+                  "
                   onClick={() => onDelete?.(feeType)}
                 >
                   <IconTrash className="mr-2 h-3.5 w-3.5" />

@@ -6,14 +6,13 @@ import postgres from 'postgres'
 import * as coreSchema from '../drizzle/core-schema.js'
 import * as schoolSchema from '../drizzle/school-schema.js'
 import { educationLevelsData } from './educationLevelsData.js'
+import { feeTypeTemplatesData } from './feeTypeTemplatesData.js'
 import { gradesData } from './gradesData.js'
+import { defaultRoles } from './rolesData.js'
 import { seriesData } from './seriesData.js'
 import { subjectsData } from './subjectsData.js'
 import { termsData } from './termData.js'
 import { tracksData } from './tracksData.js'
-import { defaultRoles } from './rolesData.js'
-import { feeTypesData } from './feeTypesData.js'
-import { feeTypeTemplatesData } from './feeTypeTemplatesData.js'
 
 // Manually load .env if not present
 if (!process.env.DATABASE_HOST) {
@@ -139,6 +138,7 @@ async function main() {
   } else {
     await db.insert(coreSchema.feeTypeTemplates).values(feeTypeTemplatesData).onConflictDoNothing({ target: coreSchema.feeTypeTemplates.code })
   }
+
 
   console.log('Seeding Tracks...')
 

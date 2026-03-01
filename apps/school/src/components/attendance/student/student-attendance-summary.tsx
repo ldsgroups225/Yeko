@@ -10,7 +10,11 @@ export function StudentAttendanceSummary() {
   const { summary } = state
 
   return (
-    <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="
+      mt-4 grid grid-cols-2 gap-3
+      md:grid-cols-4
+    "
+    >
       <SummaryCard
         label={t.attendance.status.present()}
         count={summary.present}
@@ -39,17 +43,35 @@ function SummaryCard({ label, count, config }: { label: string, count: number, c
   const Icon = config.icon
   return (
     <div className={cn(
-      'relative overflow-hidden p-3 rounded-2xl border transition-all duration-300 group',
+      `
+        group relative overflow-hidden rounded-2xl border p-3 transition-all
+        duration-300
+      `,
       config.bgColor,
       config.borderColor,
     )}
     >
-      <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:scale-110 transition-transform duration-500">
+      <div className="
+        absolute top-0 right-0 p-3 opacity-5 transition-transform duration-500
+        group-hover:scale-110
+      "
+      >
         <Icon className={cn('size-6', config.color)} />
       </div>
       <div className="relative z-10 flex flex-col">
-        <span className={cn('text-[8px] font-black uppercase tracking-widest mb-0.5 italic', config.color)}>{label}</span>
-        <span className="text-xl font-black italic tabular-nums group-hover:translate-x-1 transition-transform">{count}</span>
+        <span className={cn(`
+          mb-0.5 text-[8px] font-black tracking-widest uppercase italic
+        `, config.color)}
+        >
+          {label}
+        </span>
+        <span className="
+          text-xl font-black italic tabular-nums transition-transform
+          group-hover:translate-x-1
+        "
+        >
+          {count}
+        </span>
       </div>
     </div>
   )

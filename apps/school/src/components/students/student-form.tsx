@@ -26,14 +26,43 @@ function StudentFormInner() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Tabs defaultValue="personal" className="w-full space-y-8">
-          <TabsList className="p-1 h-auto bg-white/40 dark:bg-card/40 backdrop-blur-md rounded-full border border-border/20 dark:border-border/10 w-full md:w-auto inline-flex justify-start">
-            <TabsTrigger value="personal" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">
+          <TabsList className="
+            dark:bg-card/40
+            border-border/20
+            dark:border-border/10
+            inline-flex h-auto w-full justify-start rounded-full border
+            bg-white/40 p-1 backdrop-blur-md
+            md:w-auto
+          "
+          >
+            <TabsTrigger
+              value="personal"
+              className="
+                data-[state=active]:text-primary
+                rounded-full px-6 py-2.5 transition-all
+                data-[state=active]:bg-white data-[state=active]:shadow-sm
+              "
+            >
               {t.students.personalInfo()}
             </TabsTrigger>
-            <TabsTrigger value="contact" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">
+            <TabsTrigger
+              value="contact"
+              className="
+                data-[state=active]:text-primary
+                rounded-full px-6 py-2.5 transition-all
+                data-[state=active]:bg-white data-[state=active]:shadow-sm
+              "
+            >
               {t.students.contactInfo()}
             </TabsTrigger>
-            <TabsTrigger value="medical" className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all">
+            <TabsTrigger
+              value="medical"
+              className="
+                data-[state=active]:text-primary
+                rounded-full px-6 py-2.5 transition-all
+                data-[state=active]:bg-white data-[state=active]:shadow-sm
+              "
+            >
               {t.students.medicalInfo()}
             </TabsTrigger>
           </TabsList>

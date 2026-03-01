@@ -61,22 +61,42 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
       />
 
       <Tabs defaultValue="info" className="w-full">
-        <TabsList className="mb-8 p-1 h-auto bg-white/40 dark:bg-card/40 backdrop-blur-md rounded-full border border-border/20 dark:border-border/10 w-full md:w-auto inline-flex justify-start">
+        <TabsList className="
+          dark:bg-card/40
+          border-border/20
+          dark:border-border/10
+          mb-8 inline-flex h-auto w-full justify-start rounded-full border
+          bg-white/40 p-1 backdrop-blur-md
+          md:w-auto
+        "
+        >
           <TabsTrigger
             value="info"
-            className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+            className="
+              data-[state=active]:text-primary
+              rounded-full px-6 py-2.5 transition-all
+              data-[state=active]:bg-white data-[state=active]:shadow-sm
+            "
           >
             {t.students.personalInfo()}
           </TabsTrigger>
           <TabsTrigger
             value="parents"
-            className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+            className="
+              data-[state=active]:text-primary
+              rounded-full px-6 py-2.5 transition-all
+              data-[state=active]:bg-white data-[state=active]:shadow-sm
+            "
           >
             {t.students.parents()}
           </TabsTrigger>
           <TabsTrigger
             value="enrollments"
-            className="rounded-full px-6 py-2.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all"
+            className="
+              data-[state=active]:text-primary
+              rounded-full px-6 py-2.5 transition-all
+              data-[state=active]:bg-white data-[state=active]:shadow-sm
+            "
           >
             {t.students.enrollmentHistory()}
           </TabsTrigger>

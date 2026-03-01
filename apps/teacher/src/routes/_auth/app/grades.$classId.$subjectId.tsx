@@ -142,7 +142,7 @@ function GradeEntryPage() {
           </Link>
           <div>
             <h1 className="text-lg font-semibold">{LL.grades.enterGrades()}</h1>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {data?.className}
               {' '}
               •
@@ -185,7 +185,11 @@ function GradeEntryPage() {
                 </Card>
 
                 {/* Fixed bottom action bar */}
-                <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4 flex gap-2">
+                <div className="
+                  bg-background fixed inset-x-0 bottom-16 flex gap-2 border-t
+                  p-4
+                "
+                >
                   <Button
                     variant="outline"
                     className="flex-1"
@@ -224,14 +228,17 @@ interface StudentGradeRowProps {
 function StudentGradeRow({ student, value, onChange }: StudentGradeRowProps) {
   const { LL } = useI18nContext()
   return (
-    <div className="flex items-center justify-between gap-3 rounded-lg bg-muted/30 p-3">
+    <div className="
+      bg-muted/30 flex items-center justify-between gap-3 rounded-lg p-3
+    "
+    >
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium">
           {student.lastName}
           {' '}
           {student.firstName}
         </p>
-        <p className="text-xs text-muted-foreground">{student.matricule}</p>
+        <p className="text-muted-foreground text-xs">{student.matricule}</p>
       </div>
       <div className="flex items-center gap-2">
         <Input
@@ -242,7 +249,7 @@ function StudentGradeRow({ student, value, onChange }: StudentGradeRowProps) {
           onChange={e => onChange(e.target.value)}
           className="h-10 w-16 text-center text-lg font-semibold"
         />
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {LL.grades.outOf()}
           {' '}
           20
@@ -258,8 +265,8 @@ function EmptyStudents() {
   return (
     <Card>
       <CardContent className="flex flex-col items-center justify-center py-12">
-        <IconUsers className="h-12 w-12 text-muted-foreground/50" />
-        <p className="mt-4 text-sm text-muted-foreground">
+        <IconUsers className="text-muted-foreground/50 h-12 w-12" />
+        <p className="text-muted-foreground mt-4 text-sm">
           {LL.grades.noStudents()}
         </p>
       </CardContent>
@@ -277,7 +284,9 @@ function GradeEntrySkeleton() {
         {[1, 2, 3, 4, 5, 6].map(i => (
           <div
             key={i}
-            className="flex items-center justify-between rounded-lg bg-muted/30 p-3"
+            className="
+              bg-muted/30 flex items-center justify-between rounded-lg p-3
+            "
           >
             <div className="space-y-1">
               <Skeleton className="h-4 w-32" />

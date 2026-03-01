@@ -11,7 +11,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { Button } from '@workspace/ui/components/button'
-
 import {
   Card,
   CardContent,
@@ -19,15 +18,7 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card'
 import { Input } from '@workspace/ui/components/input'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@workspace/ui/components/table'
-import { AnimatePresence, motion } from 'motion/react'
+import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { EmptyState } from '@/components/hr/empty-state'
@@ -38,6 +29,7 @@ import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingUser, getUsers } from '@/school/functions/users'
 import { useUsersTableColumns } from './users-table-columns'
 import { UsersTableDeleteDialog } from './users-table-delete-dialog'
+import { UsersTableRenderer } from './users-table-renderer'
 
 interface UsersTableProps {
   filters: {
@@ -111,20 +103,39 @@ export function UsersTable({ filters }: UsersTableProps) {
 
   return (
     <div className="space-y-6">
-      <Card className="border-border/40 bg-card/50 backdrop-blur-xl shadow-sm overflow-hidden">
+      <Card className="
+        border-border/40 bg-card/50 overflow-hidden shadow-sm backdrop-blur-xl
+      "
+      >
         <CardHeader className="pb-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <CardTitle className="text-2xl font-serif">
+          <div className="
+            flex flex-col gap-4
+            sm:flex-row sm:items-center sm:justify-between
+          "
+          >
+            <CardTitle className="font-serif text-2xl">
               {t.hr.users.listTitle()}
             </CardTitle>
-            <div className="relative w-full sm:w-72">
-              <IconSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <div className="
+              relative w-full
+              sm:w-72
+            "
+            >
+              <IconSearch className="
+                text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                -translate-y-1/2
+              "
+              />
               <Input
                 placeholder={t.hr.users.searchPlaceholder()}
                 value={searchInput}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchInput(e.target.value)}
-                className="pl-10 rounded-xl bg-background/50 border-border/40 focus:bg-background transition-all"
+                className="
+                  bg-background/50 border-border/40
+                  focus:bg-background
+                  rounded-xl pl-10 transition-all
+                "
               />
             </div>
           </div>
@@ -139,7 +150,7 @@ export function UsersTable({ filters }: UsersTableProps) {
                 description={t.hr.users.noUsersDescription()}
                 action={{
                   label: t.hr.users.addUser(),
-                  onClick: () => navigate({ to: '/users/users/new' }),
+                  onClick: () => navigate({ to: '/settings/personnel/users/new' }),
                 }}
               />
             </div>
@@ -158,67 +169,17 @@ export function UsersTable({ filters }: UsersTableProps) {
 
           {/* Table */}
           {!hasNoData && (
-            <div className="rounded-xl border border-border/40 bg-background/30 overflow-hidden">
-              <Table>
-                <TableHeader className="bg-muted/50 backdrop-blur-md">
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <TableRow
-                      key={headerGroup.id}
-                      className="hover:bg-transparent border-border/40"
-                    >
-                      {headerGroup.headers.map(header => (
-                        <TableHead
-                          key={header.id}
-                          className="text-xs uppercase tracking-wider font-semibold py-4"
-                        >
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  <AnimatePresence mode="popLayout">
-                    {table.getRowModel().rows.map((row, index) => (
-                      <motion.tr
-                        key={row.id}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{
-                          duration: 0.2,
-                          delay: index * 0.03,
-                          ease: 'easeOut',
-                        }}
-                        className="group hover:bg-primary/5 transition-colors border-border/40 cursor-pointer"
-                        onClick={() =>
-                          navigate({ to: `/users/users/${row.original.id}` })}
-                      >
-                        {row.getVisibleCells().map(cell => (
-                          <TableCell key={cell.id} className="py-4">
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </TableCell>
-                        ))}
-                      </motion.tr>
-                    ))}
-                  </AnimatePresence>
-                </TableBody>
-              </Table>
-            </div>
+            <UsersTableRenderer table={table} />
           )}
 
           {/* Pagination */}
           {!hasNoData && usersData && usersData.totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-              <div className="text-sm text-muted-foreground font-medium">
+            <div className="
+              mt-6 flex flex-col items-center justify-between gap-4
+              sm:flex-row
+            "
+            >
+              <div className="text-muted-foreground text-sm font-medium">
                 {t.common.showing()}
                 {' '}
                 <span className="text-foreground">
@@ -239,11 +200,15 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
+                  className="
+                    border-border/40 bg-background/50
+                    hover:bg-background
+                    rounded-xl px-4 transition-all
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     navigate({
-                      to: '/users/users',
+                      to: '/settings/personnel/users',
                       search: { ...filters, page: usersData.page - 1 },
                     })
                   }}
@@ -254,11 +219,15 @@ export function UsersTable({ filters }: UsersTableProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl border-border/40 bg-background/50 hover:bg-background transition-all px-4"
+                  className="
+                    border-border/40 bg-background/50
+                    hover:bg-background
+                    rounded-xl px-4 transition-all
+                  "
                   onClick={(e) => {
                     e.stopPropagation()
                     navigate({
-                      to: '/users/users',
+                      to: '/settings/personnel/users',
                       search: { ...filters, page: usersData.page + 1 },
                     })
                   }}

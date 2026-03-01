@@ -50,9 +50,12 @@ function NotificationsPage() {
 
       <div className="flex flex-col gap-4 p-4">
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <IconBell className="h-12 w-12 text-muted-foreground/50" />
-            <p className="mt-4 text-sm text-muted-foreground">
+          <CardContent className="
+            flex flex-col items-center justify-center py-12
+          "
+          >
+            <IconBell className="text-muted-foreground/50 h-12 w-12" />
+            <p className="text-muted-foreground mt-4 text-sm">
               {LL.notifications.noNotifications()}
             </p>
           </CardContent>

@@ -92,7 +92,10 @@ export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+            <div className="
+              bg-muted flex h-16 w-16 items-center justify-center rounded-full
+            "
+            >
               {data.student.photoUrl
                 ? (
                     <img
@@ -102,19 +105,19 @@ export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
                     />
                   )
                 : (
-                    <IconUser className="h-8 w-8 text-muted-foreground" />
+                    <IconUser className="text-muted-foreground h-8 w-8" />
                   )}
             </div>
             <div>
               <CardTitle className="text-xl">{data.student.name}</CardTitle>
               {data.student.matricule && (
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {t.students.matricule()}
                   :
                   {data.student.matricule}
                 </p>
               )}
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {data.class.name}
                 {' '}
                 •
@@ -128,11 +131,15 @@ export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
 
       <CardContent className="space-y-6">
         {/* Overall Results */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="flex items-center gap-3 rounded-lg bg-primary/10 p-4">
-            <IconSchool className="h-8 w-8 text-primary" />
+        <div className="
+          grid gap-4
+          sm:grid-cols-3
+        "
+        >
+          <div className="bg-primary/10 flex items-center gap-3 rounded-lg p-4">
+            <IconSchool className="text-primary h-8 w-8" />
             <div>
-              <p className="text-sm text-muted-foreground">{t.reportCards.average()}</p>
+              <p className="text-muted-foreground text-sm">{t.reportCards.average()}</p>
               <p className="text-2xl font-bold">
                 {calculatedAverage.toFixed(2)}
                 /20
@@ -140,10 +147,10 @@ export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
             </div>
           </div>
           {data.rank && data.totalStudents && (
-            <div className="flex items-center gap-3 rounded-lg bg-secondary p-4">
-              <IconAward className="h-8 w-8 text-secondary-foreground" />
+            <div className="bg-secondary flex items-center gap-3 rounded-lg p-4">
+              <IconAward className="text-secondary-foreground h-8 w-8" />
               <div>
-                <p className="text-sm text-muted-foreground">{t.reportCards.rank()}</p>
+                <p className="text-muted-foreground text-sm">{t.reportCards.rank()}</p>
                 <p className="text-2xl font-bold">
                   {data.rank}
                   /
@@ -153,9 +160,9 @@ export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
             </div>
           )}
           {data.attendance && (
-            <div className="flex items-center gap-3 rounded-lg bg-muted p-4">
+            <div className="bg-muted flex items-center gap-3 rounded-lg p-4">
               <div>
-                <p className="text-sm text-muted-foreground">{t.reportCards.attendance()}</p>
+                <p className="text-muted-foreground text-sm">{t.reportCards.attendance()}</p>
                 <p className="text-sm">
                   {t.reportCards.absences()}
                   :
@@ -180,7 +187,7 @@ export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
           <div className="rounded-md border">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-muted/50">
+                <tr className="bg-muted/50 border-b">
                   <th className="px-4 py-2 text-left font-medium">
                     {t.subjects.subject()}
                   </th>
@@ -194,7 +201,13 @@ export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
               </thead>
               <tbody>
                 {data.grades.map(grade => (
-                  <tr key={grade.subjectId} className="border-b last:border-0">
+                  <tr
+                    key={grade.subjectId}
+                    className="
+                      border-b
+                      last:border-0
+                    "
+                  >
                     <td className="px-4 py-2">{grade.subjectName}</td>
                     <td className="px-4 py-2 text-center">{grade.coefficient}</td>
                     <td className="px-4 py-2 text-center font-medium">
@@ -225,7 +238,7 @@ export function ReportCardPreview({ data, isPending }: ReportCardPreviewProps) {
                     <IconMessage className="h-4 w-4" />
                     {t.reportCards.homeroomComment()}
                   </h3>
-                  <p className="rounded-md bg-muted p-3 text-sm italic">
+                  <p className="bg-muted rounded-md p-3 text-sm italic">
                     "
                     {data.homeroomComment}
                     "

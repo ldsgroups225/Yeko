@@ -222,12 +222,16 @@ function HomeworkDetailPage() {
                 <div className="space-y-2">
                   <Label>{LL.homework.dueDate()}</Label>
                   <div className="relative">
-                    <IconCalendar className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <IconCalendar className="
+                      text-muted-foreground absolute top-1/2 left-3 h-4 w-4
+                      -translate-y-1/2
+                    "
+                    />
                     <Suspense fallback={<Skeleton className="h-10 w-full" />}>
                       <DatePicker
                         date={dueDate ? new Date(dueDate) : undefined}
                         onSelect={(date: Date | undefined) => setDueDate(date ? (date.toISOString().split('T')[0] ?? '') : '')}
-                        className="pl-9 justify-start font-normal"
+                        className="justify-start pl-9 font-normal"
                       />
                     </Suspense>
                   </div>
@@ -243,7 +247,10 @@ function HomeworkDetailPage() {
               </div>
 
               {/* Edit Actions */}
-              <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
+              <div className="
+                bg-background fixed inset-x-0 bottom-16 border-t p-4
+              "
+              >
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
@@ -276,7 +283,7 @@ function HomeworkDetailPage() {
                       {LL.homework.status[homework.status]()}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {homework.className}
                     {' '}
                     •
@@ -286,10 +293,10 @@ function HomeworkDetailPage() {
                 <CardContent className="space-y-4">
                   {homework.description && (
                     <div>
-                      <Label className="text-xs text-muted-foreground">
+                      <Label className="text-muted-foreground text-xs">
                         {LL.homework.description()}
                       </Label>
-                      <p className="mt-1 whitespace-pre-wrap text-sm">
+                      <p className="mt-1 text-sm whitespace-pre-wrap">
                         {homework.description}
                       </p>
                     </div>
@@ -297,12 +304,12 @@ function HomeworkDetailPage() {
 
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-2">
-                      <IconCalendar className="h-4 w-4 text-muted-foreground" />
+                      <IconCalendar className="text-muted-foreground h-4 w-4" />
                       <span>{format(dueDateTime, 'd MMMM yyyy', { locale })}</span>
                     </div>
                     {homework.dueTime && (
                       <div className="flex items-center gap-2">
-                        <IconClock className="h-4 w-4 text-muted-foreground" />
+                        <IconClock className="text-muted-foreground h-4 w-4" />
                         <span>{homework.dueTime}</span>
                       </div>
                     )}
@@ -310,10 +317,10 @@ function HomeworkDetailPage() {
 
                   {homework.instructions && (
                     <div>
-                      <Label className="text-xs text-muted-foreground">
+                      <Label className="text-muted-foreground text-xs">
                         {LL.homework.instructions()}
                       </Label>
-                      <p className="mt-1 whitespace-pre-wrap text-sm">
+                      <p className="mt-1 text-sm whitespace-pre-wrap">
                         {homework.instructions}
                       </p>
                     </div>
@@ -323,7 +330,10 @@ function HomeworkDetailPage() {
 
               {/* Actions */}
               {homework.status !== 'cancelled' && (
-                <div className="fixed inset-x-0 bottom-16 border-t bg-background p-4">
+                <div className="
+                  bg-background fixed inset-x-0 bottom-16 border-t p-4
+                "
+                >
                   <div className="flex gap-2">
                     <AlertDialog>
                       <AlertDialogTrigger

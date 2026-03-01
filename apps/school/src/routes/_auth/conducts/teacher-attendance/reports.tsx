@@ -79,13 +79,13 @@ function TeacherPunctualityReportsPage() {
           <CardTitle className="text-base">{t.attendance.selectDateRange()}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 items-center">
+          <div className="flex items-center gap-4">
             <div>
-              <label className="text-sm text-muted-foreground">{t.common.startDate()}</label>
+              <label className="text-muted-foreground text-sm">{t.common.startDate()}</label>
               <DatePicker date={startDate} onSelect={d => d && setStartDate(d)} />
             </div>
             <div>
-              <label className="text-sm text-muted-foreground">{t.common.endDate()}</label>
+              <label className="text-muted-foreground text-sm">{t.common.endDate()}</label>
               <DatePicker date={endDate} onSelect={d => d && setEndDate(d)} />
             </div>
           </div>
@@ -101,7 +101,10 @@ function TeacherPunctualityReportsPage() {
             ? (
                 <div className="space-y-2">
                   {Array.from({ length: 5 }).map(() => (
-                    <Skeleton key={`skeleton-${generateUUID()}`} className="h-12 w-full" />
+                    <Skeleton
+                      key={`skeleton-${generateUUID()}`}
+                      className="h-12 w-full"
+                    />
                   ))}
                 </div>
               )
@@ -123,9 +126,14 @@ function TeacherPunctualityReportsPage() {
                       <TableRow key={record.teacherId}>
                         <TableCell className="font-medium">{record.teacherName}</TableCell>
                         <TableCell className="text-center">{record.totalDays}</TableCell>
-                        <TableCell className="text-center text-success">{record.presentDays}</TableCell>
-                        <TableCell className="text-center text-accent-foreground">{record.lateDays}</TableCell>
-                        <TableCell className="text-center text-destructive">{record.absentDays}</TableCell>
+                        <TableCell className="text-success text-center">{record.presentDays}</TableCell>
+                        <TableCell className="
+                          text-accent-foreground text-center
+                        "
+                        >
+                          {record.lateDays}
+                        </TableCell>
+                        <TableCell className="text-destructive text-center">{record.absentDays}</TableCell>
                         <TableCell className="text-center">
                           {record.averageLateMinutes.toFixed(0)}
                           {' '}
