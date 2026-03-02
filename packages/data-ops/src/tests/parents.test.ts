@@ -100,6 +100,7 @@ describe('parents queries', () => {
     test('should return parents for a school', async () => {
       const parent = await createTestParent()
       await linkParentToStudent({
+        schoolId: testSchoolId,
         studentId: testStudentId,
         parentId: parent.id,
         relationship: 'father',
@@ -117,6 +118,7 @@ describe('parents queries', () => {
     test('should return parent with children', async () => {
       const parent = await createTestParent()
       await linkParentToStudent({
+        schoolId: testSchoolId,
         studentId: testStudentId,
         parentId: parent.id,
         relationship: 'mother',

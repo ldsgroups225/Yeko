@@ -7,7 +7,6 @@
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "erasableSyntaxOnly": false,
-    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo",
     "types": ["vite/client"]
   }
 }

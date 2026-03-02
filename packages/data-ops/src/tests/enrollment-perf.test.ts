@@ -5,8 +5,8 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { getDb, initDatabase } from '../database/setup'
 import { educationLevels, grades, schools, tracks } from '../drizzle/core-schema'
 import { enrollments, classes as schoolClasses, schoolYears, students } from '../drizzle/school-schema'
+import { createEnrollment } from '../queries/enrollments'
 import { createSchoolYearTemplate } from '../queries/programs'
-import { enrollStudent } from '../queries/school-admin/enrollments'
 import { createSchoolYear } from '../queries/school-admin/school-years'
 import { createSchool } from '../queries/schools'
 import { createStudent } from '../queries/students'
@@ -133,15 +133,15 @@ describe('enrollment performance benchmark', () => {
   test(`should measure enrollment time for ${BATCH_SIZE} students`, async () => {
     const { duration } = await measureTime(async () => {
       // Sequential Promise.all to simulate concurrent load
-      const promises = testStudentIds.map(studentId =>
-        enrollStudent({
+      const promises = testStudentIds.map(async (studentId) => {
+        const result = await createEnrollment({
           studentId,
           classId: testClassId,
           schoolYearId: testSchoolYearId,
-          schoolId: testSchoolId,
-          enrollmentDate: new Date(),
-        }),
-      )
+          enrollmentDate: new Date().toISOString().split('T')[0],
+        })
+        expect(R.isFailure(result)).toBe(false)
+      })
       await Promise.all(promises)
     })
 

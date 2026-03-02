@@ -9,7 +9,6 @@
     "allowJs": true,
     "jsx": "preserve",
     "noEmit": true,
-    "erasableSyntaxOnly": false,
-    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo"
+    "erasableSyntaxOnly": false
   }
 }

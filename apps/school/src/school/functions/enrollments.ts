@@ -3,33 +3,15 @@ import * as enrollmentQueries from '@repo/data-ops/queries/enrollments'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { databaseLogger } from '@repo/logger'
 import { z } from 'zod'
+import {
+  bulkEnrollmentSchema,
+  bulkReEnrollmentSchema,
+} from '@/schemas/bulk-operations'
 import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
 import { autoAssignFeesForEnrollment } from './fee-calculation/auto-assign'
 
 // ==================== Schemas ====================
-
-const enrollmentSchema = z.object({
-  studentId: z.string(),
-  classId: z.string(),
-  schoolYearId: z.string(),
-  enrollmentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-  rollNumber: z.number().int().positive().optional(),
-})
-
-const transferSchema = z.object({
-  enrollmentId: z.string(),
-  newClassId: z.string(),
-  reason: z.string().max(500).optional(),
-  effectiveDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-})
-
-const reEnrollSchema = z.object({
-  fromYearId: z.string(),
-  toYearId: z.string(),
-  gradeMapping: z.record(z.string(), z.string()).optional(),
-  autoConfirm: z.boolean().optional(),
-})
 
 const enrollmentFiltersSchema = z.object({
   schoolYearId: z.string().optional(),
@@ -76,7 +58,13 @@ export const getEnrollmentById = authServerFn
   })
 
 export const createEnrollment = authServerFn
-  .inputValidator(enrollmentSchema)
+  .inputValidator(z.object({
+    studentId: z.string(),
+    classId: z.string(),
+    schoolYearId: z.string(),
+    enrollmentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+    rollNumber: z.number().int().positive().optional(),
+  }))
   .handler(async ({ data, context }) => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
@@ -188,7 +176,12 @@ export const deleteEnrollment = authServerFn
   })
 
 export const transferStudent = authServerFn
-  .inputValidator(transferSchema)
+  .inputValidator(z.object({
+    enrollmentId: z.string(),
+    newClassId: z.string(),
+    reason: z.string().max(500).optional(),
+    effectiveDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  }))
   .handler(async ({ data, context }) => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
@@ -210,8 +203,8 @@ export const transferStudent = authServerFn
     return { success: true as const, data: _result7.value }
   })
 
-export const bulkReEnroll = authServerFn
-  .inputValidator(reEnrollSchema)
+export const bulkEnrollStudents = authServerFn
+  .inputValidator(bulkEnrollmentSchema)
   .handler(async ({ data, context }) => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
@@ -219,11 +212,39 @@ export const bulkReEnroll = authServerFn
     const { schoolId, userId } = context.school
     await requirePermission('enrollments', 'create')
 
-    const _result8 = await enrollmentQueries.bulkReEnroll(schoolId, data.fromYearId, data.toYearId, {
+    const _result = await enrollmentQueries.bulkEnroll(schoolId, data.classId, data.schoolYearId, data.studentIds, {
+      autoConfirm: data.autoConfirm,
+    })
+
+    if (R.isFailure(_result))
+      return { success: false as const, error: 'Erreur lors de l\'inscription groupée' }
+
+    await createAuditLog({
+      schoolId,
+      userId,
+      action: 'create',
+      tableName: 'enrollments',
+      recordId: 'bulk-enroll',
+      newValues: { classId: data.classId, count: _result.value.success },
+    })
+
+    return { success: true as const, data: _result.value }
+  })
+
+export const bulkReEnroll = authServerFn
+  .inputValidator(bulkReEnrollmentSchema)
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId, userId } = context.school
+    await requirePermission('enrollments', 'create')
+
+    const result = await enrollmentQueries.bulkReEnroll(schoolId, data.fromYearId, data.toYearId, {
       gradeMapping: data.gradeMapping,
       autoConfirm: data.autoConfirm,
     })
-    if (R.isFailure(_result8))
+    if (R.isFailure(result))
       return { success: false as const, error: 'Erreur lors de la réinscription en masse' }
     await createAuditLog({
       schoolId,
@@ -234,11 +255,11 @@ export const bulkReEnroll = authServerFn
       newValues: {
         fromYearId: data.fromYearId,
         toYearId: data.toYearId,
-        success: _result8.value.success,
-        errors: _result8.value.errors.length,
+        success: result.value.success,
+        errors: result.value.errors.length,
       },
     })
-    return { success: true as const, data: _result8.value }
+    return { success: true as const, data: result.value }
   })
 
 export const getEnrollmentStatistics = authServerFn
