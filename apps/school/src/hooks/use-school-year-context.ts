@@ -2,6 +2,21 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { getSchoolYearContext, setSchoolYearContext } from '@/school/middleware/school-context'
 
+const SCHOOL_YEAR_DEPENDENT_QUERY_KEYS: readonly string[] = [
+  'school-year-context',
+  'students',
+  'classes',
+  'enrollments',
+  'report-cards',
+  'class-averages',
+  'grades',
+  'terms',
+  'timetables',
+  'coefficients',
+  'subjects',
+  'curriculum-progress',
+]
+
 /**
  * Hook to get and manage school year context
  */
@@ -10,27 +25,20 @@ export function useSchoolYearContext() {
 
   const { data: context, isPending } = useQuery({
     queryKey: ['school-year-context'],
-    queryFn: async () => await getSchoolYearContext(),
+    queryFn: getSchoolYearContext,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 
   const switchSchoolYear = useMutation({
     mutationKey: schoolMutationKeys.context.selectSchoolYear,
-    mutationFn: async (schoolYearId: string) => await setSchoolYearContext({ data: schoolYearId }),
+    mutationFn: (schoolYearId: string) => setSchoolYearContext({ data: schoolYearId }),
     onSuccess: () => {
-      // Invalidate queries that depend on school year
-      queryClient.invalidateQueries({ queryKey: ['school-year-context'] })
-      queryClient.invalidateQueries({ queryKey: ['students'] })
-      queryClient.invalidateQueries({ queryKey: ['classes'] })
-      queryClient.invalidateQueries({ queryKey: ['enrollments'] })
-      queryClient.invalidateQueries({ queryKey: ['report-cards'] })
-      queryClient.invalidateQueries({ queryKey: ['class-averages'] })
-      queryClient.invalidateQueries({ queryKey: ['grades'] })
-      queryClient.invalidateQueries({ queryKey: ['terms'] })
-      queryClient.invalidateQueries({ queryKey: ['timetables'] })
-      queryClient.invalidateQueries({ queryKey: ['coefficients'] })
-      queryClient.invalidateQueries({ queryKey: ['subjects'] })
-      queryClient.invalidateQueries({ queryKey: ['curriculum-progress'] })
+      // Keep invalidation scope explicit while avoiding repetitive calls.
+      void Promise.all(
+        SCHOOL_YEAR_DEPENDENT_QUERY_KEYS.map(queryKey =>
+          queryClient.invalidateQueries({ queryKey: [queryKey] }),
+        ),
+      )
     },
   })
 

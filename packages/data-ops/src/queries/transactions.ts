@@ -78,11 +78,12 @@ export async function getTransactionWithLines(transactionId: string): R.ResultAs
   return R.pipe(
     R.try({
       try: async () => {
-        const [transaction] = await db.select().from(transactions).where(eq(transactions.id, transactionId)).limit(1)
+        const [[transaction], lines] = await Promise.all([
+          db.select().from(transactions).where(eq(transactions.id, transactionId)).limit(1),
+          db.select().from(transactionLines).where(eq(transactionLines.transactionId, transactionId)).orderBy(transactionLines.lineNumber),
+        ])
         if (!transaction)
           return null
-
-        const lines = await db.select().from(transactionLines).where(eq(transactionLines.transactionId, transactionId)).orderBy(transactionLines.lineNumber)
         return { transaction, lines }
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch transaction with lines'),

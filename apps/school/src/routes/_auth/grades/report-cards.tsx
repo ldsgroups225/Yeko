@@ -23,13 +23,12 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
 import { schoolMutationKeys } from '@/lib/queries/keys'
+import { reportCardsKeys, reportCardsOptions } from '@/lib/queries/report-cards'
 import { getClassAverages, recalculateAverages } from '@/school/functions/averages'
 import { getClasses } from '@/school/functions/classes'
 import { getEnrollments } from '@/school/functions/enrollments'
 import {
   bulkGenerateReportCards,
-  getReportCards,
-  getReportCardTemplates,
 } from '@/school/functions/report-cards'
 
 import { getTerms } from '@/school/functions/terms'
@@ -90,34 +89,26 @@ function ReportCardsPage() {
   })
 
   // Fetch existing report cards
-  const { data: reportCardsResult, isPending: reportCardsPending } = useQuery({
-    queryKey: ['report-cards', selectedClassId, selectedTermId],
-    queryFn: () => getReportCards({ data: { classId: selectedClassId, termId: selectedTermId } }),
-    enabled: !!selectedClassId && !!selectedTermId,
-  })
-  const reportCards = reportCardsResult?.success ? reportCardsResult.data : []
+  const { data: reportCards = [], isPending: reportCardsPending } = useQuery(
+    reportCardsOptions.byClass({ classId: selectedClassId, termId: selectedTermId }),
+  )
 
   // Fetch all templates
-  const { data: templatesResult } = useQuery({
-    queryKey: ['report-card-templates', schoolId],
-    queryFn: () => getReportCardTemplates({ data: { schoolId: schoolId ?? '' } }),
-    enabled: !!schoolId,
-  })
-  const templates = templatesResult?.success ? templatesResult.data : []
+  const { data: templates = [] } = useQuery(reportCardsOptions.templates(schoolId ?? ''))
 
   // Determine which template to use (default or first available)
   const activeTemplate = templates?.find(t => t.isDefault) || templates?.[0]
 
   const generateMutation = useMutation({
     mutationKey: schoolMutationKeys.reportCards.generate,
-    mutationFn: async (studentIds: string[]) => {
+    mutationFn: (studentIds: string[]) => {
       if (!authUserId)
         throw new Error('IconUser not found')
 
       if (!activeTemplate)
         throw new Error('No report card template found. Please create one in settings.')
 
-      return await bulkGenerateReportCards({
+      return bulkGenerateReportCards({
         data: {
           classId: selectedClassId,
           termId: selectedTermId,
@@ -128,7 +119,7 @@ function ReportCardsPage() {
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['report-cards'] })
+      queryClient.invalidateQueries({ queryKey: reportCardsKeys.all })
       toast.success(t.reportCards.generationComplete())
     },
     onError: (error) => {
@@ -147,8 +138,8 @@ function ReportCardsPage() {
 
   // Recalculate Mutation
   const recalculateMutation = useMutation({
-    mutationFn: async () => {
-      return await recalculateAverages({
+    mutationFn: () => {
+      return recalculateAverages({
         data: {
           classId: selectedClassId,
           termId: selectedTermId,

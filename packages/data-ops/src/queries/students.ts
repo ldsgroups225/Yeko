@@ -280,36 +280,35 @@ export async function getStudentById(id: string): R.ResultAsync<StudentFullProfi
         if (!student)
           throw dbError('NOT_FOUND', getNestedErrorMessage('students', 'notFoundWithId', { id }))
 
-        // Get parents
-        const studentParentsList = await db
-          .select({
-            parent: parents,
-            relationship: studentParents.relationship,
-            isPrimary: studentParents.isPrimary,
-            canPickup: studentParents.canPickup,
-            receiveNotifications: studentParents.receiveNotifications,
-          })
-          .from(studentParents)
-          .innerJoin(parents, eq(studentParents.parentId, parents.id))
-          .where(eq(studentParents.studentId, id))
-
-        // Get enrollment history
-        const enrollmentHistory = await db
-          .select({
-            enrollment: enrollments,
-            class: {
-              id: classes.id,
-              section: classes.section,
-              gradeName: grades.name,
-              seriesName: series.name,
-            },
-          })
-          .from(enrollments)
-          .innerJoin(classes, eq(enrollments.classId, classes.id))
-          .innerJoin(grades, eq(classes.gradeId, grades.id))
-          .leftJoin(series, eq(classes.seriesId, series.id))
-          .where(eq(enrollments.studentId, id))
-          .orderBy(desc(enrollments.enrollmentDate))
+        const [studentParentsList, enrollmentHistory] = await Promise.all([
+          db
+            .select({
+              parent: parents,
+              relationship: studentParents.relationship,
+              isPrimary: studentParents.isPrimary,
+              canPickup: studentParents.canPickup,
+              receiveNotifications: studentParents.receiveNotifications,
+            })
+            .from(studentParents)
+            .innerJoin(parents, eq(studentParents.parentId, parents.id))
+            .where(eq(studentParents.studentId, id)),
+          db
+            .select({
+              enrollment: enrollments,
+              class: {
+                id: classes.id,
+                section: classes.section,
+                gradeName: grades.name,
+                seriesName: series.name,
+              },
+            })
+            .from(enrollments)
+            .innerJoin(classes, eq(enrollments.classId, classes.id))
+            .innerJoin(grades, eq(classes.gradeId, grades.id))
+            .leftJoin(series, eq(classes.seriesId, series.id))
+            .where(eq(enrollments.studentId, id))
+            .orderBy(desc(enrollments.enrollmentDate)),
+        ])
 
         return {
           ...student.student,
@@ -354,12 +353,13 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
         }
 
         // Fallback: Sequence doesn't exist, create it.
-        // Get school code for prefix
-        const [school] = await db.select().from(schools).where(eq(schools.id, schoolId))
+        const [[school], [schoolYear]] = await Promise.all([
+          db.select().from(schools).where(eq(schools.id, schoolId)),
+          db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId)),
+        ])
         const prefix = school?.code?.substring(0, 2).toUpperCase() || 'XX'
 
         // Get year from school year
-        const [schoolYear] = await db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId))
         const year = new Date(schoolYear?.startDate || new Date()).getFullYear().toString().slice(-2)
         const format = `${prefix}${year}{sequence:4}`
 

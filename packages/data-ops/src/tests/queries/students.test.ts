@@ -20,7 +20,7 @@ vi.mock('@repo/logger', () => ({
     error: vi.fn(),
     fatal: vi.fn(),
   },
-  tapLogErr: vi.fn((error: unknown) => error),
+  tapLogErr: vi.fn((_logger: unknown, _context: unknown) => (error: unknown) => error),
 }))
 
 describe('students queries', () => {
@@ -28,6 +28,7 @@ describe('students queries', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks()
+    mockDb.select.mockReset()
     const { getDb } = await import('../../database/setup')
     vi.mocked(getDb).mockReturnValue(mockDb as unknown as ReturnType<typeof getDb>)
   })
@@ -43,14 +44,6 @@ describe('students queries', () => {
         },
       ]
 
-      mockDb.select.mockReturnValue({
-        from: vi.fn().mockReturnValue({
-          leftJoin: vi.fn().mockReturnValue({
-            where: vi.fn().mockResolvedValue([{ count: 1 }]),
-          }),
-        }),
-      })
-
       mockDb.select.mockReturnValueOnce({
         from: vi.fn().mockReturnValue({
           leftJoin: vi.fn().mockReturnValue({
@@ -58,11 +51,14 @@ describe('students queries', () => {
               leftJoin: vi.fn().mockReturnValue({
                 leftJoin: vi.fn().mockReturnValue({
                   where: vi.fn().mockReturnValue({
-                    groupBy: vi.fn().mockReturnValue({
-                      orderBy: vi.fn().mockReturnValue({
-                        limit: vi.fn().mockReturnValue({
-                          offset: vi.fn().mockResolvedValue(mockStudents),
-                        }),
+                    orderBy: vi.fn().mockReturnValue({
+                      limit: vi.fn().mockReturnValue({
+                        offset: vi.fn().mockResolvedValue([
+                          {
+                            ...mockStudents[0],
+                            totalCount: 1,
+                          },
+                        ]),
                       }),
                     }),
                   }),
@@ -94,16 +90,6 @@ describe('students queries', () => {
     })
 
     test('should apply filters correctly', async () => {
-      const mockStudents: unknown[] = []
-
-      mockDb.select.mockReturnValue({
-        from: vi.fn().mockReturnValue({
-          leftJoin: vi.fn().mockReturnValue({
-            where: vi.fn().mockResolvedValue([{ count: 0 }]),
-          }),
-        }),
-      })
-
       mockDb.select.mockReturnValueOnce({
         from: vi.fn().mockReturnValue({
           leftJoin: vi.fn().mockReturnValue({
@@ -111,11 +97,9 @@ describe('students queries', () => {
               leftJoin: vi.fn().mockReturnValue({
                 leftJoin: vi.fn().mockReturnValue({
                   where: vi.fn().mockReturnValue({
-                    groupBy: vi.fn().mockReturnValue({
-                      orderBy: vi.fn().mockReturnValue({
-                        limit: vi.fn().mockReturnValue({
-                          offset: vi.fn().mockResolvedValue(mockStudents),
-                        }),
+                    orderBy: vi.fn().mockReturnValue({
+                      limit: vi.fn().mockReturnValue({
+                        offset: vi.fn().mockResolvedValue([]),
                       }),
                     }),
                   }),
@@ -146,7 +130,7 @@ describe('students queries', () => {
         currentClass: { id: 'class-1', section: 'A', gradeName: 'Grade 1', seriesName: null },
       }
 
-      mockDb.select.mockReturnValue({
+      mockDb.select.mockReturnValueOnce({
         from: vi.fn().mockReturnValue({
           leftJoin: vi.fn().mockReturnValue({
             leftJoin: vi.fn().mockReturnValue({
@@ -162,17 +146,29 @@ describe('students queries', () => {
 
       mockDb.select.mockReturnValueOnce({
         from: vi.fn().mockReturnValue({
-          leftJoin: vi.fn().mockReturnValue({
-            where: vi.fn().mockResolvedValue([]),
+          innerJoin: vi.fn().mockReturnValue({
+            where: vi.fn().mockResolvedValue([
+              {
+                parent: { id: 'parent-1', firstName: 'Jane', lastName: 'Doe' },
+                relationship: 'mother',
+                isPrimary: true,
+                canPickup: true,
+                receiveNotifications: true,
+              },
+            ]),
           }),
         }),
       })
 
       mockDb.select.mockReturnValueOnce({
         from: vi.fn().mockReturnValue({
-          leftJoin: vi.fn().mockReturnValue({
-            leftJoin: vi.fn().mockReturnValue({
-              where: vi.fn().mockResolvedValue([]),
+          innerJoin: vi.fn().mockReturnValue({
+            innerJoin: vi.fn().mockReturnValue({
+              leftJoin: vi.fn().mockReturnValue({
+                where: vi.fn().mockReturnValue({
+                  orderBy: vi.fn().mockResolvedValue([]),
+                }),
+              }),
             }),
           }),
         }),
@@ -182,6 +178,7 @@ describe('students queries', () => {
 
       const data = await expectResultSuccess(result)
       expect(data.firstName).toBe('John')
+      expect(data.parents).toHaveLength(1)
     })
 
     test('should return NOT_FOUND error when student does not exist', async () => {
@@ -231,7 +228,7 @@ describe('students queries', () => {
 
       const error = await expectResultError(result)
       expect(error).toBeInstanceOf(DatabaseError)
-      expect(error.message).toContain('Failed to fetch students')
+      expect(error.message).toContain('Test error')
     })
 
     test('should preserve error context in DatabaseError', async () => {
