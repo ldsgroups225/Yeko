@@ -8,8 +8,8 @@ import { enrollments, classes as schoolClasses, schoolYears, students } from '..
 import { createEnrollment } from '../queries/enrollments'
 import { createSchoolYearTemplate } from '../queries/programs'
 import { createSchoolYear } from '../queries/school-admin/school-years'
-import { createSchool } from '../queries/schools'
-import { createStudent } from '../queries/students'
+import { createSchool } from '../queries/schools-write'
+import { createStudent } from '../queries/students-write'
 import './setup'
 
 // Helper to measure execution time

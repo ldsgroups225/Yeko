@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PreInscriptionRouteImport } from './routes/pre-inscription'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthUsersRouteImport } from './routes/_auth/users'
@@ -116,6 +117,11 @@ import { Route as AuthSettingsPersonnelStaffStaffIdEditRouteImport } from './rou
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PreInscriptionRoute = PreInscriptionRouteImport.update({
+  id: '/pre-inscription',
+  path: '/pre-inscription',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -679,6 +685,7 @@ const AuthSettingsPersonnelStaffStaffIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pre-inscription': typeof PreInscriptionRoute
   '/reset-password': typeof ResetPasswordRoute
   '/accounting': typeof AuthAccountingRouteWithChildren
   '/approbations': typeof AuthApprobationsRoute
@@ -783,6 +790,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pre-inscription': typeof PreInscriptionRoute
   '/reset-password': typeof ResetPasswordRoute
   '/approbations': typeof AuthApprobationsRoute
   '/dashboard': typeof AuthDashboardRoute
@@ -878,6 +886,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
+  '/pre-inscription': typeof PreInscriptionRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_auth/accounting': typeof AuthAccountingRouteWithChildren
   '/_auth/approbations': typeof AuthApprobationsRoute
@@ -984,6 +993,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/pre-inscription'
     | '/reset-password'
     | '/accounting'
     | '/approbations'
@@ -1088,6 +1098,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/pre-inscription'
     | '/reset-password'
     | '/approbations'
     | '/dashboard'
@@ -1182,6 +1193,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_auth'
+    | '/pre-inscription'
     | '/reset-password'
     | '/_auth/accounting'
     | '/_auth/approbations'
@@ -1288,6 +1300,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  PreInscriptionRoute: typeof PreInscriptionRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -1299,6 +1312,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pre-inscription': {
+      id: '/pre-inscription'
+      path: '/pre-inscription'
+      fullPath: '/pre-inscription'
+      preLoaderRoute: typeof PreInscriptionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
@@ -2350,6 +2370,7 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  PreInscriptionRoute: PreInscriptionRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

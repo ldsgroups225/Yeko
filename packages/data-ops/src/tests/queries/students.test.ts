@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { DatabaseError } from '../../errors'
-import { getStudentById, getStudents } from '../../queries/students'
+import { getStudentById, getStudents } from '../../queries/students-read'
 import {
   createMockDbClient,
   expectResultError,

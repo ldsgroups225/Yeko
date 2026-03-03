@@ -51,14 +51,16 @@ import {
   updateSchoolYearTemplate,
 } from '../queries/programs'
 import {
-  createSchool,
-  deleteSchool,
   getSchoolById,
   getSchools,
   getSchoolsByStatus,
   searchSchools,
+} from '../queries/schools-read'
+import {
+  createSchool,
+  deleteSchool,
   updateSchool,
-} from '../queries/schools'
+} from '../queries/schools-write'
 
 describe('query Functions Tests - Schools', () => {
   let testSchoolIds: string[] = []

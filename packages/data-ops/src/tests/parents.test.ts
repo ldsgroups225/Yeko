@@ -12,8 +12,8 @@ import {
 
 import { createSchoolYearTemplate } from '../queries/programs'
 import { createSchoolYear } from '../queries/school-admin/school-years'
-import { createSchool } from '../queries/schools'
-import { createStudent } from '../queries/students'
+import { createSchool } from '../queries/schools-write'
+import { createStudent } from '../queries/students-write'
 import './setup'
 
 describe('parents queries', () => {
@@ -145,7 +145,8 @@ describe('parents queries', () => {
   describe('autoMatchParents', () => {
     test('should suggest match based on student emergency phone', async () => {
       // Need to get the student's emergency phone
-      const student = R.unwrap(await (await import('../queries/students')).getStudentById(testStudentId))
+      const studentResult = await (await import('../queries/students-read')).getStudentById(testStudentId)
+      const student = R.unwrap(studentResult)
       const phone = student?.emergencyPhone || '0700000001'
 
       const parent = R.unwrap(await createParent({

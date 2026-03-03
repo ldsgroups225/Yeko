@@ -1,11 +1,11 @@
 import type { MonthlyRevenue } from '@repo/data-ops/queries/finance-stats'
-import type { StudentStatistics } from '@repo/data-ops/queries/students'
+import type { StudentStatistics } from '@repo/data-ops/queries/students-types'
 import { Result as R } from '@praha/byethrow'
 import { getClasses } from '@repo/data-ops/queries/classes'
 import { getEnrollmentStatistics } from '@repo/data-ops/queries/enrollments'
 import { getFinanceStats, getMonthlyRevenue } from '@repo/data-ops/queries/finance-stats'
 import { countTeachersBySchool } from '@repo/data-ops/queries/school-admin/teachers'
-import * as studentQueries from '@repo/data-ops/queries/students'
+import { getStudentStatistics } from '@repo/data-ops/queries/students-stats'
 import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
 
@@ -45,7 +45,7 @@ export const getAdminDashboardStats = authServerFn
         monthlyRevenueResult,
         enrollmentStatsResult,
       ] = await Promise.all([
-        studentQueries.getStudentStatistics(schoolId),
+        getStudentStatistics(schoolId),
         countTeachersBySchool(schoolId),
         getClasses({ schoolId, status: 'active' }),
         getFinanceStats(schoolId),

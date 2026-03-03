@@ -1,8 +1,11 @@
-import type { ExportStudentRow, ImportStudentResult, StudentFullProfile, StudentStatistics, StudentWithDetails } from '@repo/data-ops/queries/students'
+import type { ExportStudentRow, ImportStudentResult, StudentFullProfile, StudentStatistics, StudentWithDetails } from '@repo/data-ops/queries/students-types'
 import { Result as R } from '@praha/byethrow'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { getActiveSchoolYear } from '@repo/data-ops/queries/school-admin/school-years'
-import * as studentQueries from '@repo/data-ops/queries/students'
+import { bulkImportStudents as bulkImportStudentsQuery, exportStudents as exportStudentsQuery } from '@repo/data-ops/queries/students-bulk'
+import { getStudentById as getStudentByIdQuery, getStudents as getStudentsQuery } from '@repo/data-ops/queries/students-read'
+import { getStudentStatistics as getStudentStatisticsQuery } from '@repo/data-ops/queries/students-stats'
+import { createStudent as createStudentQuery, deleteStudent as deleteStudentQuery, generateMatricule as generateMatriculeQuery, updateStudent as updateStudentQuery, updateStudentStatus as updateStudentStatusQuery } from '@repo/data-ops/queries/students-write'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'
 import { requirePermission } from '../middleware/permissions'
@@ -49,7 +52,7 @@ export const getStudents = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    const _result1 = await studentQueries.getStudents({ ...data, schoolId: context.school.schoolId })
+    const _result1 = await getStudentsQuery({ ...data, schoolId: context.school.schoolId })
     if (R.isFailure(_result1))
       return { success: false as const, error: _result1.error.message }
     return { success: true as const, data: _result1.value }
@@ -62,7 +65,7 @@ export const getStudentById = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    const _result2 = await studentQueries.getStudentById(id)
+    const _result2 = await getStudentByIdQuery(id)
     if (R.isFailure(_result2))
       return { success: false as const, error: _result2.error.message }
     return { success: true as const, data: _result2.value }
@@ -78,7 +81,7 @@ export const createStudent = authServerFn
     await requirePermission('students', 'create')
     const schoolYearId = schoolYear?.schoolYearId
 
-    const _result3 = await studentQueries.createStudent({
+    const _result3 = await createStudentQuery({
       ...data,
       schoolId: school.schoolId,
       schoolYearId,
@@ -110,7 +113,7 @@ export const updateStudent = authServerFn
     const { school } = context
     await requirePermission('students', 'edit')
 
-    const _result4 = await studentQueries.updateStudent(data.id, data.data)
+    const _result4 = await updateStudentQuery(data.id, data.data)
     if (R.isFailure(_result4))
       return { success: false as const, error: _result4.error.message }
     await createAuditLog({
@@ -133,7 +136,7 @@ export const deleteStudent = authServerFn
     const { school } = context
     await requirePermission('students', 'delete')
 
-    const _result5 = await studentQueries.deleteStudent(id)
+    const _result5 = await deleteStudentQuery(id)
     if (R.isFailure(_result5))
       return { success: false as const, error: _result5.error.message }
     await createAuditLog({
@@ -161,7 +164,7 @@ export const updateStudentStatus = authServerFn
     const { school } = context
     await requirePermission('students', 'edit')
 
-    const _result6 = await studentQueries.updateStudentStatus(data.id, data.status, data.reason)
+    const _result6 = await updateStudentStatusQuery(data.id, data.status, data.reason)
     if (R.isFailure(_result6))
       return { success: false as const, error: _result6.error.message }
     await createAuditLog({
@@ -184,7 +187,7 @@ export const bulkImportStudents = authServerFn
     const { school } = context
     await requirePermission('students', 'create')
 
-    const _result7 = await studentQueries.bulkImportStudents(school.schoolId, data.map(student => ({
+    const _result7 = await bulkImportStudentsQuery(school.schoolId, data.map(student => ({
       ...student,
       schoolId: school.schoolId,
     })))
@@ -208,7 +211,7 @@ export const exportStudents = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    const _result8 = await studentQueries.exportStudents({ ...data, schoolId: context.school.schoolId })
+    const _result8 = await exportStudentsQuery({ ...data, schoolId: context.school.schoolId })
     if (R.isFailure(_result8))
       return { success: false as const, error: _result8.error.message }
     return { success: true as const, data: _result8.value }
@@ -220,7 +223,7 @@ export const getStudentStatistics = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    const _result9 = await studentQueries.getStudentStatistics(context.school.schoolId)
+    const _result9 = await getStudentStatisticsQuery(context.school.schoolId)
     if (R.isFailure(_result9))
       return { success: false as const, error: _result9.error.message }
     return { success: true as const, data: _result9.value }
@@ -245,7 +248,7 @@ export const generateMatricule = authServerFn
       schoolYearId = activeYear.id
     }
 
-    const _result10 = await studentQueries.generateMatricule(school.schoolId, schoolYearId!)
+    const _result10 = await generateMatriculeQuery(school.schoolId, schoolYearId!)
     if (R.isFailure(_result10))
       return { success: false as const, error: _result10.error.message }
     return { success: true as const, data: _result10.value }
