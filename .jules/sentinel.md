@@ -1,0 +1,4 @@
+## 2024-05-16 - Prevent Path Traversal in Presigned Upload URLs
+**Vulnerability:** The `generatePresignedUploadUrl` function in `packages/data-ops/src/storage/upload.ts` accepted an unsanitized `folder` parameter, which was interpolated directly into the R2 bucket key.
+**Learning:** This could allow an authenticated user to perform a path traversal attack (e.g., using `../../`) to upload or overwrite files in unintended locations within the bucket.
+**Prevention:** Sanitize the `folder` parameter by replacing dot sequences with underscores (`_`) and stripping leading/trailing slashes before constructing the key.
