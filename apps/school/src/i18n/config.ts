@@ -3,9 +3,13 @@ import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
 
 // Only import French (base locale) eagerly
+import { en as enTranslation } from './locales/en'
 import { fr as frTranslation } from './locales/fr'
 
 const resources = {
+  en: {
+    translation: enTranslation,
+  },
   fr: {
     translation: frTranslation,
   },
@@ -17,7 +21,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'fr',
-    lng: 'fr',
+    supportedLngs: ['fr', 'en'],
     debug: false,
     partialBundledLanguages: true,
 

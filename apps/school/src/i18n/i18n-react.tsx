@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import type { Locales, TranslationFunctions, Translations } from './i18n-types'
 import { createContext, use, useEffect, useState } from 'react'
+import enTranslations from './en/index.js'
+import i18n from './config'
 import { initFormatters as initBaseFormatters } from './formatters.js'
 import baseTranslations from './fr/index.js'
 import {
@@ -61,7 +63,9 @@ function getI18nObject(locale: Locales): TranslationFunctions {
 
 // Initialize base locale immediately (synchronously)
 loadedLocales[baseLocale] = baseTranslations as Translations
+loadedLocales.en = enTranslations as Translations
 loadedFormatters[baseLocale] = initBaseFormatters(baseLocale)
+loadedFormatters.en = initBaseFormatters('en')
 
 // Import locale loaders for dynamic locales
 async function loadLocale(locale: Locales): Promise<Translations> {
@@ -130,6 +134,20 @@ export function I18nProvider({
       newLocale = baseLocale
     }
 
+    // Apply locale immediately for deterministic UI updates.
+    setLocaleState(newLocale)
+    setT(getI18nObject(newLocale))
+
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('yeko_school_language', newLocale)
+      document.documentElement.lang = newLocale
+
+      // Keep react-i18next consumers in sync with the same configured instance.
+      if (i18n.language !== newLocale) {
+        await i18n.changeLanguage(newLocale)
+      }
+    }
+
     try {
       // Load translations if not already loaded
       if (!loadedLocales[newLocale]) {
@@ -143,27 +161,28 @@ export function I18nProvider({
         loadedFormatters[newLocale] = formatters
       }
 
-      // Update state with the new translation object
-      setLocaleState(newLocale)
+      // Refresh translation object in case async loaders updated dictionaries.
       setT(getI18nObject(newLocale))
-
-      // Persist to localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('yeko_school_language', newLocale)
-      }
     }
     catch (error) {
       console.error(`Failed to load locale '${newLocale}':`, error)
     }
   }
 
-  // Detect and apply user's preferred locale ONLY on client after hydration
+  // Detect and apply user's preferred locale once on client after hydration.
   useEffect(() => {
     const targetLocale = initialLocale || detectBrowserLocale()
-    if (targetLocale !== baseLocale) {
-      setLocale(targetLocale)
+    if (targetLocale !== locale) {
+      void setLocale(targetLocale)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialLocale])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      document.documentElement.lang = locale
+    }
+  }, [locale])
 
   const contextValue: I18nContextValue = {
     locale,

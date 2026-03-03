@@ -37,7 +37,7 @@ function LazyCommandPalette() {
 
   return (
     <Suspense>
-      <CommandPalette />
+      <CommandPalette initialOpen />
     </Suspense>
   )
 }

@@ -10,7 +10,7 @@ import { lazy, Suspense, useMemo } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
-import { I18nProvider } from '@/i18n'
+import { I18nProvider, useI18nContext } from '@/i18n'
 import i18n from '@/i18n/config'
 import appCss from '@/styles.css?url'
 
@@ -57,20 +57,21 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <I18nextProvider i18n={i18n}>
-        <I18nProvider>
+    <I18nextProvider i18n={i18n}>
+      <I18nProvider>
+        <RootDocument>
           <ThemeProvider defaultTheme="system" storageKey="school-ui-theme">
             <Outlet />
             <Toaster position="top-right" richColors />
           </ThemeProvider>
-        </I18nProvider>
-      </I18nextProvider>
-    </RootDocument>
+        </RootDocument>
+      </I18nProvider>
+    </I18nextProvider>
   )
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
+  const { locale } = useI18nContext()
   const themeScriptContent = useMemo(
     () => `
       (function() {
@@ -85,7 +86,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   )
 
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <HeadContent />
         {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
