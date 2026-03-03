@@ -730,10 +730,9 @@ export async function getTeacherProgressSummary(teacherId: string, termId: strin
           }
         }
 
-        // Get progress for each class-subject
-        const progressRecords = []
-        for (const { classId, subjectId } of classSubjectsMap.values()) {
-          const progress = await db.query.curriculumProgress.findFirst({
+        // Get progress for each class-subject concurrently
+        const progressPromises = Array.from(classSubjectsMap.values()).map(({ classId, subjectId }) =>
+          db.query.curriculumProgress.findFirst({
             where: and(
               eq(curriculumProgress.classId, classId),
               eq(curriculumProgress.subjectId, subjectId),
@@ -746,13 +745,13 @@ export async function getTeacherProgressSummary(teacherId: string, termId: strin
               },
               subject: { columns: { name: true } },
             },
-          })
-          if (progress) {
-            progressRecords.push(progress)
-          }
-        }
+          }),
+        )
 
-        return progressRecords
+        const progressResults = await Promise.all(progressPromises)
+
+        // Filter out null/undefined results
+        return progressResults.filter((p): p is NonNullable<typeof p> => p != null)
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('curriculum', 'fetchTeacherSummaryFailed')),
     }),
