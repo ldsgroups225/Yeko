@@ -34,8 +34,20 @@ export async function generatePresignedUploadUrl(
   const timestamp = Date.now()
   const randomSuffix = Math.random().toString(36).substring(2, 8)
   const sanitizedFilename = options.filename.replace(/[^a-z0-9.-]/gi, '_')
-  const folder = options.folder ? `${options.folder}/` : ''
-  const key = `${folder}${timestamp}-${randomSuffix}-${sanitizedFilename}`
+
+  // Sanitize folder to prevent path traversal
+  // Remove dot sequences and leading/trailing slashes
+  let sanitizedFolder = ''
+  if (options.folder) {
+    sanitizedFolder = options.folder
+      // Replace continuous dot sequences with single underscores
+      .replace(/\.{2,}/g, '_')
+      // Remove leading and trailing slashes
+      .replace(/^\/+|\/+$/g, '')
+    sanitizedFolder = sanitizedFolder ? `${sanitizedFolder}/` : ''
+  }
+
+  const key = `${sanitizedFolder}${timestamp}-${randomSuffix}-${sanitizedFilename}`
 
   // Build the URL for the object
   const expiresIn = options.expiresIn || 3600
