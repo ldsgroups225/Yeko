@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type {
   EducationLevel,
   Grade,
@@ -14,6 +15,7 @@ import { getDb } from '../database/setup'
 import {
   educationLevels,
   grades,
+  gradeSeries,
   series,
   subjects,
   tracks,
@@ -299,6 +301,38 @@ export async function getSeries(options?: {
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'series.fetchFailed')),
     }),
     R.mapError(tapLogErr(databaseLogger, options || {})),
+  )
+}
+
+/**
+ * Get series available for a specific grade via the grade_series join table.
+ * Returns an empty array for grades without series (e.g. 1er cycle: 6ème-3ème).
+ */
+export async function getSeriesByGradeId(gradeId: string): R.ResultAsync<Serie[], DatabaseError> {
+  const db = getDb()
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const rows = await db
+          .select({
+            id: series.id,
+            name: series.name,
+            code: series.code,
+            trackId: series.trackId,
+            createdAt: series.createdAt,
+            updatedAt: series.updatedAt,
+          })
+          .from(gradeSeries)
+          .innerJoin(series, eq(gradeSeries.seriesId, series.id))
+          .where(eq(gradeSeries.gradeId, gradeId))
+          .orderBy(asc(series.name))
+
+        return rows
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'series.fetchByGradeFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { gradeId })),
   )
 }
 

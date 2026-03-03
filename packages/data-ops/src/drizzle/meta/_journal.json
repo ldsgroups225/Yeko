@@ -8,6 +8,13 @@
       "when": 1771978243377,
       "tag": "0000_greedy_champions",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1772579092123,
+      "tag": "0001_add_grade_series_join_table",
+      "breakpoints": true
     }
   ]
 }

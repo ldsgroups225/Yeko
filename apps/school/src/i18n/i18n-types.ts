@@ -3358,6 +3358,10 @@ type RootTranslation = {
 		 */
 		selectGrade: string
 		/**
+		 * V​e​u​i​l​l​e​z​ ​d​'​a​b​o​r​d​ ​s​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​ ​n​i​v​e​a​u
+		 */
+		selectGradeFirst: string
+		/**
 		 * S​é​r​i​e
 		 */
 		series: string
@@ -3365,6 +3369,10 @@ type RootTranslation = {
 		 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​e​ ​s​é​r​i​e
 		 */
 		selectSeries: string
+		/**
+		 * A​u​c​u​n​e​ ​s​é​r​i​e​ ​d​i​s​p​o​n​i​b​l​e​ ​p​o​u​r​ ​c​e​ ​n​i​v​e​a​u
+		 */
+		noSeriesForGrade: string
 		/**
 		 * S​e​c​t​i​o​n
 		 */
@@ -7435,19 +7443,19 @@ type RootTranslation = {
 		saveFailed: string
 		tabs: {
 			/**
-			 * P​é​d​a​g​o​g​i​e​ ​&​ ​B​u​l​l​e​t​i​n​s
+			 * B​u​l​l​e​t​i​n​s
 			 */
 			pedagogicalAndReportCards: string
 			/**
-			 * A​s​s​i​d​u​i​t​é​ ​&​ ​C​o​n​d​u​i​t​e
+			 * C​o​n​d​u​i​t​e
 			 */
 			attendanceAndConduct: string
 			/**
-			 * C​o​m​p​t​a​b​i​l​i​t​é​ ​&​ ​F​i​n​a​n​c​e​s
+			 * C​o​m​p​t​a​b​i​l​i​t​é
 			 */
 			accountingAndFinance: string
 			/**
-			 * S​y​s​t​è​m​e​ ​&​ ​N​o​t​i​f​i​c​a​t​i​o​n​s
+			 * N​o​t​i​f​i​c​a​t​i​o​n​s
 			 */
 			systemAndNotifications: string
 		}
@@ -11836,6 +11844,10 @@ export type TranslationFunctions = {
 		 */
 		selectGrade: () => LocalizedString
 		/**
+		 * Veuillez d'abord sélectionner un niveau
+		 */
+		selectGradeFirst: () => LocalizedString
+		/**
 		 * Série
 		 */
 		series: () => LocalizedString
@@ -11843,6 +11855,10 @@ export type TranslationFunctions = {
 		 * Sélectionner une série
 		 */
 		selectSeries: () => LocalizedString
+		/**
+		 * Aucune série disponible pour ce niveau
+		 */
+		noSeriesForGrade: () => LocalizedString
 		/**
 		 * Section
 		 */
@@ -15869,19 +15885,19 @@ export type TranslationFunctions = {
 		saveFailed: () => LocalizedString
 		tabs: {
 			/**
-			 * Pédagogie & Bulletins
+			 * Bulletins
 			 */
 			pedagogicalAndReportCards: () => LocalizedString
 			/**
-			 * Assiduité & Conduite
+			 * Conduite
 			 */
 			attendanceAndConduct: () => LocalizedString
 			/**
-			 * Comptabilité.
+			 * Comptabilité
 			 */
 			accountingAndFinance: () => LocalizedString
 			/**
-			 * Système & Notifications
+			 * Notifications
 			 */
 			systemAndNotifications: () => LocalizedString
 		}

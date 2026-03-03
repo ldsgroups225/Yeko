@@ -8,6 +8,7 @@ import * as schoolSchema from '../drizzle/school-schema.js'
 import { educationLevelsData } from './educationLevelsData.js'
 import { feeTypeTemplatesData } from './feeTypeTemplatesData.js'
 import { gradesData } from './gradesData.js'
+import { gradeSeriesData } from './gradeSeriesData.js'
 import { defaultRoles } from './rolesData.js'
 import { seriesData } from './seriesData.js'
 import { subjectsData } from './subjectsData.js'
@@ -50,6 +51,7 @@ async function clearCoreTables() {
   await db.delete(coreSchema.termTemplates)
   await db.delete(coreSchema.schoolYearTemplates)
   await db.delete(coreSchema.subjects)
+  await db.delete(coreSchema.gradeSeries)
   await db.delete(coreSchema.series)
   await db.delete(coreSchema.grades)
   await db.delete(coreSchema.tracks)
@@ -200,6 +202,41 @@ async function main() {
   }
   else {
     await db.insert(coreSchema.series).values(seriesList).onConflictDoNothing({ target: coreSchema.series.code })
+  }
+
+  // Seed Grade-Series join table (which series are available for which grade)
+  console.log('Seeding Grade-Series mappings...')
+
+  const allGrades = await db.query.grades.findMany({
+    where: eq(coreSchema.grades.trackId, generalTrack.id),
+  })
+  const allSeries = await db.query.series.findMany({
+    where: eq(coreSchema.series.trackId, generalTrack.id),
+  })
+
+  const gsEntries = gradeSeriesData(allGrades, allSeries).map(entry => ({
+    id: crypto.randomUUID(),
+    ...entry,
+  }))
+
+  if (gsEntries.length > 0) {
+    if (isFresh) {
+      await db.insert(coreSchema.gradeSeries).values(gsEntries)
+    }
+    else {
+      // Read existing, filter duplicates, insert new ones
+      const existingGS = await db.query.gradeSeries.findMany()
+      const existingKeys = new Set(existingGS.map(gs => `${gs.gradeId}:${gs.seriesId}`))
+      const newEntries = gsEntries.filter(gs => !existingKeys.has(`${gs.gradeId}:${gs.seriesId}`))
+
+      if (newEntries.length > 0) {
+        await db.insert(coreSchema.gradeSeries).values(newEntries)
+      }
+    }
+    console.log(`  → ${gsEntries.length} grade-series mappings configured`)
+  }
+  else {
+    console.log('  → No grade-series mappings to seed')
   }
 
   console.log('Seeding Subjects...')

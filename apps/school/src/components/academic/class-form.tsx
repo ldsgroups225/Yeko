@@ -14,7 +14,6 @@ import { createClass, updateClass } from '@/school/functions/classes'
 import { getClassrooms } from '@/school/functions/classrooms'
 import { getGrades } from '@/school/functions/grades'
 import { getSchoolYears } from '@/school/functions/school-years'
-import { getSeries } from '@/school/functions/series'
 import { getTeachers } from '@/school/functions/teachers'
 import { ClassFormFields } from './class-form-fields'
 
@@ -56,12 +55,6 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
     queryFn: () => getGrades({ data: {} }),
   })
   const grades = gradesResult.success ? gradesResult.data : []
-
-  const { data: seriesResult } = useSuspenseQuery({
-    queryKey: ['series'],
-    queryFn: () => getSeries({ data: {} }),
-  })
-  const series = seriesResult.success ? seriesResult.data : []
 
   const { data: classroomsResult } = useSuspenseQuery({
     queryKey: ['classrooms'],
@@ -131,7 +124,6 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
       >
         <ClassFormFields
           grades={grades}
-          series={series}
           classrooms={classrooms}
           teachers={teachers}
         />

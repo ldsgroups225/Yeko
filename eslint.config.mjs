@@ -24,6 +24,7 @@ export default config.append(
       '**/patches/**',
       '**/pnpm-lock.yaml',
       '**/pnpm-workspace.yaml',
+      '**/drizzle/meta/**',
     ],
   },
   {
