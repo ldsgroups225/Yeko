@@ -34,6 +34,23 @@ export interface StudentFilters {
   sortOrder?: 'asc' | 'desc'
 }
 
+export interface StudentKeysetCursor {
+  createdAt: Date
+  id: string
+}
+
+export interface StudentKeysetFilters extends Omit<StudentFilters, 'page' | 'limit' | 'sortBy' | 'sortOrder'> {
+  limit?: number
+  cursor?: StudentKeysetCursor
+}
+
+export interface StudentKeysetResult {
+  data: StudentWithDetails[]
+  nextCursor: StudentKeysetCursor | null
+  hasMore: boolean
+  limit: number
+}
+
 export interface CreateStudentInput {
   schoolId: string
   schoolYearId?: string // Optional - used for matricule generation
@@ -244,6 +261,130 @@ export async function getStudents(filters: StudentFilters): R.ResultAsync<{
   )
 }
 
+export async function getStudentsKeyset(filters: StudentKeysetFilters): R.ResultAsync<StudentKeysetResult, DatabaseError> {
+  const db = getDb()
+  const {
+    schoolId,
+    classId,
+    gradeId,
+    schoolYearId,
+    status,
+    gender,
+    search,
+    limit = 20,
+    cursor,
+  } = filters
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const conditions = [eq(students.schoolId, schoolId)]
+
+        if (status) {
+          conditions.push(eq(students.status, status))
+        }
+
+        if (gender) {
+          conditions.push(eq(students.gender, gender))
+        }
+
+        if (search) {
+          const searchCondition = or(
+            ilike(students.firstName, `%${search}%`),
+            ilike(students.lastName, `%${search}%`),
+            ilike(students.matricule, `%${search}%`),
+          )
+          if (searchCondition) {
+            conditions.push(searchCondition)
+          }
+        }
+
+        if (classId) {
+          conditions.push(eq(enrollments.classId, classId))
+        }
+        if (gradeId) {
+          conditions.push(eq(classes.gradeId, gradeId))
+        }
+        if (schoolYearId) {
+          conditions.push(eq(enrollments.schoolYearId, schoolYearId))
+        }
+
+        if (cursor) {
+          const cursorCondition = or(
+            sql`${students.createdAt} < ${cursor.createdAt}`,
+            and(
+              eq(students.createdAt, cursor.createdAt),
+              sql`${students.id} < ${cursor.id}`,
+            ),
+          )
+          if (cursorCondition) {
+            conditions.push(cursorCondition)
+          }
+        }
+
+        const parentsCountSubquery = sql<number>`(
+          SELECT COUNT(*)::int FROM ${studentParents}
+          WHERE ${studentParents.studentId} = ${students.id}
+        )`.as('parents_count')
+
+        const rows = await db
+          .select({
+            student: students,
+            currentClass: {
+              id: classes.id,
+              section: classes.section,
+              gradeName: grades.name,
+              seriesName: series.name,
+            },
+            parentsCount: parentsCountSubquery,
+            enrollmentStatus: enrollments.status,
+          })
+          .from(students)
+          .leftJoin(
+            enrollments,
+            and(eq(enrollments.studentId, students.id), eq(enrollments.status, 'confirmed')),
+          )
+          .leftJoin(classes, eq(enrollments.classId, classes.id))
+          .leftJoin(grades, eq(classes.gradeId, grades.id))
+          .leftJoin(series, eq(classes.seriesId, series.id))
+          .where(and(...conditions))
+          .orderBy(desc(students.createdAt), desc(students.id))
+          .limit(limit + 1)
+
+        const hasMore = rows.length > limit
+        const dataRows = hasMore ? rows.slice(0, limit) : rows
+        const mappedData: StudentWithDetails[] = dataRows.map(d => ({
+          student: d.student,
+          currentClass: d.currentClass.id
+            ? {
+                id: d.currentClass.id,
+                section: d.currentClass.section,
+                gradeName: d.currentClass.gradeName,
+                seriesName: d.currentClass.seriesName,
+              }
+            : null,
+          parentsCount: d.parentsCount ?? 0,
+          enrollmentStatus: d.enrollmentStatus,
+        }))
+
+        const lastItem = mappedData[mappedData.length - 1]
+        const nextCursor = hasMore && lastItem
+          ? { createdAt: lastItem.student.createdAt, id: lastItem.student.id }
+          : null
+
+        return {
+          data: mappedData,
+          nextCursor,
+          hasMore,
+          limit,
+        }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('students', 'fetchFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId: filters.schoolId })),
+  )
+}
+
 export async function getStudentById(id: string): R.ResultAsync<StudentFullProfile, DatabaseError> {
   const db = getDb()
   return R.pipe(
@@ -280,36 +421,35 @@ export async function getStudentById(id: string): R.ResultAsync<StudentFullProfi
         if (!student)
           throw dbError('NOT_FOUND', getNestedErrorMessage('students', 'notFoundWithId', { id }))
 
-        // Get parents
-        const studentParentsList = await db
-          .select({
-            parent: parents,
-            relationship: studentParents.relationship,
-            isPrimary: studentParents.isPrimary,
-            canPickup: studentParents.canPickup,
-            receiveNotifications: studentParents.receiveNotifications,
-          })
-          .from(studentParents)
-          .innerJoin(parents, eq(studentParents.parentId, parents.id))
-          .where(eq(studentParents.studentId, id))
-
-        // Get enrollment history
-        const enrollmentHistory = await db
-          .select({
-            enrollment: enrollments,
-            class: {
-              id: classes.id,
-              section: classes.section,
-              gradeName: grades.name,
-              seriesName: series.name,
-            },
-          })
-          .from(enrollments)
-          .innerJoin(classes, eq(enrollments.classId, classes.id))
-          .innerJoin(grades, eq(classes.gradeId, grades.id))
-          .leftJoin(series, eq(classes.seriesId, series.id))
-          .where(eq(enrollments.studentId, id))
-          .orderBy(desc(enrollments.enrollmentDate))
+        const [studentParentsList, enrollmentHistory] = await Promise.all([
+          db
+            .select({
+              parent: parents,
+              relationship: studentParents.relationship,
+              isPrimary: studentParents.isPrimary,
+              canPickup: studentParents.canPickup,
+              receiveNotifications: studentParents.receiveNotifications,
+            })
+            .from(studentParents)
+            .innerJoin(parents, eq(studentParents.parentId, parents.id))
+            .where(eq(studentParents.studentId, id)),
+          db
+            .select({
+              enrollment: enrollments,
+              class: {
+                id: classes.id,
+                section: classes.section,
+                gradeName: grades.name,
+                seriesName: series.name,
+              },
+            })
+            .from(enrollments)
+            .innerJoin(classes, eq(enrollments.classId, classes.id))
+            .innerJoin(grades, eq(classes.gradeId, grades.id))
+            .leftJoin(series, eq(classes.seriesId, series.id))
+            .where(eq(enrollments.studentId, id))
+            .orderBy(desc(enrollments.enrollmentDate)),
+        ])
 
         return {
           ...student.student,
@@ -354,12 +494,13 @@ export async function generateMatricule(schoolId: string, schoolYearId: string):
         }
 
         // Fallback: Sequence doesn't exist, create it.
-        // Get school code for prefix
-        const [school] = await db.select().from(schools).where(eq(schools.id, schoolId))
+        const [[school], [schoolYear]] = await Promise.all([
+          db.select().from(schools).where(eq(schools.id, schoolId)),
+          db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId)),
+        ])
         const prefix = school?.code?.substring(0, 2).toUpperCase() || 'XX'
 
         // Get year from school year
-        const [schoolYear] = await db.select().from(schoolYears).where(eq(schoolYears.id, schoolYearId))
         const year = new Date(schoolYear?.startDate || new Date()).getFullYear().toString().slice(-2)
         const format = `${prefix}${year}{sequence:4}`
 

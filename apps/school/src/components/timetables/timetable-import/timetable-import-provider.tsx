@@ -1,6 +1,5 @@
 import type { ImportResult, TimetableImportProps } from './types'
 import type { ParsedSession } from '@/lib/excel-parser'
-import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
@@ -137,7 +136,7 @@ export function TimetableImportProvider({
     onOpenChange(false)
   }
 
-  const downloadTemplate = () => {
+  const downloadTemplate = async () => {
     interface TimetableTemplate {
       Classe: string
       Matière: string
@@ -159,6 +158,8 @@ export function TimetableImportProvider({
         Fin: '10:00',
       },
     ]
+
+    const { ExcelBuilder, ExcelSchemaBuilder } = await import('@chronicstone/typed-xlsx')
 
     const schema = ExcelSchemaBuilder.create<TimetableTemplate>()
       .column('className', { key: 'Classe' })

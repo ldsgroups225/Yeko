@@ -40,6 +40,20 @@ const studentFiltersSchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).optional(),
 })
 
+const studentKeysetFiltersSchema = z.object({
+  classId: z.string().optional(),
+  gradeId: z.string().optional(),
+  schoolYearId: z.string().optional(),
+  status: z.enum(['active', 'graduated', 'transferred', 'withdrawn']).optional(),
+  gender: z.enum(['M', 'F', 'other']).optional(),
+  search: z.string().optional(),
+  limit: z.number().int().positive().max(100).optional(),
+  cursor: z.object({
+    createdAt: z.date(),
+    id: z.string().min(1),
+  }).optional(),
+})
+
 // ==================== Server Functions ====================
 
 export const getStudents = authServerFn
@@ -50,6 +64,19 @@ export const getStudents = authServerFn
 
     await requirePermission('students', 'view')
     const _result1 = await studentQueries.getStudents({ ...data, schoolId: context.school.schoolId })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: _result1.error.message }
+    return { success: true as const, data: _result1.value }
+  })
+
+export const getStudentsKeyset = authServerFn
+  .inputValidator(studentKeysetFiltersSchema)
+  .handler(async ({ data, context }): Promise<{ success: true, data: studentQueries.StudentKeysetResult } | { success: false, error: string }> => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    await requirePermission('students', 'view')
+    const _result1 = await studentQueries.getStudentsKeyset({ ...data, schoolId: context.school.schoolId })
     if (R.isFailure(_result1))
       return { success: false as const, error: _result1.error.message }
     return { success: true as const, data: _result1.value }

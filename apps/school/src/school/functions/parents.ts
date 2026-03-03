@@ -167,7 +167,7 @@ export const linkParentToStudent = authServerFn
     const { school } = context
     await requirePermission('students', 'edit')
 
-    const result = await parentQueries.linkParentToStudent(data)
+    const result = await parentQueries.linkParentToStudent({ ...data, schoolId: school.schoolId })
     if (R.isFailure(result))
       return { success: false as const, error: result.error.message }
 

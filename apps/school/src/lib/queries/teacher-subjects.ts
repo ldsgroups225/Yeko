@@ -18,6 +18,7 @@ export const teacherSubjectsOptions = {
           throw new Error(res.error)
         return res.data
       },
+      staleTime: 5 * 60 * 1000, // 5 minutes
     }),
 
   available: (teacherId: string, schoolYearId?: string) =>
@@ -31,6 +32,7 @@ export const teacherSubjectsOptions = {
           throw new Error(res.error)
         return res.data
       },
+      staleTime: 5 * 60 * 1000, // 5 minutes
       enabled: !!schoolYearId,
     }),
 }

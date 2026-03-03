@@ -10,7 +10,7 @@ import {
 import { ClassForm } from '@/components/academic/class-form'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
-import { getClassById } from '@/school/functions/classes'
+import { classesOptions } from '@/lib/queries/classes'
 
 export const Route = createFileRoute('/_auth/classes/$classId/edit')({
   component: EditClassPage,
@@ -21,13 +21,7 @@ function EditClassPage() {
   const { classId } = Route.useParams()
   const navigate = useNavigate()
 
-  const { data: result, isPending } = useQuery({
-    queryKey: ['class', classId],
-    queryFn: () => getClassById({ data: classId }),
-  })
-
-  // Safely extract the data from the Result object
-  const classInfo = result?.success ? result.data : null
+  const { data: classInfo, isPending } = useQuery(classesOptions.detail(classId))
 
   if (isPending) {
     return (

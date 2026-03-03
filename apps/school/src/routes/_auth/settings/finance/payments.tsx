@@ -1,5 +1,6 @@
+import type { PaymentFilters } from '@/lib/queries/payments'
 import { IconPlus } from '@tabler/icons-react'
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
@@ -12,9 +13,13 @@ import {
 } from '@workspace/ui/components/select'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { FinanceStats, FinanceSubpageToolbar, PaymentFormDialog, PaymentsTable } from '@/components/finance'
+import { FinanceStats } from '@/components/finance/finance-stats'
+import { FinanceSubpageToolbar } from '@/components/finance/finance-subpage-toolbar'
+import { PaymentFormDialog } from '@/components/finance/payment-form-dialog'
+import { PaymentsTable } from '@/components/finance/payments-table'
 import { useTranslations } from '@/i18n'
-import { financeStatsOptions, paymentsOptions } from '@/lib/queries'
+import { financeStatsOptions } from '@/lib/queries/finance-stats'
+import { paymentsOptions } from '@/lib/queries/payments'
 
 export const Route = createFileRoute('/_auth/settings/finance/payments')({
   component: PaymentsPage,
@@ -22,19 +27,29 @@ export const Route = createFileRoute('/_auth/settings/finance/payments')({
 
 function PaymentsPage() {
   const t = useTranslations()
-  const [statusFilter, setStatusFilter] = useState<string>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'completed' | 'pending' | 'cancelled'>('all')
   const [showPaymentDialog, setShowPaymentDialog] = useState(false)
 
-  const { data: paymentsData, isPending } = useQuery(
-    paymentsOptions.list({
-      status: statusFilter === 'all' ? undefined : statusFilter as 'completed' | 'pending' | 'cancelled',
+  const selectedStatus: PaymentFilters['status'] | undefined = statusFilter === 'all'
+    ? undefined
+    : statusFilter
+
+  const {
+    data: paymentsData,
+    isPending,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
+    paymentsOptions.infiniteKeyset({
+      status: selectedStatus,
       pageSize: 20,
     }),
   )
 
   const { data: statsData, isPending: statsPending } = useQuery(financeStatsOptions.summary())
 
-  const payments = paymentsData?.data?.map(p => ({
+  const payments = paymentsData?.pages.flatMap(page => page.data).map(p => ({
     id: p.id,
     receiptNumber: p.receiptNumber ?? undefined,
     studentName: p.studentName ?? 'N/A',
@@ -54,7 +69,14 @@ function PaymentsPage() {
             animate={{ opacity: 1, x: 0 }}
             className="flex items-center gap-2"
           >
-            <Select value={statusFilter} onValueChange={val => setStatusFilter(val ?? '')}>
+            <Select
+              value={statusFilter}
+              onValueChange={(val) => {
+                if (val === 'all' || val === 'completed' || val === 'pending' || val === 'cancelled') {
+                  setStatusFilter(val)
+                }
+              }}
+            >
               <SelectTrigger className="
                 bg-card/50 border-border/40
                 focus:ring-primary/20
@@ -116,8 +138,19 @@ function PaymentsPage() {
           <CardContent className="p-0">
             <PaymentsTable
               payments={payments}
-              isPending={isPending}
+              isPending={isPending && !paymentsData}
             />
+            {payments.length > 0 && (
+              <div className="border-border/30 flex justify-center border-t p-4">
+                <Button
+                  variant="outline"
+                  onClick={() => fetchNextPage()}
+                  disabled={!hasNextPage || isFetchingNextPage}
+                >
+                  {isFetchingNextPage ? t.common.loading() : t.common.next()}
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>

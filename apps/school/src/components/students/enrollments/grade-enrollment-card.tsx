@@ -1,5 +1,15 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@workspace/ui/components/card'
-import { Progress } from '@workspace/ui/components/progress'
+import {
+  Bar,
+  CartesianGrid,
+  ComposedChart,
+  Legend,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import { useTranslations } from '@/i18n'
 
 interface GradeStats {
@@ -16,6 +26,12 @@ interface GradeEnrollmentCardProps {
 
 export function GradeEnrollmentCard({ data }: GradeEnrollmentCardProps) {
   const t = useTranslations()
+  const chartData = data.map(grade => ({
+    name: grade.gradeName,
+    boys: Number(grade.boys),
+    girls: Number(grade.girls),
+    total: Number(grade.count),
+  }))
 
   return (
     <Card className="border-border/40 bg-card/50 shadow-sm backdrop-blur-xl">
@@ -24,37 +40,59 @@ export function GradeEnrollmentCard({ data }: GradeEnrollmentCardProps) {
         <CardDescription>{t.students.enrollmentByGradeDescription()}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          {data.length === 0
-            ? (
-                <p className="text-muted-foreground text-center text-sm">{t.students.noEnrollmentData()}</p>
-              )
-            : (
-                data.map(grade => (
-                  <div key={grade.gradeId} className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium">{grade.gradeName}</span>
-                      <span className="text-muted-foreground">
-                        {grade.count}
-                        {' '}
-                        (
-                        {grade.boys}
-                        M /
-                        {' '}
-                        {grade.girls}
-                        F)
-                      </span>
-                    </div>
-                    <div className="flex gap-1">
-                      <Progress
-                        value={(Number(grade.boys) / Math.max(Number(grade.count), 1)) * 100}
-                        className="h-2 flex-1 bg-pink-100"
-                      />
-                    </div>
-                  </div>
-                ))
-              )}
-        </div>
+        {chartData.length === 0
+          ? (
+              <p className="text-muted-foreground text-center text-sm">{t.students.noEnrollmentData()}</p>
+            )
+          : (
+              <div className="h-[210px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <ComposedChart
+                    data={chartData}
+                    margin={{
+                      top: 16,
+                      right: 12,
+                      left: 0,
+                      bottom: 0,
+                    }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                    <XAxis
+                      dataKey="name"
+                      tickLine={false}
+                      axisLine={false}
+                      stroke="var(--muted-foreground)"
+                      fontSize={12}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      stroke="var(--muted-foreground)"
+                      fontSize={12}
+                      allowDecimals={false}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'var(--card)',
+                        border: '1px solid var(--border)',
+                        borderRadius: '0.5rem',
+                      }}
+                    />
+                    <Legend />
+                    <Bar dataKey="boys" stackId="gender" fill="#3b82f6" name={t.students.male()} radius={[3, 3, 0, 0]} />
+                    <Bar dataKey="girls" stackId="gender" fill="#ec4899" name={t.students.female()} radius={[3, 3, 0, 0]} />
+                    <Line
+                      type="monotone"
+                      dataKey="total"
+                      stroke="var(--primary)"
+                      strokeWidth={2}
+                      dot={{ r: 3, fill: 'var(--primary)' }}
+                      name={t.common.total()}
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </div>
+            )}
       </CardContent>
     </Card>
   )

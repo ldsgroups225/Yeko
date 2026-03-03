@@ -31,8 +31,8 @@ export type BulkEnrollmentInput = z.infer<typeof bulkEnrollmentSchema>
 
 // Bulk re-enrollment schema
 export const bulkReEnrollmentSchema = z.object({
-  fromSchoolYearId: z.string().min(1, 'Année source requise'),
-  toSchoolYearId: z.string().min(1, 'Année cible requise'),
+  fromYearId: z.string().min(1, 'Année source requise'),
+  toYearId: z.string().min(1, 'Année cible requise'),
   gradeMapping: z.record(z.string(), z.string()).optional(), // oldGradeId -> newGradeId
   autoConfirm: z.boolean().default(false),
 })

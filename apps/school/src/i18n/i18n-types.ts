@@ -7435,19 +7435,19 @@ type RootTranslation = {
 		saveFailed: string
 		tabs: {
 			/**
-			 * P​é​d​a​g​o​g​i​e​ ​&​ ​B​u​l​l​e​t​i​n​s
+			 * B​u​l​l​e​t​i​n​s
 			 */
 			pedagogicalAndReportCards: string
 			/**
-			 * A​s​s​i​d​u​i​t​é​ ​&​ ​C​o​n​d​u​i​t​e
+			 * C​o​n​d​u​i​t​e
 			 */
 			attendanceAndConduct: string
 			/**
-			 * C​o​m​p​t​a​b​i​l​i​t​é​ ​&​ ​F​i​n​a​n​c​e​s
+			 * C​o​m​p​t​a​b​i​l​i​t​é
 			 */
 			accountingAndFinance: string
 			/**
-			 * S​y​s​t​è​m​e​ ​&​ ​N​o​t​i​f​i​c​a​t​i​o​n​s
+			 * N​o​t​i​f​i​c​a​t​i​o​n​s
 			 */
 			systemAndNotifications: string
 		}
@@ -15869,19 +15869,19 @@ export type TranslationFunctions = {
 		saveFailed: () => LocalizedString
 		tabs: {
 			/**
-			 * Pédagogie & Bulletins
+			 * Bulletins
 			 */
 			pedagogicalAndReportCards: () => LocalizedString
 			/**
-			 * Assiduité & Conduite
+			 * Conduite
 			 */
 			attendanceAndConduct: () => LocalizedString
 			/**
-			 * Comptabilité.
+			 * Comptabilité
 			 */
 			accountingAndFinance: () => LocalizedString
 			/**
-			 * Système & Notifications
+			 * Notifications
 			 */
 			systemAndNotifications: () => LocalizedString
 		}

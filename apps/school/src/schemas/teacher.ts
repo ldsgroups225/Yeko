@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Teacher validation schema
-export const teacherSchema = z.object({
+export const teacherCreateSchema = z.object({
   userId: z.string().min(1, 'Utilisateur requis'),
   subjectIds: z.array(z.string()).min(1, 'Au moins une matière requise'),
   specialization: z.string().optional().nullable(),
@@ -18,14 +18,9 @@ export const teacherSchema = z.object({
   }),
 })
 
-export const teacherCreateSchema = teacherSchema
-export const teacherUpdateSchema = teacherSchema.partial().extend({
+export const teacherUpdateSchema = teacherCreateSchema.partial().extend({
   subjectIds: z.array(z.string()).optional(),
 })
-
-// Aliases for backward compatibility
-export const createTeacherSchema = teacherCreateSchema
-export const updateTeacherSchema = teacherUpdateSchema
 
 // Teacher with new user creation
 export const teacherWithUserSchema = z.object({
@@ -40,7 +35,7 @@ export const teacherWithUserSchema = z.object({
   status: z.enum(['active', 'inactive', 'on_leave']),
 })
 
-export type TeacherFormData = z.infer<typeof teacherSchema>
-export type CreateTeacherData = z.infer<typeof createTeacherSchema>
-export type UpdateTeacherData = z.infer<typeof updateTeacherSchema>
+export type TeacherFormData = z.infer<typeof teacherCreateSchema>
+export type CreateTeacherData = z.infer<typeof teacherCreateSchema>
+export type UpdateTeacherData = z.infer<typeof teacherUpdateSchema>
 export type TeacherWithUserData = z.infer<typeof teacherWithUserSchema>

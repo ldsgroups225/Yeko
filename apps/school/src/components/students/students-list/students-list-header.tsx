@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import {
   IconAdjustmentsHorizontal,
   IconDownload,
@@ -29,6 +30,27 @@ import { motion } from 'motion/react'
 import { useTranslations } from '@/i18n'
 import { useStudentsList } from './students-list-context'
 
+const studentStatusValues = ['all', 'active', 'graduated', 'transferred', 'withdrawn'] as const
+const studentGenderValues = ['all', 'M', 'F', 'other'] as const
+type StudentStatusValue = (typeof studentStatusValues)[number]
+type StudentGenderValue = (typeof studentGenderValues)[number]
+
+function isStudentStatusValue(value: string): value is StudentStatusValue {
+  return (studentStatusValues as readonly string[]).includes(value)
+}
+
+function isStudentGenderValue(value: string): value is StudentGenderValue {
+  return (studentGenderValues as readonly string[]).includes(value)
+}
+
+function parseStudentStatus(value: string): StudentStatusValue | '' {
+  return isStudentStatusValue(value) ? value : ''
+}
+
+function parseStudentGender(value: string): StudentGenderValue | '' {
+  return isStudentGenderValue(value) ? value : ''
+}
+
 export function StudentsListHeader() {
   const t = useTranslations()
   const navigate = useNavigate()
@@ -51,6 +73,23 @@ export function StudentsListHeader() {
     setImportDialogOpen,
     handleExport,
   } = actions
+
+  const selectedStatus = (() => {
+    switch (status) {
+      case 'all':
+        return { color: 'bg-gray-400', label: t.common.all(), icon: '⚫' }
+      case 'active':
+        return { color: 'bg-emerald-500', label: t.students.statusActive(), icon: '🟢' }
+      case 'graduated':
+        return { color: 'bg-blue-500', label: t.students.statusGraduated(), icon: '🎓' }
+      case 'transferred':
+        return { color: 'bg-orange-500', label: t.students.statusTransferred(), icon: '↔️' }
+      case 'withdrawn':
+        return { color: 'bg-red-500', label: t.students.statusWithdrawn(), icon: '🚫' }
+      default:
+        return null
+    }
+  })()
 
   return (
     <motion.div
@@ -123,35 +162,25 @@ export function StudentsListHeader() {
               <Label>{t.students.status()}</Label>
               <Select
                 value={status}
-                onValueChange={val => setStatus(val ?? '')}
+                onValueChange={val => setStatus(parseStudentStatus(val ?? ''))}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={t.students.status()}>
-                    {status
-                      ? (() => {
-                          const statusConfig = {
-                            all: { color: 'bg-gray-400', label: t.common.all(), icon: '⚫' },
-                            active: { color: 'bg-emerald-500', label: t.students.statusActive(), icon: '🟢' },
-                            graduated: { color: 'bg-blue-500', label: t.students.statusGraduated(), icon: '🎓' },
-                            transferred: { color: 'bg-orange-500', label: t.students.statusTransferred(), icon: '↔️' },
-                            withdrawn: { color: 'bg-red-500', label: t.students.statusWithdrawn(), icon: '🚫' },
-                          }
-                          const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.all
-                          return (
-                            <div className="flex items-center gap-2">
-                              <div className={`
-                                h-2 w-2 rounded-full
-                                ${config.color}
-                              `}
-                              />
-                              <span>
-                                {config.icon}
-                                {' '}
-                                {config.label}
-                              </span>
-                            </div>
-                          )
-                        })()
+                    {selectedStatus
+                      ? (
+                          <div className="flex items-center gap-2">
+                            <div className={`
+                              h-2 w-2 rounded-full
+                              ${selectedStatus.color}
+                            `}
+                            />
+                            <span>
+                              {selectedStatus.icon}
+                              {' '}
+                              {selectedStatus.label}
+                            </span>
+                          </div>
+                        )
                       : null}
                   </SelectValue>
                 </SelectTrigger>
@@ -168,7 +197,7 @@ export function StudentsListHeader() {
               <Label>{t.students.gender()}</Label>
               <Select
                 value={gender}
-                onValueChange={val => setGender(val ?? '')}
+                onValueChange={val => setGender(parseStudentGender(val ?? ''))}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={t.students.gender()} />

@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
 import {
   classSubjectsKeys,
   classSubjectsOptions,
@@ -47,20 +48,29 @@ export function ClassSubjectManagerProvider({
     ...teacherOptions.list({}, { page: 1, limit: 100 }),
   })
 
+  const listKey = classSubjectsKeys.list({ classId })
+
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.classSubjects.delete,
     mutationFn: (data: { classId: string, subjectId: string }) =>
       removeClassSubject({ data }),
+    onMutate: async (vars) => {
+      await queryClient.cancelQueries({ queryKey: listKey })
+      return snapshotAndUpdate<unknown[]>(
+        queryClient,
+        listKey,
+        old => old.filter((item: any) => item.subject?.id !== vars.subjectId),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: classSubjectsKeys.list({ classId }),
-      })
       toast.success(t.academic.classes.removeSubjectSuccess())
       setSubjectToDelete(null)
     },
-    onError: () => {
+    onError: (_err, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(t.academic.classes.removeSubjectError())
     },
+    onSettled: () => invalidateAll(queryClient, [listKey]),
   })
 
   const assignMutation = useMutation({
@@ -70,15 +80,13 @@ export function ClassSubjectManagerProvider({
         data: { classId, subjectId: data.subjectId, teacherId: data.teacherId },
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: classSubjectsKeys.list({ classId }),
-      })
       toast.success(t.academic.grades.assignment.success())
       setPendingAssignment(null)
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : t.common.error())
     },
+    onSettled: () => invalidateAll(queryClient, [listKey]),
   })
 
   const state = {

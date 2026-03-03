@@ -1,20 +1,35 @@
 import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
   Scripts,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { useMemo } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
-import { I18nProvider } from '@/i18n'
+import { I18nProvider, useI18nContext } from '@/i18n'
 import i18n from '@/i18n/config'
 import appCss from '@/styles.css?url'
+
+// DevTools are only loaded in development — fully tree-shaken in production
+const TanStackRouterDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import('@tanstack/react-router-devtools').then(mod => ({
+        default: mod.TanStackRouterDevtools,
+      })),
+    )
+  : () => null
+
+const ReactQueryDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import('@tanstack/react-query-devtools').then(mod => ({
+        default: mod.ReactQueryDevtools,
+      })),
+    )
+  : () => null
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -42,20 +57,21 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <I18nextProvider i18n={i18n}>
-        <I18nProvider>
+    <I18nextProvider i18n={i18n}>
+      <I18nProvider>
+        <RootDocument>
           <ThemeProvider defaultTheme="system" storageKey="school-ui-theme">
             <Outlet />
             <Toaster position="top-right" richColors />
           </ThemeProvider>
-        </I18nProvider>
-      </I18nextProvider>
-    </RootDocument>
+        </RootDocument>
+      </I18nProvider>
+    </I18nextProvider>
   )
 }
 
 function RootDocument({ children }: { children: ReactNode }) {
+  const { locale } = useI18nContext()
   const themeScriptContent = useMemo(
     () => `
       (function() {
@@ -70,7 +86,7 @@ function RootDocument({ children }: { children: ReactNode }) {
   )
 
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <HeadContent />
         {/* eslint-disable-next-line react-dom/no-dangerously-set-innerhtml */}
@@ -78,8 +94,12 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
-        <TanStackRouterDevtools position="bottom-right" />
-        <ReactQueryDevtools buttonPosition="bottom-left" />
+        {import.meta.env.DEV && (
+          <Suspense>
+            <TanStackRouterDevtools position="bottom-right" />
+            <ReactQueryDevtools buttonPosition="bottom-left" />
+          </Suspense>
+        )}
         <Scripts />
       </body>
     </html>

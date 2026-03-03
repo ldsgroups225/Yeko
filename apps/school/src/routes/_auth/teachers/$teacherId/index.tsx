@@ -38,9 +38,10 @@ import { TeacherClasses } from '@/components/hr/teachers/teacher-classes'
 import { TeacherTimetable } from '@/components/hr/teachers/teacher-timetable'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
 import { schoolSubjectsOptions } from '@/lib/queries/school-subjects'
-import { teacherKeys, teacherMutations, teacherOptions } from '@/lib/queries/teachers'
 
+import { teacherKeys, teacherMutations, teacherOptions } from '@/lib/queries/teachers'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/_auth/teachers/$teacherId/')({
@@ -64,14 +65,29 @@ function TeacherDetailsPage() {
 
   const deleteMutation = useMutation({
     ...teacherMutations.delete,
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: teacherKeys.all })
+      return snapshotAndUpdate(
+        queryClient,
+        teacherKeys.lists(),
+        (old: any) => {
+          if (Array.isArray(old))
+            return old.filter((t: any) => t.id !== teacherId)
+          if (old?.data)
+            return { ...old, data: old.data.filter((t: any) => t.id !== teacherId) }
+          return old
+        },
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['teachers'] })
       toast.success(t.hr.teachers.deleteSuccess())
       navigate({ to: '/teachers', search: { page: 1 } })
     },
-    onError: () => {
+    onError: (_err, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(t.hr.teachers.deleteError())
     },
+    onSettled: () => invalidateAll(queryClient, [teacherKeys.all]),
   })
 
   const [isAddingSubject, setIsAddingSubject] = useState(false)
@@ -90,6 +106,7 @@ function TeacherDetailsPage() {
     onError: (error: Error) => {
       toast.error(error.message || t.hr.teachers.addSubjectError())
     },
+    onSettled: () => invalidateAll(queryClient, [teacherKeys.detail(teacherId)]),
   })
 
   const handleAddSubject = () => {

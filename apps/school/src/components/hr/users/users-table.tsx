@@ -6,7 +6,6 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
-  flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
@@ -18,7 +17,6 @@ import {
   CardTitle,
 } from '@workspace/ui/components/card'
 import { Input } from '@workspace/ui/components/input'
-import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { EmptyState } from '@/components/hr/empty-state'

@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest'
-import { generateSlug, roleSchema } from '../role'
+import { createRoleSchema, generateSlug } from '../role'
 
 describe('role Schema Validation', () => {
   describe('name field', () => {
     test('should reject names shorter than 2 characters', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'A',
         slug: 'a',
         permissions: {},
@@ -20,7 +20,7 @@ describe('role Schema Validation', () => {
 
     test('should reject names longer than 50 characters', () => {
       const longName = 'A'.repeat(51)
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: longName,
         slug: 'test',
         permissions: {},
@@ -35,7 +35,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should accept valid names', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Administrator',
         slug: 'administrator',
         permissions: {},
@@ -51,7 +51,7 @@ describe('role Schema Validation', () => {
 
   describe('slug field', () => {
     test('should reject uppercase characters', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'TestRole',
         permissions: {},
@@ -65,7 +65,7 @@ describe('role Schema Validation', () => {
       const invalidSlugs = ['test@role', 'test role', 'test_role', 'test.role']
 
       invalidSlugs.forEach((slug) => {
-        const result = roleSchema.safeParse({
+        const result = createRoleSchema.safeParse({
           name: 'Test',
           slug,
           permissions: {},
@@ -79,7 +79,7 @@ describe('role Schema Validation', () => {
       const validSlugs = ['admin', 'test-role', 'role123', 'my-role-2024']
 
       validSlugs.forEach((slug) => {
-        const result = roleSchema.safeParse({
+        const result = createRoleSchema.safeParse({
           name: 'Test',
           slug,
           permissions: {},
@@ -90,7 +90,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should reject slugs shorter than 2 characters', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'a',
         permissions: {},
@@ -103,7 +103,7 @@ describe('role Schema Validation', () => {
 
   describe('permissions field', () => {
     test('should accept empty permissions object', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {},
@@ -114,7 +114,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should accept valid permissions structure', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {
@@ -132,7 +132,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should accept permissions with multiple resources', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {
@@ -150,7 +150,7 @@ describe('role Schema Validation', () => {
 
   describe('scope field', () => {
     test('should accept "school" scope', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {},
@@ -164,7 +164,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should accept "system" scope', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {},
@@ -178,7 +178,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should reject invalid scope', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {},
@@ -189,7 +189,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should default to "school" scope when not provided', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {},
@@ -204,7 +204,7 @@ describe('role Schema Validation', () => {
 
   describe('description field', () => {
     test('should accept optional description', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {},
@@ -219,7 +219,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should accept null description', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {},
@@ -231,7 +231,7 @@ describe('role Schema Validation', () => {
     })
 
     test('should work without description', () => {
-      const result = roleSchema.safeParse({
+      const result = createRoleSchema.safeParse({
         name: 'Test',
         slug: 'test',
         permissions: {},

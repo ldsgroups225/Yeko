@@ -801,6 +801,9 @@ importers:
       jsdom:
         specifier: 'catalog:'
         version: 28.1.0(@noble/hashes@2.0.1)
+      knip:
+        specifier: 'catalog:'
+        version: 5.85.0(@types/node@25.3.2)(typescript@5.9.3)
       playwright:
         specifier: 'catalog:'
         version: 1.58.2

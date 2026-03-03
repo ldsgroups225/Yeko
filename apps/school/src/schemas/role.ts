@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Role validation schema
-export const roleSchema = z.object({
+export const createRoleSchema = z.object({
   name: z
     .string()
     .min(2, 'Minimum 2 caractères')
@@ -21,9 +21,7 @@ export const roleSchema = z.object({
   }),
 })
 
-export const createRoleSchema = roleSchema
-
-export const updateRoleSchema = roleSchema
+export const updateRoleSchema = createRoleSchema
   .omit({ slug: true, scope: true })
   .partial()
 
@@ -43,6 +41,6 @@ export function generateSlug(name: string): string {
   ) // Remove duplicate hyphens
 }
 
-export type RoleFormData = z.infer<typeof roleSchema>
+export type RoleFormData = z.infer<typeof createRoleSchema>
 export type CreateRoleData = z.infer<typeof createRoleSchema>
 export type UpdateRoleData = z.infer<typeof updateRoleSchema>

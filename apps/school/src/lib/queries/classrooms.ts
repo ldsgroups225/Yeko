@@ -32,8 +32,8 @@ export const classroomsOptions = {
           throw new Error(res.error)
         return res.data
       },
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 30 * 60 * 1000, // 30 minutes
+      staleTime: 30 * 60 * 1000, // 30 minutes — infrastructure data rarely changes
+      gcTime: 60 * 60 * 1000, // 1 hour
     }),
 
   detail: (id: string) =>
@@ -45,8 +45,8 @@ export const classroomsOptions = {
           throw new Error(res.error)
         return res.data
       },
-      staleTime: 5 * 60 * 1000,
-      gcTime: 30 * 60 * 1000,
+      staleTime: 30 * 60 * 1000, // 30 minutes
+      gcTime: 60 * 60 * 1000, // 1 hour
       enabled: !!id,
     }),
 }

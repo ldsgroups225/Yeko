@@ -17,19 +17,31 @@ import {
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
 import { useState } from 'react'
-import { GradeEntryTable, GradeTypeSelector } from '@/components/grades'
+import { GradeEntryTable } from '@/components/grades/grade-entry-table'
+import { GradeTypeSelector } from '@/components/grades/grade-type-selector'
 import { useCurrentTeacher } from '@/hooks/use-current-teacher'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { classSubjectsOptions } from '@/lib/queries/class-subjects'
 import { classesOptions } from '@/lib/queries/classes'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
+import { ensureSchoolYearId } from '@/lib/queries/ensure-school-year'
 import { gradesOptions } from '@/lib/queries/grades'
 import { termsOptions } from '@/lib/queries/terms'
 import { defaultGradeWeights } from '@/schemas/grade'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/grades/entry')({
+  loader: async ({ context: { queryClient } }) => {
+    const schoolYearId = await ensureSchoolYearId(queryClient)
+    if (!schoolYearId)
+      return
+
+    await Promise.all([
+      queryClient.ensureQueryData(classesOptions.list({ schoolYearId, status: 'active' })),
+      queryClient.ensureQueryData(termsOptions.list(schoolYearId)),
+    ])
+  },
   component: GradeEntryPage,
 })
 

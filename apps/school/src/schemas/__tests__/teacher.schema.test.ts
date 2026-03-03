@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest'
-import { teacherCreateSchema, teacherSchema, teacherUpdateSchema } from '../teacher'
+import { teacherCreateSchema, teacherUpdateSchema } from '../teacher'
 
 describe('teacher Schema Validation', () => {
   describe('userId field', () => {
     test('should require userId', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         subjectIds: ['math'],
         status: 'active',
       })
@@ -16,7 +16,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should reject empty userId', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: '',
         subjectIds: ['math'],
         status: 'active',
@@ -26,7 +26,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should accept valid userId', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         status: 'active',
@@ -38,7 +38,7 @@ describe('teacher Schema Validation', () => {
 
   describe('subjectIds field', () => {
     test('should require at least one subject', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: [],
         status: 'active',
@@ -51,7 +51,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should accept single subject', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         status: 'active',
@@ -61,7 +61,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should accept multiple subjects', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math', 'physics', 'chemistry'],
         status: 'active',
@@ -74,7 +74,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should require subjectIds field', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         status: 'active',
       })
@@ -85,7 +85,7 @@ describe('teacher Schema Validation', () => {
 
   describe('specialization field', () => {
     test('should accept optional specialization', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         specialization: 'Mathematics Education',
@@ -99,7 +99,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should accept null specialization', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         specialization: null,
@@ -110,7 +110,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should work without specialization', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         status: 'active',
@@ -123,7 +123,7 @@ describe('teacher Schema Validation', () => {
   describe('hireDate field', () => {
     test('should accept valid past date', () => {
       const pastDate = new Date('2019-09-01')
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         hireDate: pastDate,
@@ -135,7 +135,7 @@ describe('teacher Schema Validation', () => {
 
     test('should accept today as hire date', () => {
       const today = new Date()
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         hireDate: today,
@@ -149,7 +149,7 @@ describe('teacher Schema Validation', () => {
       const futureDate = new Date()
       futureDate.setFullYear(futureDate.getFullYear() + 1)
 
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         hireDate: futureDate,
@@ -160,7 +160,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should accept null hireDate', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         hireDate: null,
@@ -171,7 +171,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should work without hireDate', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         status: 'active',
@@ -183,7 +183,7 @@ describe('teacher Schema Validation', () => {
 
   describe('status field', () => {
     test('should accept "active" status', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         status: 'active',
@@ -193,7 +193,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should accept "inactive" status', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         status: 'inactive',
@@ -203,7 +203,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should accept "on_leave" status', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         status: 'on_leave',
@@ -213,7 +213,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should reject invalid status', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
         status: 'invalid',
@@ -223,7 +223,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should default to "active" when not provided', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math'],
       })
@@ -237,7 +237,7 @@ describe('teacher Schema Validation', () => {
 
   describe('complete valid teacher', () => {
     test('should accept teacher with all fields', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['math', 'physics'],
         specialization: 'STEM Education',
@@ -255,7 +255,7 @@ describe('teacher Schema Validation', () => {
     })
 
     test('should accept teacher with minimal required fields', () => {
-      const result = teacherSchema.safeParse({
+      const result = teacherCreateSchema.safeParse({
         userId: 'user123',
         subjectIds: ['french'],
       })
@@ -276,7 +276,7 @@ describe('teacher Create Schema', () => {
       status: 'active',
     }
 
-    const baseResult = teacherSchema.safeParse(testData)
+    const baseResult = teacherCreateSchema.safeParse(testData)
     const createResult = teacherCreateSchema.safeParse(testData)
 
     expect(baseResult.success).toBe(createResult.success)

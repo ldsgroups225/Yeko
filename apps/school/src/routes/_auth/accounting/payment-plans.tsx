@@ -4,9 +4,9 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
-import { PaymentPlansTable } from '@/components/finance'
+import { PaymentPlansTable } from '@/components/finance/payment-plans-table'
 import { useTranslations } from '@/i18n'
-import { paymentPlansOptions } from '@/lib/queries'
+import { paymentPlansOptions } from '@/lib/queries/payment-plans'
 
 export const Route = createFileRoute('/_auth/accounting/payment-plans')({
   component: PaymentPlansPage,

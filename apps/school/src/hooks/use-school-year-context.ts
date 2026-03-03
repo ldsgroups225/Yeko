@@ -3,6 +3,28 @@ import { schoolMutationKeys } from '@/lib/queries/keys'
 import { getSchoolYearContext, setSchoolYearContext } from '@/school/middleware/school-context'
 
 /**
+ * Query keys that depend on the active school year.
+ * On year switch these are removed from cache (not invalidated) to avoid
+ * burst refetches.  Components re-render with the new schoolYearId and
+ * create fresh queries that fetch on demand.
+ */
+const SCHOOL_YEAR_DEPENDENT_QUERY_KEYS: readonly string[] = [
+  'students',
+  'classes',
+  'enrollments',
+  'report-cards',
+  'class-averages',
+  'grades',
+  'terms',
+  'timetables',
+  'coefficients',
+  'subjects',
+  'curriculum-progress',
+  'dashboard',
+  'conduct-records',
+]
+
+/**
  * Hook to get and manage school year context
  */
 export function useSchoolYearContext() {
@@ -10,27 +32,32 @@ export function useSchoolYearContext() {
 
   const { data: context, isPending } = useQuery({
     queryKey: ['school-year-context'],
-    queryFn: async () => await getSchoolYearContext(),
+    queryFn: getSchoolYearContext,
     staleTime: 5 * 60 * 1000, // 5 minutes
   })
 
   const switchSchoolYear = useMutation({
     mutationKey: schoolMutationKeys.context.selectSchoolYear,
-    mutationFn: async (schoolYearId: string) => await setSchoolYearContext({ data: schoolYearId }),
+    mutationFn: (schoolYearId: string) => setSchoolYearContext({ data: schoolYearId }),
     onSuccess: () => {
-      // Invalidate queries that depend on school year
-      queryClient.invalidateQueries({ queryKey: ['school-year-context'] })
-      queryClient.invalidateQueries({ queryKey: ['students'] })
-      queryClient.invalidateQueries({ queryKey: ['classes'] })
-      queryClient.invalidateQueries({ queryKey: ['enrollments'] })
-      queryClient.invalidateQueries({ queryKey: ['report-cards'] })
-      queryClient.invalidateQueries({ queryKey: ['class-averages'] })
-      queryClient.invalidateQueries({ queryKey: ['grades'] })
-      queryClient.invalidateQueries({ queryKey: ['terms'] })
-      queryClient.invalidateQueries({ queryKey: ['timetables'] })
-      queryClient.invalidateQueries({ queryKey: ['coefficients'] })
-      queryClient.invalidateQueries({ queryKey: ['subjects'] })
-      queryClient.invalidateQueries({ queryKey: ['curriculum-progress'] })
+      // 1. Invalidate context — triggers re-render cascade so components
+      //    pick up the new schoolYearId and create new queries.
+      void queryClient.invalidateQueries({ queryKey: ['school-year-context'] })
+
+      // 2. Remove (not invalidate) year-dependent queries.
+      //    • Queries that include schoolYearId in their key auto-resolve:
+      //      components re-render → new key → fresh fetch.
+      //    • Queries without schoolYearId in key are cleared so they
+      //      refetch lazily when the user navigates to the relevant view.
+      //    Using removeQueries avoids the burst of simultaneous refetches
+      //    that invalidateQueries would cause for all active observers.
+      for (const key of SCHOOL_YEAR_DEPENDENT_QUERY_KEYS) {
+        queryClient.removeQueries({ queryKey: [key] })
+      }
+
+      // 3. Prefetching for the new year is handled by the _auth layout's
+      //    useEffect (classes, terms, catalogs) which re-fires when
+      //    schoolYearId changes.
     },
   })
 

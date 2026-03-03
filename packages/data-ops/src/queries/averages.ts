@@ -83,25 +83,24 @@ export function calculateTermAverage(params: {
       try: async () => {
         const db = getDb()
 
-        // 1. Get class info
-        const classInfo = await db.query.classes.findFirst({
-          where: eq(classes.id, params.classId),
-          with: {
-            schoolYear: true,
-          },
-        })
+        const [classInfo, subjectAveragesList] = await Promise.all([
+          db.query.classes.findFirst({
+            where: eq(classes.id, params.classId),
+            with: {
+              schoolYear: true,
+            },
+          }),
+          db.query.studentAverages.findMany({
+            where: and(
+              eq(studentAverages.studentId, params.studentId),
+              eq(studentAverages.termId, params.termId),
+              isNotNull(studentAverages.subjectId),
+            ),
+          }),
+        ])
 
         if (!classInfo)
           throw new DatabaseError('NOT_FOUND', 'Class not found')
-
-        // 2. Get all subject averages for the student
-        const subjectAveragesList = await db.query.studentAverages.findMany({
-          where: and(
-            eq(studentAverages.studentId, params.studentId),
-            eq(studentAverages.termId, params.termId),
-            isNotNull(studentAverages.subjectId),
-          ),
-        })
 
         // 3. Get coefficients
         let totalWeightedSum = 0
@@ -353,42 +352,39 @@ export function getClassAveragesList(classId: string, termId: string) {
       try: async () => {
         const db = getDb()
 
-        // Fetch Overalls
-        const overallAverages = await db.query.studentAverages.findMany({
-          where: and(
-            eq(studentAverages.classId, classId),
-            eq(studentAverages.termId, termId),
-            isNull(studentAverages.subjectId),
-          ),
-          with: {
-            student: {
-              columns: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                matricule: true,
+        const [overallAverages, subjectAverages, classInfo] = await Promise.all([
+          db.query.studentAverages.findMany({
+            where: and(
+              eq(studentAverages.classId, classId),
+              eq(studentAverages.termId, termId),
+              isNull(studentAverages.subjectId),
+            ),
+            with: {
+              student: {
+                columns: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                  matricule: true,
+                },
               },
             },
-          },
-        })
-
-        // Fetch Subject Averages for details
-        const subjectAverages = await db.query.studentAverages.findMany({
-          where: and(
-            eq(studentAverages.classId, classId),
-            eq(studentAverages.termId, termId),
-            isNotNull(studentAverages.subjectId),
-          ),
-          with: {
-            subject: true,
-          },
-        })
-
-        // Get Coefficients for display
-        const classInfo = await db.query.classes.findFirst({
-          where: eq(classes.id, classId),
-          with: { schoolYear: true, grade: true, series: true },
-        })
+          }),
+          db.query.studentAverages.findMany({
+            where: and(
+              eq(studentAverages.classId, classId),
+              eq(studentAverages.termId, termId),
+              isNotNull(studentAverages.subjectId),
+            ),
+            with: {
+              subject: true,
+            },
+          }),
+          db.query.classes.findFirst({
+            where: eq(classes.id, classId),
+            with: { schoolYear: true, grade: true, series: true },
+          }),
+        ])
 
         let coefMap = new Map<string, number>()
         if (classInfo) {

@@ -20,10 +20,8 @@ export function LanguageSwitcher() {
   const { locale, setLocale } = useI18nContext()
 
   const changeLanguage = (lng: Locales) => {
-    setLocale(lng)
+    void setLocale(lng)
   }
-
-  const currentLanguage = locale
 
   return (
     <DropdownMenu>
@@ -41,15 +39,15 @@ export function LanguageSwitcher() {
       />
       <DropdownMenuContent align="end">
         <DropdownMenuItem
-          onClick={() => changeLanguage('fr')}
-          className={currentLanguage === 'fr' ? 'bg-accent' : ''}
+          onSelect={() => changeLanguage('fr')}
+          className={locale === 'fr' ? 'bg-accent' : ''}
         >
           <span className="mr-2">🇫🇷</span>
           {t.language.french()}
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => changeLanguage('en')}
-          className={currentLanguage === 'en' ? 'bg-accent' : ''}
+          onSelect={() => changeLanguage('en')}
+          className={locale === 'en' ? 'bg-accent' : ''}
         >
           <span className="mr-2">🇬🇧</span>
           {t.language.english()}

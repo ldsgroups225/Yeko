@@ -9,12 +9,11 @@ import { toast } from 'sonner'
 import { z } from 'zod'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { catalogsOptions } from '@/lib/queries/catalogs'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { createClass, updateClass } from '@/school/functions/classes'
 import { getClassrooms } from '@/school/functions/classrooms'
-import { getGrades } from '@/school/functions/grades'
 import { getSchoolYears } from '@/school/functions/school-years'
-import { getSeries } from '@/school/functions/series'
 import { getTeachers } from '@/school/functions/teachers'
 import { ClassFormFields } from './class-form-fields'
 
@@ -51,17 +50,8 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
   const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
   const currentSchoolYear = schoolYears?.find(sy => sy.id === schoolYearId) || schoolYears?.[0]
 
-  const { data: gradesResult } = useSuspenseQuery({
-    queryKey: ['grades'],
-    queryFn: () => getGrades({ data: {} }),
-  })
-  const grades = gradesResult.success ? gradesResult.data : []
-
-  const { data: seriesResult } = useSuspenseQuery({
-    queryKey: ['series'],
-    queryFn: () => getSeries({ data: {} }),
-  })
-  const series = seriesResult.success ? seriesResult.data : []
+  const { data: grades } = useSuspenseQuery(catalogsOptions.grades())
+  const { data: series } = useSuspenseQuery(catalogsOptions.series())
 
   const { data: classroomsResult } = useSuspenseQuery({
     queryKey: ['classrooms'],

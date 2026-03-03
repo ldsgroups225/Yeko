@@ -9,8 +9,8 @@ import { useState } from 'react'
 import { CoefficientMatrix } from '@/components/academic/coefficients/coefficient-matrix'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { catalogsOptions } from '@/lib/queries/catalogs'
 import { getSchoolYears } from '@/school/functions/school-years'
-import { getSeries } from '@/school/functions/series'
 
 export const Route = createFileRoute('/_auth/programs/coefficients')({
   component: CoefficientsPage,
@@ -31,13 +31,7 @@ function CoefficientsPage() {
   const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
 
   // Fetch series for filtering
-  const { data: seriesResult, isPending: seriesPending } = useQuery({
-    queryKey: ['series'],
-    queryFn: () => getSeries({ data: {} }),
-    staleTime: 10 * 60 * 1000,
-  })
-
-  const series = seriesResult?.success ? seriesResult.data : []
+  const { data: series, isPending: seriesPending } = useQuery(catalogsOptions.series())
 
   // Derive template ID from global school year context
   const selectedYearTemplateId = schoolYears.find(y => y.id === schoolYearId)?.schoolYearTemplateId || ''

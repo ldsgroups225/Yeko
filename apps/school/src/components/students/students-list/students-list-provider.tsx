@@ -1,6 +1,6 @@
 import type { StudentFilters, StudentItem } from './types'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { toast } from 'sonner'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
@@ -10,14 +10,17 @@ import { studentsOptions } from '@/lib/queries/students'
 import { exportStudents } from '@/school/functions/students'
 import { StudentsListContext } from './students-list-context'
 
+type StudentStatusFilter = StudentFilters['status'] | '' | 'all'
+type StudentGenderFilter = StudentFilters['gender'] | '' | 'all'
+
 export function StudentsListProvider({ children }: { children: React.ReactNode }) {
   const t = useTranslations()
   const queryClient = useQueryClient()
   const { schoolYearId } = useSchoolYearContext()
 
   const [search, setSearch] = useState('')
-  const [status, setStatus] = useState<string>('')
-  const [gender, setGender] = useState<string>('')
+  const [status, setStatus] = useState<StudentStatusFilter>('')
+  const [gender, setGender] = useState<StudentGenderFilter>('')
   const [page, setPage] = useState(1)
   const [selectedStudent, setSelectedStudent] = useState<StudentItem | null>(null)
   const [selectedRows, setSelectedRows] = useState<string[]>([])
@@ -32,66 +35,72 @@ export function StudentsListProvider({ children }: { children: React.ReactNode }
 
   const debouncedSearch = useDebounce(search, 500)
 
+  // Reset page when schoolYearId changes
   const [prevSchoolYearId, setPrevSchoolYearId] = useState(schoolYearId)
-
-  // Reset local filters when global school year changes
   if (schoolYearId !== prevSchoolYearId) {
     setPrevSchoolYearId(schoolYearId)
     setPage(1)
   }
 
-  const filters: StudentFilters = {
+  const statusFilter: StudentFilters['status'] | undefined = status === '' || status === 'all'
+    ? undefined
+    : status
+  const genderFilter: StudentFilters['gender'] | undefined = gender === '' || gender === 'all'
+    ? undefined
+    : gender
+
+  const filters = useMemo<StudentFilters>(() => ({
     schoolYearId: schoolYearId || undefined,
     search: debouncedSearch || undefined,
-    status: (status as any) || undefined,
-    gender: (gender as any) || undefined,
+    status: statusFilter,
+    gender: genderFilter,
     page,
     limit: 20,
-  }
+  }), [debouncedSearch, genderFilter, page, schoolYearId, statusFilter])
 
   const isFiltered = !!search || (!!status && status !== 'all') || (!!gender && gender !== 'all')
 
   const { data, isPending } = useQuery(studentsOptions.list(filters))
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setSearch('')
     setStatus('')
     setGender('')
-  }
+  }, [])
 
-  const handleSelectAll = (checked: boolean) => {
+  const handleSelectAll = useCallback((checked: boolean) => {
     if (checked && data?.data) {
-      setSelectedRows(data.data.map((item: StudentItem) => item.student.id))
+      setSelectedRows(data.data.map(item => item.student.id))
     }
     else {
       setSelectedRows([])
     }
-  }
+  }, [data?.data])
 
-  const handleSelectRow = (id: string, checked: boolean) => {
+  const handleSelectRow = useCallback((id: string, checked: boolean) => {
     if (checked) {
       setSelectedRows(prev => [...prev, id])
     }
     else {
       setSelectedRows(prev => prev.filter(rowId => rowId !== id))
     }
-  }
+  }, [])
 
-  const handlePrefetchStudent = (studentId: string) => {
+  const handlePrefetchStudent = useCallback((studentId: string) => {
     void queryClient.prefetchQuery(studentsOptions.detail(studentId))
-  }
+  }, [queryClient])
 
-  const handleDelete = (student: StudentItem) => {
+  const handleDelete = useCallback((student: StudentItem) => {
     setSelectedStudent(student)
     setDeleteDialogOpen(true)
-  }
+  }, [])
 
-  const handleStatusChange = (student: StudentItem) => {
+  const handleStatusChange = useCallback((student: StudentItem) => {
     setSelectedStudent(student)
     setStatusDialogOpen(true)
-  }
+  }, [])
 
-  const handleExport = async () => {
+  const handleExport = useCallback(async () => {
     setIsExporting(true)
     try {
       const result = await exportStudents({ data: filters })
@@ -103,7 +112,7 @@ export function StudentsListProvider({ children }: { children: React.ReactNode }
 
       const exportData = result.data
 
-      const excelBuffer = exportStudentsToExcel(exportData, {
+      const excelBuffer = await exportStudentsToExcel(exportData, {
         matricule: t.students.matricule(),
         lastName: t.students.lastName(),
         firstName: t.students.firstName(),
@@ -133,51 +142,75 @@ export function StudentsListProvider({ children }: { children: React.ReactNode }
     finally {
       setIsExporting(false)
     }
-  }
+  }, [filters, t])
+
+  const contextValue = useMemo(() => ({
+    state: {
+      filters,
+      search,
+      status,
+      gender,
+      page,
+      selectedStudent,
+      selectedRows,
+      deleteDialogOpen,
+      statusDialogOpen,
+      reEnrollDialogOpen,
+      importDialogOpen,
+      autoMatchDialogOpen,
+      isExporting,
+      data,
+      isPending,
+      isFiltered,
+    },
+    actions: {
+      setSearch,
+      setStatus,
+      setGender,
+      setPage,
+      setSelectedStudent,
+      setSelectedRows,
+      setDeleteDialogOpen,
+      setStatusDialogOpen,
+      setReEnrollDialogOpen,
+      setImportDialogOpen,
+      setAutoMatchDialogOpen,
+      handleClearFilters,
+      handleSelectAll,
+      handleSelectRow,
+      handleDelete,
+      handleStatusChange,
+      handleExport,
+      handlePrefetchStudent,
+    },
+  }), [
+    autoMatchDialogOpen,
+    data,
+    deleteDialogOpen,
+    filters,
+    gender,
+    handleClearFilters,
+    handleDelete,
+    handleExport,
+    handlePrefetchStudent,
+    handleSelectAll,
+    handleSelectRow,
+    handleStatusChange,
+    importDialogOpen,
+    isExporting,
+    isFiltered,
+    isPending,
+    page,
+    reEnrollDialogOpen,
+    search,
+    selectedRows,
+    selectedStudent,
+    status,
+    statusDialogOpen,
+  ])
 
   return (
-    <StudentsListContext
-      value={{
-        state: {
-          filters,
-          search,
-          status,
-          gender,
-          page,
-          selectedStudent,
-          selectedRows,
-          deleteDialogOpen,
-          statusDialogOpen,
-          reEnrollDialogOpen,
-          importDialogOpen,
-          autoMatchDialogOpen,
-          isExporting,
-          data,
-          isPending,
-          isFiltered,
-        },
-        actions: {
-          setSearch,
-          setStatus,
-          setGender,
-          setPage,
-          setSelectedStudent,
-          setSelectedRows,
-          setDeleteDialogOpen,
-          setStatusDialogOpen,
-          setReEnrollDialogOpen,
-          setImportDialogOpen,
-          setAutoMatchDialogOpen,
-          handleClearFilters,
-          handleSelectAll,
-          handleSelectRow,
-          handleDelete,
-          handleStatusChange,
-          handleExport,
-          handlePrefetchStudent,
-        },
-      }}
-    >
+    <StudentsListContext value={contextValue}>
       {children}
     </StudentsListContext>
   )

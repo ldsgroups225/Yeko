@@ -11,7 +11,7 @@ import {
   IconUsers,
   IconUserScreen,
 } from '@tabler/icons-react'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useLocation, useNavigate, useRouter } from '@tanstack/react-router'
 import {
   Sidebar,
   SidebarContent,
@@ -35,6 +35,7 @@ import { useTranslations } from '@/i18n'
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const t = useTranslations()
   const navigate = useNavigate()
+  const router = useRouter()
   const pathname = useLocation({ select: location => location.pathname })
   const { can } = useAuthorization()
   const { state } = useSidebar()
@@ -142,6 +143,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     })).filter(section => section.items.length > 0)
   }, [can, t])
 
+  const preloadRoute = React.useCallback((to: string) => {
+    void router.preloadRoute({ to })
+  }, [router])
+
   return (
     <Sidebar
       collapsible="icon"
@@ -240,6 +245,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   return (
                     <SidebarMenuItem key={item.href}>
                       <SidebarMenuButton
+                        onMouseEnter={() => preloadRoute(item.href)}
+                        onFocus={() => preloadRoute(item.href)}
                         onClick={() => navigate({ to: item.href })}
                         isActive={isActive}
                         tooltip={item.title}

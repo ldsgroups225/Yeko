@@ -1,4 +1,5 @@
-import type { AccountsTableItem, Account as CRUDAccount } from '@/components/finance'
+import type { AccountsTableItem } from '@/components/finance/accounts-table'
+import type { Account as CRUDAccount } from '@/components/finance/accounts/account-schema'
 import { IconPlus } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -13,10 +14,12 @@ import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confir
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { AccountFormDialog, AccountsTable } from '@/components/finance'
+import { AccountFormDialog } from '@/components/finance/account-form-dialog'
+import { AccountsTable } from '@/components/finance/accounts-table'
 import { FinanceSubpageToolbar } from '@/components/finance/finance-subpage-toolbar'
 import { useTranslations } from '@/i18n'
-import { accountsKeys, accountsOptions } from '@/lib/queries'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
+import { accountsKeys, accountsOptions } from '@/lib/queries/accounts'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingAccount } from '@/school/functions/accounts'
 
@@ -59,15 +62,24 @@ function AccountsPage() {
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.accounts.delete,
     mutationFn: (id: string) => deleteExistingAccount({ data: id }),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: accountsKeys.all })
+      return snapshotAndUpdate<unknown[]>(
+        queryClient,
+        accountsKeys.all,
+        old => old.filter((acc: any) => acc.id !== id),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: accountsKeys.all })
       toast.success('Compte supprimé')
       setDeletingId(null)
     },
-    onError: (err: unknown) => {
+    onError: (err: unknown, _vars, context) => {
+      rollback(queryClient, context)
       const message = err instanceof Error ? err.message : 'Erreur lors de la suppression'
       toast.error(message)
     },
+    onSettled: () => invalidateAll(queryClient, [accountsKeys.all]),
   })
 
   const handleEdit = (account: AccountsTableItem) => {

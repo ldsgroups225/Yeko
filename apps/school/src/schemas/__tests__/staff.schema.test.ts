@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest'
-import { staffPositions, staffSchema } from '../staff'
+import { createStaffSchema, staffPositions } from '../staff'
 
 describe('staff Schema Validation', () => {
   describe('userId field', () => {
     test('should require userId', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         position: 'accountant',
         status: 'active',
       })
@@ -16,7 +16,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should reject empty userId', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: '',
         position: 'accountant',
         status: 'active',
@@ -26,7 +26,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept valid userId', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         status: 'active',
@@ -39,7 +39,7 @@ describe('staff Schema Validation', () => {
   describe('position field', () => {
     test('should accept all valid positions', () => {
       staffPositions.forEach((position) => {
-        const result = staffSchema.safeParse({
+        const result = createStaffSchema.safeParse({
           userId: 'user123',
           position,
           status: 'active',
@@ -49,7 +49,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept "academic_coordinator"', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'academic_coordinator',
         status: 'active',
@@ -59,7 +59,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept "discipline_officer"', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'discipline_officer',
         status: 'active',
@@ -69,7 +69,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept "accountant"', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         status: 'active',
@@ -79,7 +79,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept "cashier"', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'cashier',
         status: 'active',
@@ -89,7 +89,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept "registrar"', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'registrar',
         status: 'active',
@@ -99,7 +99,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept "other"', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'other',
         status: 'active',
@@ -109,7 +109,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should reject invalid position', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'invalid_position',
         status: 'active',
@@ -119,7 +119,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should require position field', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         status: 'active',
       })
@@ -130,7 +130,7 @@ describe('staff Schema Validation', () => {
 
   describe('department field', () => {
     test('should accept optional department', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         department: 'Finance',
@@ -144,7 +144,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept null department', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         department: null,
@@ -155,7 +155,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should work without department', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         status: 'active',
@@ -168,7 +168,7 @@ describe('staff Schema Validation', () => {
   describe('hireDate field', () => {
     test('should accept valid past date', () => {
       const pastDate = new Date('2020-01-15')
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         hireDate: pastDate,
@@ -180,7 +180,7 @@ describe('staff Schema Validation', () => {
 
     test('should accept today as hire date', () => {
       const today = new Date()
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         hireDate: today,
@@ -194,7 +194,7 @@ describe('staff Schema Validation', () => {
       const futureDate = new Date()
       futureDate.setFullYear(futureDate.getFullYear() + 1)
 
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         hireDate: futureDate,
@@ -205,7 +205,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept null hireDate', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         hireDate: null,
@@ -216,7 +216,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should work without hireDate', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         status: 'active',
@@ -228,7 +228,7 @@ describe('staff Schema Validation', () => {
 
   describe('status field', () => {
     test('should accept "active" status', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         status: 'active',
@@ -238,7 +238,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept "inactive" status', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         status: 'inactive',
@@ -248,7 +248,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept "on_leave" status', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         status: 'on_leave',
@@ -258,7 +258,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should reject invalid status', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
         status: 'invalid',
@@ -268,7 +268,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should default to "active" when not provided', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'accountant',
       })
@@ -282,7 +282,7 @@ describe('staff Schema Validation', () => {
 
   describe('complete valid staff', () => {
     test('should accept staff with all fields', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'academic_coordinator',
         department: 'Academic Affairs',
@@ -300,7 +300,7 @@ describe('staff Schema Validation', () => {
     })
 
     test('should accept staff with minimal required fields', () => {
-      const result = staffSchema.safeParse({
+      const result = createStaffSchema.safeParse({
         userId: 'user123',
         position: 'cashier',
       })

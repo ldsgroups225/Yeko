@@ -2,10 +2,9 @@ import type { TimetableViewMode } from '@/components/timetables'
 import type { TimetableSessionData } from '@/components/timetables/timetable-session-card'
 import type { SessionFormInput } from '@/components/timetables/timetable-session-dialog'
 import type { CreateTimetableSessionInput, UpdateTimetableSessionInput } from '@/schemas/timetable'
-import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import { IconCalendarSearch, IconDownload, IconUpload } from '@tabler/icons-react'
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 
 import { createFileRoute } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
@@ -22,16 +21,18 @@ import { TimetableImportDialog } from '@/components/timetables/timetable-import-
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
+import { classSubjectsOptions } from '@/lib/queries/class-subjects'
+import { classesOptions } from '@/lib/queries/classes'
+import { classroomsOptions } from '@/lib/queries/classrooms'
+import { ensureSchoolYearId } from '@/lib/queries/ensure-school-year'
 import { schoolMutationKeys } from '@/lib/queries/keys'
-import { timetablesOptions } from '@/lib/queries/timetables'
+import { teacherOptions } from '@/lib/queries/teachers'
+import { timetablesKeys, timetablesOptions } from '@/lib/queries/timetables'
 import { detectConflicts } from '@/lib/utils/timetable-conflicts'
 import {
   dayOfWeekLabels,
 } from '@/schemas/timetable'
-import { getClassSubjects } from '@/school/functions/class-subjects'
-import { getClasses } from '@/school/functions/classes'
-import { getClassrooms } from '@/school/functions/classrooms'
-import { getTeachers } from '@/school/functions/teachers'
 import {
   createTimetableSession,
   deleteTimetableSession,
@@ -42,6 +43,17 @@ const TimetableGrid = lazy(() => import('@/components/timetables').then(m => ({ 
 const TimetableSessionDialog = lazy(() => import('@/components/timetables/timetable-session-dialog').then(m => ({ default: m.TimetableSessionDialog })))
 
 export const Route = createFileRoute('/_auth/schedules')({
+  loader: async ({ context: { queryClient } }) => {
+    const schoolYearId = await ensureSchoolYearId(queryClient)
+
+    await Promise.all([
+      queryClient.ensureQueryData(teacherOptions.list()),
+      queryClient.ensureQueryData(classroomsOptions.list()),
+      ...(schoolYearId
+        ? [queryClient.ensureQueryData(classesOptions.list({ schoolYearId }))]
+        : []),
+    ])
+  },
   component: TimetablesPage,
 })
 
@@ -74,46 +86,30 @@ function TimetablesPage() {
   const effectiveYearId = contextSchoolYearId || ''
 
   // Fetch classes for selected year
-  const { data: classesResult, isPending: classesPending } = useQuery({
-    queryKey: ['classes', effectiveYearId],
-    queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
+  const { data: classes = [], isPending: classesPending } = useQuery({
+    ...classesOptions.list({ schoolYearId: effectiveYearId }),
     enabled: !!effectiveYearId,
-    staleTime: 5 * 60 * 1000,
   })
-  const classes = classesResult?.success ? classesResult.data : []
 
   // Fetch teachers
-  const { data: teachersResult, isPending: teachersPending } = useQuery({
-    queryKey: ['teachers'],
-    queryFn: () => getTeachers({ data: {} }),
-    staleTime: 5 * 60 * 1000,
-  })
-  const teachersData = teachersResult?.success ? teachersResult.data : null
+  const { data: teachersData, isPending: teachersPending } = useSuspenseQuery(teacherOptions.list())
   const teachers = useMemo(() => teachersData?.teachers ?? [], [teachersData])
 
   // Fetch classrooms
-  const { data: classroomsResult } = useQuery({
-    queryKey: ['classrooms', { schoolId }],
-    queryFn: () => getClassrooms({ data: {} }),
-    staleTime: 5 * 60 * 1000,
-  })
+  const { data: classroomsResult } = useSuspenseQuery(classroomsOptions.list())
 
   const classrooms = useMemo(() => {
-    if (classroomsResult?.success) {
-      return classroomsResult.data
-    }
-    return []
+    return classroomsResult ?? []
   }, [classroomsResult])
 
   // Fetch subjects for class
   const { data: classSubjectsResult } = useQuery({
-    queryKey: ['class-subjects', selectedClassId],
-    queryFn: () => getClassSubjects({ data: { classId: selectedClassId, schoolYearId: effectiveYearId } }),
-    enabled: !!selectedClassId,
+    ...classSubjectsOptions.list({ classId: selectedClassId, schoolYearId: effectiveYearId }),
+    enabled: !!selectedClassId && !!effectiveYearId,
   })
 
   const classSubjects = useMemo(() => {
-    return classSubjectsResult?.success ? classSubjectsResult.data : []
+    return classSubjectsResult ?? []
   }, [classSubjectsResult])
 
   // Fetch timetable for class view
@@ -144,7 +140,7 @@ function TimetablesPage() {
         ? (teacherTimetableResult || [])
         : (classroomTimetableResult || [])
 
-    const sessions = (timetable?.map((session) => {
+    const sessions: TimetableSessionData[] = timetable?.map((session) => {
       // Handle different data structures for class vs teacher views
       const teacherName = 'teacher' in session && session.teacher?.user?.name
         ? session.teacher.user.name
@@ -163,7 +159,7 @@ function TimetablesPage() {
         endTime: session.endTime,
         color: session.color,
       }
-    }) || []) as TimetableSessionData[]
+    }) || []
 
     return detectConflicts(sessions)
   }, [viewMode, classTimetableResult, teacherTimetableResult, classroomTimetableResult])
@@ -175,7 +171,7 @@ function TimetablesPage() {
     onSuccess: (res) => {
       if (res.success) {
         toast.success(t.common.success())
-        queryClient.invalidateQueries({ queryKey: ['timetables'] })
+        queryClient.invalidateQueries({ queryKey: timetablesKeys.all })
         setIsDialogOpen(false)
       }
       else {
@@ -190,7 +186,7 @@ function TimetablesPage() {
     onSuccess: (res) => {
       if (res.success) {
         toast.success(t.common.success())
-        queryClient.invalidateQueries({ queryKey: ['timetables'] })
+        queryClient.invalidateQueries({ queryKey: timetablesKeys.all })
         setIsDialogOpen(false)
       }
       else {
@@ -202,11 +198,29 @@ function TimetablesPage() {
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.timetables.delete,
     mutationFn: (id: string) => deleteTimetableSession({ data: { id } }),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: timetablesKeys.all })
+      return snapshotAndUpdate(
+        queryClient,
+        timetablesKeys.all,
+        (old: any) => {
+          if (Array.isArray(old))
+            return old.filter((s: any) => s.id !== id)
+          if (old?.sessions)
+            return { ...old, sessions: old.sessions.filter((s: any) => s.id !== id) }
+          return old
+        },
+      )
+    },
     onSuccess: () => {
       toast.success(t.common.success())
-      queryClient.invalidateQueries({ queryKey: ['timetables'] })
       setIsDialogOpen(false)
     },
+    onError: (err, _vars, context) => {
+      rollback(queryClient, context)
+      toast.error(err instanceof Error ? err.message : t.common.error())
+    },
+    onSettled: () => invalidateAll(queryClient, [timetablesKeys.all]),
   })
 
   const handleViewModeChange = (mode: TimetableViewMode) => {
@@ -262,11 +276,13 @@ function TimetablesPage() {
     await deleteMutation.mutateAsync(id)
   }
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (!transformedTimetable.length) {
       toast.error(t.timetables.noDataToExport())
       return
     }
+
+    const { ExcelBuilder, ExcelSchemaBuilder } = await import('@chronicstone/typed-xlsx')
 
     const schema = ExcelSchemaBuilder.create<ExportData>()
       .column('Jour', { key: 'day' })

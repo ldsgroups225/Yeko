@@ -56,6 +56,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import {
   schoolYearsKeys,
@@ -91,51 +92,44 @@ function SchoolYearsSettingsPage() {
     mutationKey: schoolMutationKeys.schoolYears.setActive,
     mutationFn: (id: string) => setActiveSchoolYear({ data: { id } }),
     onMutate: async (id) => {
-      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries({ queryKey: schoolYearsKeys.all })
-
-      // Snapshot the previous value
-      const previousSchoolYears = queryClient.getQueryData(schoolYearsOptions().queryKey)
-
-      // Optimistically update to the new value
-      queryClient.setQueryData(schoolYearsOptions().queryKey, (old) => {
-        if (!old)
-          return []
-        return old.map(sy => ({
-          ...sy,
-          isActive: sy.id === id,
-        }))
-      })
-
-      // Return a context object with the snapshotted value
-      return { previousSchoolYears }
+      return snapshotAndUpdate(
+        queryClient,
+        schoolYearsKeys.lists(),
+        (old: any[]) => old.map(sy => ({ ...sy, isActive: sy.id === id })),
+      )
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: schoolYearsKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['school-context'] })
       toast.success(t.settings.schoolYears.activatedSuccess())
     },
     onError: (err, _id, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
-      if (context?.previousSchoolYears) {
-        queryClient.setQueryData(schoolYearsOptions().queryKey, context.previousSchoolYears)
-      }
+      rollback(queryClient, context)
       toast.error(parseServerFnError(err, t.settings.schoolYears.activatedError()))
     },
+    onSettled: () => invalidateAll(queryClient, [schoolYearsKeys.all, ['school-context']]),
   })
 
   // Delete mutation
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.schoolYears.delete,
     mutationFn: (id: string) => deleteSchoolYear({ data: { id } }),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: schoolYearsKeys.all })
+      return snapshotAndUpdate(
+        queryClient,
+        schoolYearsKeys.lists(),
+        (old: any[]) => old.filter(sy => sy.id !== id),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: schoolYearsKeys.all })
       toast.success(t.settings.schoolYears.deletedSuccess())
       setDeleteConfirmId(null)
     },
-    onError: (err) => {
+    onError: (err, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(parseServerFnError(err, t.settings.schoolYears.deletedError()))
     },
+    onSettled: () => invalidateAll(queryClient, [schoolYearsKeys.all]),
   })
 
   return (

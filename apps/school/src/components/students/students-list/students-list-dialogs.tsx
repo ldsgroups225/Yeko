@@ -1,14 +1,23 @@
 import type { StudentStatus } from '@repo/data-ops/drizzle/school-schema'
+import type { StudentWithDetails } from '@repo/data-ops/queries/students'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
 import { studentsKeys, studentsMutations } from '@/lib/queries/students'
 import { AutoMatchDialog } from '../auto-match-dialog'
 import { BulkReEnrollDialog } from '../bulk-reenroll-dialog'
 import { ImportDialog } from '../import-dialog'
 import { StudentStatusDialog } from '../student-status-dialog'
 import { useStudentsList } from './students-list-context'
+
+interface PaginatedStudents {
+  data: StudentWithDetails[]
+  total: number
+  page: number
+  totalPages: number
+}
 
 export function StudentsListDialogs() {
   const t = useTranslations()
@@ -32,26 +41,55 @@ export function StudentsListDialogs() {
 
   const deleteMutation = useMutation({
     ...studentsMutations.delete,
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: studentsKeys.lists() })
+      return snapshotAndUpdate<PaginatedStudents>(
+        queryClient,
+        studentsKeys.lists(),
+        old => ({
+          ...old,
+          data: old.data.filter(s => s.student.id !== id),
+          total: old.total - 1,
+        }),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       toast.success(t.students.deleteSuccess())
       setDeleteDialogOpen(false)
     },
-    onError: (err: Error) => {
+    onError: (err: Error, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(err.message)
     },
+    onSettled: () => invalidateAll(queryClient, [studentsKeys.all]),
   })
 
   const statusMutation = useMutation({
     ...studentsMutations.updateStatus,
+    onMutate: async (vars: { id: string, status: StudentStatus, reason?: string }) => {
+      await queryClient.cancelQueries({ queryKey: studentsKeys.lists() })
+      return snapshotAndUpdate<PaginatedStudents>(
+        queryClient,
+        studentsKeys.lists(),
+        old => ({
+          ...old,
+          data: old.data.map(s =>
+            s.student.id === vars.id
+              ? { ...s, student: { ...s.student, status: vars.status } }
+              : s,
+          ),
+        }),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: studentsKeys.all })
       toast.success(t.students.statusUpdateSuccess())
       setStatusDialogOpen(false)
     },
-    onError: (err: Error) => {
+    onError: (err: Error, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(err.message)
     },
+    onSettled: () => invalidateAll(queryClient, [studentsKeys.all]),
   })
 
   return (

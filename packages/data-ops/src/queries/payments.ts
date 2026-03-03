@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type {
   Payment,
   PaymentAllocation,
@@ -7,13 +8,14 @@ import type {
 } from '../drizzle/school-schema'
 import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
-import { and, desc, eq, gte, lte, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, lte, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import {
   installments,
   paymentAllocations,
   paymentPlans,
   payments,
+  receiptSequences,
   studentFees,
   students,
 } from '../drizzle/school-schema'
@@ -43,6 +45,56 @@ export interface PaginatedPayments {
   total: number
   page: number
   pageSize: number
+}
+
+export interface PaymentListItem {
+  id: string
+  receiptNumber: string
+  amount: string
+  method: PaymentMethod
+  status: PaymentStatus | null
+  createdAt: Date
+  paymentDate: string
+  studentName: string
+  studentMatricule: string | null
+}
+
+export interface PaymentsKeysetCursor {
+  paymentDate: string
+  createdAt: Date
+  id: string
+}
+
+export interface GetPaymentsKeysetParams extends Omit<GetPaymentsParams, 'page'> {
+  pageSize?: number
+  cursor?: PaymentsKeysetCursor
+}
+
+export interface KeysetPaymentsResult {
+  data: PaymentListItem[]
+  nextCursor: PaymentsKeysetCursor | null
+  hasMore: boolean
+  pageSize: number
+}
+
+function getErrorMessage(error: unknown): string | null {
+  if (error instanceof Error) {
+    return error.message
+  }
+  if (typeof error === 'object' && error !== null && 'message' in error) {
+    const message = error.message
+    if (typeof message === 'string' && message.length > 0) {
+      return message
+    }
+  }
+  return null
+}
+
+function hasPostgresErrorCode(error: unknown, code: string): boolean {
+  if (typeof error !== 'object' || error === null || !('code' in error)) {
+    return false
+  }
+  return error.code === code
 }
 
 export async function getPayments(params: GetPaymentsParams): R.ResultAsync<PaginatedPayments, DatabaseError> {
@@ -110,6 +162,100 @@ export async function getPayments(params: GetPaymentsParams): R.ResultAsync<Pagi
   )
 }
 
+export async function getPaymentsKeyset(params: GetPaymentsKeysetParams): R.ResultAsync<KeysetPaymentsResult, DatabaseError> {
+  const db = getDb()
+  const {
+    schoolId,
+    studentId,
+    paymentPlanId,
+    method,
+    status,
+    startDate,
+    endDate,
+    processedBy,
+    pageSize = 20,
+    cursor,
+  } = params
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const conditions = [eq(payments.schoolId, schoolId)]
+        if (studentId)
+          conditions.push(eq(payments.studentId, studentId))
+        if (paymentPlanId)
+          conditions.push(eq(payments.paymentPlanId, paymentPlanId))
+        if (method)
+          conditions.push(eq(payments.method, method))
+        if (status)
+          conditions.push(eq(payments.status, status))
+        if (processedBy)
+          conditions.push(eq(payments.processedBy, processedBy))
+        if (startDate)
+          conditions.push(gte(payments.paymentDate, startDate))
+        if (endDate)
+          conditions.push(lte(payments.paymentDate, endDate))
+
+        if (cursor) {
+          const cursorCondition = or(
+            sql`${payments.paymentDate} < ${cursor.paymentDate}`,
+            and(
+              eq(payments.paymentDate, cursor.paymentDate),
+              sql`${payments.createdAt} < ${cursor.createdAt}`,
+            ),
+            and(
+              eq(payments.paymentDate, cursor.paymentDate),
+              eq(payments.createdAt, cursor.createdAt),
+              sql`${payments.id} < ${cursor.id}`,
+            ),
+          )
+          if (cursorCondition) {
+            conditions.push(cursorCondition)
+          }
+        }
+
+        const rows = await db
+          .select({
+            id: payments.id,
+            receiptNumber: payments.receiptNumber,
+            amount: payments.amount,
+            method: payments.method,
+            status: payments.status,
+            createdAt: payments.createdAt,
+            paymentDate: payments.paymentDate,
+            studentName: sql<string>`concat(${students.firstName}, ' ', ${students.lastName})`.as('studentName'),
+            studentMatricule: students.matricule,
+          })
+          .from(payments)
+          .leftJoin(students, eq(payments.studentId, students.id))
+          .where(and(...conditions))
+          .orderBy(desc(payments.paymentDate), desc(payments.createdAt), desc(payments.id))
+          .limit(pageSize + 1)
+
+        const hasMore = rows.length > pageSize
+        const data = hasMore ? rows.slice(0, pageSize) : rows
+        const lastRow = data[data.length - 1]
+        const nextCursor = hasMore && lastRow
+          ? {
+              paymentDate: String(lastRow.paymentDate),
+              createdAt: lastRow.createdAt,
+              id: lastRow.id,
+            }
+          : null
+
+        return {
+          data,
+          nextCursor,
+          hasMore,
+          pageSize,
+        }
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.fetchFailed')),
+    }),
+    R.mapError(tapLogErr(databaseLogger, { schoolId, studentId })),
+  )
+}
+
 export async function getPaymentById(paymentId: string): R.ResultAsync<Payment | null, DatabaseError> {
   const db = getDb()
   return R.pipe(
@@ -142,31 +288,104 @@ export async function getPaymentByReceiptNumber(schoolId: string, receiptNumber:
   )
 }
 
-export async function generateReceiptNumber(schoolId: string): R.ResultAsync<string, DatabaseError> {
+function resolveReceiptYear(paymentDate: string): number {
+  const parsedYear = Number.parseInt(paymentDate.slice(0, 4), 10)
+  if (Number.isFinite(parsedYear) && parsedYear >= 1900 && parsedYear <= 9999) {
+    return parsedYear
+  }
+  return new Date().getFullYear()
+}
+
+export async function generateReceiptNumber(schoolId: string, paymentDate: string): R.ResultAsync<string, DatabaseError> {
   const db = getDb()
   return R.pipe(
     R.try({
       try: async () => {
-        const year = new Date().getFullYear()
+        const year = resolveReceiptYear(paymentDate)
         const prefix = `REC-${year}-`
 
-        const [lastPayment] = await db
-          .select({ receiptNumber: payments.receiptNumber })
-          .from(payments)
-          .where(and(eq(payments.schoolId, schoolId), sql`${payments.receiptNumber} LIKE ${`${prefix}%`}`))
-          .orderBy(desc(payments.receiptNumber))
-          .limit(1)
+        const [updatedSequence] = await db
+          .update(receiptSequences)
+          .set({
+            lastNumber: sql`${receiptSequences.lastNumber} + 1`,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(receiptSequences.schoolId, schoolId),
+              eq(receiptSequences.sequenceYear, year),
+            ),
+          )
+          .returning()
 
-        let nextNumber = 1
-        if (lastPayment?.receiptNumber) {
-          const lastNum = Number.parseInt(lastPayment.receiptNumber.replace(prefix, ''), 10)
-          if (!Number.isNaN(lastNum))
-            nextNumber = lastNum + 1
+        if (updatedSequence) {
+          return `${prefix}${updatedSequence.lastNumber.toString().padStart(5, '0')}`
         }
 
-        return `${prefix}${nextNumber.toString().padStart(5, '0')}`
+        try {
+          await db.insert(receiptSequences).values({
+            id: crypto.randomUUID(),
+            schoolId,
+            sequenceYear: year,
+            prefix,
+            lastNumber: 1,
+          })
+
+          return `${prefix}00001`
+        }
+        catch (insertError) {
+          if (
+            typeof insertError === 'object'
+            && insertError !== null
+            && 'code' in insertError
+            && insertError.code === '23505'
+          ) {
+            const [retrySequence] = await db
+              .update(receiptSequences)
+              .set({
+                lastNumber: sql`${receiptSequences.lastNumber} + 1`,
+                updatedAt: new Date(),
+              })
+              .where(
+                and(
+                  eq(receiptSequences.schoolId, schoolId),
+                  eq(receiptSequences.sequenceYear, year),
+                ),
+              )
+              .returning()
+
+            if (retrySequence) {
+              return `${prefix}${retrySequence.lastNumber.toString().padStart(5, '0')}`
+            }
+          }
+          throw insertError
+        }
       },
-      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('finance', 'payment.generateReceiptNumberFailed')),
+      catch: (err) => {
+        if (hasPostgresErrorCode(err, '42P01')) {
+          return DatabaseError.from(
+            err,
+            'INTERNAL_ERROR',
+            'Table receipt_sequences introuvable. Exécutez les migrations data-ops.',
+          )
+        }
+
+        if (hasPostgresErrorCode(err, '42501')) {
+          return DatabaseError.from(
+            err,
+            'PERMISSION_DENIED',
+            'Permissions insuffisantes sur receipt_sequences pour générer un reçu.',
+          )
+        }
+
+        const baseMessage = getNestedErrorMessage('finance', 'payment.generateReceiptNumberFailed')
+        const rootCauseMessage = getErrorMessage(err)
+        const message = rootCauseMessage
+          ? `${baseMessage}: ${rootCauseMessage}`
+          : baseMessage
+
+        return DatabaseError.from(err, 'INTERNAL_ERROR', message)
+      },
     }),
     R.mapError(tapLogErr(databaseLogger, { schoolId })),
   )
@@ -189,7 +408,7 @@ export async function createPayment(data: CreatePaymentData): R.ResultAsync<Paym
   return R.pipe(
     R.try({
       try: async () => {
-        const receiptNumberResult = await generateReceiptNumber(data.schoolId)
+        const receiptNumberResult = await generateReceiptNumber(data.schoolId, data.paymentDate)
         if (R.isFailure(receiptNumberResult))
           throw receiptNumberResult.error
         const receiptNumber = receiptNumberResult.value
@@ -223,7 +442,7 @@ export async function createPaymentWithAllocations(
           throw dbError('PAYMENT_CONFLICT', getNestedErrorMessage('finance', 'payment.amountMismatch', { paymentAmount, totalAllocated }))
         }
 
-        const receiptNumberResult = await generateReceiptNumber(paymentData.schoolId)
+        const receiptNumberResult = await generateReceiptNumber(paymentData.schoolId, paymentData.paymentDate)
         if (R.isFailure(receiptNumberResult))
           throw receiptNumberResult.error
         const receiptNumber = receiptNumberResult.value

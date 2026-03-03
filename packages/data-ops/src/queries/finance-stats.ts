@@ -14,6 +14,7 @@ import { getNestedErrorMessage } from '../i18n'
 export interface FinanceStats {
   totalRevenue: number
   totalPayments: number
+  paymentsThisMonth: number
   pendingPayments: number
   overdueAmount: number
 }
@@ -24,51 +25,40 @@ export async function getFinanceStats(schoolId: string): R.ResultAsync<FinanceSt
   return R.pipe(
     R.try({
       try: async () => {
-        const [revenueResult] = await db
-          .select({
-            amount: sum(payments.amount),
-            count: sql<number>`count(*)::int`,
-          })
-          .from(payments)
-          .where(
-            and(
-              eq(payments.schoolId, schoolId),
-              eq(payments.status, 'completed'),
-            ),
-          )
-
-        const [pendingResult] = await db
-          .select({
-            amount: sum(payments.amount),
-          })
-          .from(payments)
-          .where(
-            and(
-              eq(payments.schoolId, schoolId),
-              eq(payments.status, 'pending'),
-            ),
-          )
-
         const now = new Date().toISOString().split('T')[0]
-        const [overdueResult] = await db
-          .select({
-            amount: sum(installments.balance),
-          })
-          .from(installments)
-          .innerJoin(paymentPlans, eq(installments.paymentPlanId, paymentPlans.id))
-          .innerJoin(schoolYears, eq(paymentPlans.schoolYearId, schoolYears.id))
-          .where(
-            and(
-              eq(schoolYears.schoolId, schoolId),
-              sql`${installments.dueDate} < ${now}`,
-              sql`${installments.balance} > 0`,
+        const [[paymentsResult], [overdueResult]] = await Promise.all([
+          db
+            .select({
+              totalRevenue: sql<string>`COALESCE(SUM(CASE WHEN ${payments.status} = 'completed' THEN ${payments.amount} ELSE 0 END), 0)`,
+              totalPayments: sql<number>`COUNT(*) FILTER (WHERE ${payments.status} = 'completed')::int`,
+              totalPaymentsThisMonth: sql<number>`COUNT(*) FILTER (WHERE ${payments.status} = 'completed' AND DATE_TRUNC('month', ${payments.paymentDate}::date) = DATE_TRUNC('month', CURRENT_DATE))::int`,
+              pendingAmount: sql<string>`COALESCE(SUM(CASE WHEN ${payments.status} = 'pending' THEN ${payments.amount} ELSE 0 END), 0)`,
+            })
+            .from(payments)
+            .where(eq(payments.schoolId, schoolId)),
+          db
+            .select({
+              amount: sum(installments.balance),
+            })
+            .from(installments)
+            .innerJoin(paymentPlans, eq(installments.paymentPlanId, paymentPlans.id))
+            .innerJoin(schoolYears, eq(paymentPlans.schoolYearId, schoolYears.id))
+            .where(
+              and(
+                eq(schoolYears.schoolId, schoolId),
+                sql`${installments.dueDate} < ${now}`,
+                sql`${installments.balance} > 0`,
+              ),
             ),
-          )
+        ])
 
         return {
-          totalRevenue: Number(revenueResult?.amount ?? 0),
-          totalPayments: Number(revenueResult?.count ?? 0),
-          pendingPayments: Number(pendingResult?.amount ?? 0),
+          totalRevenue: Number(paymentsResult?.totalRevenue ?? 0),
+          totalPayments: Number(paymentsResult?.totalPayments ?? 0),
+          paymentsThisMonth: Number(
+            paymentsResult?.totalPaymentsThisMonth ?? 0,
+          ),
+          pendingPayments: Number(paymentsResult?.pendingAmount ?? 0),
           overdueAmount: Number(overdueResult?.amount ?? 0),
         }
       },

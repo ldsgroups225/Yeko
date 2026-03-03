@@ -6,6 +6,9 @@
     "rm:vite": "rm -rf ./node_modules/.vite",
     "dev": "pnpm run rm:vite && vite dev --port 3001",
     "build": "vite build",
+    "perf:budget": "node ../../scripts/check-school-budgets.mjs",
+    "db:explain:snapshot": "node ../../scripts/capture-school-db-explain.mjs",
+    "db:explain:summary": "node ../../scripts/summarize-school-db-explain.mjs",
     "deploy": "pnpm run build && wrangler deploy --config dist/server/wrangler.json",
     "serve": "vite preview",
     "cf-typegen": "wrangler types --env-interface Env",
@@ -18,7 +21,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:report": "playwright show-report playwright-report",
-    "test:all": "pnpm test && pnpm test:e2e"
+    "test:all": "pnpm test && pnpm test:e2e",
+    "knip": "knip"
   },
   "dependencies": {
     "@chronicstone/typed-xlsx": "catalog:",
@@ -82,6 +86,7 @@
     "@yeko/eslint-config": "workspace:^",
     "eslint": "catalog:",
     "jsdom": "catalog:",
+    "knip": "catalog:",
     "playwright": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

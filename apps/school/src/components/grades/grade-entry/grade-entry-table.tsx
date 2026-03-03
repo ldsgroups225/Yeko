@@ -1,4 +1,5 @@
 import { IconHash, IconUser } from '@tabler/icons-react'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { Badge } from '@workspace/ui/components/badge'
 import {
   Table,
@@ -8,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@workspace/ui/components/table'
-import { AnimatePresence, motion } from 'motion/react'
+import { useRef } from 'react'
 import { useTranslations } from '@/i18n'
 import { GradeCell } from '../grade-cell'
 import { GradeStatusBadge } from '../grade-status-badge'
@@ -19,54 +20,72 @@ export function GradeEntryTableContent() {
   const { state, actions } = useGradeEntry()
   const { students, gradesByStudent, pendingChanges, isPendingAction } = state
   const { handleGradeChange } = actions
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+  const rowVirtualizer = useVirtualizer({
+    count: students.length,
+    getScrollElement: () => tableContainerRef.current,
+    estimateSize: () => 72,
+    overscan: 10,
+  })
+  const virtualRows = rowVirtualizer.getVirtualItems()
+  const paddingTop = virtualRows.length > 0 ? virtualRows[0]?.start ?? 0 : 0
+  const paddingBottom = virtualRows.length > 0
+    ? rowVirtualizer.getTotalSize() - (virtualRows[virtualRows.length - 1]?.end ?? 0)
+    : 0
 
   return (
     <div className="
-      border-border/40 bg-card/30 overflow-hidden overflow-x-auto rounded-2xl
+      border-border/40 bg-card/30 overflow-hidden rounded-2xl
       border shadow-xl backdrop-blur-xl
     "
     >
-      <Table>
-        <TableHeader>
-          <TableRow className="
-            bg-muted/30 border-b-border/40
-            hover:bg-muted/30
-          "
-          >
-            <TableHead className="min-w-[240px]">
-              <div className="flex items-center gap-2">
-                <IconUser className="text-muted-foreground size-4" />
-                <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.student()}</span>
-              </div>
-            </TableHead>
-            <TableHead className="w-24">
-              <div className="flex items-center gap-1.5">
-                <IconHash className="text-muted-foreground size-3.5" />
-                <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.matricule()}</span>
-              </div>
-            </TableHead>
-            <TableHead className="w-32 text-center">
-              <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.average()}</span>
-            </TableHead>
-            <TableHead className="w-32 text-center">
-              <span className="text-xs font-bold tracking-tight uppercase">{t.common.status()}</span>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <AnimatePresence mode="popLayout">
-            {students.map((student, index) => {
+      <div ref={tableContainerRef} className="max-h-[70vh] overflow-auto">
+        <Table>
+          <TableHeader className="sticky top-0 z-10 bg-card/95 backdrop-blur-xl">
+            <TableRow className="
+              bg-muted/30 border-b-border/40
+              hover:bg-muted/30
+            "
+            >
+              <TableHead className="min-w-[240px]">
+                <div className="flex items-center gap-2">
+                  <IconUser className="text-muted-foreground size-4" />
+                  <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.student()}</span>
+                </div>
+              </TableHead>
+              <TableHead className="w-24">
+                <div className="flex items-center gap-1.5">
+                  <IconHash className="text-muted-foreground size-3.5" />
+                  <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.matricule()}</span>
+                </div>
+              </TableHead>
+              <TableHead className="w-32 text-center">
+                <span className="text-xs font-bold tracking-tight uppercase">{t.academic.grades.averages.average()}</span>
+              </TableHead>
+              <TableHead className="w-32 text-center">
+                <span className="text-xs font-bold tracking-tight uppercase">{t.common.status()}</span>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {paddingTop > 0 && (
+              <TableRow className="hover:bg-transparent">
+                <TableCell style={{ height: `${paddingTop}px` }} colSpan={4} />
+              </TableRow>
+            )}
+            {virtualRows.map((virtualRow) => {
+              const student = students[virtualRow.index]
+              if (!student) {
+                return null
+              }
               const grade = gradesByStudent.get(student.id)
               const pendingValue = pendingChanges.get(student.id)
               const currentValue = grade ? Number.parseFloat(grade.value) : pendingValue ?? null
               const status = grade?.status ?? 'draft'
 
               return (
-                <motion.tr
+                <TableRow
                   key={student.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.03 }}
                   className="
                     group border-border/20
                     hover:bg-primary/5
@@ -115,12 +134,17 @@ export function GradeEntryTableContent() {
                       <GradeStatusBadge status={status} />
                     </div>
                   </TableCell>
-                </motion.tr>
+                </TableRow>
               )
             })}
-          </AnimatePresence>
-        </TableBody>
-      </Table>
+            {paddingBottom > 0 && (
+              <TableRow className="hover:bg-transparent">
+                <TableCell style={{ height: `${paddingBottom}px` }} colSpan={4} />
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }

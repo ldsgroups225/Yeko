@@ -16,9 +16,9 @@ import { toast } from 'sonner'
 import { StudentAttendanceGrid } from '@/components/attendance/student/student-attendance-grid'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { classesOptions } from '@/lib/queries/classes'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { classAttendanceOptions } from '@/lib/queries/student-attendance'
-import { getClasses } from '@/school/functions/classes'
 import { bulkRecordClassAttendance } from '@/school/functions/student-attendance'
 
 export const Route = createFileRoute('/_auth/conducts/student-attendance/')({
@@ -53,13 +53,9 @@ function StudentAttendancePage() {
 
   const { schoolYearId } = useSchoolYearContext()
 
-  const { data: classesResult } = useQuery({
-    queryKey: ['classes', { schoolYearId }],
-    queryFn: () => getClasses({ data: { schoolYearId: schoolYearId ?? undefined } }),
-    enabled: !!schoolYearId,
-  })
-
-  const classes = classesResult?.success ? classesResult.data : []
+  const { data: classes = [] } = useQuery(
+    classesOptions.list({ schoolYearId: schoolYearId ?? undefined }),
+  )
 
   const dateStr = date.toISOString().split('T')[0] ?? ''
 
