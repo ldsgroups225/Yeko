@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
-import { StudentDetail } from '@/components/students'
+import { StudentDetail } from '@/components/students/student-detail'
 import { useTranslations } from '@/i18n'
 
 export const Route = createFileRoute('/_auth/students/$studentId/')({

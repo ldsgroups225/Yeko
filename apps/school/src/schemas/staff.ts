@@ -11,7 +11,7 @@ export const staffPositions = [
 ] as const
 
 // Staff validation schema
-export const staffSchema = z.object({
+export const createStaffSchema = z.object({
   userId: z.string().min(1, 'Utilisateur requis'),
   position: z.enum(staffPositions, {
     message: 'Poste invalide',
@@ -30,9 +30,7 @@ export const staffSchema = z.object({
   }),
 })
 
-export const createStaffSchema = staffSchema
-
-export const updateStaffSchema = staffSchema.partial()
+export const updateStaffSchema = createStaffSchema.partial()
 
 // Staff with new user creation
 export const staffWithUserSchema = z.object({
@@ -47,7 +45,7 @@ export const staffWithUserSchema = z.object({
   status: z.enum(['active', 'inactive', 'on_leave']),
 })
 
-export type StaffFormData = z.infer<typeof staffSchema>
+export type StaffFormData = z.infer<typeof createStaffSchema>
 export type CreateStaffData = z.infer<typeof createStaffSchema>
 export type UpdateStaffData = z.infer<typeof updateStaffSchema>
 export type StaffWithUserData = z.infer<typeof staffWithUserSchema>

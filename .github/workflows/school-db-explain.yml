@@ -1,0 +1,59 @@
+name: School DB Explain Snapshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      sample_limit:
+        description: 'EXPLAIN sample limit per target'
+        required: false
+        default: '100'
+      baseline_file:
+        description: 'Optional baseline snapshot path in repo workspace'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  capture-and-summarize:
+    name: Capture and Summarize
+    runs-on: ubuntu-latest
+    env:
+      SCHOOL_DB_EXPLAIN_DATABASE_URL: ${{ secrets.SCHOOL_DB_EXPLAIN_DATABASE_URL_STAGING }}
+      SCHOOL_DB_EXPLAIN_SAMPLE_LIMIT: ${{ github.event.inputs.sample_limit || '100' }}
+      SCHOOL_DB_EXPLAIN_BASELINE: ${{ github.event.inputs.baseline_file }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            apps/**/pnpm-lock.yaml
+            packages/**/pnpm-lock.yaml
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Capture EXPLAIN snapshot
+        run: pnpm --filter yeko-school db:explain:snapshot
+
+      - name: Generate summary markdown
+        run: pnpm --filter yeko-school db:explain:summary
+
+      - name: Upload DB observability artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: school-db-explain-${{ github.run_id }}
+          path: |
+            docs/perf/db-observability/latest.json
+            docs/perf/db-observability/latest-summary.md
+            docs/perf/db-observability/school-db-explain-*.json
+          if-no-files-found: error

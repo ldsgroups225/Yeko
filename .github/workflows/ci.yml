@@ -112,6 +112,40 @@ jobs:
       - name: Build user-application
         run: pnpm --filter user-application build
 
+  perf-budget-school:
+    name: Perf Budget (school)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            apps/**/pnpm-lock.yaml
+            packages/**/pnpm-lock.yaml
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build logger (required dependency)
+        run: pnpm run build:logger
+
+      - name: Build data-ops (required dependency)
+        run: pnpm run build:data-ops
+
+      - name: Build school
+        run: pnpm --filter yeko-school build
+
+      - name: Check school performance budgets
+        run: pnpm --filter yeko-school perf:budget
+
   test:
     name: Test (data-service)
     runs-on: ubuntu-latest

@@ -9,7 +9,7 @@ import { motion } from 'motion/react'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslations } from '@/i18n'
-import { generateSlug, roleSchema } from '@/schemas/role'
+import { createRoleSchema, generateSlug } from '@/schemas/role'
 import { PermissionsMatrix } from './permissions-matrix'
 
 interface RoleFormProps {
@@ -28,7 +28,7 @@ export function RoleForm({ initialData, onSubmit }: RoleFormProps) {
     setValue,
     watch,
   } = useForm<RoleFormData>({
-    resolver: zodResolver(roleSchema),
+    resolver: zodResolver(createRoleSchema),
     defaultValues: initialData
       ? {
           name: initialData.name,

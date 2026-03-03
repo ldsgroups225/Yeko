@@ -15,6 +15,7 @@ import { PaymentPlanTemplateFormDialog } from '@/components/finance/payment-plan
 import { PaymentPlanTemplatesTable } from '@/components/finance/payment-plan-templates-table'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { paymentPlanTemplatesKeys, paymentPlanTemplatesOptions } from '@/lib/queries/payment-plan-templates'
 import { deletePaymentPlanTemplate } from '@/school/functions/payment-plan-templates'
@@ -45,15 +46,24 @@ function PaymentPlanTemplatesPage() {
       }
       return result.data
     },
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: paymentPlanTemplatesKeys.all })
+      return snapshotAndUpdate<unknown[]>(
+        queryClient,
+        paymentPlanTemplatesKeys.all,
+        old => old.filter((tpl: any) => tpl.id !== id),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: paymentPlanTemplatesKeys.all })
       toast.success('Modèle supprimé avec succès')
       setIsDeleteDialogOpen(false)
       setSelectedTemplate(null)
     },
-    onError: (err: Error) => {
+    onError: (err: Error, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(err.message)
     },
+    onSettled: () => invalidateAll(queryClient, [paymentPlanTemplatesKeys.all]),
   })
 
   const handleEdit = (template: PaymentPlanTemplateTableItem) => {

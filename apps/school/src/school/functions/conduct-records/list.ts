@@ -1,5 +1,6 @@
 import {
   getConductRecords,
+  getConductRecordsKeyset,
   getStudentConductSummary,
 } from '@repo/data-ops/queries/conduct-records'
 import { z } from 'zod'
@@ -31,6 +32,44 @@ export const listConductRecords = authServerFn
     try {
       await requirePermission('conduct', 'view')
       const result = await getConductRecords({
+        schoolId: context.school.schoolId,
+        ...data,
+      })
+      return { success: true as const, data: result }
+    }
+    catch {
+      return { success: false as const, error: 'Erreur lors de la récupération des dossiers de conduite' }
+    }
+  })
+
+/**
+ * Get conduct records with keyset pagination
+ */
+export const listConductRecordsKeyset = authServerFn
+  .inputValidator(z.object({
+    schoolYearId: z.string(),
+    studentId: z.string().optional(),
+    classId: z.string().optional(),
+    type: z.enum(['incident', 'sanction', 'reward', 'note']).optional(),
+    category: z.enum(['behavior', 'academic', 'attendance', 'uniform', 'property', 'violence', 'bullying', 'cheating', 'achievement', 'improvement', 'other']).optional(),
+    status: z.enum(['open', 'investigating', 'pending_decision', 'resolved', 'closed', 'appealed']).optional(),
+    severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+    startDate: z.string().optional(),
+    endDate: z.string().optional(),
+    search: z.string().optional(),
+    pageSize: z.number().default(20),
+    cursor: z.object({
+      createdAt: z.date(),
+      id: z.string().min(1),
+    }).optional(),
+  }))
+  .handler(async ({ data, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    try {
+      await requirePermission('conduct', 'view')
+      const result = await getConductRecordsKeyset({
         schoolId: context.school.schoolId,
         ...data,
       })

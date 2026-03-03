@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
-import { StudentForm } from '@/components/students'
+import { StudentForm } from '@/components/students/student-form'
 import { useTranslations } from '@/i18n'
 
 export const Route = createFileRoute('/_auth/students/new')({

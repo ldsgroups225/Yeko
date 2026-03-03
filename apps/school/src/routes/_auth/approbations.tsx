@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
-import { EnrollmentsList } from '@/components/students'
+import { EnrollmentsList } from '@/components/students/enrollments-list'
 import { useTranslations } from '@/i18n'
 
 export const Route = createFileRoute('/_auth/approbations')({

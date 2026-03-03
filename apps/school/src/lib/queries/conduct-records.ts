@@ -7,6 +7,7 @@ import {
   getConductRecordById,
   getStudentSummary,
   listConductRecords,
+  listConductRecordsKeyset,
   markFollowUpComplete,
   markParentAcknowledged,
   notifyParentOfConduct,
@@ -44,6 +45,37 @@ export function conductRecordsOptions(params: {
     queryKey: conductRecordsKeys.list(params.schoolYearId ?? 'all', params),
     queryFn: async () => {
       const res = await listConductRecords({ data: { ...params, schoolYearId: params.schoolYearId! } })
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
+    enabled: !!params.schoolYearId,
+  })
+}
+
+export function conductRecordsKeysetOptions(params: {
+  schoolYearId: string | null | undefined
+  studentId?: string
+  classId?: string
+  type?: 'incident' | 'sanction' | 'reward' | 'note'
+  category?: 'behavior' | 'academic' | 'attendance' | 'uniform' | 'property' | 'violence' | 'bullying' | 'cheating' | 'achievement' | 'improvement' | 'other'
+  status?: 'open' | 'investigating' | 'pending_decision' | 'resolved' | 'closed' | 'appealed'
+  severity?: 'low' | 'medium' | 'high' | 'critical'
+  startDate?: string
+  endDate?: string
+  search?: string
+  pageSize?: number
+  cursor?: {
+    createdAt: Date
+    id: string
+  }
+}) {
+  return queryOptions({
+    queryKey: [...conductRecordsKeys.all, 'keyset', params.schoolYearId ?? 'all', params] as const,
+    queryFn: async () => {
+      const res = await listConductRecordsKeyset({ data: { ...params, schoolYearId: params.schoolYearId! } })
       if (!res.success)
         throw new Error(res.error)
       return res.data

@@ -1,10 +1,11 @@
-import { keepPreviousData, queryOptions } from '@tanstack/react-query'
+import { infiniteQueryOptions, keepPreviousData, queryOptions } from '@tanstack/react-query'
 import {
   cancelExistingPayment,
   getCashierSummary,
   getPayment,
   getPaymentByReceipt,
   getPaymentsList,
+  getPaymentsListKeyset,
   recordPayment,
 } from '@/school/functions/payments'
 import { schoolMutationKeys } from './keys'
@@ -30,6 +31,16 @@ export interface PaymentFilters {
   pageSize?: number
 }
 
+export interface PaymentKeysetCursor {
+  paymentDate: string
+  createdAt: Date
+  id: string
+}
+
+export interface PaymentKeysetFilters extends Omit<PaymentFilters, 'page'> {
+  cursor?: PaymentKeysetCursor
+}
+
 export const paymentsOptions = {
   list: (filters: PaymentFilters = {}) =>
     queryOptions({
@@ -43,6 +54,40 @@ export const paymentsOptions = {
       staleTime: 2 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       placeholderData: keepPreviousData,
+    }),
+
+  listKeyset: (filters: PaymentKeysetFilters = {}) =>
+    queryOptions({
+      queryKey: [...paymentsKeys.lists(), 'keyset', filters] as const,
+      queryFn: async () => {
+        const res = await getPaymentsListKeyset({ data: filters })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
+      staleTime: 2 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      placeholderData: keepPreviousData,
+    }),
+
+  infiniteKeyset: (filters: Omit<PaymentKeysetFilters, 'cursor'> = {}) =>
+    infiniteQueryOptions({
+      queryKey: [...paymentsKeys.lists(), 'infinite-keyset', filters] as const,
+      initialPageParam: undefined as PaymentKeysetCursor | undefined,
+      queryFn: async ({ pageParam }) => {
+        const res = await getPaymentsListKeyset({
+          data: {
+            ...filters,
+            cursor: pageParam,
+          },
+        })
+        if (!res.success)
+          throw new Error(res.error)
+        return res.data
+      },
+      getNextPageParam: lastPage => lastPage.nextCursor ?? undefined,
+      staleTime: 2 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
     }),
 
   detail: (id: string) =>
@@ -92,7 +137,12 @@ export const paymentsOptions = {
 export const paymentsMutations = {
   create: {
     mutationKey: schoolMutationKeys.payments.create,
-    mutationFn: (data: Parameters<typeof recordPayment>[0]['data']) => recordPayment({ data }),
+    mutationFn: async (data: Parameters<typeof recordPayment>[0]['data']) => {
+      const response = await recordPayment({ data })
+      if (!response.success)
+        throw new Error(response.error)
+      return response.data
+    },
   },
   cancel: {
     mutationKey: schoolMutationKeys.payments.void, // Using 'void' key for cancellation as defined in keys.ts

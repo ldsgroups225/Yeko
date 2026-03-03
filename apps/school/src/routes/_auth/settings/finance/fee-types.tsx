@@ -13,9 +13,11 @@ import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confir
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { FeeTypeFormDialog, FeeTypesTable } from '@/components/finance'
+import { FeeTypeFormDialog } from '@/components/finance/fee-type-form-dialog'
+import { FeeTypesTable } from '@/components/finance/fee-types-table'
 import { FinanceSubpageToolbar } from '@/components/finance/finance-subpage-toolbar'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
 import { feeTypesKeys, feeTypesOptions } from '@/lib/queries/fee-types'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingFeeType } from '@/school/functions/fee-types'
@@ -63,16 +65,25 @@ function FeeTypesPage() {
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.feeTypes.delete,
     mutationFn: (id: string) => deleteExistingFeeType({ data: id }),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: feeTypesKeys.all })
+      return snapshotAndUpdate<unknown[]>(
+        queryClient,
+        feeTypesKeys.all,
+        old => old.filter((ft: any) => ft.id !== id),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: feeTypesKeys.all })
       toast.success('Type de frais supprimé')
       setDeleteData(null)
     },
-    onError: (error) => {
+    onError: (error, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(
         error instanceof Error ? error.message : 'Une erreur est survenue',
       )
     },
+    onSettled: () => invalidateAll(queryClient, [feeTypesKeys.all]),
   })
 
   const feeTypesList

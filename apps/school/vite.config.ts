@@ -50,7 +50,21 @@ function stubServerModulesForClient(): Plugin {
         }
       }
 
+      // Stub i18n-util.sync.ts on client — it statically imports ALL locale
+      // translations (including English) which are only needed on the server.
+      // The client uses i18n-react.tsx which loads non-base locales on demand.
       const normalizedId = id.replace(/\\/g, '/')
+      if (normalizedId.endsWith('/i18n/i18n-util.sync.ts')) {
+        return {
+          code: `
+            export const loadLocale = () => {};
+            export const loadAllLocales = () => {};
+            export const loadFormatters = () => {};
+          `,
+          map: null,
+        }
+      }
+
       if (normalizedId.includes('/data-ops/src/queries/') && code.includes('node:crypto')) {
         return {
           code: code.replace(

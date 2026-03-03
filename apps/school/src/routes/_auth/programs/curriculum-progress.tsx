@@ -13,15 +13,13 @@ import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
 
 import { useEffect, useState } from 'react'
-import {
-  BehindScheduleAlert,
-  ProgressCard,
-  ProgressOverviewCards,
-} from '@/components/curriculum-progress'
+import { BehindScheduleAlert } from '@/components/curriculum-progress/behind-schedule-alert'
+import { ProgressCard } from '@/components/curriculum-progress/progress-card'
+import { ProgressOverviewCards } from '@/components/curriculum-progress/progress-overview-cards'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { classesOptions } from '@/lib/queries/classes'
 import { progressOptions } from '@/lib/queries/curriculum-progress'
-import { getClasses } from '@/school/functions/classes'
 import { getTerms } from '@/school/functions/terms'
 import { generateUUID } from '@/utils/generateUUID'
 
@@ -56,13 +54,9 @@ function CurriculumProgressPage() {
   const terms = termsResult?.success ? termsResult.data : []
 
   // Fetch classes for selected year
-  const { data: classesResult, isPending: classesPending } = useQuery({
-    queryKey: ['classes', effectiveYearId],
-    queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
-    enabled: !!effectiveYearId,
-    staleTime: 5 * 60 * 1000,
-  })
-  const classes = classesResult?.success ? classesResult.data : []
+  const { data: classes = [], isPending: classesPending } = useQuery(
+    classesOptions.list({ schoolYearId: effectiveYearId }),
+  )
 
   // Fetch progress for selected class and term
   const { data: progressResult, isPending: progressPending } = useQuery({

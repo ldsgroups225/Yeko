@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { StaffFormData } from '@/schemas/staff'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { IconBriefcase, IconInfoCircle, IconLoader2, IconShield } from '@tabler/icons-react'
@@ -16,7 +17,7 @@ import { motion } from 'motion/react'
 import { useForm } from 'react-hook-form'
 import { UserCombobox } from '@/components/hr/staff/user-combobox'
 import { useTranslations } from '@/i18n'
-import { staffPositions, staffSchema } from '@/schemas/staff'
+import { createStaffSchema, staffPositions } from '@/schemas/staff'
 
 interface StaffFormProps {
   initialData?: StaffFormData & { id: string }
@@ -34,7 +35,7 @@ export function StaffForm({ initialData, onSubmit }: StaffFormProps) {
     setValue,
     watch,
   } = useForm<StaffFormData>({
-    resolver: zodResolver(staffSchema),
+    resolver: zodResolver(createStaffSchema),
     defaultValues: initialData
       ? {
           userId: initialData.userId,

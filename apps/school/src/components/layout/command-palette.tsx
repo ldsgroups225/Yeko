@@ -8,7 +8,7 @@ import {
   IconSettings,
   IconUser,
 } from '@tabler/icons-react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import {
   CommandDialog,
   CommandEmpty,
@@ -26,6 +26,7 @@ import { useSearch } from '@/hooks/use-search'
 export function CommandPalette() {
   const [open, setOpen] = React.useState(false)
   const navigate = useNavigate()
+  const router = useRouter()
   const { t } = useTranslation()
 
   React.useEffect(() => {
@@ -46,6 +47,17 @@ export function CommandPalette() {
     setOpen(false)
     command()
   }, [])
+
+  React.useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    const likelyRoutes = ['/dashboard', '/students', '/classes', '/accounting', '/settings']
+    for (const to of likelyRoutes) {
+      void router.preloadRoute({ to })
+    }
+  }, [open, router])
 
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>

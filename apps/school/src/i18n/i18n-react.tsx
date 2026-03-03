@@ -3,7 +3,6 @@ import type { Locales, TranslationFunctions, Translations } from './i18n-types'
 import { createContext, use, useEffect, useState } from 'react'
 import { initFormatters as initBaseFormatters } from './formatters.js'
 import baseTranslations from './fr/index.js'
-import enTranslations from './en/index.js'
 import {
   baseLocale,
   i18nObject,
@@ -63,11 +62,6 @@ function getI18nObject(locale: Locales): TranslationFunctions {
 // Initialize base locale immediately (synchronously)
 loadedLocales[baseLocale] = baseTranslations as Translations
 loadedFormatters[baseLocale] = initBaseFormatters(baseLocale)
-
-if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') {
-  loadedLocales.en = enTranslations as Translations
-  loadedFormatters.en = initBaseFormatters('en')
-}
 
 // Import locale loaders for dynamic locales
 async function loadLocale(locale: Locales): Promise<Translations> {

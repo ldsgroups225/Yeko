@@ -1,6 +1,8 @@
 import type { TranslationFunctions } from '../../i18n/i18n-types'
 import { DatabaseError } from '@repo/data-ops/errors'
+import { serverPerformanceLogger } from '@repo/logger'
 import { createMiddleware, createServerFn } from '@tanstack/react-start'
+import { getRequest } from '@tanstack/react-start/server'
 import { getServerTranslations } from '../../lib/i18n-server'
 import { getAuthContext } from '../middleware/auth'
 import { getSchoolContext, getSchoolYearContext } from '../middleware/school-context'
@@ -35,10 +37,33 @@ const authenticatedMiddleware = createMiddleware().server(async ({ next }) => {
   })
 })
 
+const latencyTelemetryMiddleware = createMiddleware().server(async ({ next }) => {
+  const request = getRequest()
+  const startedAt = Date.now()
+  const routePath = request ? new URL(request.url).pathname : 'unknown'
+  const requestMethod = request?.method ?? 'POST'
+
+  try {
+    return await next()
+  }
+  finally {
+    const durationMs = Date.now() - startedAt
+    serverPerformanceLogger.performance('school.server-fn.latency', durationMs, {
+      routePath,
+      requestMethod,
+    })
+  }
+})
+
 const authServerBuilder = createServerFn({
   method: 'POST' as const,
 })
 
-type AuthServerFn = ReturnType<typeof authServerBuilder.middleware<[typeof authenticatedMiddleware]>>
+type AuthServerFn = ReturnType<
+  typeof authServerBuilder.middleware<[typeof latencyTelemetryMiddleware, typeof authenticatedMiddleware]>
+>
 
-export const authServerFn: AuthServerFn = authServerBuilder.middleware([authenticatedMiddleware])
+export const authServerFn: AuthServerFn = authServerBuilder.middleware([
+  latencyTelemetryMiddleware,
+  authenticatedMiddleware,
+])

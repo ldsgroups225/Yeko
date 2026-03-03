@@ -15,25 +15,49 @@ import { Skeleton } from '@workspace/ui/components/skeleton'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { ClassAveragesTable } from '@/components/grades'
-import { BulkGenerationDialog, ReportCardList } from '@/components/report-cards'
+import { ClassAveragesTable } from '@/components/grades/class-averages-table'
+import { BulkGenerationDialog } from '@/components/report-cards/bulk-generation-dialog'
+import { ReportCardList } from '@/components/report-cards/report-card-list'
 import { ReportCardsToolbar } from '@/components/report-cards/report-cards-toolbar'
 import { useSchoolContext } from '@/hooks/use-school-context'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { authClient } from '@/lib/auth-client'
+import { classesOptions } from '@/lib/queries/classes'
+import { ensureSchoolYearId } from '@/lib/queries/ensure-school-year'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { reportCardsKeys, reportCardsOptions } from '@/lib/queries/report-cards'
+import { termsOptions } from '@/lib/queries/terms'
 import { getClassAverages, recalculateAverages } from '@/school/functions/averages'
-import { getClasses } from '@/school/functions/classes'
 import { getEnrollments } from '@/school/functions/enrollments'
 import {
   bulkGenerateReportCards,
 } from '@/school/functions/report-cards'
-
-import { getTerms } from '@/school/functions/terms'
+import { getCurrentSchoolContext } from '@/school/functions/school-context'
 
 export const Route = createFileRoute('/_auth/grades/report-cards')({
+  loader: async ({ context: { queryClient } }) => {
+    const [schoolYearId, schoolContext] = await Promise.all([
+      ensureSchoolYearId(queryClient),
+      queryClient.ensureQueryData({
+        queryKey: ['school-context'],
+        queryFn: getCurrentSchoolContext,
+        staleTime: 5 * 60 * 1000,
+      }),
+    ])
+
+    const schoolId = schoolContext?.success ? schoolContext.data?.schoolId : null
+
+    await Promise.all([
+      ...(schoolYearId
+        ? [
+            queryClient.ensureQueryData(termsOptions.list(schoolYearId)),
+            queryClient.ensureQueryData(classesOptions.list({ schoolYearId })),
+          ]
+        : []),
+      ...(schoolId ? [queryClient.ensureQueryData(reportCardsOptions.templates(schoolId))] : []),
+    ])
+  },
   component: ReportCardsPage,
 })
 
@@ -63,22 +87,15 @@ function ReportCardsPage() {
   const effectiveYearId = contextSchoolYearId || ''
 
   // Fetch terms for selected year
-  const { data: termsResult, isPending: termsPending } = useQuery({
-    queryKey: ['terms', effectiveYearId],
-    queryFn: () => getTerms({ data: { schoolYearId: effectiveYearId } }),
+  const { data: terms = [], isPending: termsPending } = useQuery({
+    ...termsOptions.list(effectiveYearId),
     enabled: !!effectiveYearId,
-    staleTime: 5 * 60 * 1000,
   })
-  const terms = termsResult?.success ? termsResult.data : []
 
   // Fetch classes for selected year
-  const { data: classesResult, isPending: classesPending } = useQuery({
-    queryKey: ['classes', effectiveYearId],
-    queryFn: () => getClasses({ data: { schoolYearId: effectiveYearId } }),
-    enabled: !!effectiveYearId,
-    staleTime: 5 * 60 * 1000,
-  })
-  const classes = classesResult?.success ? classesResult.data : []
+  const { data: classes = [], isPending: classesPending } = useQuery(
+    classesOptions.list({ schoolYearId: effectiveYearId }),
+  )
 
   // Fetch students for the selected class (enrollments)
   const { data: enrollmentsData } = useQuery({

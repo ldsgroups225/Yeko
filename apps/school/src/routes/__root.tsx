@@ -1,20 +1,35 @@
 import type { QueryClient } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import {
   createRootRouteWithContext,
   HeadContent,
   Outlet,
   Scripts,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { useMemo } from 'react'
+import { lazy, Suspense, useMemo } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/components/theme/theme-provider'
 import { I18nProvider } from '@/i18n'
 import i18n from '@/i18n/config'
 import appCss from '@/styles.css?url'
+
+// DevTools are only loaded in development — fully tree-shaken in production
+const TanStackRouterDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import('@tanstack/react-router-devtools').then(mod => ({
+        default: mod.TanStackRouterDevtools,
+      })),
+    )
+  : () => null
+
+const ReactQueryDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import('@tanstack/react-query-devtools').then(mod => ({
+        default: mod.ReactQueryDevtools,
+      })),
+    )
+  : () => null
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -78,8 +93,12 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
-        <TanStackRouterDevtools position="bottom-right" />
-        <ReactQueryDevtools buttonPosition="bottom-left" />
+        {import.meta.env.DEV && (
+          <Suspense>
+            <TanStackRouterDevtools position="bottom-right" />
+            <ReactQueryDevtools buttonPosition="bottom-left" />
+          </Suspense>
+        )}
         <Scripts />
       </body>
     </html>

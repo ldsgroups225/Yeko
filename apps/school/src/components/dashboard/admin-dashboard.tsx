@@ -1,14 +1,16 @@
 import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 import { motion } from 'motion/react'
+import { lazy, Suspense } from 'react'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { dashboardOptions } from '@/lib/queries/dashboard'
 import { ActivitiesAlertsSection } from './admin-dashboard/components/activities-alerts-section'
-import { ChartsSection } from './admin-dashboard/components/charts-section'
 import { MetricsSection } from './admin-dashboard/components/metrics-section'
 import { QuickActionsSection } from './admin-dashboard/components/quick-actions-section'
 import { container, formatMonthLabel } from './admin-dashboard/constants'
+
+const ChartsSection = lazy(() => import('./admin-dashboard/components/charts-section').then(m => ({ default: m.ChartsSection })))
 
 export function AdminDashboard() {
   const t = useTranslations()
@@ -49,13 +51,15 @@ export function AdminDashboard() {
     >
       <MetricsSection metrics={metrics} t={t} />
 
-      <ChartsSection
-        revenueData={revenueChartData}
-        enrollmentData={enrollmentChartData}
-        genderData={genderChartData}
-        totalGender={totalGender}
-        t={t}
-      />
+      <Suspense fallback={<ChartsSectionSkeleton />}>
+        <ChartsSection
+          revenueData={revenueChartData}
+          enrollmentData={enrollmentChartData}
+          genderData={genderChartData}
+          totalGender={totalGender}
+          t={t}
+        />
+      </Suspense>
 
       <div className="
         grid gap-4
@@ -67,6 +71,28 @@ export function AdminDashboard() {
 
       <ActivitiesAlertsSection metrics={metrics} t={t} />
     </motion.div>
+  )
+}
+
+function ChartsSectionSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="
+        grid gap-4
+        lg:grid-cols-2
+      "
+      >
+        <Skeleton className="h-[380px] rounded-xl" />
+        <Skeleton className="h-[380px] rounded-xl" />
+      </div>
+      <div className="
+        grid gap-4
+        lg:grid-cols-3
+      "
+      >
+        <Skeleton className="h-[300px] rounded-xl" />
+      </div>
+    </div>
   )
 }
 

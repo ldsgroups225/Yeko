@@ -1,12 +1,15 @@
 import type { StudentFilters, StudentItem } from './types'
 import { createContext, use } from 'react'
 
+type StudentStatusFilter = StudentFilters['status'] | '' | 'all'
+type StudentGenderFilter = StudentFilters['gender'] | '' | 'all'
+
 interface StudentsListContextType {
   state: {
     filters: StudentFilters
     search: string
-    status: string
-    gender: string
+    status: StudentStatusFilter
+    gender: StudentGenderFilter
     page: number
     selectedStudent: StudentItem | null
     selectedRows: string[]
@@ -26,8 +29,8 @@ interface StudentsListContextType {
   }
   actions: {
     setSearch: (val: string) => void
-    setStatus: (val: string) => void
-    setGender: (val: string) => void
+    setStatus: (val: StudentStatusFilter) => void
+    setGender: (val: StudentGenderFilter) => void
     setPage: (val: number | ((prev: number) => number)) => void
     setSelectedStudent: (student: StudentItem | null) => void
     setSelectedRows: (rows: string[] | ((prev: string[]) => string[])) => void
