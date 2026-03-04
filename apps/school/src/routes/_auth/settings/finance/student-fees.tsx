@@ -4,9 +4,10 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
-import { FinanceSubpageToolbar, StudentFeesTable } from '@/components/finance'
+import { FinanceSubpageToolbar } from '@/components/finance/finance-subpage-toolbar'
+import { StudentFeesTable } from '@/components/finance/student-fees-table'
 import { useTranslations } from '@/i18n'
-import { studentFeesOptions } from '@/lib/queries'
+import { studentFeesOptions } from '@/lib/queries/student-fees'
 
 export const Route = createFileRoute('/_auth/settings/finance/student-fees')({
   component: StudentFeesPage,

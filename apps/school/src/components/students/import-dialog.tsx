@@ -1,5 +1,4 @@
 import type { ParsedStudent } from './import/import-utils'
-import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
 import {
   IconAlertCircle,
   IconDownload,
@@ -24,7 +23,7 @@ import {
 } from '@workspace/ui/components/dialog'
 import { useCallback, useState } from 'react'
 import { toast } from 'sonner'
-import * as XLSX from 'xlsx'
+
 import { useTranslations } from '@/i18n'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { studentsKeys } from '@/lib/queries/students'
@@ -73,7 +72,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
     onError: (err: Error) => toast.error(err.message),
   })
 
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
     if (!selectedFile)
       return
@@ -83,12 +82,14 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
     setPreview([])
     setAllParsed([])
 
+    const XLSX = await import('xlsx')
+
     const reader = new FileReader()
     reader.onload = (event) => {
       try {
         const data = new Uint8Array(event.target?.result as ArrayBuffer)
         const workbook = XLSX.read(data, { type: 'array', cellDates: true })
-        const { headers, rows } = parseExcelData(workbook)
+        const { headers, rows } = parseExcelData(workbook, XLSX)
         if (headers.length === 0 || rows.length === 0) {
           setParseError(t.students.importNoValidRows())
           return
@@ -107,7 +108,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
           return
         }
 
-        const parsed = rows.map(row => mapRowToStudent(row, headerMapping)).filter((s): s is ParsedStudent => s !== null)
+        const parsed = rows.map(row => mapRowToStudent(row, headerMapping, XLSX)).filter((s): s is ParsedStudent => s !== null)
         if (parsed.length === 0) {
           setParseError(t.students.importNoValidRows())
           return
@@ -131,7 +132,9 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
     onOpenChange(false)
   }
 
-  const downloadTemplate = () => {
+  const downloadTemplate = async () => {
+    const { ExcelBuilder, ExcelSchemaBuilder } = await import('@chronicstone/typed-xlsx')
+
     interface StudentTemplate {
       'Nom': string
       'Prénom': string

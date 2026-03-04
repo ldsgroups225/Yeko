@@ -3,7 +3,7 @@ import { createFileRoute, Outlet } from '@tanstack/react-router'
 import { Button } from '@workspace/ui/components/button'
 import { PageHeader } from '@workspace/ui/components/page-header'
 import { useState } from 'react'
-import { PaymentFormDialog } from '@/components/finance'
+import { PaymentFormDialog } from '@/components/finance/payment-form-dialog'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
 

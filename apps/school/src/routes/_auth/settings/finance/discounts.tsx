@@ -1,4 +1,5 @@
-import type { Discount as CRUDDiscount, DiscountsTableItem } from '@/components/finance'
+import type { DiscountsTableItem } from '@/components/finance/discounts-table'
+import type { Discount as CRUDDiscount } from '@/components/finance/discounts/discount-schema'
 import { IconPlus } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -13,10 +14,12 @@ import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confir
 import { motion } from 'motion/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { DiscountFormDialog, DiscountsTable } from '@/components/finance'
+import { DiscountFormDialog } from '@/components/finance/discount-form-dialog'
+import { DiscountsTable } from '@/components/finance/discounts-table'
 import { FinanceSubpageToolbar } from '@/components/finance/finance-subpage-toolbar'
 import { useTranslations } from '@/i18n'
-import { discountsKeys, discountsOptions } from '@/lib/queries'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
+import { discountsKeys, discountsOptions } from '@/lib/queries/discounts'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingDiscount } from '@/school/functions/discounts'
 
@@ -36,15 +39,24 @@ function DiscountsPage() {
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.discounts.delete,
     mutationFn: (id: string) => deleteExistingDiscount({ data: id }),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: discountsKeys.all })
+      return snapshotAndUpdate<unknown[]>(
+        queryClient,
+        discountsKeys.all,
+        old => old.filter((d: any) => d.id !== id),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: discountsKeys.all })
       toast.success('Réduction supprimée')
       setDeletingId(null)
     },
-    onError: (err: unknown) => {
+    onError: (err: unknown, _vars, context) => {
+      rollback(queryClient, context)
       const message = err instanceof Error ? err.message : 'Erreur lors de la suppression'
       toast.error(message)
     },
+    onSettled: () => invalidateAll(queryClient, [discountsKeys.all]),
   })
 
   const handleEdit = (discount: DiscountsTableItem) => {

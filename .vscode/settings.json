@@ -106,5 +106,6 @@
     "apps/**/src/**/*.test.tsx"
   ],
   "typescript.autoClosingTags": false,
-  "accessibility.signalOptions.volume": 50
+  "accessibility.signalOptions.volume": 50,
+  "chatgpt.commentCodeLensEnabled": true
 }

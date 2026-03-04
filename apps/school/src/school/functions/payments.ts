@@ -7,6 +7,7 @@ import {
   getPaymentById,
   getPaymentByReceiptNumber,
   getPayments,
+  getPaymentsKeyset,
 } from '@repo/data-ops/queries/payments'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { z } from 'zod'
@@ -28,6 +29,21 @@ const paymentFiltersSchema = z.object({
   pageSize: z.number().min(1).max(100).default(20),
 })
 
+const paymentKeysetFiltersSchema = z.object({
+  studentId: z.string().optional(),
+  paymentPlanId: z.string().optional(),
+  method: z.enum(['cash', 'bank_transfer', 'mobile_money', 'card', 'check', 'other']).optional(),
+  status: z.enum(['pending', 'completed', 'cancelled', 'refunded', 'partial_refund']).optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  pageSize: z.number().min(1).max(100).default(20),
+  cursor: z.object({
+    paymentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    createdAt: z.date(),
+    id: z.string().min(1),
+  }).optional(),
+})
+
 /**
  * Get payments list with pagination
  */
@@ -41,6 +57,27 @@ export const getPaymentsList = authServerFn
     await requirePermission('finance', 'view')
 
     const _result1 = await getPayments({
+      schoolId,
+      ...filters,
+    })
+    if (R.isFailure(_result1))
+      return { success: false as const, error: 'Erreur lors de la récupération des paiements' }
+    return { success: true as const, data: _result1.value }
+  })
+
+/**
+ * Get payments list with keyset pagination
+ */
+export const getPaymentsListKeyset = authServerFn
+  .inputValidator(paymentKeysetFiltersSchema.optional())
+  .handler(async ({ data: filters, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const { schoolId } = context.school
+    await requirePermission('finance', 'view')
+
+    const _result1 = await getPaymentsKeyset({
       schoolId,
       ...filters,
     })
@@ -101,8 +138,12 @@ export const recordPayment = authServerFn
       processedBy: userId,
       ...data,
     })
-    if (R.isFailure(_result4))
-      return { success: false as const, error: 'Erreur lors de l\'enregistrement du paiement' }
+    if (R.isFailure(_result4)) {
+      return {
+        success: false as const,
+        error: _result4.error.message || 'Erreur lors de l\'enregistrement du paiement',
+      }
+    }
     await createAuditLog({
       schoolId,
       userId,

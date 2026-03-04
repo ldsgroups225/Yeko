@@ -12,8 +12,29 @@
     {
       "idx": 1,
       "version": "7",
+      "when": 1772388900000,
+      "tag": "0001_receipt_sequences",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1772389800000,
+      "tag": "0002_payment_read_path_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1772618400000,
+      "tag": "0003_read_path_composite_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
       "when": 1772579092123,
-      "tag": "0001_add_grade_series_join_table",
+      "tag": "0004_add_grade_series_join_table",
       "breakpoints": true
     }
   ]

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { SystemPermissions } from '../auth/permissions'
 import { relations } from 'drizzle-orm'
 
@@ -405,6 +406,8 @@ export const enrollments = pgTable('enrollments', {
   statusIdx: index('idx_enrollments_status').on(table.status),
   confirmedByIdx: index('idx_enrollments_confirmed_by').on(table.confirmedBy),
   rollNumberIdx: index('idx_enrollments_roll_number').on(table.classId, table.rollNumber),
+  // Phase 4: Optimized join path for students-list-by-year query
+  yearStatusStudentIdx: index('idx_enrollments_year_status_student').on(table.schoolYearId, table.status, table.studentId),
   // NOTE: Partial unique index for active enrollments is enforced via:
   // 1. Runtime check in createEnrollment() query
   // 2. Custom SQL migration: CREATE UNIQUE INDEX unique_student_year_active
@@ -955,6 +958,8 @@ export const reportCards = pgTable('report_cards', {
   studentIdx: index('idx_report_cards_student').on(table.studentId),
   schoolYearIdx: index('idx_report_cards_school_year').on(table.schoolYearId),
   uniqueStudentTerm: unique('unique_student_term').on(table.studentId, table.termId),
+  // Phase 4: Composite index for class+term list queries ordered by created_at
+  classTermCreatedIdx: index('idx_report_cards_class_term_created').on(table.classId, table.termId, table.createdAt.desc()),
 }))
 
 // Teacher Comments (Subject-Specific)
@@ -1000,6 +1005,10 @@ export const timetableSessions = pgTable('timetable_sessions', {
   classroomDayIdx: index('idx_timetable_classroom_day').on(table.classroomId, table.dayOfWeek),
   conflictsIdx: index('idx_timetable_conflicts').on(table.schoolId, table.dayOfWeek, table.startTime, table.endTime),
   schoolYearDayIdx: index('idx_timetable_school_year_day').on(table.schoolId, table.schoolYearId, table.dayOfWeek),
+  // Phase 4: Composite indexes for EXPLAIN target queries
+  classYearIdx: index('idx_timetable_class_year').on(table.classId, table.schoolYearId, table.dayOfWeek, table.startTime),
+  teacherYearIdx: index('idx_timetable_teacher_year').on(table.teacherId, table.schoolYearId, table.dayOfWeek, table.startTime),
+  classroomYearIdx: index('idx_timetable_classroom_year').on(table.classroomId, table.schoolYearId, table.dayOfWeek, table.startTime),
 }))
 
 // Class Sessions (Actual Teaching Sessions)
@@ -1067,6 +1076,8 @@ export const curriculumProgress = pgTable('curriculum_progress', {
   termIdx: index('idx_progress_term').on(table.termId),
   subjectIdx: index('idx_progress_subject').on(table.subjectId),
   uniqueClassSubjectTerm: unique('unique_class_subject_term').on(table.classId, table.subjectId, table.termId),
+  // Phase 4: Composite index for class+term list queries
+  classTermIdx: index('idx_progress_class_term').on(table.classId, table.termId, table.calculatedAt.desc()),
 }))
 
 // Chapter Completions
@@ -1420,6 +1431,8 @@ export const conductRecords = pgTable('conduct_records', {
   severityIdx: index('idx_conduct_severity').on(table.severity),
   dateIdx: index('idx_conduct_date').on(table.incidentDate),
   studentYearIdx: index('idx_conduct_student_year').on(table.studentId, table.schoolYearId),
+  // Phase 4: Composite index for primary list query (school+year ordered by created_at)
+  schoolYearCreatedIdx: index('idx_conduct_school_year_created').on(table.schoolId, table.schoolYearId, table.createdAt.desc()),
 }))
 
 // Conduct Follow-ups Table
@@ -1903,6 +1916,20 @@ export const studentDiscounts = pgTable('student_discounts', {
   uniqueStudentDiscountYear: unique('unique_student_discount_year').on(table.studentId, table.discountId, table.schoolYearId),
 }))
 
+// Receipt Sequences Table
+export const receiptSequences = pgTable('receipt_sequences', {
+  id: text('id').primaryKey(),
+  schoolId: text('school_id').notNull().references(() => schools.id, { onDelete: 'cascade' }),
+  sequenceYear: integer('sequence_year').notNull(),
+  prefix: text('prefix').notNull(),
+  lastNumber: integer('last_number').default(0).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()).notNull(),
+}, table => ({
+  schoolYearIdx: index('idx_receipt_sequences_school_year').on(table.schoolId, table.sequenceYear),
+  uniqueSchoolYear: unique('unique_receipt_sequences_school_year').on(table.schoolId, table.sequenceYear),
+}))
+
 // Payments Table
 export const payments = pgTable('payments', {
   id: text('id').primaryKey(),
@@ -1932,10 +1959,13 @@ export const payments = pgTable('payments', {
   studentIdx: index('idx_payments_student').on(table.studentId),
   planIdx: index('idx_payments_plan').on(table.paymentPlanId),
   dateIdx: index('idx_payments_date').on(table.schoolId, table.paymentDate),
+  schoolDateCreatedIdx: index('idx_payments_school_date_created').on(table.schoolId, table.paymentDate.desc(), table.createdAt.desc()),
   methodIdx: index('idx_payments_method').on(table.method),
   statusIdx: index('idx_payments_status').on(table.status),
+  schoolStatusDateIdx: index('idx_payments_school_status_date').on(table.schoolId, table.status, table.paymentDate.desc()),
   receiptIdx: index('idx_payments_receipt').on(table.schoolId, table.receiptNumber),
   processedByIdx: index('idx_payments_processed_by').on(table.processedBy, table.paymentDate),
+  schoolProcessedDateIdx: index('idx_payments_school_processed_date').on(table.schoolId, table.processedBy, table.paymentDate.desc()),
   uniqueReceipt: unique('unique_receipt_number').on(table.schoolId, table.receiptNumber),
 }))
 
@@ -2273,6 +2303,7 @@ export type PaymentPlanInsert = typeof paymentPlans.$inferInsert
 export type InstallmentInsert = typeof installments.$inferInsert
 export type StudentFeeInsert = typeof studentFees.$inferInsert
 export type StudentDiscountInsert = typeof studentDiscounts.$inferInsert
+export type ReceiptSequenceInsert = typeof receiptSequences.$inferInsert
 export type PaymentInsert = typeof payments.$inferInsert
 export type PaymentAllocationInsert = typeof paymentAllocations.$inferInsert
 export type TransactionInsert = typeof transactions.$inferInsert
@@ -2290,6 +2321,7 @@ export type PaymentPlan = typeof paymentPlans.$inferSelect
 export type Installment = typeof installments.$inferSelect
 export type StudentFee = typeof studentFees.$inferSelect
 export type StudentDiscount = typeof studentDiscounts.$inferSelect
+export type ReceiptSequence = typeof receiptSequences.$inferSelect
 export type Payment = typeof payments.$inferSelect
 export type PaymentAllocation = typeof paymentAllocations.$inferSelect
 export type Transaction = typeof transactions.$inferSelect

@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx'
+import type * as XLSXType from 'xlsx'
 
 export interface ParsedStudent {
   firstName: string
@@ -42,7 +42,7 @@ export function findColumnMapping(header: string): string | null {
   return null
 }
 
-export function normalizeDate(value: unknown): string {
+export function normalizeDate(value: unknown, XLSX: typeof XLSXType): string {
   if (!value)
     return ''
   if (typeof value === 'number') {
@@ -77,7 +77,7 @@ export function normalizeGender(value: unknown): 'M' | 'F' | 'other' | undefined
   return undefined
 }
 
-export function parseExcelData(workbook: XLSX.WorkBook): { headers: string[], rows: Record<string, any>[] } {
+export function parseExcelData(workbook: XLSXType.WorkBook, XLSX: typeof XLSXType): { headers: string[], rows: Record<string, any>[] } {
   const firstSheet = workbook.Sheets[workbook.SheetNames[0] || '']
   if (!firstSheet)
     return { headers: [], rows: [] }
@@ -86,7 +86,7 @@ export function parseExcelData(workbook: XLSX.WorkBook): { headers: string[], ro
   return { headers, rows: jsonData }
 }
 
-export function mapRowToStudent(row: Record<string, any>, headerMapping: Record<string, string>): ParsedStudent | null {
+export function mapRowToStudent(row: Record<string, any>, headerMapping: Record<string, string>, XLSX: typeof XLSXType): ParsedStudent | null {
   const data: Record<string, any> = {}
   for (const [originalHeader, value] of Object.entries(row)) {
     const mappedField = headerMapping[originalHeader]
@@ -98,7 +98,7 @@ export function mapRowToStudent(row: Record<string, any>, headerMapping: Record<
   return {
     firstName: String(data.firstName).trim(),
     lastName: String(data.lastName).trim(),
-    dob: normalizeDate(data.dob),
+    dob: normalizeDate(data.dob, XLSX),
     gender: normalizeGender(data.gender),
     matricule: data.matricule ? String(data.matricule).trim() : undefined,
     birthPlace: data.birthPlace ? String(data.birthPlace).trim() : undefined,

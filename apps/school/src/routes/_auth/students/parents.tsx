@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 
-import { ParentsList } from '@/components/students'
+import { ParentsList } from '@/components/students/parents-list'
 import { useTranslations } from '@/i18n'
 
 export const Route = createFileRoute('/_auth/students/parents')({

@@ -10,14 +10,29 @@ import {
 } from '@workspace/ui/components/select'
 import { useTranslations } from '@/i18n'
 
+type EnrollmentStatusFilter = 'all' | 'pending' | 'confirmed' | 'cancelled' | 'transferred'
+
+interface EnrollmentClassOption {
+  class: {
+    id: string
+    section: string | null
+  }
+  grade: {
+    name: string | null
+  }
+  series: {
+    name: string | null
+  } | null
+}
+
 interface EnrollmentFiltersProps {
   search: string
   onSearchChange: (value: string) => void
-  status: string
-  onStatusChange: (value: any) => void
+  status: EnrollmentStatusFilter
+  onStatusChange: (value: EnrollmentStatusFilter) => void
   classId: string
   onClassChange: (value: string) => void
-  classesData: any[] | undefined
+  classesData: EnrollmentClassOption[] | undefined
   onBulkReEnroll: () => void
 }
 
@@ -32,6 +47,18 @@ export function EnrollmentFilters({
   onBulkReEnroll,
 }: EnrollmentFiltersProps) {
   const t = useTranslations()
+  const selectedClass = classesData?.find(cls => cls.class.id === classId)
+  const selectedClassLabel = selectedClass
+    ? `${selectedClass.grade.name || ''} ${selectedClass.class.section || ''}${selectedClass.series?.name ? ` (${selectedClass.series.name})` : ''}`.trim()
+    : undefined
+
+  const statusLabels: Record<EnrollmentStatusFilter, string> = {
+    all: t.common.all(),
+    pending: t.enrollments.statusPending(),
+    confirmed: t.enrollments.statusConfirmed(),
+    cancelled: t.enrollments.statusCancelled(),
+    transferred: t.enrollments.statusTransferred(),
+  }
 
   return (
     <div className="
@@ -53,9 +80,22 @@ export function EnrollmentFilters({
             className="pl-9"
           />
         </div>
-        <Select value={status} onValueChange={onStatusChange}>
+        <Select
+          value={status}
+          onValueChange={(value) => {
+            if (value) {
+              onStatusChange(value)
+            }
+          }}
+        >
           <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder={t.enrollments.filterByStatus()} />
+            <SelectValue placeholder={t.enrollments.filterByStatus()}>
+              {status
+                ? (
+                    <span className="truncate">{statusLabels[status]}</span>
+                  )
+                : undefined}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t.common.all()}</SelectItem>
@@ -65,9 +105,27 @@ export function EnrollmentFilters({
             <SelectItem value="transferred">{t.enrollments.statusTransferred()}</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={classId} onValueChange={v => onClassChange(v as string)}>
+        <Select
+          value={classId}
+          onValueChange={(value) => {
+            if (value) {
+              onClassChange(value)
+            }
+          }}
+        >
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder={t.enrollments.filterByClass()} />
+            <SelectValue placeholder={t.enrollments.filterByClass()}>
+              {classId !== 'all' && selectedClassLabel
+                ? (
+                    <div className="flex items-center gap-2">
+                      <div className="bg-primary size-2 rounded-full" />
+                      <span className="truncate">{selectedClassLabel}</span>
+                    </div>
+                  )
+                : (
+                    <span className="truncate">{t.common.all()}</span>
+                  )}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">{t.common.all()}</SelectItem>

@@ -6,6 +6,7 @@ import {
   generateMatricule,
   getStudentById,
   getStudents,
+  getStudentsKeyset,
   getStudentStatistics,
   updateStudent,
   updateStudentStatus,
@@ -36,6 +37,13 @@ export interface StudentFilters {
   sortOrder?: 'asc' | 'desc'
 }
 
+export interface StudentKeysetFilters extends Omit<StudentFilters, 'page' | 'sortBy' | 'sortOrder'> {
+  cursor?: {
+    createdAt: Date
+    id: string
+  }
+}
+
 export const studentsOptions = {
   list: (filters: StudentFilters = {}) =>
     queryOptions({
@@ -48,6 +56,21 @@ export const studentsOptions = {
         throw new Error('error' in result ? result.error : 'Failed to fetch students')
       },
 
+      staleTime: 5 * 60 * 1000,
+      gcTime: 30 * 60 * 1000,
+      placeholderData: keepPreviousData,
+    }),
+
+  listKeyset: (filters: StudentKeysetFilters = {}) =>
+    queryOptions({
+      queryKey: [...studentsKeys.lists(), 'keyset', filters] as const,
+      queryFn: async () => {
+        const result = await getStudentsKeyset({ data: filters })
+        if (result.success === true) {
+          return result.data
+        }
+        throw new Error('error' in result ? result.error : 'Failed to fetch students')
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       placeholderData: keepPreviousData,

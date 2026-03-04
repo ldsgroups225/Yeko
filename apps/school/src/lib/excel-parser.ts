@@ -1,5 +1,3 @@
-import * as XLSX from 'xlsx'
-
 export interface ParsedSession {
   className: string
   subjectName: string
@@ -102,19 +100,21 @@ export async function parseTimetableExcel(
   file: File,
   context: TimetableImportContext,
 ): Promise<{ success: boolean, parsed?: ParsedSession[], errorKey?: string }> {
+  const XLSXModule = await import('xlsx')
+
   return new Promise((resolve) => {
     const reader = new FileReader()
     reader.onload = (event) => {
       try {
         const data = new Uint8Array(event.target?.result as ArrayBuffer)
-        const workbook = XLSX.read(data, { type: 'array', cellDates: true })
+        const workbook = XLSXModule.read(data, { type: 'array', cellDates: true })
         const firstSheet = workbook.Sheets[workbook.SheetNames[0] || '']
         if (!firstSheet) {
           resolve({ success: false, errorKey: 'timetables.errors.readError' })
           return
         }
 
-        const jsonData = XLSX.utils.sheet_to_json<Record<string, any>>(firstSheet, { defval: '' })
+        const jsonData = XLSXModule.utils.sheet_to_json<Record<string, any>>(firstSheet, { defval: '' })
         const headers = jsonData.length > 0 ? Object.keys(jsonData[0] || {}) : []
 
         // Map headers

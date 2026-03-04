@@ -7,8 +7,8 @@ import { motion } from 'motion/react'
 import { toast } from 'sonner'
 import { NotificationSettingsForm } from '@/components/settings/notification-settings-form'
 import { useTranslations } from '@/i18n'
-import { schoolProfileOptions } from '@/lib/queries'
 import { schoolMutationKeys } from '@/lib/queries/keys'
+import { schoolProfileOptions } from '@/lib/queries/school-profile'
 import { updateSchoolSettings } from '@/school/functions/school-profile'
 
 export const Route = createFileRoute('/_auth/settings/notifications')({

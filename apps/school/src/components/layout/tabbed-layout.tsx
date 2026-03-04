@@ -63,6 +63,8 @@ export function TabbedLayout({
               <Link
                 key={tab.href}
                 to={tab.href}
+                preload="intent"
+                preloadDelay={120}
                 className={cn(
                   `
                     relative flex items-center gap-2.5 px-6 py-4 text-xs

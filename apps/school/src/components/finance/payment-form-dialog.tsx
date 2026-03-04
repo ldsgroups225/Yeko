@@ -11,6 +11,7 @@ import {
 import { useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useTranslations } from '@/i18n'
+import { invalidateAll } from '@/lib/mutations'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { paymentsKeys } from '@/lib/queries/payments'
 import { studentFeesOptions } from '@/lib/queries/student-fees'
@@ -55,7 +56,7 @@ export function PaymentFormDialog({
 
   const mutation = useMutation({
     mutationKey: schoolMutationKeys.payments.create,
-    mutationFn: (data: PaymentFormData) => {
+    mutationFn: async (data: PaymentFormData) => {
       const paymentAmount = Number.parseFloat(data.amount)
       let remainingAmount = paymentAmount
       const allocations: { studentFeeId: string, amount: string, installmentId?: string }[] = []
@@ -88,7 +89,7 @@ export function PaymentFormDialog({
         throw new Error('Aucun frais en attente trouvé pour cet élève. Impossible d\'affecter le paiement.')
       }
 
-      return recordPayment({
+      const response = await recordPayment({
         data: {
           studentId: data.studentId,
           amount: data.amount,
@@ -99,10 +100,15 @@ export function PaymentFormDialog({
           notes: data.notes,
         },
       })
+
+      if (!response.success) {
+        throw new Error(response.error)
+      }
+
+      return response.data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: paymentsKeys.all })
-      queryClient.invalidateQueries({ queryKey: ['studentFees'] })
+      invalidateAll(queryClient, [paymentsKeys.all, ['studentFees'], ['finance-stats']])
       toast.success(t.finance.payments.recordPayment())
       form.reset()
       onOpenChange(false)

@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Skeleton } from '@workspace/ui/components/skeleton'
 
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
-import { StudentForm } from '@/components/students'
+import { StudentForm } from '@/components/students/student-form'
 import { useTranslations } from '@/i18n'
 import { studentsOptions } from '@/lib/queries/students'
 

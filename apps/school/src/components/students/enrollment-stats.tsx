@@ -17,9 +17,8 @@ import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
 import { enrollmentsOptions } from '@/lib/queries/enrollments'
 import { generateUUID } from '@/utils/generateUUID'
-import { ClassCapacityCard } from './enrollments/class-capacity-card'
 import { GradeEnrollmentCard } from './enrollments/grade-enrollment-card'
-import { StatusBreakdownCard } from './enrollments/status-breakdown-card'
+import { StatusDistributionChartCard } from './enrollments/status-distribution-chart-card'
 
 interface StatCardProps {
   title: string
@@ -134,8 +133,9 @@ export function EnrollmentStats() {
 
   if (!data)
     return null
-  const totalBoys = (data.byGrade as any[]).reduce((sum, g) => sum + Number(g.boys), 0)
-  const totalGirls = (data.byGrade as any[]).reduce((sum, g) => sum + Number(g.girls), 0)
+  const totalBoys = data.byGrade.reduce((sum, grade) => sum + Number(grade.boys), 0)
+  const totalGirls = data.byGrade.reduce((sum, grade) => sum + Number(grade.girls), 0)
+  const secondaryStatuses = data.byStatus.filter(status => status.status !== 'confirmed' && status.status !== 'pending')
 
   return (
     <div className="space-y-4">
@@ -177,15 +177,10 @@ export function EnrollmentStats() {
           )}
         />
       </div>
-      <div className="
-        grid gap-4
-        md:grid-cols-2
-      "
-      >
-        <GradeEnrollmentCard data={data.byGrade as any[]} />
-        <ClassCapacityCard data={data.byClass as any[]} />
-      </div>
-      <StatusBreakdownCard data={data.byStatus as any[]} />
+      <GradeEnrollmentCard data={data.byGrade} />
+      {secondaryStatuses.length > 0 && (
+        <StatusDistributionChartCard data={secondaryStatuses} />
+      )}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import type { FeeStructure } from '@/components/finance'
+import type { FeeStructure } from '@/components/finance/fee-structure-form-dialog'
 import { IconPlus } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
@@ -9,9 +9,11 @@ import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { FeeStructureFormDialog, FeeStructuresTable } from '@/components/finance'
+import { FeeStructureFormDialog } from '@/components/finance/fee-structure-form-dialog'
+import { FeeStructuresTable } from '@/components/finance/fee-structures-table'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
-import { feeStructuresKeys, feeStructuresOptions } from '@/lib/queries'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
+import { feeStructuresKeys, feeStructuresOptions } from '@/lib/queries/fee-structures'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { deleteExistingFeeStructure } from '@/school/functions/fee-structures'
 
@@ -34,15 +36,24 @@ function FeeStructuresPage() {
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.feeStructures.delete,
     mutationFn: (id: string) => deleteExistingFeeStructure({ data: id }),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: feeStructuresKeys.lists() })
+      return snapshotAndUpdate<unknown[]>(
+        queryClient,
+        feeStructuresKeys.lists(),
+        old => old.filter((fs: any) => fs.id !== id),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: feeStructuresKeys.lists() })
       toast.success(t('finance.feeStructures.success.delete'))
       setDeletingId(null)
     },
-    onError: (err: unknown) => {
+    onError: (err: unknown, _vars, context) => {
+      rollback(queryClient, context)
       const message = err instanceof Error ? err.message : t('errors.generic')
       toast.error(message)
     },
+    onSettled: () => invalidateAll(queryClient, [feeStructuresKeys.lists()]),
   })
 
   const handleEdit = (id: string) => {

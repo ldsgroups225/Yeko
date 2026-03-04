@@ -1,3 +1,4 @@
+import type { StudentItem } from '../types'
 import { formatDate } from '@repo/data-ops'
 import { IconDots, IconEdit, IconTrash } from '@tabler/icons-react'
 import { Link, useNavigate } from '@tanstack/react-router'
@@ -13,7 +14,7 @@ import { useStudentsList } from '../students-list-context'
 import { StudentStatusBadge } from './student-status'
 
 interface StudentTableRowProps {
-  item: any
+  item: StudentItem
   index: number
 }
 

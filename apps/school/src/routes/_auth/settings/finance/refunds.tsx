@@ -5,11 +5,12 @@ import { Button } from '@workspace/ui/components/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
-import { FinanceSubpageToolbar, RefundsTable } from '@/components/finance'
+import { FinanceSubpageToolbar } from '@/components/finance/finance-subpage-toolbar'
+import { RefundsTable } from '@/components/finance/refunds-table'
 
 import { useTranslations } from '@/i18n'
-import { refundsKeys, refundsOptions } from '@/lib/queries'
 import { schoolMutationKeys } from '@/lib/queries/keys'
+import { refundsKeys, refundsOptions } from '@/lib/queries/refunds'
 import { approveExistingRefund, rejectExistingRefund } from '@/school/functions/refunds'
 
 export const Route = createFileRoute('/_auth/settings/finance/refunds')({

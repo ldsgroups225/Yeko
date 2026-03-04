@@ -11,9 +11,9 @@ import { CoefficientMatrix } from '@/components/academic/coefficients/coefficien
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useSeriesForGrade } from '@/hooks/use-series-for-grade'
 import { useTranslations } from '@/i18n'
-import { getGrades } from '@/school/functions/grades'
+import { catalogsOptions } from '@/lib/queries/catalogs'
+
 import { getSchoolYears } from '@/school/functions/school-years'
-import { getSeries } from '@/school/functions/series'
 
 export const Route = createFileRoute('/_auth/programs/coefficients')({
   component: CoefficientsPage,
@@ -39,31 +39,19 @@ function CoefficientsPage() {
   const schoolYears = schoolYearsResult?.success ? schoolYearsResult.data : []
 
   // Fetch all grades
-  const { data: gradesResult, isPending: gradesPending } = useQuery({
-    queryKey: ['grades', 'list'],
-    queryFn: () => getGrades({ data: {} }),
-    staleTime: 10 * 60 * 1000,
-  })
+  const { data: gradesResult } = useQuery(catalogsOptions.grades())
+  const grades = gradesResult || []
+  const gradesPending = !gradesResult
 
-  const grades = gradesResult?.success ? gradesResult.data : []
+  // Fetch all series for filtering
+  const { data: seriesResult, isPending: seriesPending } = useQuery(catalogsOptions.series())
+  const allSeries = seriesResult || []
 
-  // Fetch all series (only used when grade is 'all')
-  const { data: allSeriesResult, isPending: allSeriesPending } = useQuery({
-    queryKey: ['series', 'list'],
-    queryFn: () => getSeries({ data: {} }),
-    staleTime: 10 * 60 * 1000,
-    enabled: selectedGradeId === 'all',
-  })
-
-  const allSeries = allSeriesResult?.success ? allSeriesResult.data : []
   const effectiveSeries = selectedGradeId === 'all' ? allSeries : filteredSeries
 
   // Handle grade change and series reset
   const handleGradeChange = (gradeId: string) => {
     setSelectedGradeId(gradeId)
-
-    // If switching to 'all' or a grade that might not have the same series, reset series
-    // (We'll be conservative and always reset to 'all' for simplicity in this filter view)
     setSelectedSeriesId('all')
   }
 
@@ -148,7 +136,7 @@ function CoefficientsPage() {
             >
               {t.academic.coefficients.filters.series()}
             </span>
-            {isSeriesLoading || (selectedGradeId === 'all' && allSeriesPending)
+            {isSeriesLoading || (selectedGradeId === 'all' && seriesPending)
               ? (
                   <Skeleton className="h-11 w-full rounded-xl" />
                 )

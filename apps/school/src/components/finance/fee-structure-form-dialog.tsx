@@ -13,11 +13,11 @@ import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { feeStructuresKeys, feeTypesKeys, feeTypesOptions } from '@/lib/queries'
+import { catalogsOptions } from '@/lib/queries/catalogs'
+import { feeStructuresKeys } from '@/lib/queries/fee-structures'
+import { feeTypesKeys, feeTypesOptions } from '@/lib/queries/fee-types'
 import { schoolMutationKeys } from '@/lib/queries/keys'
 import { createNewFeeStructure, updateExistingFeeStructure } from '@/school/functions/fee-structures'
-import { getGrades } from '@/school/functions/grades'
-import { getSeries } from '@/school/functions/series'
 import { getSchoolYearContext } from '@/school/middleware/school-context'
 import { FeeStructureForm } from './fee-structures/fee-structure-form'
 import { getFeeStructureSchema } from './fee-structures/fee-structure-schema'
@@ -42,14 +42,8 @@ export function FeeStructureFormDialog({
   const schema = getFeeStructureSchema(t)
 
   const { data: feeTypes } = useQuery(feeTypesOptions.list())
-  const { data: grades } = useQuery({
-    queryKey: ['grades', 'list'],
-    queryFn: () => getGrades({ data: {} }),
-  })
-  const { data: series } = useQuery({
-    queryKey: ['series', 'list'],
-    queryFn: () => getSeries({ data: {} }),
-  })
+  const { data: grades } = useQuery(catalogsOptions.grades())
+  const { data: series } = useQuery(catalogsOptions.series())
 
   const form = useForm<FeeStructureFormData>({
     resolver: zodResolver(schema),
@@ -165,8 +159,8 @@ export function FeeStructureFormDialog({
           onCancel={() => onOpenChange(false)}
           isPending={mutation.isPending}
           feeTypeList={feeTypes || []}
-          gradesList={grades?.success ? grades.data : []}
-          seriesList={series?.success ? series.data : []}
+          gradesList={grades || []}
+          seriesList={series || []}
         />
       </DialogContent>
     </Dialog>

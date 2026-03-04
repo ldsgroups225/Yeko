@@ -18,9 +18,9 @@ import { useState } from 'react'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { classesOptions } from '@/lib/queries/classes'
 import { attendanceStatisticsOptions } from '@/lib/queries/student-attendance'
 import { cn } from '@/lib/utils'
-import { getClasses } from '@/school/functions/classes'
 import { generateUUID } from '@/utils/generateUUID'
 
 export const Route = createFileRoute('/_auth/conducts/student-attendance/statistics')({
@@ -39,13 +39,9 @@ function StudentAttendanceStatisticsPage() {
 
   const { schoolYearId } = useSchoolYearContext()
 
-  const { data: classesResult } = useQuery({
-    queryKey: ['classes', { schoolYearId }],
-    queryFn: () => getClasses({ data: { schoolYearId: schoolYearId ?? undefined } }),
-    enabled: !!schoolYearId,
-  })
-
-  const classes = classesResult?.success ? classesResult.data : []
+  const { data: classes = [] } = useQuery(
+    classesOptions.list({ schoolYearId: schoolYearId ?? undefined }),
+  )
 
   const startDateStr = startDate.toISOString().split('T')[0] ?? ''
   const endDateStr = endDate.toISOString().split('T')[0] ?? ''

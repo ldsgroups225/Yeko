@@ -1,5 +1,3 @@
-import { ExcelBuilder, ExcelSchemaBuilder } from '@chronicstone/typed-xlsx'
-
 interface StudentExportData {
   matricule: string | null
   lastName: string
@@ -36,10 +34,12 @@ interface ExportTranslations {
 /**
  * Export students to Excel with natural column names
  */
-export function exportStudentsToExcel(
+export async function exportStudentsToExcel(
   data: StudentExportData[],
   translations: ExportTranslations,
-): ArrayBuffer {
+): Promise<ArrayBuffer> {
+  const { ExcelBuilder, ExcelSchemaBuilder } = await import('@chronicstone/typed-xlsx')
+
   // Build schema with translated labels
   const schema = ExcelSchemaBuilder.create<StudentExportData>()
     .column('matricule', { key: 'matricule', label: translations.matricule })

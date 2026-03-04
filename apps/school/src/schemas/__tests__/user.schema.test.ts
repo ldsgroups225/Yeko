@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest'
-import { userCreateSchema, userSchema, userUpdateSchema } from '../user'
+import { userCreateSchema, userUpdateSchema } from '../user'
 
 describe('user Schema Validation', () => {
   describe('name field', () => {
     test('should reject names shorter than 2 characters', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'A',
         email: 'test@example.com',
         status: 'active',
@@ -19,7 +19,7 @@ describe('user Schema Validation', () => {
 
     test('should reject names longer than 100 characters', () => {
       const longName = 'A'.repeat(101)
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: longName,
         email: 'test@example.com',
         status: 'active',
@@ -33,7 +33,7 @@ describe('user Schema Validation', () => {
       const validNames = ['John Doe', 'Marie-Claire', 'Jean-Baptiste Kouassi']
 
       validNames.forEach((name) => {
-        const result = userSchema.safeParse({
+        const result = userCreateSchema.safeParse({
           name,
           email: 'test@example.com',
           status: 'active',
@@ -55,7 +55,7 @@ describe('user Schema Validation', () => {
       ]
 
       invalidEmails.forEach((email) => {
-        const result = userSchema.safeParse({
+        const result = userCreateSchema.safeParse({
           name: 'Test User',
           email,
           status: 'active',
@@ -74,7 +74,7 @@ describe('user Schema Validation', () => {
       ]
 
       validEmails.forEach((email) => {
-        const result = userSchema.safeParse({
+        const result = userCreateSchema.safeParse({
           name: 'Test User',
           email,
           status: 'active',
@@ -87,7 +87,7 @@ describe('user Schema Validation', () => {
 
   describe('phone field', () => {
     test('should accept optional phone number', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         phone: '+225 01 02 03 04',
@@ -102,7 +102,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should accept null phone', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         phone: null,
@@ -114,7 +114,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should work without phone', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
@@ -134,7 +134,7 @@ describe('user Schema Validation', () => {
       ]
 
       invalidUrls.forEach((avatarUrl) => {
-        const result = userSchema.safeParse({
+        const result = userCreateSchema.safeParse({
           name: 'Test User',
           email: 'test@example.com',
           avatarUrl,
@@ -153,7 +153,7 @@ describe('user Schema Validation', () => {
       ]
 
       validUrls.forEach((avatarUrl) => {
-        const result = userSchema.safeParse({
+        const result = userCreateSchema.safeParse({
           name: 'Test User',
           email: 'test@example.com',
           avatarUrl,
@@ -165,7 +165,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should accept null avatarUrl', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         avatarUrl: null,
@@ -177,7 +177,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should work without avatarUrl', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
@@ -190,7 +190,7 @@ describe('user Schema Validation', () => {
 
   describe('status field', () => {
     test('should accept "active" status', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
@@ -204,7 +204,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should accept "inactive" status', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'inactive',
@@ -215,7 +215,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should accept "suspended" status', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'suspended',
@@ -226,7 +226,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should reject invalid status', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'invalid',
@@ -237,7 +237,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should require status field', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         roleIds: ['role1'],
@@ -249,7 +249,7 @@ describe('user Schema Validation', () => {
 
   describe('roleIds field', () => {
     test('should accept empty role list', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
@@ -263,7 +263,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should accept single role', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
@@ -274,7 +274,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should accept multiple roles', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
@@ -288,7 +288,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should accept missing roleIds field (default to empty array)', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
@@ -303,7 +303,7 @@ describe('user Schema Validation', () => {
 
   describe('complete valid user', () => {
     test('should accept user with all fields', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Jean-Baptiste Kouassi',
         email: 'jb.kouassi@school.ci',
         phone: '+225 07 08 09 10',
@@ -323,7 +323,7 @@ describe('user Schema Validation', () => {
     })
 
     test('should accept user with minimal required fields', () => {
-      const result = userSchema.safeParse({
+      const result = userCreateSchema.safeParse({
         name: 'Test User',
         email: 'test@example.com',
         status: 'active',
@@ -344,7 +344,7 @@ describe('user Create Schema', () => {
       roleIds: ['role1'],
     }
 
-    const baseResult = userSchema.safeParse(testData)
+    const baseResult = userCreateSchema.safeParse(testData)
     const createResult = userCreateSchema.safeParse(testData)
 
     expect(baseResult.success).toBe(createResult.success)

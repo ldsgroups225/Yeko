@@ -11,8 +11,10 @@ import { toast } from 'sonner'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useSchoolYearContext } from '@/hooks/use-school-year-context'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
+import { classesKeys, classesOptions } from '@/lib/queries/classes'
 import { schoolMutationKeys } from '@/lib/queries/keys'
-import { deleteClass, getClasses } from '@/school/functions/classes'
+import { deleteClass } from '@/school/functions/classes'
 import { ClassesTableContext } from './classes-table-context'
 import { useClassesTableColumns } from './use-classes-table-columns'
 
@@ -51,22 +53,13 @@ export function ClassesTableProvider({
     ? status as 'active' | 'archived'
     : undefined
 
-  const { data, isPending, refetch } = useQuery({
-    queryKey: ['classes', { search: debouncedSearch, status, schoolYearId }],
-    queryFn: async () => {
-      const result = await getClasses({
-        data: {
-          search: debouncedSearch,
-          status: statusFilter,
-          schoolYearId: schoolYearId || undefined,
-        },
-      })
-      if (!result.success)
-        throw new Error(result.error)
-      return result.data as ClassItem[]
-    },
-    placeholderData: [],
-  })
+  const { data, isPending, refetch } = useQuery(
+    classesOptions.list({
+      search: debouncedSearch,
+      status: statusFilter,
+      schoolYearId: schoolYearId || undefined,
+    }),
+  )
 
   const handleSelectAll = useCallback(
     (checked: boolean) => {
@@ -92,6 +85,14 @@ export function ClassesTableProvider({
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.classes.delete,
     mutationFn: (id: string) => deleteClass({ data: id }),
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: classesKeys.all })
+      return snapshotAndUpdate<unknown[]>(
+        queryClient,
+        classesKeys.all,
+        old => old.filter((c: any) => (c.class?.id ?? c.id) !== id),
+      )
+    },
     onSuccess: () => {
       toast.success(t.common.deleteSuccess())
       if (classToDelete) {
@@ -99,12 +100,13 @@ export function ClassesTableProvider({
           prev.filter(id => id !== classToDelete.class.id),
         )
       }
-      queryClient.invalidateQueries({ queryKey: ['classes'] })
       setClassToDelete(null)
     },
-    onError: () => {
+    onError: (_err, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(t.common.error())
     },
+    onSettled: () => invalidateAll(queryClient, [classesKeys.all]),
   })
 
   const handleDelete = () => {

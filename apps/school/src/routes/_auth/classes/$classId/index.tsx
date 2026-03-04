@@ -28,8 +28,10 @@ import { ClassSubjectManager } from '@/components/academic/class-subjects/class-
 import { ClassStudentList } from '@/components/academic/classes/class-student-list'
 import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { useTranslations } from '@/i18n'
+import { invalidateAll, rollback, snapshotAndUpdate } from '@/lib/mutations'
+import { classesKeys, classesOptions } from '@/lib/queries/classes'
 import { schoolMutationKeys } from '@/lib/queries/keys'
-import { deleteClass, getClassById } from '@/school/functions/classes'
+import { deleteClass } from '@/school/functions/classes'
 
 export const Route = createFileRoute('/_auth/classes/$classId/')({
   component: ClassDetailPage,
@@ -42,25 +44,28 @@ function ClassDetailPage() {
   const queryClient = useQueryClient()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const { data: result, isPending } = useQuery({
-    queryKey: ['class', classId],
-    queryFn: () => getClassById({ data: classId }),
-  })
-
-  // Safely extract data from Result
-  const classInfo = result?.success ? result.data : null
+  const { data: classInfo, isPending } = useQuery(classesOptions.detail(classId))
 
   const deleteMutation = useMutation({
     mutationKey: schoolMutationKeys.classes.delete,
     mutationFn: () => deleteClass({ data: classId }),
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: classesKeys.all })
+      return snapshotAndUpdate(
+        queryClient,
+        classesKeys.lists(),
+        (old: any[]) => old.filter((c: any) => c.id !== classId),
+      )
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['classes'] })
       toast.success(t.classes.deleteSuccess())
       navigate({ to: '/classes' })
     },
-    onError: (error) => {
+    onError: (error, _vars, context) => {
+      rollback(queryClient, context)
       toast.error(error.message || t.classes.deleteError())
     },
+    onSettled: () => invalidateAll(queryClient, [classesKeys.all]),
   })
 
   if (isPending) {

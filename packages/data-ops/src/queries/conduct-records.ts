@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type {
   ConductCategory,
   ConductFollowUpInsert,
@@ -16,6 +17,22 @@ import {
   students,
   users,
 } from '../drizzle/school-schema'
+
+export interface ConductRecordsKeysetCursor {
+  createdAt: Date
+  id: string
+}
+
+export interface ConductRecordsKeysetResult {
+  data: Array<(typeof conductRecords.$inferSelect) & {
+    studentName: string
+    studentMatricule: string | null
+    recordedByName: string | null
+  }>
+  nextCursor: ConductRecordsKeysetCursor | null
+  hasMore: boolean
+  pageSize: number
+}
 
 // Get conduct records with filters
 export async function getConductRecords(params: {
@@ -104,6 +121,103 @@ export async function getConductRecords(params: {
     ),
     total: countResult[0]?.count ?? 0,
     page,
+    pageSize,
+  }
+}
+
+export async function getConductRecordsKeyset(params: {
+  schoolId: string
+  schoolYearId: string
+  studentId?: string
+  classId?: string
+  type?: ConductType
+  category?: ConductCategory
+  status?: ConductStatus
+  severity?: SeverityLevel
+  startDate?: string
+  endDate?: string
+  search?: string
+  pageSize?: number
+  cursor?: ConductRecordsKeysetCursor
+}): Promise<ConductRecordsKeysetResult> {
+  const db = getDb()
+  const pageSize = params.pageSize ?? 20
+
+  const conditions = [
+    eq(conductRecords.schoolId, params.schoolId),
+    eq(conductRecords.schoolYearId, params.schoolYearId),
+  ]
+
+  if (params.studentId)
+    conditions.push(eq(conductRecords.studentId, params.studentId))
+  if (params.classId)
+    conditions.push(eq(conductRecords.classId, params.classId))
+  if (params.type)
+    conditions.push(eq(conductRecords.type, params.type))
+  if (params.category)
+    conditions.push(eq(conductRecords.category, params.category))
+  if (params.status)
+    conditions.push(eq(conductRecords.status, params.status))
+  if (params.severity)
+    conditions.push(eq(conductRecords.severity, params.severity))
+  if (params.startDate)
+    conditions.push(gte(conductRecords.incidentDate, params.startDate))
+  if (params.endDate)
+    conditions.push(lte(conductRecords.incidentDate, params.endDate))
+  if (params.search) {
+    const searchCondition = or(
+      ilike(conductRecords.title, `%${params.search}%`),
+      ilike(conductRecords.description, `%${params.search}%`),
+    )
+    if (searchCondition) {
+      conditions.push(searchCondition)
+    }
+  }
+  if (params.cursor) {
+    const cursorCondition = or(
+      sql`${conductRecords.createdAt} < ${params.cursor.createdAt}`,
+      and(
+        eq(conductRecords.createdAt, params.cursor.createdAt),
+        sql`${conductRecords.id} < ${params.cursor.id}`,
+      ),
+    )
+    if (cursorCondition) {
+      conditions.push(cursorCondition)
+    }
+  }
+
+  const rows = await db
+    .select({
+      record: conductRecords,
+      studentName: sql<string>`${students.lastName} || ' ' || ${students.firstName}`,
+      studentMatricule: students.matricule,
+      recordedByName: users.name,
+    })
+    .from(conductRecords)
+    .leftJoin(students, eq(conductRecords.studentId, students.id))
+    .leftJoin(users, eq(conductRecords.recordedBy, users.id))
+    .where(and(...conditions))
+    .orderBy(desc(conductRecords.createdAt), desc(conductRecords.id))
+    .limit(pageSize + 1)
+
+  const hasMore = rows.length > pageSize
+  const dataRows = hasMore ? rows.slice(0, pageSize) : rows
+  const data = dataRows.map(row => ({
+    ...row.record,
+    studentName: row.studentName,
+    studentMatricule: row.studentMatricule,
+    recordedByName: row.recordedByName,
+  }))
+
+  const lastRow = data[data.length - 1]
+  const nextCursor = hasMore && lastRow
+    ? { createdAt: lastRow.createdAt, id: lastRow.id }
+    : null
+
+  return {
+    data,
+    nextCursor,
+    hasMore,
     pageSize,
   }
 }
