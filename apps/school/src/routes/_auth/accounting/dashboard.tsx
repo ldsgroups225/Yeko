@@ -75,7 +75,7 @@ function FinanceDashboardPage() {
     })),
   })
 
-  const totalStudents = enrollmentStats?.total ?? studentBalanceStats.studentsWithBalance
+  const totalStudents = enrollmentStats?.confirmed ?? studentBalanceStats.studentsWithBalance
   const studentsWithBalanceCount = studentBalanceStats.studentsWithBalance
   const totalOutstanding = studentBalanceStats.totalOutstanding
   const totalCollected = financeStats?.totalRevenue ?? 0

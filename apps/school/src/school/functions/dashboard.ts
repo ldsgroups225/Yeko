@@ -90,7 +90,7 @@ export const getAdminDashboardStats = authServerFn
         success: true as const,
         data: {
           metrics: {
-            totalStudents: studentStats.total,
+            totalStudents: enrollmentStatsResult && R.isSuccess(enrollmentStatsResult) ? enrollmentStatsResult.value.confirmed : 0,
             totalTeachers: teacherCount,
             activeClasses,
             revenueThisMonth,
