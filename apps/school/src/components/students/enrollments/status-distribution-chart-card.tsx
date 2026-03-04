@@ -69,7 +69,7 @@ export function StatusDistributionChartCard({ data }: StatusDistributionChartCar
           : (
               <div className="grid gap-6 md:grid-cols-[1.2fr_1fr]">
                 <div className="h-[220px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <PieChart>
                       <Pie
                         data={chartData}

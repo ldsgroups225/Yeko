@@ -207,6 +207,11 @@ export const getUserSystemPermissionsByAuthUserId = undefined as never
 export const getUserSystemRolesByAuthUserId = undefined as never
 export const syncUserAuthOnLogin = undefined as never
 
+// Audit
+export const getAuditLogs = undefined as never
+export const getRecentActivities = undefined as never
+export const getRecordAuditLogs = undefined as never
+
 // Coefficients
 export const getCoefficientTemplates = undefined as never
 export const getCoefficientTemplateById = undefined as never

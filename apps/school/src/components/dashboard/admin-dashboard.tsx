@@ -69,7 +69,11 @@ export function AdminDashboard() {
         <QuickActionsSection t={t} />
       </div>
 
-      <ActivitiesAlertsSection metrics={metrics} t={t} />
+      <ActivitiesAlertsSection
+        metrics={metrics}
+        recentActivities={data?.recentActivities}
+        t={t}
+      />
     </motion.div>
   )
 }

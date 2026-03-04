@@ -1,9 +1,11 @@
+import type { EnrollmentStatistics } from '@repo/data-ops/queries/enrollments'
 import type { MonthlyRevenue } from '@repo/data-ops/queries/finance-stats'
 import type { StudentStatistics } from '@repo/data-ops/queries/students'
 import { Result as R } from '@praha/byethrow'
 import { getClasses } from '@repo/data-ops/queries/classes'
 import { getEnrollmentStatistics } from '@repo/data-ops/queries/enrollments'
 import { getFinanceStats, getMonthlyRevenue } from '@repo/data-ops/queries/finance-stats'
+import { getRecentActivities } from '@repo/data-ops/queries/school-admin/audit'
 import { countTeachersBySchool } from '@repo/data-ops/queries/school-admin/teachers'
 import * as studentQueries from '@repo/data-ops/queries/students'
 import { authServerFn } from '../lib/server-fn'
@@ -24,6 +26,14 @@ export interface AdminDashboardStats {
     enrollmentByGrade: Array<{ gradeName: string, count: number, boys: number, girls: number }>
     genderDistribution: StudentStatistics['byGender']
   }
+  recentActivities: Array<{
+    id: string
+    action: string
+    tableName: string
+    userName: string | null
+    createdAt: Date
+    details: any
+  }>
 }
 
 export const getAdminDashboardStats = authServerFn
@@ -44,6 +54,7 @@ export const getAdminDashboardStats = authServerFn
         financeResult,
         monthlyRevenueResult,
         enrollmentStatsResult,
+        recentActivitiesResult,
       ] = await Promise.all([
         studentQueries.getStudentStatistics(schoolId),
         countTeachersBySchool(schoolId),
@@ -52,34 +63,49 @@ export const getAdminDashboardStats = authServerFn
         getMonthlyRevenue(schoolId, 6),
         schoolYearId
           ? getEnrollmentStatistics(schoolId, schoolYearId)
-          : null,
+          : Promise.resolve(null),
+        getRecentActivities(schoolId, 5),
       ])
 
       const studentStats = R.isFailure(studentStatsResult)
-        ? { total: 0, byGender: [], byStatus: [], byAge: [], newAdmissions: 0 }
+        ? { total: 0, byGender: [] as StudentStatistics['byGender'] }
         : studentStatsResult.value
 
-      const activeClasses = R.isFailure(classesResult)
-        ? 0
-        : classesResult.value.length
+      const activeClassesResultValue = R.isFailure(classesResult)
+        ? []
+        : classesResult.value
+      const activeClasses = activeClassesResultValue.length
 
       const finance = R.isFailure(financeResult)
-        ? { totalRevenue: 0, totalPayments: 0, pendingPayments: 0, overdueAmount: 0 }
+        ? { pendingPayments: 0, overdueAmount: 0 }
         : financeResult.value
 
       const monthlyRevenue = R.isFailure(monthlyRevenueResult)
-        ? []
+        ? [] as MonthlyRevenue[]
         : monthlyRevenueResult.value
 
-      const enrollmentByGrade = enrollmentStatsResult
-        ? R.isFailure(enrollmentStatsResult)
-          ? []
-          : enrollmentStatsResult.value.byGrade.map(g => ({
-              gradeName: g.gradeName,
-              count: Number(g.count),
-              boys: Number(g.boys),
-              girls: Number(g.girls),
-            }))
+      const enrollmentStats = enrollmentStatsResult && R.isSuccess(enrollmentStatsResult)
+        ? (enrollmentStatsResult.value as EnrollmentStatistics)
+        : null
+
+      const enrollmentByGrade = enrollmentStats
+        ? enrollmentStats.byGrade.map((g: any) => ({
+            gradeName: g.gradeName,
+            count: Number(g.count),
+            boys: Number(g.boys),
+            girls: Number(g.girls),
+          }))
+        : []
+
+      const recentActivities = recentActivitiesResult && R.isSuccess(recentActivitiesResult)
+        ? recentActivitiesResult.value.map(a => ({
+            id: a.id,
+            action: a.action,
+            tableName: a.tableName,
+            userName: a.userName,
+            createdAt: a.createdAt,
+            details: a.newValues,
+          }))
         : []
 
       const now = new Date()
@@ -90,23 +116,25 @@ export const getAdminDashboardStats = authServerFn
         success: true as const,
         data: {
           metrics: {
-            totalStudents: enrollmentStatsResult && R.isSuccess(enrollmentStatsResult) ? enrollmentStatsResult.value.confirmed : 0,
+            totalStudents: enrollmentStats ? enrollmentStats.confirmed : 0,
             totalTeachers: teacherCount,
             activeClasses,
             revenueThisMonth,
             pendingPayments: finance.pendingPayments,
             overdueAmount: finance.overdueAmount,
-            pendingEnrollments: enrollmentStatsResult && R.isSuccess(enrollmentStatsResult) ? enrollmentStatsResult.value.pending : 0,
+            pendingEnrollments: enrollmentStats ? enrollmentStats.pending : 0,
           },
           charts: {
             revenueLast6Months: monthlyRevenue,
             enrollmentByGrade,
             genderDistribution: studentStats.byGender,
           },
+          recentActivities,
         },
       }
     }
-    catch {
-      return { success: false as const, error: 'Erreur lors de la récupération des statistiques du tableau de bord' }
+    catch (e) {
+      console.error('======= DASHBOARD ERROR =======', e)
+      return { success: false as const, error: String(e) }
     }
   })

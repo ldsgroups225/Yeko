@@ -46,7 +46,7 @@ export function GradeEnrollmentCard({ data }: GradeEnrollmentCardProps) {
             )
           : (
               <div className="h-[210px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                   <ComposedChart
                     data={chartData}
                     margin={{

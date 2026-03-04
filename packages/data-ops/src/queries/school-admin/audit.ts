@@ -1,9 +1,20 @@
-import type { AuditLogInsert } from '../../drizzle/school-schema'
+import type { AuditAction, AuditLogInsert } from '../../drizzle/school-schema'
+import { Result as R } from '@praha/byethrow'
 import { and, desc, eq } from 'drizzle-orm'
 import { getDb } from '../../database/setup'
-import { auditLogs } from '../../drizzle/school-schema'
+import { auditLogs, users } from '../../drizzle/school-schema'
+import { DatabaseError } from '../../errors'
 
-export type AuditAction = 'create' | 'update' | 'delete' | 'view'
+export interface AuditLogWithUser {
+  id: string
+  action: AuditAction
+  tableName: string
+  recordId: string
+  oldValues: any
+  newValues: any
+  createdAt: Date
+  userName: string | null
+}
 
 export interface CreateAuditLogParams {
   schoolId: string
@@ -53,15 +64,39 @@ export async function bulkInsertAuditLogs(logs: AuditLogInsert[]): Promise<void>
 /**
  * Get audit logs for a school
  */
-export async function getAuditLogs(schoolId: string, limit: number = 50) {
+export async function getAuditLogs(schoolId: string, limit: number = 50): R.ResultAsync<AuditLogWithUser[], DatabaseError> {
   const db = getDb()
 
-  return db
-    .select()
-    .from(auditLogs)
-    .where(eq(auditLogs.schoolId, schoolId))
-    .orderBy(desc(auditLogs.createdAt))
-    .limit(limit)
+  return R.pipe(
+    R.try({
+      try: async () => {
+        return db
+          .select({
+            id: auditLogs.id,
+            action: auditLogs.action,
+            tableName: auditLogs.tableName,
+            recordId: auditLogs.recordId,
+            oldValues: auditLogs.oldValues,
+            newValues: auditLogs.newValues,
+            createdAt: auditLogs.createdAt,
+            userName: users.name,
+          })
+          .from(auditLogs)
+          .leftJoin(users, eq(auditLogs.userId, users.id))
+          .where(eq(auditLogs.schoolId, schoolId))
+          .orderBy(desc(auditLogs.createdAt))
+          .limit(limit)
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch audit logs'),
+    }),
+  )
+}
+
+/**
+ * Get recent activities for dashboard
+ */
+export async function getRecentActivities(schoolId: string, limit: number = 5): R.ResultAsync<AuditLogWithUser[], DatabaseError> {
+  return getAuditLogs(schoolId, limit)
 }
 
 /**

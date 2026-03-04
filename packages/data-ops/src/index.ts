@@ -41,6 +41,7 @@ export * from './queries/programs'
 export * from './queries/receipts'
 export * from './queries/refunds'
 export * from './queries/report-cards'
+export * from './queries/school-admin/audit'
 export * from './queries/school-admin/roles'
 export * from './queries/school-admin/users'
 export * from './queries/school-coefficients'
@@ -48,7 +49,6 @@ export * from './queries/school-subjects'
 export * from './queries/schools'
 export * from './queries/student-attendance'
 export * from './queries/student-fees'
-
 export * from './queries/students'
 
 // Explicitly handle teacher-app exports to avoid conflicts

@@ -1,5 +1,7 @@
 import { formatCurrency } from '@repo/data-ops'
-import { IconAlertCircle } from '@tabler/icons-react'
+import { IconAlertCircle, IconArrowRight, IconCheck, IconPlus } from '@tabler/icons-react'
+import { formatDistanceToNow } from 'date-fns'
+import { fr } from 'date-fns/locale'
 import { motion } from 'motion/react'
 import { item } from '../constants'
 
@@ -9,14 +11,34 @@ interface ActivityItemProps {
   time: string
 }
 
-function ActivityItem({ title, description, time }: ActivityItemProps) {
+function ActivityItem({ title, description, time, action }: ActivityItemProps & { action?: string }) {
+  const getIcon = () => {
+    switch (action) {
+      case 'create': return <IconPlus className="h-3 w-3 text-white" />
+      case 'update': return <IconCheck className="h-3 w-3 text-white" />
+      case 'delete': return <IconArrowRight className="h-3 w-3 text-white" />
+      default: return null
+    }
+  }
+
+  const getBgColor = () => {
+    switch (action) {
+      case 'create': return 'bg-green-500'
+      case 'update': return 'bg-blue-500'
+      case 'delete': return 'bg-red-500'
+      default: return 'bg-primary'
+    }
+  }
+
   return (
     <div className="flex gap-3">
-      <div className="bg-primary mt-1 flex h-2 w-2 shrink-0 rounded-full" />
-      <div className="flex-1 space-y-1">
+      <div className={`${getBgColor()} mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full`}>
+        {getIcon()}
+      </div>
+      <div className="flex-1 space-y-0.5">
         <p className="text-sm font-medium">{title}</p>
-        <p className="text-muted-foreground text-xs">{description}</p>
-        <p className="text-muted-foreground text-xs">{time}</p>
+        <p className="text-muted-foreground text-xs leading-none">{description}</p>
+        <p className="text-muted-foreground text-[10px] uppercase tracking-wider">{time}</p>
       </div>
     </div>
   )
@@ -52,10 +74,47 @@ function AlertItem({ type, title, description }: AlertItemProps) {
 
 interface ActivitiesAlertsSectionProps {
   metrics: any
+  recentActivities?: Array<{
+    id: string
+    action: string
+    tableName: string
+    userName: string | null
+    createdAt: Date
+    details: any
+  }>
   t: any
 }
 
-export function ActivitiesAlertsSection({ metrics, t }: ActivitiesAlertsSectionProps) {
+export function ActivitiesAlertsSection({ metrics, recentActivities, t }: ActivitiesAlertsSectionProps) {
+  const formatActivityTitle = (activity: any) => {
+    const tableNames: Record<string, string> = {
+      students: t.nav.students(),
+      teachers: t.nav.teachers(),
+      payments: t.nav.payments(),
+      enrollments: t.nav.enrollments(),
+      users: t.nav.users(),
+      classes: t.nav.classes(),
+    }
+
+    const actions: Record<string, string> = {
+      create: t.common.create(),
+      update: t.common.edit(),
+      delete: t.common.delete(),
+    }
+
+    const tableName = tableNames[activity.tableName] || activity.tableName
+    const action = actions[activity.action] || activity.action
+
+    return `${action} ${tableName.toLowerCase()}`
+  }
+
+  const formatActivityDescription = (activity: any) => {
+    if (activity.userName) {
+      return `Par ${activity.userName}`
+    }
+    return ''
+  }
+
   return (
     <div className="
       grid gap-4
@@ -67,22 +126,27 @@ export function ActivitiesAlertsSection({ metrics, t }: ActivitiesAlertsSectionP
         className="border-border/40 bg-card rounded-lg border p-6"
       >
         <h2 className="mb-4 text-lg font-semibold">{t.dashboard.recentActivity()}</h2>
-        <div className="space-y-3">
-          <ActivityItem
-            title={t.dashboard.activity.teacherAdded()}
-            description="Marie Kouassi - Mathématiques"
-            time={t.common.timeAgo({ time: '2 heures' })}
-          />
-          <ActivityItem
-            title={t.dashboard.activity.studentsEnrolled({ count: 15 })}
-            description="Classe de 6ème A"
-            time={t.common.timeAgo({ time: '5 heures' })}
-          />
-          <ActivityItem
-            title={t.dashboard.activity.paymentReceived()}
-            description="45,000 FCFA - Jean Kouadio"
-            time={t.common.timeAgo({ time: '1 jour' })}
-          />
+        <div className="space-y-4">
+          {recentActivities && recentActivities.length > 0
+            ? (
+                recentActivities.map(activity => (
+                  <ActivityItem
+                    key={activity.id}
+                    title={formatActivityTitle(activity)}
+                    description={formatActivityDescription(activity)}
+                    action={activity.action}
+                    time={formatDistanceToNow(new Date(activity.createdAt), {
+                      addSuffix: true,
+                      locale: fr,
+                    })}
+                  />
+                ))
+              )
+            : (
+                <p className="text-muted-foreground text-sm py-4 text-center">
+                  {t.common.noResults()}
+                </p>
+              )}
         </div>
       </motion.div>
 
