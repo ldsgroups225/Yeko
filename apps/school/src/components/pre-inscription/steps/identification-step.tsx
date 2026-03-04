@@ -8,10 +8,10 @@ import { Input } from '@workspace/ui/components/input'
 import { Spinner } from '@workspace/ui/components/spinner'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { findSchoolAndStudentByCodeAndMatricule } from '../../../lib/api/pre-inscription'
 import {
-
   preInscriptionIdentificationSchema,
 } from '../../../schemas/pre-inscription'
 
@@ -21,6 +21,7 @@ interface IdentificationStepProps {
 
 export function IdentificationStep({ onSuccess }: IdentificationStepProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const { t } = useTranslation()
 
   const {
     register,
@@ -46,7 +47,7 @@ export function IdentificationStep({ onSuccess }: IdentificationStepProps) {
       }
     }
     catch {
-      toast.error('Une erreur est survenue lors de la recherche')
+      toast.error(t('preInscription.identification.errors.searchFailed'))
     }
     finally {
       setIsLoading(false)
@@ -57,14 +58,14 @@ export function IdentificationStep({ onSuccess }: IdentificationStepProps) {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="space-y-2 text-center">
         <h1 className="text-3xl font-black tracking-tight sm:text-4xl text-foreground">
-          Bienvenue sur
+          {t('preInscription.identification.hero.titlePrefix')}
           {' '}
-          <span className="text-primary">Yeko School</span>
+          <span className="text-primary">{t('app.name')}</span>
         </h1>
         <p className="text-muted-foreground text-lg">
-          Commencez par identifier votre établissement pour votre
+          {t('preInscription.identification.hero.descriptionPrefix')}
           {' '}
-          <span className="font-bold text-primary">pré-inscription</span>
+          <span className="font-bold text-primary">{t('preInscription.identification.hero.descriptionHighlight')}</span>
           .
         </p>
       </div>
@@ -75,10 +76,10 @@ export function IdentificationStep({ onSuccess }: IdentificationStepProps) {
         <CardHeader className="space-y-1 pt-8 pb-4">
           <CardTitle className="text-xl flex items-center gap-2 text-foreground">
             <IconMapPin className="w-5 h-5 text-primary" />
-            Identification
+            {t('preInscription.identification.card.title')}
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            Entrez le code de l'établissement et, si disponible, le matricule de l'élève.
+            {t('preInscription.identification.card.description')}
           </CardDescription>
         </CardHeader>
 
@@ -87,13 +88,13 @@ export function IdentificationStep({ onSuccess }: IdentificationStepProps) {
             <div className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="schoolCode" className="text-sm font-medium text-muted-foreground ml-1">
-                  Code de l'établissement
+                  {t('preInscription.identification.form.schoolCodeLabel')}
                 </label>
                 <div className="relative group/input">
                   <Input
                     {...register('schoolCode')}
                     id="schoolCode"
-                    placeholder="Ex: YEKO-001"
+                    placeholder={t('preInscription.identification.form.schoolCodePlaceholder')}
                     className={`bg-muted/40 border-border/60 h-14 pl-12 text-lg focus:ring-ring/20 focus:border-primary transition-all ${
                       errors.schoolCode ? 'border-destructive/50 pr-10' : ''
                     }`}
@@ -108,21 +109,21 @@ export function IdentificationStep({ onSuccess }: IdentificationStepProps) {
               <div className="space-y-2">
                 <div className="flex items-center justify-between ml-1">
                   <label htmlFor="matricule" className="text-sm font-medium text-muted-foreground">
-                    Matricule de l'élève (facultatif)
+                    {t('preInscription.identification.form.matriculeLabel')}
                   </label>
-                  <span className="text-[10px] text-muted-foreground uppercase font-black px-1.5 py-0.5 border border-border/50 rounded italic tracking-widest">Ré-inscription</span>
+                  <span className="text-[10px] text-muted-foreground uppercase font-black px-1.5 py-0.5 border border-border/50 rounded italic tracking-widest">{t('preInscription.identification.form.reEnrollmentBadge')}</span>
                 </div>
                 <div className="relative group/input">
                   <Input
                     {...register('matricule')}
                     id="matricule"
-                    placeholder="Ex: 2024-STUD-001 (réinscription)"
+                    placeholder={t('preInscription.identification.form.matriculePlaceholder')}
                     className="bg-muted/40 border-border/60 h-14 pl-12 text-lg focus:ring-ring/20 focus:border-primary transition-all"
                   />
                   <IconUser className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/60 group-focus-within/input:text-primary transition-colors" />
                 </div>
                 <p className="text-xs text-muted-foreground ml-1">
-                  Laissez ce champ vide pour une nouvelle inscription.
+                  {t('preInscription.identification.form.matriculeHint')}
                 </p>
               </div>
             </div>
@@ -139,7 +140,7 @@ export function IdentificationStep({ onSuccess }: IdentificationStepProps) {
                     )
                   : (
                       <>
-                        Continuer
+                        {t('preInscription.identification.form.continue')}
                         <IconArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
@@ -152,7 +153,7 @@ export function IdentificationStep({ onSuccess }: IdentificationStepProps) {
 
       <div className="flex items-center justify-center gap-6 pt-4 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
         <div className="h-px w-10 bg-border/40" />
-        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em]">Propulsé par Yeko</span>
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.3em]">{t('preInscription.identification.poweredBy')}</span>
         <div className="h-px w-10 bg-border/40" />
       </div>
     </div>

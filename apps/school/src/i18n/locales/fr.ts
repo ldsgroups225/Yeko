@@ -2055,6 +2055,32 @@ export const fr: TypedLocale = {
     schoolEmail: 'contact@ecole.ci',
     classSection: 'A, B, C...',
   },
+  preInscription: {
+    identification: {
+      hero: {
+        titlePrefix: 'Bienvenue sur',
+        descriptionPrefix: 'Commencez par identifier votre établissement pour votre',
+        descriptionHighlight: 'pré-inscription',
+      },
+      card: {
+        title: 'Identification',
+        description: 'Entrez le code de l\'établissement et, si disponible, le matricule de l\'élève.',
+      },
+      form: {
+        schoolCodeLabel: 'Code de l\'établissement',
+        schoolCodePlaceholder: 'Ex: YEKO-001',
+        matriculeLabel: 'Matricule de l\'élève (facultatif)',
+        reEnrollmentBadge: 'Ré-inscription',
+        matriculePlaceholder: 'Ex: 2024-STUD-001 (réinscription)',
+        matriculeHint: 'Laissez ce champ vide pour une nouvelle inscription.',
+        continue: 'Continuer',
+      },
+      errors: {
+        searchFailed: 'Une erreur est survenue lors de la recherche',
+      },
+      poweredBy: 'Propulsé par Yeko',
+    },
+  },
   accounting: {
     accounts: {
       deleteAccount: 'Supprimer le compte',

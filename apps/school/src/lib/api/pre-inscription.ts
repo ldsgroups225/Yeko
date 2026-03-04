@@ -52,9 +52,13 @@ export const findSchoolAndStudentByCodeAndMatricule = publicServerFn
     let student = null
     if (matricule) {
       const studentResult = await getStudentByMatricule(school.id, matricule)
-      if (R.isSuccess(studentResult)) {
-        student = studentResult.value
+      if (R.isFailure(studentResult)) {
+        return {
+          success: false as const,
+          error: 'Impossible de vérifier le matricule pour le moment',
+        }
       }
+      student = studentResult.value
     }
     return {
       success: true as const,
