@@ -1,37 +1,37 @@
-import { R } from "@praha/byethrow";
-import { databaseLogger, tapLogErr } from "@repo/logger";
-import { and, desc, eq } from "drizzle-orm";
-import { getDb } from "../database/setup";
-import { subjects } from "../drizzle/core-schema";
-import { studentGrades, terms } from "../drizzle/school-schema";
-import { DatabaseError } from "../errors";
+import { R } from '@praha/byethrow'
+import { databaseLogger, tapLogErr } from '@repo/logger'
+import { and, desc, eq } from 'drizzle-orm'
+import { getDb } from '../database/setup'
+import { subjects, termTemplates } from '../drizzle/core-schema'
+import { studentGrades, students, terms } from '../drizzle/school-schema'
+import { DatabaseError } from '../errors'
 
 export interface SubjectPerformance {
-  subjectId: string;
-  subjectName: string;
+  subjectId: string
+  subjectName: string
   grades: Array<{
-    id: string;
-    value: string;
-    type: string;
-    weight: number;
-    description: string | null;
-    gradeDate: string;
-  }>;
-  average: number | null;
+    id: string
+    value: string
+    type: string
+    weight: number
+    description: string | null
+    gradeDate: string
+  }>
+  average: number | null
 }
 
 export interface StudentPerformanceData {
-  termId: string | null;
-  termName: string | null;
-  subjects: SubjectPerformance[];
-  overallAverage: number | null;
+  termId: string | null
+  termName: string | null
+  subjects: SubjectPerformance[]
+  overallAverage: number | null
 }
 
 export async function getStudentPerformanceStats(
   studentId: string,
   schoolId: string,
 ): R.ResultAsync<StudentPerformanceData, DatabaseError> {
-  const db = getDb();
+  const db = getDb()
   return R.pipe(
     R.try({
       try: async () => {
@@ -47,18 +47,21 @@ export async function getStudentPerformanceStats(
             subjectId: studentGrades.subjectId,
             subjectName: subjects.name,
             termId: studentGrades.termId,
-            termName: terms.id,
+            termName: termTemplates.name,
           })
           .from(studentGrades)
+          .innerJoin(students, eq(studentGrades.studentId, students.id))
           .innerJoin(subjects, eq(studentGrades.subjectId, subjects.id))
           .innerJoin(terms, eq(studentGrades.termId, terms.id))
+          .innerJoin(termTemplates, eq(terms.termTemplateId, termTemplates.id))
           .where(
             and(
               eq(studentGrades.studentId, studentId),
-              eq(studentGrades.status, "validated"),
+              eq(students.schoolId, schoolId),
+              eq(studentGrades.status, 'validated'),
             ),
           )
-          .orderBy(desc(studentGrades.gradeDate));
+          .orderBy(desc(studentGrades.gradeDate))
 
         if (gradesResult.length === 0) {
           return {
@@ -66,18 +69,18 @@ export async function getStudentPerformanceStats(
             termName: null,
             subjects: [],
             overallAverage: null,
-          };
+          }
         }
 
         // Determine current term (using the most recent grade's term as fallback)
-        const currentTermId = gradesResult[0]?.termId || null;
-        const currentTermName = gradesResult[0]?.termName || null;
+        const currentTermId = gradesResult[0]?.termId || null
+        const currentTermName = gradesResult[0]?.termName || null
 
         // Group by subject
-        const subjectMap = new Map<string, SubjectPerformance>();
+        const subjectMap = new Map<string, SubjectPerformance>()
 
-        let totalWeightedSum = 0;
-        let totalWeights = 0;
+        let totalWeightedSum = 0
+        let totalWeights = 0
 
         for (const grade of gradesResult) {
           if (!subjectMap.has(grade.subjectId)) {
@@ -86,10 +89,10 @@ export async function getStudentPerformanceStats(
               subjectName: grade.subjectName,
               grades: [],
               average: null,
-            });
+            })
           }
 
-          const subject = subjectMap.get(grade.subjectId)!;
+          const subject = subjectMap.get(grade.subjectId)!
           subject.grades.push({
             id: grade.id,
             value: grade.value,
@@ -97,26 +100,26 @@ export async function getStudentPerformanceStats(
             weight: grade.weight,
             description: grade.description,
             gradeDate: grade.gradeDate,
-          });
+          })
         }
 
         // Calculate averages per subject
         for (const subject of subjectMap.values()) {
-          let subjectSum = 0;
-          let subjectWeight = 0;
+          let subjectSum = 0
+          let subjectWeight = 0
 
           for (const g of subject.grades) {
-            const val = Number.parseFloat(g.value);
+            const val = Number.parseFloat(g.value)
             if (!Number.isNaN(val)) {
-              subjectSum += val * g.weight;
-              subjectWeight += g.weight;
+              subjectSum += val * g.weight
+              subjectWeight += g.weight
             }
           }
 
           if (subjectWeight > 0) {
-            subject.average = subjectSum / subjectWeight;
-            totalWeightedSum += subjectSum;
-            totalWeights += subjectWeight;
+            subject.average = subjectSum / subjectWeight
+            totalWeightedSum += subjectSum
+            totalWeights += subjectWeight
           }
         }
 
@@ -126,15 +129,15 @@ export async function getStudentPerformanceStats(
           subjects: Array.from(subjectMap.values()),
           overallAverage:
             totalWeights > 0 ? totalWeightedSum / totalWeights : null,
-        };
+        }
       },
-      catch: (err) =>
+      catch: err =>
         DatabaseError.from(
           err,
-          "INTERNAL_ERROR",
-          "Failed to fetch student performance stats",
+          'INTERNAL_ERROR',
+          'Failed to fetch student performance stats',
         ),
     }),
     R.mapError(tapLogErr(databaseLogger, { studentId, schoolId })),
-  );
+  )
 }

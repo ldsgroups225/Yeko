@@ -75,12 +75,13 @@ export const getStudents = authServerFn
 
 export const getStudentsKeyset = authServerFn
   .inputValidator(studentKeysetFiltersSchema)
-  .handler(async ({ data, context }): Promise<{ success: true, data: studentQueries.StudentKeysetResult } | { success: false, error: string }> => {
+  .handler(async ({ data, context }): Promise<{ success: true, data: { data: StudentWithDetails[], total: number, page: number, totalPages: number } } | { success: false, error: string }> => {
     if (!context?.school)
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     await requirePermission('students', 'view')
-    const _result1 = await studentQueries.getStudentsKeyset({ ...data, schoolId: context.school.schoolId })
+    const { cursor: _cursor, ...filters } = data
+    const _result1 = await getStudentsQuery({ ...filters, schoolId: context.school.schoolId })
     if (R.isFailure(_result1))
       return { success: false as const, error: _result1.error.message }
     return { success: true as const, data: _result1.value }
