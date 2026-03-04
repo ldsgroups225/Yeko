@@ -3358,6 +3358,10 @@ type RootTranslation = {
 		 */
 		selectGrade: string
 		/**
+		 * V​e​u​i​l​l​e​z​ ​d​'​a​b​o​r​d​ ​s​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​ ​n​i​v​e​a​u
+		 */
+		selectGradeFirst: string
+		/**
 		 * S​é​r​i​e
 		 */
 		series: string
@@ -3365,6 +3369,10 @@ type RootTranslation = {
 		 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​e​ ​s​é​r​i​e
 		 */
 		selectSeries: string
+		/**
+		 * A​u​c​u​n​e​ ​s​é​r​i​e​ ​d​i​s​p​o​n​i​b​l​e​ ​p​o​u​r​ ​c​e​ ​n​i​v​e​a​u
+		 */
+		noSeriesForGrade: string
 		/**
 		 * S​e​c​t​i​o​n
 		 */
@@ -11836,6 +11844,10 @@ export type TranslationFunctions = {
 		 */
 		selectGrade: () => LocalizedString
 		/**
+		 * Veuillez d'abord sélectionner un niveau
+		 */
+		selectGradeFirst: () => LocalizedString
+		/**
 		 * Série
 		 */
 		series: () => LocalizedString
@@ -11843,6 +11855,10 @@ export type TranslationFunctions = {
 		 * Sélectionner une série
 		 */
 		selectSeries: () => LocalizedString
+		/**
+		 * Aucune série disponible pour ce niveau
+		 */
+		noSeriesForGrade: () => LocalizedString
 		/**
 		 * Section
 		 */

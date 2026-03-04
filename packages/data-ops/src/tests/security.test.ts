@@ -20,11 +20,13 @@ import {
   deleteGrade,
 } from '../queries/catalogs'
 import {
+  getSchools,
+} from '../queries/schools-read'
+import {
   createSchool,
   deleteSchool,
-  getSchools,
   updateSchool,
-} from '../queries/schools'
+} from '../queries/schools-write'
 
 // ============================================================================
 // 6.1 AUTHORIZATION & ACCESS CONTROL

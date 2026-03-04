@@ -30,11 +30,13 @@ import {
   getProgramTemplates,
 } from '@repo/data-ops/queries/programs'
 import {
-  createSchool,
   getSchools,
   getSchoolsByStatus,
   searchSchools,
-} from '@repo/data-ops/queries/schools'
+} from '@repo/data-ops/queries/schools-read'
+import {
+  createSchool,
+} from '@repo/data-ops/queries/schools-write'
 import { and, eq } from 'drizzle-orm'
 import { nanoid } from 'nanoid'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'

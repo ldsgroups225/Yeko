@@ -1,5 +1,5 @@
 import type { StudentStatus } from '@repo/data-ops/drizzle/school-schema'
-import type { StudentWithDetails } from '@repo/data-ops/queries/students'
+import type { StudentWithDetails } from '@repo/data-ops/queries/students-types'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { DeleteConfirmationDialog } from '@workspace/ui/components/delete-confirmation-dialog'
 import { toast } from 'sonner'

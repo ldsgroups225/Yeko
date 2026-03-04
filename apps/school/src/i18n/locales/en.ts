@@ -2002,6 +2002,32 @@ export const en = {
     schoolEmail: 'contact@school.ci',
     classSection: 'A, B, C...',
   },
+  preInscription: {
+    identification: {
+      hero: {
+        titlePrefix: 'Welcome to',
+        descriptionPrefix: 'Start by identifying your school for your',
+        descriptionHighlight: 'pre-registration',
+      },
+      card: {
+        title: 'Identification',
+        description: 'Enter the school code and, if available, the student ID.',
+      },
+      form: {
+        schoolCodeLabel: 'School code',
+        schoolCodePlaceholder: 'E.g. YEKO-001',
+        matriculeLabel: 'Student ID (optional)',
+        reEnrollmentBadge: 'Re-enrollment',
+        matriculePlaceholder: 'E.g. 2024-STUD-001 (re-enrollment)',
+        matriculeHint: 'Leave this field empty for a new registration.',
+        continue: 'Continue',
+      },
+      errors: {
+        searchFailed: 'An error occurred while searching',
+      },
+      poweredBy: 'Powered by Yeko',
+    },
+  },
   accounting: {
     accounts: {
       deleteAccount: 'Delete Account',

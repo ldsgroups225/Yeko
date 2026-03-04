@@ -9,7 +9,7 @@ import {
   getClassrooms,
   updateClassroom,
 } from '../queries/classrooms'
-import { createSchool, deleteSchool } from '../queries/schools'
+import { createSchool, deleteSchool } from '../queries/schools-write'
 
 describe('classrooms queries', () => {
   let testSchoolId: string

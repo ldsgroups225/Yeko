@@ -63,6 +63,7 @@ export type CopyCoefficientsInput = z.infer<typeof copyCoefficientsSchema>
  */
 export const coefficientMatrixFiltersSchema = z.object({
   schoolYearTemplateId: z.string(),
+  gradeId: z.string().nullable().optional(),
   seriesId: z.string().nullable().optional(),
 })
 

@@ -1,5 +1,6 @@
+/* eslint-disable max-lines */
 import { relations } from 'drizzle-orm'
-import { boolean, decimal, index, integer, jsonb, pgTable, smallint, text, timestamp } from 'drizzle-orm/pg-core'
+import { boolean, decimal, index, integer, jsonb, pgTable, smallint, text, timestamp, unique } from 'drizzle-orm/pg-core'
 
 // Import auth_user for foreign key reference
 import { auth_user } from './auth-schema'
@@ -72,13 +73,6 @@ export const grades = pgTable('grades', {
     .notNull(),
 })
 
-export const gradesRelations = relations(grades, ({ one }) => ({
-  track: one(tracks, {
-    fields: [grades.trackId],
-    references: [tracks.id],
-  }),
-}))
-
 export const series = pgTable('series', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
@@ -93,10 +87,49 @@ export const series = pgTable('series', {
     .notNull(),
 })
 
-export const seriesRelations = relations(series, ({ one }) => ({
+// --- Grade-Series Join Table (which series are available for which grade) ---
+
+export const gradeSeries = pgTable('grade_series', {
+  id: text('id').primaryKey(),
+  gradeId: text('grade_id')
+    .notNull()
+    .references(() => grades.id, { onDelete: 'cascade' }),
+  seriesId: text('series_id')
+    .notNull()
+    .references(() => series.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => ({
+  gradeIdx: index('idx_grade_series_grade').on(table.gradeId),
+  seriesIdx: index('idx_grade_series_series').on(table.seriesId),
+  uniqueGradeSeries: unique('unique_grade_series').on(table.gradeId, table.seriesId),
+}))
+
+// --- Relations for grades, series, gradeSeries ---
+
+export const gradesRelations = relations(grades, ({ one, many }) => ({
+  track: one(tracks, {
+    fields: [grades.trackId],
+    references: [tracks.id],
+  }),
+  gradeSeries: many(gradeSeries),
+}))
+
+export const seriesRelations = relations(series, ({ one, many }) => ({
   track: one(tracks, {
     fields: [series.trackId],
     references: [tracks.id],
+  }),
+  gradeSeries: many(gradeSeries),
+}))
+
+export const gradeSeriesRelations = relations(gradeSeries, ({ one }) => ({
+  grade: one(grades, {
+    fields: [gradeSeries.gradeId],
+    references: [grades.id],
+  }),
+  series: one(series, {
+    fields: [gradeSeries.seriesId],
+    references: [series.id],
   }),
 }))
 
@@ -386,6 +419,7 @@ export type ProgramTemplateInsert = typeof programTemplates.$inferInsert
 export type ProgramTemplateChapterInsert = typeof programTemplateChapters.$inferInsert
 export type ProgramTemplateVersionInsert = typeof programTemplateVersions.$inferInsert
 export type CoefficientTemplateInsert = typeof coefficientTemplates.$inferInsert
+export type GradeSeriesInsert = typeof gradeSeries.$inferInsert
 export type FeeTypeTemplateInsert = typeof feeTypeTemplates.$inferInsert
 export type ActivityLogInsert = typeof activityLogs.$inferInsert
 export type ApiMetricInsert = typeof apiMetrics.$inferInsert
@@ -417,6 +451,7 @@ export type ProgramTemplate = typeof programTemplates.$inferSelect
 export type ProgramTemplateChapter = typeof programTemplateChapters.$inferSelect
 export type ProgramTemplateVersion = typeof programTemplateVersions.$inferSelect
 export type CoefficientTemplate = typeof coefficientTemplates.$inferSelect
+export type GradeSeries = typeof gradeSeries.$inferSelect
 export type FeeTypeTemplate = typeof feeTypeTemplates.$inferSelect
 export type ActivityLog = typeof activityLogs.$inferSelect
 export type ApiMetric = typeof apiMetrics.$inferSelect

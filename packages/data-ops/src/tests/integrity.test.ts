@@ -26,10 +26,7 @@ import {
   createProgramTemplate,
   deleteProgramTemplate,
 } from '../queries/programs'
-import {
-  createSchool,
-  deleteSchool,
-} from '../queries/schools'
+import { createSchool, deleteSchool } from '../queries/schools-write'
 import './setup'
 
 // ============================================================================

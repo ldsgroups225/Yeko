@@ -1,5 +1,5 @@
 import { Result as R } from '@praha/byethrow'
-import { getSeries as getSeriesQuery } from '@repo/data-ops/queries/catalogs'
+import { getSeriesByGradeId as getSeriesByGradeIdQuery, getSeries as getSeriesQuery } from '@repo/data-ops/queries/catalogs'
 import { z } from 'zod'
 import { authServerFn } from '../lib/server-fn'
 
@@ -10,6 +10,18 @@ export const getSeries = authServerFn
       return { success: false as const, error: 'Établissement non sélectionné' }
 
     const result = await getSeriesQuery()
+    if (R.isFailure(result))
+      return { success: false as const, error: result.error.message }
+    return { success: true as const, data: result.value }
+  })
+
+export const getSeriesByGrade = authServerFn
+  .inputValidator(z.object({ gradeId: z.string().min(1) }))
+  .handler(async ({ context, data }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    const result = await getSeriesByGradeIdQuery(data.gradeId)
     if (R.isFailure(result))
       return { success: false as const, error: result.error.message }
     return { success: true as const, data: result.value }

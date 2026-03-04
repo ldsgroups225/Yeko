@@ -1,10 +1,12 @@
 import { Result as R } from '@praha/byethrow'
 import {
-  getSchoolProfile as getSchoolProfileQuery,
+  getSchoolById as getSchoolProfileQuery,
+} from '@repo/data-ops/queries/schools-read'
+import {
   updateSchoolLogo as updateSchoolLogoQuery,
   updateSchoolProfile as updateSchoolProfileQuery,
   updateSchoolSettings as updateSchoolSettingsQuery,
-} from '@repo/data-ops/queries/schools'
+} from '@repo/data-ops/queries/schools-write'
 import { z } from 'zod'
 import {
   defaultSchoolSettings,

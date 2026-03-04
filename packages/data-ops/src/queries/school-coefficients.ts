@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { and, count, eq, isNull } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { coefficientTemplates, grades, series, subjects } from '../drizzle/core-schema'
@@ -335,14 +336,19 @@ export async function resetAllSchoolCoefficients(schoolId: string) {
 export async function getCoefficientMatrix(options: {
   schoolId: string
   schoolYearTemplateId: string
+  gradeId?: string | null
   seriesId?: string | null
 }) {
   const db = getDb()
-  const { schoolId, schoolYearTemplateId, seriesId } = options
+  const { schoolId, schoolYearTemplateId, gradeId, seriesId } = options
 
   const conditions = [
     eq(coefficientTemplates.schoolYearTemplateId, schoolYearTemplateId),
   ]
+
+  if (gradeId !== undefined && gradeId !== null) {
+    conditions.push(eq(coefficientTemplates.gradeId, gradeId))
+  }
 
   if (seriesId !== undefined) {
     if (seriesId === null) {

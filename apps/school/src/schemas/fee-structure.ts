@@ -3,7 +3,7 @@ import { z } from 'zod'
 // Amount validation (positive decimal)
 export const amountSchema = z.string()
   .regex(/^\d+(\.\d{1,2})?$/, 'Montant invalide')
-  .refine(val => Number.parseFloat(val) > 0, 'Le montant doit être positif')
+  .refine(val => Number.parseFloat(val) >= 0, 'Le montant ne peut pas être négatif')
 
 // Create fee structure schema
 export const createFeeStructureSchema = z.object({

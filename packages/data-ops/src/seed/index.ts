@@ -8,6 +8,7 @@ import * as schoolSchema from '../drizzle/school-schema.js'
 import { educationLevelsData } from './educationLevelsData.js'
 import { feeTypeTemplatesData } from './feeTypeTemplatesData.js'
 import { gradesData } from './gradesData.js'
+import { gradeSeriesData } from './gradeSeriesData.js'
 import { defaultRoles } from './rolesData.js'
 import { seriesData } from './seriesData.js'
 import { subjectsData } from './subjectsData.js'
@@ -50,6 +51,7 @@ async function clearCoreTables() {
   await db.delete(coreSchema.termTemplates)
   await db.delete(coreSchema.schoolYearTemplates)
   await db.delete(coreSchema.subjects)
+  await db.delete(coreSchema.gradeSeries)
   await db.delete(coreSchema.series)
   await db.delete(coreSchema.grades)
   await db.delete(coreSchema.tracks)
@@ -135,18 +137,19 @@ async function main() {
 
   if (isFresh) {
     await db.insert(coreSchema.feeTypeTemplates).values(feeTypeTemplatesData)
-  } else {
+  }
+  else {
     await db.insert(coreSchema.feeTypeTemplates).values(feeTypeTemplatesData).onConflictDoNothing({ target: coreSchema.feeTypeTemplates.code })
   }
-
 
   console.log('Seeding Tracks...')
 
   const tracksWithIds = tracksData.map(track => ({ id: crypto.randomUUID(), ...track }))
   if (isFresh) {
-      await db.insert(coreSchema.tracks).values(tracksWithIds)
-  } else {
-      await db.insert(coreSchema.tracks).values(tracksWithIds).onConflictDoNothing({ target: coreSchema.tracks.code })
+    await db.insert(coreSchema.tracks).values(tracksWithIds)
+  }
+  else {
+    await db.insert(coreSchema.tracks).values(tracksWithIds).onConflictDoNothing({ target: coreSchema.tracks.code })
   }
 
   const generalTrack = await db.query.tracks.findFirst({ where: eq(coreSchema.tracks.code, 'GEN') })
@@ -180,13 +183,13 @@ async function main() {
 
     // Optimization: Read all existing grades for this track, filter out duplicates in memory, then bulk insert new ones.
     const existingGrades = await db.query.grades.findMany({
-        where: eq(coreSchema.grades.trackId, generalTrack.id)
+      where: eq(coreSchema.grades.trackId, generalTrack.id),
     })
     const existingCodes = new Set(existingGrades.map(g => g.code))
     const newGrades = grades.filter(g => !existingCodes.has(g.code))
 
     if (newGrades.length > 0) {
-        await db.insert(coreSchema.grades).values(newGrades)
+      await db.insert(coreSchema.grades).values(newGrades)
     }
   }
 
@@ -201,12 +204,47 @@ async function main() {
     await db.insert(coreSchema.series).values(seriesList).onConflictDoNothing({ target: coreSchema.series.code })
   }
 
+  // Seed Grade-Series join table (which series are available for which grade)
+  console.log('Seeding Grade-Series mappings...')
+
+  const allGrades = await db.query.grades.findMany({
+    where: eq(coreSchema.grades.trackId, generalTrack.id),
+  })
+  const allSeries = await db.query.series.findMany({
+    where: eq(coreSchema.series.trackId, generalTrack.id),
+  })
+
+  const gsEntries = gradeSeriesData(allGrades, allSeries).map(entry => ({
+    id: crypto.randomUUID(),
+    ...entry,
+  }))
+
+  if (gsEntries.length > 0) {
+    if (isFresh) {
+      await db.insert(coreSchema.gradeSeries).values(gsEntries)
+    }
+    else {
+      // Read existing, filter duplicates, insert new ones
+      const existingGS = await db.query.gradeSeries.findMany()
+      const existingKeys = new Set(existingGS.map(gs => `${gs.gradeId}:${gs.seriesId}`))
+      const newEntries = gsEntries.filter(gs => !existingKeys.has(`${gs.gradeId}:${gs.seriesId}`))
+
+      if (newEntries.length > 0) {
+        await db.insert(coreSchema.gradeSeries).values(newEntries)
+      }
+    }
+    console.log(`  → ${gsEntries.length} grade-series mappings configured`)
+  }
+  else {
+    console.log('  → No grade-series mappings to seed')
+  }
+
   console.log('Seeding Subjects...')
 
   const subjects = subjectsData.map(s => ({
-      id: crypto.randomUUID(),
-      ...s,
-      category: s.category as SubjectCategory
+    id: crypto.randomUUID(),
+    ...s,
+    category: s.category as SubjectCategory,
   }))
 
   if (isFresh) {
@@ -220,7 +258,7 @@ async function main() {
     const newSubjects = subjects.filter(s => !existingNames.has(s.name))
 
     if (newSubjects.length > 0) {
-        await db.insert(coreSchema.subjects).values(newSubjects)
+      await db.insert(coreSchema.subjects).values(newSubjects)
     }
   }
 
@@ -256,26 +294,27 @@ async function main() {
   // Original code checks by name + schoolYearTemplateId
   // We can read all for this year template, filter, insert.
   if (yearTemplate) {
-      const terms = termsData.map(t => ({
-          id: crypto.randomUUID(),
-          ...t,
-          type: t.type as TermType,
-          schoolYearTemplateId: yearTemplate!.id,
-      }))
+    const terms = termsData.map(t => ({
+      id: crypto.randomUUID(),
+      ...t,
+      type: t.type as TermType,
+      schoolYearTemplateId: yearTemplate!.id,
+    }))
 
-      if (isFresh) {
-          await db.insert(coreSchema.termTemplates).values(terms)
-      } else {
-          const existingTerms = await db.query.termTemplates.findMany({
-              where: eq(coreSchema.termTemplates.schoolYearTemplateId, yearTemplate.id)
-          })
-          const existingTermNames = new Set(existingTerms.map(t => t.name))
-          const newTerms = terms.filter(t => !existingTermNames.has(t.name))
+    if (isFresh) {
+      await db.insert(coreSchema.termTemplates).values(terms)
+    }
+    else {
+      const existingTerms = await db.query.termTemplates.findMany({
+        where: eq(coreSchema.termTemplates.schoolYearTemplateId, yearTemplate.id),
+      })
+      const existingTermNames = new Set(existingTerms.map(t => t.name))
+      const newTerms = terms.filter(t => !existingTermNames.has(t.name))
 
-          if (newTerms.length > 0) {
-              await db.insert(coreSchema.termTemplates).values(newTerms)
-          }
+      if (newTerms.length > 0) {
+        await db.insert(coreSchema.termTemplates).values(newTerms)
       }
+    }
   }
 
   await client.end()
