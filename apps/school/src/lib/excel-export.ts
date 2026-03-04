@@ -88,3 +88,60 @@ export function downloadExcelFile(buffer: ArrayBuffer, filename: string) {
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
 }
+
+export interface PaymentExportData {
+  receiptNumber: string
+  studentName: string
+  studentMatricule: string | null
+  amount: number
+  method: string
+  status: string
+  date: string
+  createdAt: string
+  notes: string | null
+}
+
+export interface PaymentExportTranslations {
+  receiptNumber: string
+  studentName: string
+  studentMatricule: string
+  amount: string
+  method: string
+  status: string
+  date: string
+  createdAt: string
+  notes: string
+  sheetName: string
+}
+
+export async function exportPaymentsToExcel(
+  data: PaymentExportData[],
+  translations: PaymentExportTranslations,
+): Promise<ArrayBuffer> {
+  const { ExcelBuilder, ExcelSchemaBuilder } = await import('@chronicstone/typed-xlsx')
+
+  const schema = ExcelSchemaBuilder.create<PaymentExportData>()
+    .column('receiptNumber', { key: 'receiptNumber', label: translations.receiptNumber })
+    .column('studentName', { key: 'studentName', label: translations.studentName })
+    .column('studentMatricule', { key: 'studentMatricule', label: translations.studentMatricule })
+    .column('amount', { key: 'amount', label: translations.amount })
+    .column('method', { key: 'method', label: translations.method })
+    .column('status', { key: 'status', label: translations.status })
+    .column('date', { key: 'date', label: translations.date })
+    .column('createdAt', { key: 'createdAt', label: translations.createdAt })
+    .column('notes', { key: 'notes', label: translations.notes })
+    .build()
+
+  const file = ExcelBuilder.create()
+    .sheet(translations.sheetName)
+    .addTable({
+      data,
+      schema,
+    })
+    .build({ output: 'buffer' })
+
+  if (file instanceof Uint8Array) {
+    return file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength) as ArrayBuffer
+  }
+  return file
+}
