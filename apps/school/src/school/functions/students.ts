@@ -1,5 +1,6 @@
 import type { ExportStudentRow, ImportStudentResult, StudentFullProfile, StudentStatistics, StudentWithDetails } from '@repo/data-ops/queries/students-types'
 import { Result as R } from '@praha/byethrow'
+import { getStudentConductStats, getStudentPerformanceStats } from '@repo/data-ops'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import { getActiveSchoolYear } from '@repo/data-ops/queries/school-admin/school-years'
 import { bulkImportStudents as bulkImportStudentsQuery, exportStudents as exportStudentsQuery } from '@repo/data-ops/queries/students-bulk'
@@ -279,4 +280,30 @@ export const generateMatricule = authServerFn
     if (R.isFailure(_result10))
       return { success: false as const, error: _result10.error.message }
     return { success: true as const, data: _result10.value }
+  })
+
+export const getStudentConduct = authServerFn
+  .inputValidator(z.string())
+  .handler(async ({ data: studentId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    await requirePermission('students', 'view')
+    const _result = await getStudentConductStats(studentId, context.school.schoolId)
+    if (R.isFailure(_result))
+      return { success: false as const, error: _result.error.message }
+    return { success: true as const, data: _result.value }
+  })
+
+export const getStudentPerformance = authServerFn
+  .inputValidator(z.string())
+  .handler(async ({ data: studentId, context }) => {
+    if (!context?.school)
+      return { success: false as const, error: 'Établissement non sélectionné' }
+
+    await requirePermission('students', 'view')
+    const _result = await getStudentPerformanceStats(studentId, context.school.schoolId)
+    if (R.isFailure(_result))
+      return { success: false as const, error: _result.error.message }
+    return { success: true as const, data: _result.value }
   })

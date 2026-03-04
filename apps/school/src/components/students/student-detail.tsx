@@ -9,11 +9,13 @@ import { motion } from 'motion/react'
 import { useState } from 'react'
 import { useTranslations } from '@/i18n'
 import { studentsOptions } from '@/lib/queries/students'
+import { StudentDetailConduct } from './student-detail/student-detail-conduct'
 import { StudentDetailDialogs } from './student-detail/student-detail-dialogs'
 import { StudentDetailHeader } from './student-detail/student-detail-header'
 import { StudentDetailHistory } from './student-detail/student-detail-history'
 import { StudentDetailInfo } from './student-detail/student-detail-info'
 import { StudentDetailParents } from './student-detail/student-detail-parents'
+import { StudentDetailPerformance } from './student-detail/student-detail-performance'
 import { StudentDetailSkeleton } from './student-detail/student-detail-skeleton'
 
 interface StudentDetailProps {
@@ -100,6 +102,26 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           >
             {t.students.enrollmentHistory()}
           </TabsTrigger>
+          <TabsTrigger
+            value="conduct"
+            className="
+              data-[state=active]:text-primary
+              rounded-full px-6 py-2.5 transition-all
+              data-[state=active]:bg-white data-[state=active]:shadow-sm
+            "
+          >
+            {t.students.conductAndPunctuality()}
+          </TabsTrigger>
+          <TabsTrigger
+            value="performance"
+            className="
+              data-[state=active]:text-primary
+              rounded-full px-6 py-2.5 transition-all
+              data-[state=active]:bg-white data-[state=active]:shadow-sm
+            "
+          >
+            {t.students.performance()}
+          </TabsTrigger>
         </TabsList>
 
         {/* Info Tab */}
@@ -125,6 +147,16 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             enrollmentHistory={enrollmentHistory}
             onEnroll={() => setEnrollmentDialogOpen(true)}
           />
+        </TabsContent>
+
+        {/* Conduct Tab */}
+        <TabsContent value="conduct" className="space-y-4">
+          <StudentDetailConduct studentId={studentId} />
+        </TabsContent>
+
+        {/* Performance Tab */}
+        <TabsContent value="performance" className="space-y-4">
+          <StudentDetailPerformance studentId={studentId} />
         </TabsContent>
       </Tabs>
 

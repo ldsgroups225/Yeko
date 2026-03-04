@@ -5,6 +5,8 @@ import {
   exportStudents,
   generateMatricule,
   getStudentById,
+  getStudentConduct,
+  getStudentPerformance,
   getStudents,
   getStudentsKeyset,
   getStudentStatistics,
@@ -19,6 +21,8 @@ export const studentsKeys = {
   list: (filters: StudentFilters) => [...studentsKeys.lists(), filters] as const,
   details: () => [...studentsKeys.all, 'detail'] as const,
   detail: (id: string) => [...studentsKeys.details(), id] as const,
+  conduct: (id: string) => [...studentsKeys.detail(id), 'conduct'] as const,
+  performance: (id: string) => [...studentsKeys.detail(id), 'performance'] as const,
   statistics: () => [...studentsKeys.all, 'statistics'] as const,
   export: (filters: StudentFilters) => [...studentsKeys.all, 'export', filters] as const,
   matricule: () => [...studentsKeys.all, 'matricule'] as const,
@@ -87,6 +91,36 @@ export const studentsOptions = {
         throw new Error('error' in result ? result.error : 'Failed to fetch student')
       },
 
+      staleTime: 5 * 60 * 1000,
+      gcTime: 30 * 60 * 1000,
+      enabled: !!id,
+    }),
+
+  conduct: (id: string) =>
+    queryOptions({
+      queryKey: studentsKeys.conduct(id),
+      queryFn: async () => {
+        const result = await getStudentConduct({ data: id })
+        if (result.success === true) {
+          return result.data
+        }
+        throw new Error('error' in result ? result.error : 'Failed to fetch student conduct')
+      },
+      staleTime: 5 * 60 * 1000,
+      gcTime: 30 * 60 * 1000,
+      enabled: !!id,
+    }),
+
+  performance: (id: string) =>
+    queryOptions({
+      queryKey: studentsKeys.performance(id),
+      queryFn: async () => {
+        const result = await getStudentPerformance({ data: id })
+        if (result.success === true) {
+          return result.data
+        }
+        throw new Error('error' in result ? result.error : 'Failed to fetch student performance')
+      },
       staleTime: 5 * 60 * 1000,
       gcTime: 30 * 60 * 1000,
       enabled: !!id,

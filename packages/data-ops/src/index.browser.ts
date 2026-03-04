@@ -281,3 +281,5 @@ export const notExists = undefined as never
 export const notInArray = undefined as never
 export const or = undefined as never
 export const sql = undefined as never
+export const getStudentConductStats = undefined as never
+export const getStudentPerformanceStats = undefined as never

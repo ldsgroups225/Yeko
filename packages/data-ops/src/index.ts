@@ -144,3 +144,5 @@ export {
   or,
   sql,
 } from 'drizzle-orm'
+export * from './queries/student-conduct-read'
+export * from './queries/student-performance-read'
