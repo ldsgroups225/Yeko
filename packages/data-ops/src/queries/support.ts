@@ -14,6 +14,7 @@ import {
   desc,
   eq,
   gte,
+  inArray,
   isNotNull,
   lte,
   sql,
@@ -140,22 +141,33 @@ export async function getTickets(
     .offset(offset)
 
   // Get comments count for each ticket
-  const ticketsWithComments = await Promise.all(
-    tickets.map(async (t) => {
-      const [commentsCountResult] = await db
-        .select({ count: count() })
-        .from(ticketComments)
-        .where(eq(ticketComments.ticketId, t.ticket.id))
+  const ticketIds = tickets.map(t => t.ticket.id)
+  let commentsCounts: Record<string, number> = {}
 
-      return {
-        ...t.ticket,
-        schoolName: t.schoolName,
-        userName: t.userName,
-        assigneeName: t.assigneeName,
-        commentsCount: commentsCountResult?.count || 0,
-      }
-    }),
-  )
+  if (ticketIds.length > 0) {
+    const counts = await db
+      .select({
+        ticketId: ticketComments.ticketId,
+        count: count(),
+      })
+      .from(ticketComments)
+      .where(inArray(ticketComments.ticketId, ticketIds))
+      .groupBy(ticketComments.ticketId)
+
+    commentsCounts = Object.fromEntries(
+      counts.map(c => [c.ticketId, c.count]),
+    )
+  }
+
+  const ticketsWithComments = tickets.map((t) => {
+    return {
+      ...t.ticket,
+      schoolName: t.schoolName,
+      userName: t.userName,
+      assigneeName: t.assigneeName,
+      commentsCount: commentsCounts[t.ticket.id] || 0,
+    }
+  })
 
   return {
     tickets: ticketsWithComments,
