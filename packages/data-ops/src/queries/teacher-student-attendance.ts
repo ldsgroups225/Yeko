@@ -653,7 +653,7 @@ export function getStudentAttendanceTrend(params: {
               eq(studentAttendance.schoolId, params.schoolId),
               eq(studentAttendance.studentId, params.studentId),
               // Simplified date range for trend
-              sql`${studentAttendance.date} >= CURRENT_DATE - INTERVAL '${sql.raw(months.toString())} month'`,
+              sql`${studentAttendance.date} >= CURRENT_DATE - INTERVAL '1 month' * ${months}`,
             ),
           )
           .groupBy(studentAttendance.status)
