@@ -195,6 +195,8 @@ function CarouselPrevious({
         className,
       )}
       disabled={!canScrollPrev}
+      title="Previous slide"
+      aria-label="Previous slide"
       onClick={scrollPrev}
       {...props}
     >
@@ -225,6 +227,8 @@ function CarouselNext({
         className,
       )}
       disabled={!canScrollNext}
+      title="Next slide"
+      aria-label="Next slide"
       onClick={scrollNext}
       {...props}
     >
