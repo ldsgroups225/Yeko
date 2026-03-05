@@ -89,7 +89,7 @@ export async function getMonthlyRevenue(schoolId: string, months: number = 6): R
             and(
               eq(payments.schoolId, schoolId),
               eq(payments.status, 'completed'),
-              sql`${payments.paymentDate} >= CURRENT_DATE - INTERVAL '${sql.raw(String(months))} months'`,
+              sql`${payments.paymentDate} >= CURRENT_DATE - INTERVAL '1 month' * ${months}`,
             ),
           )
           .groupBy(sql`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`)

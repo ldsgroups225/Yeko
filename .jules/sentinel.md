@@ -1,0 +1,4 @@
+## 2026-03-05 - SQL Injection Vulnerability with sql.raw in Interval Definitions
+**Vulnerability:** Found `sql.raw()` being used to concatenate dynamically generated date intervals (e.g. `` sql`${payments.paymentDate} >= CURRENT_DATE - INTERVAL '${sql.raw(String(months))} months'` `` and `` sql`${studentAttendance.date} >= date('now', '-${sql.raw(months.toString())} month')` ``) which presents an SQL Injection vulnerability.
+**Learning:** Developers sometimes use `sql.raw()` when working with intervals because Drizzle parameters combined with the INTERVAL string (e.g., `INTERVAL '${months} months'`) can sometimes cause issues or errors with bindings depending on the driver.
+**Prevention:** Avoid `sql.raw` entirely for interval logic by using parameterized interval multiplication pattern instead: `` sql`CURRENT_DATE - INTERVAL '1 month' * ${months}` ``. This works securely with Drizzle, Postgres, and PGlite without any raw SQL injection vector.
