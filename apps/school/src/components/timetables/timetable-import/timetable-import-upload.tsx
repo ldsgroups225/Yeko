@@ -39,7 +39,7 @@ export function TimetableImportUpload() {
                     {t.timetables.preview.totalLines()}
                   </p>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => setFile(null)}>
+                <Button variant="ghost" size="icon" onClick={() => setFile(null)} aria-label={t.common.close()}>
                   <IconX className="h-4 w-4" />
                 </Button>
               </div>
