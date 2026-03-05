@@ -31,7 +31,7 @@ import {
 import { DatabaseError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
 
-interface StudentGradeWithStudent {
+export interface StudentGradeWithStudent {
   id: string
   value: string
   type: GradeType
