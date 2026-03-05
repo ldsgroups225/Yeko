@@ -92,6 +92,11 @@ export const getGradesByClassSchema = z.object({
   subjectId: z.string().min(1),
   termId: z.string().min(1),
   teacherId: z.string().min(1).optional(),
+  type: z.enum(gradeTypes).optional(),
+  gradeDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  description: z.string().max(200).optional(),
+  status: z.enum(gradeStatuses).optional(),
+  submittedAt: z.string().optional(),
 })
 
 export const getPendingValidationsSchema = z.object({

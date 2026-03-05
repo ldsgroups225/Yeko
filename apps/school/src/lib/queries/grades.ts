@@ -19,8 +19,13 @@ import { schoolMutationKeys } from './keys'
 export const gradesKeys = {
   all: ['grades'] as const,
   lists: () => [...gradesKeys.all, 'list'] as const,
-  byClass: (classId: string, subjectId: string, termId: string) =>
-    [...gradesKeys.lists(), 'class', classId, subjectId, termId] as const,
+  byClass: (
+    classId: string,
+    subjectId: string,
+    termId: string,
+    filters?: Pick<GradesByClassParams, 'teacherId' | 'type' | 'gradeDate' | 'description' | 'status' | 'submittedAt'>,
+  ) =>
+    [...gradesKeys.lists(), 'class', classId, subjectId, termId, filters] as const,
   details: () => [...gradesKeys.all, 'detail'] as const,
   detail: (id: string) => [...gradesKeys.details(), id] as const,
   history: (gradeId: string) => [...gradesKeys.all, 'history', gradeId] as const,
@@ -35,6 +40,11 @@ export interface GradesByClassParams {
   subjectId: string
   termId: string
   teacherId?: string
+  type?: 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project'
+  gradeDate?: string
+  description?: string
+  status?: 'draft' | 'submitted' | 'validated' | 'rejected'
+  submittedAt?: string
 }
 
 export interface PendingFilters {
@@ -52,7 +62,14 @@ export interface StatisticsParams {
 export const gradesOptions = {
   byClass: (params: GradesByClassParams) =>
     queryOptions({
-      queryKey: gradesKeys.byClass(params.classId, params.subjectId, params.termId),
+      queryKey: gradesKeys.byClass(params.classId, params.subjectId, params.termId, {
+        teacherId: params.teacherId,
+        type: params.type,
+        gradeDate: params.gradeDate,
+        description: params.description,
+        status: params.status,
+        submittedAt: params.submittedAt,
+      }),
       queryFn: async () => {
         const res = await getGradesByClass({ data: params })
         if (!res.success)

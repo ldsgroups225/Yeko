@@ -7,6 +7,7 @@ import {
   clientDatabaseManager,
 } from '../lib/db/client-db'
 import { localNotesService } from '../lib/db/local-notes'
+import { syncService } from '../lib/services/sync-service'
 
 // ============================================================================
 // Database Status Hook
@@ -62,6 +63,7 @@ export function useDatabaseStats(): {
 
 export interface SyncStatus {
   pendingItems: number
+  failedItems: number
   isOnline: boolean
   isSyncing: boolean
   lastSyncTime: Date | null
@@ -75,13 +77,24 @@ export function useSyncStatus(): SyncStatus {
   const { data: pendingItems } = useQuery({
     queryKey: ['sync', 'pending-items'],
     queryFn: () => localNotesService.getPendingSyncCount(),
-    refetchInterval: 5000,
+    refetchInterval: 10_000,
+  })
+
+  const { data: failedItems } = useQuery({
+    queryKey: ['sync', 'failed-items'],
+    queryFn: () => localNotesService.getFailedSyncCount(),
+    refetchInterval: 10_000,
+  })
+
+  const { data: isSyncing = false } = useQuery({
+    queryKey: ['sync', 'is-syncing'],
+    queryFn: () => syncService.isSyncInProgress(),
+    refetchInterval: 3000,
   })
 
   const [isOnline, setIsOnline] = useState(
     typeof navigator !== 'undefined' ? navigator.onLine : true,
   )
-  const [isSyncing] = useState(false)
   const [lastSyncTime] = useState<Date | null>(null)
 
   // Monitor online status
@@ -100,10 +113,11 @@ export function useSyncStatus(): SyncStatus {
 
   return {
     pendingItems: pendingItems ?? 0,
+    failedItems: failedItems ?? 0,
     isOnline,
     isSyncing,
     lastSyncTime,
-    hasLocalChanges: (pendingItems ?? 0) > 0,
+    hasLocalChanges: (pendingItems ?? 0) > 0 || (failedItems ?? 0) > 0,
   }
 }
 

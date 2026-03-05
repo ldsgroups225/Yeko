@@ -8,6 +8,7 @@ import { Link } from '@tanstack/react-router'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
 import { useI18nContext } from '@/i18n/i18n-react'
+import { ClassDetailSyncBadge } from './ClassDetailSyncBadge'
 
 interface ClassDetailHeaderProps {
   schoolId: string
@@ -67,30 +68,33 @@ export function ClassDetailHeader({
             {LL.nav.back()}
           </span>
         </Link>
-        {isSessionActive && (
-          <div className="flex gap-2.5">
-            <Badge
-              variant="outline"
-              className="
-                h-8 animate-pulse border-emerald-500/20 bg-emerald-500/10 px-4
-                font-bold text-emerald-600 shadow-sm
-              "
-            >
-              <div className="mr-2 h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              {LL.session.gpsActive()}
-            </Badge>
-            <Badge
-              variant="outline"
-              className="
-                bg-primary/10 border-primary/20 text-primary h-8 px-4 font-bold
-                shadow-sm
-              "
-            >
-              <div className="bg-primary mr-2 h-1.5 w-1.5 rounded-full" />
-              {LL.session.active()}
-            </Badge>
-          </div>
-        )}
+        <div className="flex items-center gap-2.5">
+          <ClassDetailSyncBadge />
+          {isSessionActive && (
+            <>
+              <Badge
+                variant="outline"
+                className="
+                  h-8 animate-pulse border-emerald-500/20 bg-emerald-500/10 px-4
+                  font-bold text-emerald-600 shadow-sm
+                "
+              >
+                <div className="mr-2 h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                {LL.session.gpsActive()}
+              </Badge>
+              <Badge
+                variant="outline"
+                className="
+                  bg-primary/10 border-primary/20 text-primary h-8 px-4 font-bold
+                  shadow-sm
+                "
+              >
+                <div className="bg-primary mr-2 h-1.5 w-1.5 rounded-full" />
+                {LL.session.active()}
+              </Badge>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="

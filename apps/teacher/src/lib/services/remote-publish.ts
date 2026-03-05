@@ -14,6 +14,15 @@ export const remotePublishHandler: RemotePublishHandler = async (note: NoteWithD
   try {
     // If it's a grade evaluation (CLASS_TEST, WRITING_QUESTION, etc.)
     if (note.type !== 'behavior' && note.type !== 'general' && note.type !== 'other') {
+      const description = note.title.trim().slice(0, 200)
+      const noteCreatedAt = note.createdAt ? new Date(note.createdAt) : new Date()
+      const gradeDate = Number.isNaN(noteCreatedAt.getTime())
+        ? new Date().toISOString().slice(0, 10)
+        : noteCreatedAt.toISOString().slice(0, 10)
+      const maxPoints = note.totalPoints && note.totalPoints > 0
+        ? note.totalPoints
+        : 20
+
       // Map local note details to remote grades format
       const grades = note.details.map(detail => ({
         studentId: detail.studentId,
@@ -29,6 +38,10 @@ export const remotePublishHandler: RemotePublishHandler = async (note: NoteWithD
           classId: note.classId,
           subjectId: note.subjectId || '',
           grades,
+          weight: note.weight ?? 1,
+          maxPoints,
+          description,
+          gradeDate,
           status: note.isPublished ? 'submitted' : 'draft',
           // Map local type to remote gradeType
           gradeType: mapNoteTypeToGradeType(note.type),

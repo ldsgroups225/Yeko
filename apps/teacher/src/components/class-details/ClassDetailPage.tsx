@@ -100,6 +100,7 @@ export function ClassDetailPage({
   const gradeEntry = useClassDetailGradeEntry({
     classId,
     schoolId,
+    schoolYearId: context?.schoolYearId ?? undefined,
     teacherId: context?.teacherId ?? undefined,
     students,
     teacherSubjects,

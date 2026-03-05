@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { SQL } from 'drizzle-orm'
 import type { GradeStatus, GradeType, MessageCategory } from '../drizzle/school-schema'
 import { Result as R } from '@praha/byethrow'
@@ -1402,11 +1403,19 @@ export async function submitStudentGrades(params: {
   }>
   status: GradeStatus
   gradeType?: GradeType
+  weight?: number
+  maxPoints?: number
+  description?: string
+  gradeDate?: string
 }): R.ResultAsync<{ success: boolean, count: number }, DatabaseError> {
   const db = getDb()
 
   const gradeType: GradeType = params.gradeType ?? 'test'
   const today = new Date().toISOString().split('T')[0]!
+  const gradeDate = params.gradeDate ?? today
+  const gradeWeight = params.weight ?? 1
+  const maxPoints = params.maxPoints ?? 20
+  const submittedAt = params.status === 'submitted' ? new Date() : null
 
   if (params.grades.length === 0) {
     return R.succeed({ success: true, count: 0 })
@@ -1415,6 +1424,15 @@ export async function submitStudentGrades(params: {
   return R.pipe(
     R.try({
       try: async () => {
+        // Validate class belongs to the teacher's school (multi-tenant isolation)
+        const classExists = await db.query.classes.findFirst({
+          where: and(eq(classes.id, params.classId), eq(classes.schoolId, params.schoolId)),
+          columns: { id: true },
+        })
+        if (!classExists) {
+          throw new DatabaseError('PERMISSION_DENIED', getNestedErrorMessage('auth', 'noSchoolContext'))
+        }
+
         const results = await db
           .insert(studentGrades)
           .values(params.grades.map(grade => ({
@@ -1426,10 +1444,12 @@ export async function submitStudentGrades(params: {
             teacherId: params.teacherId,
             value: grade.grade.toFixed(2),
             type: gradeType,
-            weight: 1,
-            gradeDate: today,
+            weight: gradeWeight,
+            maxPoints,
+            description: params.description,
+            gradeDate,
             status: params.status,
-            submittedAt: params.status === 'submitted' ? new Date() : null,
+            submittedAt,
           })))
           .returning()
 
@@ -1817,7 +1837,26 @@ export async function getCurrentTermForSchoolYear(schoolYearId: string): R.Resul
           )
           .limit(1)
 
-        return result[0] ?? null
+        if (result[0]) {
+          return result[0]
+        }
+
+        // Fallback: if no active term matches today's date, use the latest
+        // term in that school year so grade publication is not blocked.
+        const latestTerm = await db
+          .select({
+            id: terms.id,
+            name: termTemplates.name,
+            startDate: terms.startDate,
+            endDate: terms.endDate,
+          })
+          .from(terms)
+          .innerJoin(termTemplates, eq(terms.termTemplateId, termTemplates.id))
+          .where(eq(terms.schoolYearId, schoolYearId))
+          .orderBy(desc(terms.endDate))
+          .limit(1)
+
+        return latestTerm[0] ?? null
       },
       catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.termFailed'), { code: 'GET_CURRENT_TERM_FAILED' }),
     }),
