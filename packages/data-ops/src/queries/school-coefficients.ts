@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { and, count, eq, isNull } from 'drizzle-orm'
+import { and, count, eq, isNull, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { coefficientTemplates, grades, series, subjects } from '../drizzle/core-schema'
 import { schoolSubjectCoefficients } from '../drizzle/school-schema'
@@ -294,29 +294,32 @@ export async function bulkUpdateSchoolCoefficients(options: {
     }
   }
 
-  const insertedOrUpdated = []
-  for (const update of updates) {
-    const [result] = await db
-      .insert(schoolSubjectCoefficients)
-      .values({
-        id: crypto.randomUUID(),
-        schoolId,
-        coefficientTemplateId: update.coefficientTemplateId,
-        weightOverride: update.weightOverride,
-        createdAt: new Date(),
+  // ⚡ Bolt Optimization: Replace N+1 inserts with single bulk insert
+  // Problem: The previous approach executed a separate database roundtrip for each coefficient update
+  // Impact: Reduces DB latency from O(N) to O(1) by batching all rows in a single query
+  // Measurement: Verification can be done by tracking DB execution times in APM tooling during bulk updates
+  const valuesToInsert = updates.map(update => ({
+    id: crypto.randomUUID(),
+    schoolId,
+    coefficientTemplateId: update.coefficientTemplateId,
+    weightOverride: update.weightOverride,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }))
+
+  const result = await db
+    .insert(schoolSubjectCoefficients)
+    .values(valuesToInsert)
+    .onConflictDoUpdate({
+      target: [schoolSubjectCoefficients.schoolId, schoolSubjectCoefficients.coefficientTemplateId],
+      set: {
+        weightOverride: sql.raw(`EXCLUDED."${schoolSubjectCoefficients.weightOverride.name}"`),
         updatedAt: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: [schoolSubjectCoefficients.schoolId, schoolSubjectCoefficients.coefficientTemplateId],
-        set: {
-          weightOverride: update.weightOverride,
-          updatedAt: new Date(),
-        },
-      })
-      .returning()
-    insertedOrUpdated.push(result)
-  }
-  return insertedOrUpdated
+      },
+    })
+    .returning()
+
+  return result
 }
 
 /**
