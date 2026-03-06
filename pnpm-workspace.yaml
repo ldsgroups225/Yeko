@@ -5,7 +5,7 @@ packages:
 catalog:
   '@antfu/eslint-config': ^7.4.3
   '@aws-sdk/client-s3': ^3.1000.0
-  '@aws-sdk/s3-request-presigner': ^3.1000.0
+  '@aws-sdk/s3-request-presigner': ^3.1003.0
   '@base-ui/react': ^1.2.0
   '@chronicstone/typed-xlsx': ^0.2.17
   '@cloudflare/vite-plugin': ^1.25.6
