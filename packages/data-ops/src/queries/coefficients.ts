@@ -1,6 +1,7 @@
+/* eslint-disable max-lines */
 import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
-import { and, asc, count, eq } from 'drizzle-orm'
+import { and, asc, count, eq, inArray, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import {
   coefficientTemplates,
@@ -298,16 +299,22 @@ export async function bulkUpdateCoefficients(
         if (updates.length === 0)
           return
 
-        await Promise.all(
-          updates.map(update =>
-            db.update(coefficientTemplates)
-              .set({
-                weight: update.weight,
-                updatedAt: new Date(),
-              })
-              .where(eq(coefficientTemplates.id, update.id)),
-          ),
-        )
+        // Create SQL CASE statement for weight updates
+        const weightSql = sql`CASE `
+        for (const update of updates) {
+          weightSql.append(sql`WHEN ${coefficientTemplates.id} = ${update.id} THEN ${update.weight}::smallint `)
+        }
+        weightSql.append(sql`END`)
+
+        const ids = updates.map(u => u.id)
+
+        await db
+          .update(coefficientTemplates)
+          .set({
+            weight: weightSql as any,
+            updatedAt: new Date(),
+          })
+          .where(inArray(coefficientTemplates.id, ids))
       },
       catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to bulk update coefficients'),
     }),
