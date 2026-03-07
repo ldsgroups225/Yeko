@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components, max-lines, react-naming-convention/use-state */
 'use client'
 
 import type { VariantProps } from 'class-variance-authority'
