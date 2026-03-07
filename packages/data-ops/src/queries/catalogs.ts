@@ -10,7 +10,7 @@ import type {
 import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
 
-import { and, asc, count, eq, ilike, or } from 'drizzle-orm'
+import { and, asc, count, eq, ilike, inArray, or, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import {
   educationLevels,
@@ -262,17 +262,22 @@ export async function bulkUpdateGradesOrder(
   return R.pipe(
     R.try({
       try: async () => {
-        await Promise.all(
-          items.map(item =>
-            db
-              .update(grades)
-              .set({
-                order: item.order,
-                updatedAt: new Date(),
-              })
-              .where(eq(grades.id, item.id)),
-          ),
-        )
+        // Create SQL CASE statement for order updates
+        const orderSql = sql`CASE `
+        for (const item of items) {
+          orderSql.append(sql`WHEN ${grades.id} = ${item.id} THEN ${item.order}::smallint `)
+        }
+        orderSql.append(sql`END`)
+
+        const ids = items.map(i => i.id)
+
+        await db
+          .update(grades)
+          .set({
+            order: orderSql as any,
+            updatedAt: new Date(),
+          })
+          .where(inArray(grades.id, ids))
       },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', getNestedErrorMessage('catalogs', 'grades.bulkUpdateOrderFailed')),
     }),
