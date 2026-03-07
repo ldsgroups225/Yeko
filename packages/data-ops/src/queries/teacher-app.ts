@@ -1781,6 +1781,81 @@ export async function getTeacherNotificationsQuery(params: {
 }
 
 /**
+ * Mark a notification as read
+ */
+export async function markNotificationReadQuery(params: {
+  notificationId: string
+  teacherId: string
+}): R.ResultAsync<typeof teacherNotifications.$inferSelect, DatabaseError> {
+  const db = getDb()
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const { teacherNotifications } = await import('../drizzle/school-schema')
+
+        const [updated] = await db
+          .update(teacherNotifications)
+          .set({
+            isRead: true,
+            readAt: new Date(),
+          })
+          .where(
+            and(
+              eq(teacherNotifications.id, params.notificationId),
+              eq(teacherNotifications.teacherId, params.teacherId),
+            ),
+          )
+          .returning()
+
+        if (!updated) {
+          throw new Error('Notification not found or access denied')
+        }
+        return updated
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'notifications.markReadFailed'), { code: 'MARK_NOTIFICATION_READ_FAILED' }),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
+}
+
+/**
+ * Mark all notifications as read for a teacher
+ */
+export async function markAllNotificationsReadQuery(params: {
+  teacherId: string
+}): R.ResultAsync<{ updatedCount: number }, DatabaseError> {
+  const db = getDb()
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const { teacherNotifications } = await import('../drizzle/school-schema')
+
+        const result = await db
+          .update(teacherNotifications)
+          .set({
+            isRead: true,
+            readAt: new Date(),
+          })
+          .where(
+            and(
+              eq(teacherNotifications.teacherId, params.teacherId),
+              eq(teacherNotifications.isRead, false),
+            ),
+          )
+
+        return {
+          updatedCount: result.rowCount ?? 0,
+        }
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'notifications.markAllReadFailed'), { code: 'MARK_ALL_NOTIFICATIONS_READ_FAILED' }),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
+}
+
+/**
  * Get current term for a school year
  */
 export async function getCurrentTermForSchoolYear(schoolYearId: string): R.ResultAsync<{

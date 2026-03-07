@@ -478,6 +478,8 @@ const fr_errors = {
       },
       notifications: {
         listFailed: 'Échec de la récupération des notifications',
+        markReadFailed: 'Échec du marquage de la notification comme lue',
+        markAllReadFailed: 'Échec du marquage de toutes les notifications comme lues',
       },
     },
     catalogs: {
