@@ -479,6 +479,7 @@ function TeacherDetailsPage() {
                             </div>
                           </div>
                           <button
+                            aria-label={t.classes.removeSubject()}
                             type="button"
                             onClick={() => handleRemoveSubject(sub.subjectId)}
                             className="size-8 flex items-center justify-center rounded-xl bg-destructive/5 text-destructive opacity-0 group-hover:opacity-100 hover:bg-destructive hover:text-white transition-all"
