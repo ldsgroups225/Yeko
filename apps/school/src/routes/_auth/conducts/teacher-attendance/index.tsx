@@ -1,4 +1,4 @@
-import type { TeacherAttendanceEntry } from '@/components/attendance/teacher/types'
+import type { TeacherAttendanceEntry, TeacherAttendanceStatus } from '@/components/attendance/teacher/types'
 import { IconCalendar, IconChartBar } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -30,6 +30,18 @@ interface TeacherAttendanceRecord {
   }
 }
 
+function normalizeTeacherAttendanceStatus(status: string | null | undefined): TeacherAttendanceStatus {
+  if (status === 'present' || status === 'late' || status === 'absent' || status === 'excused' || status === 'on_leave') {
+    return status
+  }
+
+  if (status === 'on-leave' || status === 'onLeave') {
+    return 'on_leave'
+  }
+
+  return 'present'
+}
+
 function TeacherAttendancePage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
@@ -57,7 +69,7 @@ function TeacherAttendancePage() {
     teacherName: record.teacher?.user?.name ?? 'Unknown',
     teacherPhoto: record.teacher?.user?.image ?? undefined,
     department: record.teacher?.specialization ?? undefined,
-    status: record.status as 'present' | 'late' | 'absent' | 'excused' | 'on_leave',
+    status: normalizeTeacherAttendanceStatus(record.status),
     arrivalTime: record.arrivalTime ?? undefined,
     lateMinutes: record.lateMinutes ?? undefined,
     notes: record.notes ?? undefined,

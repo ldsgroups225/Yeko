@@ -11,7 +11,7 @@ import {
   removeTeacherFromClassSubject,
 } from '../queries/class-subjects'
 import { createClass, deleteClass } from '../queries/classes'
-import { createSchool } from '../queries/schools'
+import { createSchool } from '../queries/schools-write'
 
 describe('class subjects queries', () => {
   let testSchoolId: string

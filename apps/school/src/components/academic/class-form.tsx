@@ -51,7 +51,7 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
   const currentSchoolYear = schoolYears?.find(sy => sy.id === schoolYearId) || schoolYears?.[0]
 
   const { data: grades } = useSuspenseQuery(catalogsOptions.grades())
-  const { data: series } = useSuspenseQuery(catalogsOptions.series())
+  const { data: _series } = useSuspenseQuery(catalogsOptions.series())
 
   const { data: classroomsResult } = useSuspenseQuery({
     queryKey: ['classrooms'],
@@ -121,7 +121,6 @@ export function ClassForm({ classData, onSuccess }: ClassFormProps) {
       >
         <ClassFormFields
           grades={grades}
-          series={series}
           classrooms={classrooms}
           teachers={teachers}
         />

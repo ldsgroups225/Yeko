@@ -204,6 +204,7 @@ export const getCoefficientMatrix = authServerFn
   .inputValidator(
     z.object({
       schoolYearTemplateId: z.string(),
+      gradeId: z.string().nullable().optional(),
       seriesId: z.string().nullable().optional(),
     }),
   )

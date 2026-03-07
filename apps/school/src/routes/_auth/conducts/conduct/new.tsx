@@ -1,3 +1,4 @@
+import type { ConductRecordFormData } from '@/components/conduct/conduct-record-schema'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@workspace/ui/components/card'
@@ -45,18 +46,7 @@ function NewConductRecordPage() {
     },
   })
 
-  const handleSubmit = (data: {
-    studentId: string
-    type: 'incident' | 'sanction' | 'reward' | 'note'
-    category: string
-    title: string
-    description: string
-    severity?: 'low' | 'medium' | 'high' | 'critical'
-    incidentDate?: Date
-    incidentTime?: string
-    location?: string
-    witnesses?: string
-  }) => {
+  const handleSubmit = (data: ConductRecordFormData) => {
     if (!effectiveSchoolYearId) {
       toast.error(t.classes.noSchoolYear())
       return
@@ -67,8 +57,8 @@ function NewConductRecordPage() {
         studentId: data.studentId,
         schoolYearId: effectiveSchoolYearId,
         type: data.type,
-        category: data.category as 'behavior' | 'academic' | 'attendance' | 'uniform' | 'property' | 'violence' | 'bullying' | 'cheating' | 'achievement' | 'improvement' | 'other',
-        title: data.title,
+        category: data.category!,
+        title: data.title!,
         description: data.description,
         severity: data.severity,
         incidentDate: data.incidentDate?.toISOString().split('T')[0],

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { IconAlertCircle, IconDeviceFloppy, IconInfoCircle, IconLayoutGrid } from '@tabler/icons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Badge } from '@workspace/ui/components/badge'
@@ -35,11 +36,13 @@ import { CoefficientCell } from './coefficient-cell'
 
 interface CoefficientMatrixProps {
   schoolYearTemplateId: string
+  gradeId?: string | null
   seriesId?: string | null
 }
 
 export function CoefficientMatrix({
   schoolYearTemplateId,
+  gradeId,
   seriesId,
 }: CoefficientMatrixProps) {
   const t = useTranslations()
@@ -47,7 +50,7 @@ export function CoefficientMatrix({
   const queryClient = useQueryClient()
 
   const { data, isPending, error } = useQuery(
-    schoolCoefficientsOptions.matrix({ schoolYearTemplateId, seriesId }),
+    schoolCoefficientsOptions.matrix({ schoolYearTemplateId, gradeId, seriesId }),
   )
 
   const { subjects = [], grades = [], matrix = {} } = useMemo(() => {

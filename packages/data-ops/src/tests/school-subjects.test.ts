@@ -6,7 +6,7 @@ import {
   getAvailableCoreSubjects,
   getSchoolSubjects,
 } from '../queries/school-subjects'
-import { createSchool } from '../queries/schools'
+import { createSchool } from '../queries/schools-write'
 
 describe('school subjects queries', () => {
   let testSchoolId: string

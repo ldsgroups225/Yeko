@@ -33,7 +33,7 @@ import {
 import {
   createSchool,
   deleteSchool,
-} from '../queries/schools'
+} from '../queries/schools-write'
 import './setup'
 
 // ============================================================================

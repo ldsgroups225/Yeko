@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components, react-hooks-extra/no-direct-set-state-in-use-effect */
 'use client'
 
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
@@ -195,6 +196,8 @@ function CarouselPrevious({
         className,
       )}
       disabled={!canScrollPrev}
+      title="Previous slide"
+      aria-label="Previous slide"
       onClick={scrollPrev}
       {...props}
     >
@@ -225,6 +228,8 @@ function CarouselNext({
         className,
       )}
       disabled={!canScrollNext}
+      title="Next slide"
+      aria-label="Next slide"
       onClick={scrollNext}
       {...props}
     >

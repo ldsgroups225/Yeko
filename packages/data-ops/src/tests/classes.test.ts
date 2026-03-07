@@ -12,7 +12,7 @@ import {
 import { createClassroom } from '../queries/classrooms'
 import { createSchoolYearTemplate } from '../queries/programs'
 import { createSchoolYear } from '../queries/school-admin/school-years'
-import { createSchool } from '../queries/schools'
+import { createSchool } from '../queries/schools-write'
 import './setup'
 
 describe('classes queries', () => {

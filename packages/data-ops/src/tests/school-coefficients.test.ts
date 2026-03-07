@@ -1,4 +1,5 @@
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { getDb } from '../database/setup'
 import {
   bulkUpdateSchoolCoefficients,
   createCoefficientOverride,
@@ -6,9 +7,17 @@ import {
   upsertCoefficientOverride,
 } from '../queries/school-coefficients'
 
+vi.mock('../database/setup', () => ({
+  getDb: vi.fn(),
+}))
+
 describe('school coefficients queries', () => {
   const fakeSchoolId = 'fake-school-id'
   const fakeTemplateId = 'fake-template-id'
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
   describe('createCoefficientOverride - validation', () => {
     test('should reject weight below 0', async () => {
@@ -98,6 +107,44 @@ describe('school coefficients queries', () => {
           ],
         }),
       ).rejects.toThrow('Invalid weight -3 - must be between 0 and 20')
+    })
+
+    test('should deduplicate repeated template ids before bulk upsert', async () => {
+      const returning = vi.fn().mockResolvedValue([])
+      const onConflictDoUpdate = vi.fn().mockReturnValue({ returning })
+      const values = vi.fn().mockReturnValue({ onConflictDoUpdate })
+      const insert = vi.fn().mockReturnValue({ values })
+
+      vi.mocked(getDb).mockReturnValue({ insert } as unknown as ReturnType<typeof getDb>)
+
+      await bulkUpdateSchoolCoefficients({
+        schoolId: fakeSchoolId,
+        updates: [
+          { coefficientTemplateId: 'template-1', weightOverride: 5 },
+          { coefficientTemplateId: 'template-2', weightOverride: 6 },
+          { coefficientTemplateId: 'template-1', weightOverride: 7 },
+        ],
+      })
+
+      expect(insert).toHaveBeenCalledOnce()
+      expect(values).toHaveBeenCalledOnce()
+
+      const insertedRows = values.mock.calls[0]?.[0]
+      expect(insertedRows).toHaveLength(2)
+      expect(insertedRows).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            schoolId: fakeSchoolId,
+            coefficientTemplateId: 'template-1',
+            weightOverride: 7,
+          }),
+          expect.objectContaining({
+            schoolId: fakeSchoolId,
+            coefficientTemplateId: 'template-2',
+            weightOverride: 6,
+          }),
+        ]),
+      )
     })
   })
 })

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { StudentAttendance } from '../drizzle/school-schema'
 import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
@@ -6,60 +7,193 @@ import { databaseLogger, tapLogErr } from '@repo/logger'
  * Student Attendance Queries for School App
  * Core attendance functions for student tracking
  */
-import { and, asc, count, desc, eq, gte, lte, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, gte, inArray, lte, sql } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import { grades } from '../drizzle/core-schema'
-import { classes, studentAttendance, students } from '../drizzle/school-schema'
+import { classes, enrollments, studentAttendance, students } from '../drizzle/school-schema'
 import { DatabaseError } from '../errors'
 
 /**
  * Get class attendance for a specific date
  */
 export function getClassAttendance(params: {
+  schoolId: string
+  schoolYearId: string
   classId: string
   date: string
   classSessionId?: string
 }): R.ResultAsync<Array<{
-  id: string
   studentId: string
   studentName: string
   studentMatricule: string | null
   photoUrl: string | null
-  status: 'present' | 'absent' | 'late' | 'excused'
-  reason: string | null
-  recordedAt: Date
+  attendance: {
+    id: string
+    status: 'present' | 'absent' | 'late' | 'excused'
+    reason: string | null
+    recordedAt: Date
+  } | null
 }>, DatabaseError> {
   const db = getDb()
-  const conditions = [
-    eq(studentAttendance.classId, params.classId),
-    eq(studentAttendance.date, params.date),
-  ]
-  if (params.classSessionId) {
-    conditions.push(
-      eq(studentAttendance.classSessionId, params.classSessionId),
-    )
-  }
 
   return R.pipe(
     R.try({
       try: async () => {
-        return await db
+        const roster = await db
           .select({
-            id: studentAttendance.id,
-            studentId: studentAttendance.studentId,
+            studentId: students.id,
             studentName: sql<string>`${students.firstName} || ' ' || ${students.lastName}`,
             studentMatricule: students.matricule,
             photoUrl: students.photoUrl,
+            enrollmentId: enrollments.id,
+          })
+          .from(students)
+          .innerJoin(enrollments, eq(enrollments.studentId, students.id))
+          .where(
+            and(
+              eq(students.schoolId, params.schoolId),
+              eq(enrollments.classId, params.classId),
+              eq(enrollments.schoolYearId, params.schoolYearId),
+              eq(enrollments.status, 'confirmed'),
+            ),
+          )
+          .orderBy(asc(students.lastName), asc(students.firstName))
+
+        const attendanceConditions = [
+          eq(studentAttendance.schoolId, params.schoolId),
+          eq(studentAttendance.classId, params.classId),
+          eq(studentAttendance.date, params.date),
+        ]
+        if (params.classSessionId) {
+          attendanceConditions.push(eq(studentAttendance.classSessionId, params.classSessionId))
+        }
+
+        const existingAttendance = await db
+          .select({
+            id: studentAttendance.id,
+            studentId: studentAttendance.studentId,
             status: studentAttendance.status,
             reason: studentAttendance.reason,
             recordedAt: studentAttendance.createdAt,
           })
           .from(studentAttendance)
-          .innerJoin(students, eq(studentAttendance.studentId, students.id))
-          .where(and(...conditions))
-          .orderBy(asc(students.lastName), asc(students.firstName))
+          .where(and(...attendanceConditions))
+
+        const attendanceMap = new Map<string, typeof existingAttendance[number]>(
+          existingAttendance.map(a => [a.studentId, a]),
+        )
+
+        return roster.map(student => ({
+          studentId: student.studentId,
+          studentName: student.studentName,
+          studentMatricule: student.studentMatricule,
+          photoUrl: student.photoUrl,
+          attendance: attendanceMap.get(student.studentId) ?? null,
+        }))
       },
-      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch class attendance'),
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch class attendance roster'),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
+}
+
+/**
+ * Get latest attendance snapshot and cumulative counts for a set of students.
+ */
+export function getStudentsAttendanceSnapshot(params: {
+  schoolId: string
+  studentIds: string[]
+  classId?: string
+}): R.ResultAsync<Array<{
+  studentId: string
+  latestStatus: 'present' | 'absent' | 'late' | 'excused' | null
+  latestDate: string | null
+  absentCount: number
+  lateCount: number
+  excusedCount: number
+  presentCount: number
+}>, DatabaseError> {
+  const db = getDb()
+
+  if (params.studentIds.length === 0) {
+    return R.succeed(Promise.resolve([]))
+  }
+
+  const conditions = [
+    eq(studentAttendance.schoolId, params.schoolId),
+    inArray(studentAttendance.studentId, params.studentIds),
+  ]
+
+  if (params.classId) {
+    conditions.push(eq(studentAttendance.classId, params.classId))
+  }
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const rows = await db
+          .select({
+            studentId: studentAttendance.studentId,
+            status: studentAttendance.status,
+            date: studentAttendance.date,
+            createdAt: studentAttendance.createdAt,
+          })
+          .from(studentAttendance)
+          .where(and(...conditions))
+          .orderBy(
+            asc(studentAttendance.studentId),
+            desc(studentAttendance.date),
+            desc(studentAttendance.createdAt),
+          )
+
+        const snapshots = new Map<string, {
+          studentId: string
+          latestStatus: 'present' | 'absent' | 'late' | 'excused' | null
+          latestDate: string | null
+          absentCount: number
+          lateCount: number
+          excusedCount: number
+          presentCount: number
+        }>()
+
+        for (const studentId of params.studentIds) {
+          snapshots.set(studentId, {
+            studentId,
+            latestStatus: null,
+            latestDate: null,
+            absentCount: 0,
+            lateCount: 0,
+            excusedCount: 0,
+            presentCount: 0,
+          })
+        }
+
+        for (const row of rows) {
+          const current = snapshots.get(row.studentId)
+          if (!current) {
+            continue
+          }
+
+          if (!current.latestStatus) {
+            current.latestStatus = row.status
+            current.latestDate = row.date
+          }
+
+          if (row.status === 'absent')
+            current.absentCount += 1
+          else if (row.status === 'late')
+            current.lateCount += 1
+          else if (row.status === 'excused')
+            current.excusedCount += 1
+          else if (row.status === 'present')
+            current.presentCount += 1
+        }
+
+        return params.studentIds
+          .map(studentId => snapshots.get(studentId))
+          .filter((snapshot): snapshot is NonNullable<typeof snapshot> => Boolean(snapshot))
+      },
+      catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to fetch students attendance snapshot'),
     }),
     R.mapError(tapLogErr(databaseLogger, params)),
   )

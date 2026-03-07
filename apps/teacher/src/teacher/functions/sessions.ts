@@ -1,10 +1,13 @@
+/* eslint-disable max-lines */
 import { Result as R } from '@praha/byethrow'
 import {
   completeTeacherClassSession,
   createTeacherClassSession,
   getClassStudents,
   getTeacherClassSessionById,
+  getTeacherClassSessionForSlot,
   getTeacherSessionHistory,
+  updateTeacherClassSessionAttendance,
 } from '@repo/data-ops/queries/teacher-app'
 import { getTimetableSessionById } from '@repo/data-ops/queries/timetables'
 
@@ -16,11 +19,17 @@ import {
   startSessionSchema,
   updateAttendanceSchema,
 } from '@/schemas/session'
+import { getTeacherContext } from '@/teacher/middleware/teacher-context'
 
 // Start a class session
 export const startSession = createServerFn()
   .inputValidator(startSessionSchema)
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
     // Get timetable session details
     const timetableSessionResult = await getTimetableSessionById(data.timetableSessionId)
 
@@ -31,18 +40,47 @@ export const startSession = createServerFn()
     const timetableSession = timetableSessionResult.value
 
     // Validate teacher is assigned to this timetable session
-    if (timetableSession.teacherId !== data.teacherId) {
+    if (timetableSession.teacherId !== context.teacherId) {
       return { success: false, error: 'Unauthorized: Not assigned to this session' }
+    }
+
+    const sessionDate = data.date.includes('T')
+      ? (data.date.split('T')[0] ?? data.date)
+      : data.date
+
+    // Enforce one session per timetable slot per day.
+    const existingSessionResult = await getTeacherClassSessionForSlot({
+      teacherId: context.teacherId,
+      timetableSessionId: data.timetableSessionId,
+      date: sessionDate,
+    })
+
+    if (R.isFailure(existingSessionResult)) {
+      return {
+        success: false,
+        error: existingSessionResult.error.message,
+        code: existingSessionResult.error.details?.code as string | undefined,
+      }
+    }
+
+    if (existingSessionResult.value) {
+      return {
+        success: false,
+        error: existingSessionResult.value.status === 'completed'
+          ? 'Session already completed for this class period'
+          : 'Session already started for this class period',
+        code: 'SESSION_ALREADY_EXISTS',
+      }
     }
 
     // Create class session
     const sessionResult = await createTeacherClassSession({
       timetableSessionId: data.timetableSessionId,
-      teacherId: data.teacherId,
+      teacherId: context.teacherId,
       schoolId: timetableSession.schoolId,
       classId: timetableSession.classId,
       subjectId: timetableSession.subjectId,
-      date: data.date,
+      date: sessionDate,
       startTime: timetableSession.startTime,
       endTime: timetableSession.endTime,
       topic: data.topic,
@@ -67,6 +105,11 @@ export const startSession = createServerFn()
 export const completeSession = createServerFn({ method: 'POST' })
   .inputValidator(completeSessionSchema)
   .handler(async ({ data }) => {
+    const context = await getTeacherContext()
+    if (!context) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
     const {
       upsertParticipationGrades,
       createHomeworkAssignment,
@@ -83,11 +126,14 @@ export const completeSession = createServerFn({ method: 'POST' })
       return { success: false, error: 'Session not found' }
     }
     const session = sessionResult.value
+    if (session.teacherId !== context.teacherId) {
+      return { success: false, error: 'Unauthorized: Not assigned to this session' }
+    }
 
     // 1. Update session status and basic info
     const updatedResult = await completeTeacherClassSession({
       sessionId: data.sessionId,
-      teacherId: data.teacherId ?? '',
+      teacherId: context.teacherId,
       studentsPresent: data.studentsPresent,
       studentsAbsent: data.studentsAbsent,
       notes: data.notes,
@@ -105,15 +151,22 @@ export const completeSession = createServerFn({ method: 'POST' })
 
     // 2. Upsert participation grades if any
     if (data.participationGrades && data.participationGrades.length > 0) {
-      await upsertParticipationGrades({
+      const participationResult = await upsertParticipationGrades({
         classSessionId: data.sessionId,
-        teacherId: data.teacherId ?? '',
+        teacherId: context.teacherId,
         grades: data.participationGrades.map(g => ({
           studentId: g.studentId,
           grade: g.grade,
           comment: g.comment,
         })),
       })
+      if (R.isFailure(participationResult)) {
+        return {
+          success: false,
+          error: participationResult.error.message,
+          code: participationResult.error.details?.code as string | undefined,
+        }
+      }
     }
 
     // 3. Upsert student attendance records
@@ -123,19 +176,26 @@ export const completeSession = createServerFn({ method: 'POST' })
         status: status as 'present' | 'late' | 'absent' | 'excused',
       }))
 
-      await upsertStudentAttendance({
+      const attendanceResult = await upsertStudentAttendance({
         schoolId: session.schoolId,
         classId: session.classId,
         classSessionId: session.id,
-        teacherId: data.teacherId ?? '',
+        recordedByUserId: context.userId,
         date: session.date,
         records,
       })
+      if (R.isFailure(attendanceResult)) {
+        return {
+          success: false,
+          error: attendanceResult.error.message,
+          code: attendanceResult.error.details?.code as string | undefined,
+        }
+      }
     }
 
     // 4. Create homework if provided
     if (data.homework) {
-      await createHomeworkAssignment({
+      const homeworkResult = await createHomeworkAssignment({
         schoolId: session.schoolId,
         classId: session.classId,
         subjectId: session.subjectId,
@@ -146,27 +206,48 @@ export const completeSession = createServerFn({ method: 'POST' })
         dueDate: data.homework.dueDate,
         status: 'active',
       })
+      if (R.isFailure(homeworkResult)) {
+        return {
+          success: false,
+          error: homeworkResult.error.message,
+          code: homeworkResult.error.details?.code as string | undefined,
+        }
+      }
     }
 
     // 5. Record Chapter Completion & Update Progress
     if (data.lessonCompleted && data.chapterId) {
       // Record the completion
-      await recordChapterCompletion({
+      const completionResult = await recordChapterCompletion({
         classId: session.classId,
         subjectId: session.subjectId,
         chapterId: data.chapterId,
         classSessionId: session.id,
-        teacherId: data.teacherId ?? '',
+        teacherId: context.teacherId,
         notes: data.notes,
       })
+      if (R.isFailure(completionResult)) {
+        return {
+          success: false,
+          error: completionResult.error.message,
+          code: completionResult.error.details?.code as string | undefined,
+        }
+      }
 
       // Update curriculum progress
       // Note: We don't have termId explicitly, but updateCurriculumProgress
       // will try to find the active record for this class/subject
-      await updateCurriculumProgress({
+      const progressResult = await updateCurriculumProgress({
         classId: session.classId,
         subjectId: session.subjectId,
       })
+      if (R.isFailure(progressResult)) {
+        return {
+          success: false,
+          error: progressResult.error.message,
+          code: progressResult.error.details?.code as string | undefined,
+        }
+      }
     }
 
     return { success: true }
@@ -176,9 +257,23 @@ export const completeSession = createServerFn({ method: 'POST' })
 export const updateSessionAttendance = createServerFn()
   .inputValidator(updateAttendanceSchema)
   .handler(async ({ data }) => {
-    const updatedResult = await completeTeacherClassSession({
+    const context = await getTeacherContext()
+    if (!context) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    const sessionResult = await getTeacherClassSessionById(data.sessionId)
+    if (R.isFailure(sessionResult) || !sessionResult.value) {
+      return { success: false, error: 'Session not found' }
+    }
+    const session = sessionResult.value
+    if (session.teacherId !== context.teacherId) {
+      return { success: false, error: 'Unauthorized: Not assigned to this session' }
+    }
+
+    const updatedResult = await updateTeacherClassSessionAttendance({
       sessionId: data.sessionId,
-      teacherId: data.teacherId ?? '',
+      teacherId: context.teacherId,
       studentsPresent: data.studentsPresent,
       studentsAbsent: data.studentsAbsent,
     })
@@ -188,6 +283,30 @@ export const updateSessionAttendance = createServerFn()
         success: false,
         error: updatedResult.error.message,
         code: updatedResult.error.details?.code as string | undefined,
+      }
+    }
+
+    if (data.attendanceRecords) {
+      const { upsertStudentAttendance } = await import('@repo/data-ops/queries/teacher-app')
+      const records = Object.entries(data.attendanceRecords).map(([studentId, status]) => ({
+        studentId,
+        status: status as 'present' | 'late' | 'absent' | 'excused',
+      }))
+
+      const attendanceResult = await upsertStudentAttendance({
+        schoolId: session.schoolId,
+        classId: session.classId,
+        classSessionId: session.id,
+        recordedByUserId: context.userId,
+        date: session.date,
+        records,
+      })
+      if (R.isFailure(attendanceResult)) {
+        return {
+          success: false,
+          error: attendanceResult.error.message,
+          code: attendanceResult.error.details?.code as string | undefined,
+        }
       }
     }
 

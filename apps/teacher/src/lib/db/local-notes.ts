@@ -16,6 +16,7 @@ import {
   addToSyncQueue as addToSyncQueueAction,
   clearLocalDataAfterPublish as clearLocalDataAfterPublishAction,
   clearOldSyncItems as clearOldSyncItemsAction,
+  getFailedSyncCount as getFailedSyncCountAction,
   getPendingSyncCount as getPendingSyncCountAction,
   getPendingSyncItems as getPendingSyncItemsAction,
   markSyncItemCompleted as markSyncItemCompletedAction,
@@ -50,10 +51,11 @@ class LocalNotesService {
       const db = await this.getDb()
       const noteId = noteData.id
       const now = new Date()
+      const hasDetails = Boolean(details && details.length > 0)
 
       const noteToInsert = {
         ...noteData,
-        isDirty: true,
+        isDirty: hasDetails,
         lastSyncAt: null,
         updatedAt: now,
       }
@@ -63,7 +65,7 @@ class LocalNotesService {
         throw new Error('Failed to save note locally')
       }
 
-      if (details && details.length > 0) {
+      if (hasDetails && details) {
         const noteDetailsToInsert = details.map(detail => ({
           ...detail,
           noteId,
@@ -74,7 +76,9 @@ class LocalNotesService {
         await db.insert(noteDetailsTable).values(noteDetailsToInsert)
       }
 
-      await this.addToSyncQueue('create', 'notes', noteId!, noteData)
+      if (hasDetails) {
+        await this.addToSyncQueue('create', 'notes', noteId!, noteData)
+      }
     }
     catch (error) {
       throw new Error(
@@ -219,6 +223,14 @@ class LocalNotesService {
       if (existingDetail.length > 0 && existingDetail[0]) {
         const detailRecord = existingDetail[0]
         await db
+          .update(notesTable)
+          .set({
+            isDirty: true,
+            updatedAt: now,
+          })
+          .where(eq(notesTable.id, noteId))
+
+        await db
           .update(noteDetailsTable)
           .set({
             value,
@@ -237,6 +249,14 @@ class LocalNotesService {
       }
       else {
         const detailId = `${noteId}-${studentId}-${Date.now()}`
+        await db
+          .update(notesTable)
+          .set({
+            isDirty: true,
+            updatedAt: now,
+          })
+          .where(eq(notesTable.id, noteId))
+
         await db.insert(noteDetailsTable).values({
           id: detailId,
           noteId,
@@ -269,6 +289,7 @@ class LocalNotesService {
   updateNoteSyncTimestamp = updateNoteSyncTimestampAction
   clearOldSyncItems = clearOldSyncItemsAction
   getPendingSyncCount = getPendingSyncCountAction
+  getFailedSyncCount = getFailedSyncCountAction
   publishNote = publishNoteAction
   clearLocalDataAfterPublish = clearLocalDataAfterPublishAction
 }

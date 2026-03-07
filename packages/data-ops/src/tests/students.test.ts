@@ -2,15 +2,9 @@ import { Result as R } from '@praha/byethrow'
 import { beforeEach, describe, expect, test } from 'vitest'
 import { createSchoolYearTemplate } from '../queries/programs'
 import { createSchoolYear } from '../queries/school-admin/school-years'
-import { createSchool } from '../queries/schools'
-import {
-  createStudent,
-  deleteStudent,
-  getStudentById,
-  getStudents,
-  updateStudent,
-  updateStudentStatus,
-} from '../queries/students'
+import { createSchool } from '../queries/schools-write'
+import { getStudentById, getStudents } from '../queries/students-read'
+import { createStudent, deleteStudent, updateStudent, updateStudentStatus } from '../queries/students-write'
 import './setup'
 
 describe('students Queries', () => {

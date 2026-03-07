@@ -84,102 +84,110 @@ export function TeacherAttendanceTable() {
                     group transition-colors
                   "
                 >
-                  <TableCell className="py-2 text-center">
-                    <span className="
-                      text-muted-foreground/30 monospace text-[10px] font-black
-                    "
-                    >
-                      #
-                      {index + 1}
-                    </span>
-                  </TableCell>
-                  <TableCell className="py-2">
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <Avatar className="
-                          border-border/40 h-8 w-8 rounded-xl border shadow-sm
-                          transition-transform duration-500
-                          group-hover:scale-105
-                        "
-                        >
-                          <AvatarImage src={entry.teacherPhoto ?? undefined} alt={entry.teacherName} />
-                          <AvatarFallback className="
-                            bg-primary/5 text-[10px] font-black
+                  {(() => {
+                    const statusConfig = STATUS_CONFIG[entry.status] ?? STATUS_CONFIG.present
+
+                    return (
+                      <>
+                        <TableCell className="py-2 text-center">
+                          <span className="
+                            text-muted-foreground/30 monospace text-[10px] font-black
                           "
                           >
-                            {entry.teacherName.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className={cn(
-                          `
-                            border-card absolute -right-1 -bottom-1 size-2.5
-                            rounded-full border-2
-                          `,
-                          STATUS_CONFIG[entry.status].indicatorColor,
-                        )}
-                        />
-                      </div>
-                      <div>
-                        <p className="
-                          text-sm font-black tracking-tight uppercase italic
-                        "
-                        >
-                          {entry.teacherName}
-                        </p>
-                        <p className="
-                          text-muted-foreground/40 text-[9px] font-bold
-                          tracking-widest uppercase italic
-                        "
-                        >
-                          {STATUS_CONFIG[entry.status].label(t)}
-                        </p>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-2 text-center">
-                    <div className={cn(
-                      `
-                        inline-flex items-center gap-2 rounded-full border
-                        px-2.5 py-1 text-[9px] font-black tracking-widest
-                        uppercase italic
-                      `,
-                      STATUS_CONFIG[entry.status].bgColor,
-                      STATUS_CONFIG[entry.status].borderColor,
-                      STATUS_CONFIG[entry.status].color,
-                    )}
-                    >
-                      {(() => {
-                        const Icon = STATUS_CONFIG[entry.status].icon
-                        return <Icon className="size-3" />
-                      })()}
-                      {STATUS_CONFIG[entry.status].label(t)}
-                    </div>
-                  </TableCell>
-                  <TableCell className="py-2">
-                    <Textarea
-                      placeholder={t.attendance.notesPlaceholder()}
-                      value={entry.notes ?? ''}
-                      onChange={e => handleNotesChange(entry.teacherId, e.target.value)}
-                      className="
-                        bg-background/50 border-border/40 h-10 min-h-[40px]
-                        resize-none rounded-xl py-2 text-[10px] font-bold italic
-                        transition-all
-                        focus:min-h-[80px]
-                      "
-                    />
-                  </TableCell>
-                  <TableCell className="py-2">
-                    <div className="flex items-center justify-end gap-1">
-                      {(Object.entries(STATUS_CONFIG) as [TeacherAttendanceStatus, typeof STATUS_CONFIG['present']][]).map(([status, config]) => (
-                        <StatusButton
-                          key={status}
-                          active={entry.status === status}
-                          onClick={() => handleStatusChange(entry.teacherId, status)}
-                          config={config}
-                        />
-                      ))}
-                    </div>
-                  </TableCell>
+                            #
+                            {index + 1}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-2">
+                          <div className="flex items-center gap-3">
+                            <div className="relative">
+                              <Avatar className="
+                                border-border/40 h-8 w-8 rounded-xl border shadow-sm
+                                transition-transform duration-500
+                                group-hover:scale-105
+                              "
+                              >
+                                <AvatarImage src={entry.teacherPhoto ?? undefined} alt={entry.teacherName} />
+                                <AvatarFallback className="
+                                  bg-primary/5 text-[10px] font-black
+                                "
+                                >
+                                  {entry.teacherName.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className={cn(
+                                `
+                                  border-card absolute -right-1 -bottom-1 size-2.5
+                                  rounded-full border-2
+                                `,
+                                statusConfig.indicatorColor,
+                              )}
+                              />
+                            </div>
+                            <div>
+                              <p className="
+                                text-sm font-black tracking-tight uppercase italic
+                              "
+                              >
+                                {entry.teacherName}
+                              </p>
+                              <p className="
+                                text-muted-foreground/40 text-[9px] font-bold
+                                tracking-widest uppercase italic
+                              "
+                              >
+                                {statusConfig.label(t)}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2 text-center">
+                          <div className={cn(
+                            `
+                              inline-flex items-center gap-2 rounded-full border
+                              px-2.5 py-1 text-[9px] font-black tracking-widest
+                              uppercase italic
+                            `,
+                            statusConfig.bgColor,
+                            statusConfig.borderColor,
+                            statusConfig.color,
+                          )}
+                          >
+                            {(() => {
+                              const Icon = statusConfig.icon
+                              return <Icon className="size-3" />
+                            })()}
+                            {statusConfig.label(t)}
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-2">
+                          <Textarea
+                            placeholder={t.attendance.notesPlaceholder()}
+                            value={entry.notes ?? ''}
+                            onChange={e => handleNotesChange(entry.teacherId, e.target.value)}
+                            className="
+                              bg-background/50 border-border/40 h-10 min-h-[40px]
+                              resize-none rounded-xl py-2 text-[10px] font-bold italic
+                              transition-all
+                              focus:min-h-[80px]
+                            "
+                          />
+                        </TableCell>
+                        <TableCell className="py-2">
+                          <div className="flex items-center justify-end gap-1">
+                            {(Object.entries(STATUS_CONFIG) as [TeacherAttendanceStatus, typeof STATUS_CONFIG['present']][]).map(([status, config]) => (
+                              <StatusButton
+                                key={status}
+                                active={entry.status === status}
+                                onClick={() => handleStatusChange(entry.teacherId, status)}
+                                config={config}
+                              />
+                            ))}
+                          </div>
+                        </TableCell>
+                      </>
+                    )
+                  })()}
                 </motion.tr>
               ))}
             </AnimatePresence>

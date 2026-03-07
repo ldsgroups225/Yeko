@@ -45,11 +45,20 @@ export * from './queries/school-admin/roles'
 export * from './queries/school-admin/users'
 export * from './queries/school-coefficients'
 export * from './queries/school-subjects'
-export * from './queries/schools'
+export * from './queries/schools-read'
+export * from './queries/schools-write'
 export * from './queries/student-attendance'
-export * from './queries/student-fees'
+export * from './queries/student-conduct-read'
 
-export * from './queries/students'
+export * from './queries/student-fees'
+export * from './queries/student-performance-read'
+export * from './queries/students-bulk'
+export * from './queries/students-read'
+export * from './queries/students-stats'
+
+export * from './queries/students-types'
+
+export * from './queries/students-write'
 
 // Explicitly handle teacher-app exports to avoid conflicts
 export {
@@ -84,7 +93,6 @@ export {
 } from './queries/teacher-app'
 
 export * from './queries/teacher-attendance'
-
 export {
   addStudentToClass as addTeacherStudentToClass,
   getClassDetails as getTeacherClassDetails,
@@ -95,8 +103,8 @@ export {
 } from './queries/teacher-classes'
 
 export * from './queries/teacher-notes'
-export * from './queries/teacher-schedule'
 
+export * from './queries/teacher-schedule'
 export {
   bulkSaveAttendance,
   getClassRosterForAttendance,
@@ -107,7 +115,6 @@ export {
   getStudentAttendanceTrend as getTeacherStudentAttendanceTrend,
   saveStudentAttendance,
 } from './queries/teacher-student-attendance'
-
 export * from './queries/teacher-subjects'
 export * from './queries/timetables'
 export * from './queries/transactions'

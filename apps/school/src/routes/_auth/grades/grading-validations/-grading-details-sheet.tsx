@@ -1,3 +1,6 @@
+import type { PendingValidation } from '@repo/data-ops/index'
+import type { TranslationFunctions } from '@/i18n'
+import type { GradeType } from '@/schemas/grade'
 import {
   IconCalendar,
   IconCircleCheck,
@@ -26,29 +29,33 @@ import {
   TableRow,
 } from '@workspace/ui/components/table'
 import { cn } from '@/lib/utils'
+import { gradeTypeLabels } from '@/schemas/grade'
 
-// Grade type for UI display
-type GradeType = 'quiz' | 'test' | 'exam' | 'participation' | 'homework' | 'project'
-
-// Grade type mapping with proper typing
-const GRADE_TYPE_LABELS: Record<GradeType, string> = {
-  quiz: 'Interrogation',
-  test: 'Devoir',
-  exam: 'Examen',
-  participation: 'Participation',
-  homework: 'Devoir Maison',
-  project: 'Projet',
-} as const
+interface StudentGradeRow {
+  id: string
+  value: string
+  type: string
+  maxPoints: number | null
+  gradeDate: string
+  studentId: string
+  status: string
+  student: {
+    id: string
+    firstName: string
+    lastName: string
+    matricule: string | null
+  } | null
+}
 
 interface GradingDetailsSheetProps {
   isOpen: boolean
   onOpenChange: (open: boolean) => void
-  detailValidation: any
-  studentGradesData: any[]
+  detailValidation: PendingValidation | null
+  studentGradesData: StudentGradeRow[] | undefined
   isLoadingGrades: boolean
-  onValidate: (validation: any) => void
-  onReject: (validation: any) => void
-  t: any
+  onValidate: (validation: PendingValidation) => void
+  onReject: (validation: PendingValidation) => void
+  t: TranslationFunctions
 }
 
 export function GradingDetailsSheet({
@@ -168,8 +175,8 @@ export function GradingDetailsSheet({
                       <div className="flex items-center gap-2">
                         <IconFileText className="text-muted-foreground h-3 w-3" />
                         <p className="text-sm font-semibold">
-                          {studentGradesData?.[0]?.type
-                            ? (GRADE_TYPE_LABELS[studentGradesData[0].type as GradeType] || studentGradesData[0].type)
+                          {detailValidation?.gradeType
+                            ? (gradeTypeLabels[detailValidation.gradeType as GradeType] || detailValidation.gradeType)
                             : '-'}
                         </p>
                       </div>
@@ -364,7 +371,7 @@ export function GradingDetailsSheet({
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              {studentGradesData.map((grade: any) => (
+                              {studentGradesData.map((grade: StudentGradeRow) => (
                                 <TableRow
                                   key={grade.id}
                                   className="border-border/10"

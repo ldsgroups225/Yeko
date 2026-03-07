@@ -1,12 +1,15 @@
-import type { Grade, Serie } from '@repo/data-ops/drizzle/core-schema'
+/* eslint-disable max-lines */
+import type { Grade } from '@repo/data-ops/drizzle/core-schema'
 import type { ClassroomWithDetails } from '@repo/data-ops/queries/classrooms'
-import { IconActivity, IconCalendar, IconLayoutGrid, IconSchool, IconUser, IconUsers } from '@tabler/icons-react'
+import { IconActivity, IconCalendar, IconInfoCircle, IconLayoutGrid, IconSchool, IconUser, IconUsers } from '@tabler/icons-react'
 import { Badge } from '@workspace/ui/components/badge'
 import { Input } from '@workspace/ui/components/input'
 import { Label } from '@workspace/ui/components/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { motion } from 'motion/react'
+import { useEffect, useRef } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
+import { useSeriesForGrade } from '@/hooks/use-series-for-grade'
 import { useTranslations } from '@/i18n'
 
 interface Teacher {
@@ -18,14 +21,27 @@ interface Teacher {
 
 interface ClassFormFieldsProps {
   grades: Grade[]
-  series: Serie[]
   classrooms: ClassroomWithDetails[]
   teachers: Teacher[]
 }
 
-export function ClassFormFields({ grades, series, classrooms, teachers }: ClassFormFieldsProps) {
+export function ClassFormFields({ grades, classrooms, teachers }: ClassFormFieldsProps) {
   const t = useTranslations()
   const { register, control, watch, setValue, formState: { errors } } = useFormContext()
+
+  const selectedGradeId = watch('gradeId')
+  const { series: filteredSeries, hasSeries, isLoading: isSeriesLoading } = useSeriesForGrade(selectedGradeId)
+  const previousGradeIdRef = useRef(selectedGradeId)
+
+  // Preserve existing series on initial mount; reset only when grade actually changes.
+  useEffect(() => {
+    if (previousGradeIdRef.current === selectedGradeId) {
+      return
+    }
+
+    previousGradeIdRef.current = selectedGradeId
+    setValue('seriesId', null)
+  }, [selectedGradeId, setValue])
 
   return (
     <div className="
@@ -84,7 +100,7 @@ export function ClassFormFields({ grades, series, classrooms, teachers }: ClassF
         )}
       </div>
 
-      {/* Series Selection */}
+      {/* Series Selection — dynamic based on selected grade */}
       <div className="space-y-2">
         <Label
           htmlFor="seriesId"
@@ -96,29 +112,51 @@ export function ClassFormFields({ grades, series, classrooms, teachers }: ClassF
           <IconLayoutGrid className="h-3.5 w-3.5" />
           {t.classes.series()}
         </Label>
-        <Select value={watch('seriesId') || '__none__'} onValueChange={v => setValue('seriesId', v === '__none__' ? null : v)}>
-          <SelectTrigger className="
-            border-border/10
-            focus:ring-primary/40
-            h-11 bg-white/5
-          "
-          >
-            <SelectValue placeholder={t.classes.selectSeries()}>
-              {watch('seriesId')
-                ? series.find(s => s.id === watch('seriesId'))?.name
-                : t.common.none()}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent className="
-            bg-card/95 border-border/10 backdrop-blur-xl
-          "
-          >
-            <SelectItem value="__none__">{t.common.none()}</SelectItem>
-            {series.map(s => (
-              <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {!selectedGradeId
+          ? (
+              <div className="border-border/10 text-muted-foreground flex items-center gap-2 rounded-xl border bg-white/5 px-3 py-2.5 text-sm">
+                <IconInfoCircle className="h-4 w-4 shrink-0" />
+                {t.classes.selectGradeFirst()}
+              </div>
+            )
+          : isSeriesLoading
+            ? (
+                <div className="border-border/10 text-muted-foreground flex items-center gap-2 rounded-xl border bg-white/5 px-3 py-2.5 text-sm animate-pulse">
+                  {t.common.loading()}
+                </div>
+              )
+            : !hasSeries
+                ? (
+                    <div className="border-border/10 text-muted-foreground flex items-center gap-2 rounded-xl border bg-white/5 px-3 py-2.5 text-sm">
+                      <IconInfoCircle className="h-4 w-4 shrink-0" />
+                      {t.classes.noSeriesForGrade()}
+                    </div>
+                  )
+                : (
+                    <Select value={watch('seriesId') || '__none__'} onValueChange={v => setValue('seriesId', v === '__none__' ? null : v)}>
+                      <SelectTrigger className="
+                      border-border/10
+                      focus:ring-primary/40
+                      h-11 bg-white/5
+                    "
+                      >
+                        <SelectValue placeholder={t.classes.selectSeries()}>
+                          {watch('seriesId')
+                            ? filteredSeries.find(s => s.id === watch('seriesId'))?.name
+                            : t.common.none()}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent className="
+                      bg-card/95 border-border/10 backdrop-blur-xl
+                    "
+                      >
+                        <SelectItem value="__none__">{t.common.none()}</SelectItem>
+                        {filteredSeries.map(s => (
+                          <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
       </div>
 
       {/* Section Input */}

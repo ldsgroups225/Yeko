@@ -46,6 +46,14 @@ export function useAttendanceRecords({
           const updated = [...prev]
           const existingRecord = updated[existingIndex]
           if (existingRecord) {
+            // Initial roll call: only present/absent are allowed.
+            if (!isFirstAttendanceFinished && status === 'late')
+              return prev
+
+            // Late-arrivals phase: only absent -> late transition is allowed.
+            if (isFirstAttendanceFinished && (existingRecord.status !== 'absent' || status !== 'late'))
+              return prev
+
             updated[existingIndex] = {
               ...existingRecord,
               status,
@@ -58,13 +66,13 @@ export function useAttendanceRecords({
         const newRecord: AttendanceRecord = {
           id: `${studentId}-${Date.now()}`,
           studentId,
-          status,
+          status: !isFirstAttendanceFinished && status === 'late' ? 'absent' : status,
           updatedAt: new Date().toISOString(),
         }
         return [...prev, newRecord]
       })
     },
-    [],
+    [isFirstAttendanceFinished],
   )
 
   const attendanceStats = useMemo(() => {

@@ -29,7 +29,13 @@ export const classesOptions = {
     queryOptions({
       queryKey: classesKeys.list(filters),
       queryFn: async () => {
-        const res = await getClasses({ data: filters })
+        const res = await getClasses({ data: filters }).catch((error) => {
+          throw error instanceof Error
+            ? error
+            : new Error('Erreur lors de la récupération des classes')
+        })
+        if (!res)
+          throw new Error('Réponse vide lors de la récupération des classes')
         if (!res.success)
           throw new Error(res.error)
         return res.data
@@ -42,7 +48,13 @@ export const classesOptions = {
     queryOptions({
       queryKey: classesKeys.detail(id),
       queryFn: async () => {
-        const res = await getClassById({ data: id })
+        const res = await getClassById({ data: id }).catch((error) => {
+          throw error instanceof Error
+            ? error
+            : new Error('Erreur lors de la récupération de la classe')
+        })
+        if (!res)
+          throw new Error('Réponse vide lors de la récupération de la classe')
         if (!res.success)
           throw new Error(res.error)
         return res.data

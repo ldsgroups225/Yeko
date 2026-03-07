@@ -23,6 +23,19 @@ export const Route = createFileRoute('/_auth/grades/validations')({
   component: GradeValidationsPage,
 })
 
+function getValidationRowId(validation: PendingValidation): string {
+  return JSON.stringify([
+    validation.classId,
+    validation.subjectId,
+    validation.termId,
+    validation.gradeType,
+    validation.gradeDate,
+    validation.description ?? '__NULL_DESCRIPTION__',
+    validation.teacherId ?? '__NULL_TEACHER__',
+    validation.submittedAt ? new Date(validation.submittedAt).toISOString() : '',
+  ])
+}
+
 function GradeValidationsPage() {
   const t = useTranslations()
   const queryClient = useQueryClient()
@@ -35,6 +48,7 @@ function GradeValidationsPage() {
     'validate',
   )
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [isConfirmingAction, setIsConfirmingAction] = useState(false)
   const [search, setSearch] = useState('')
   const [selectedRows, setSelectedRows] = useState<string[]>([])
 
@@ -47,6 +61,15 @@ function GradeValidationsPage() {
   )
 
   const pendingValidations = pendingValidationsResult || []
+  const filteredValidations = (
+    (pendingValidations as PendingValidation[]) || []
+  ).filter(
+    v =>
+      v.className.toLowerCase().includes(search.toLowerCase())
+      || v.subjectName.toLowerCase().includes(search.toLowerCase())
+      || v.teacherName.toLowerCase().includes(search.toLowerCase())
+      || v.gradeName.toLowerCase().includes(search.toLowerCase()),
+  )
 
   const validateMutation = useMutation({
     mutationKey: schoolMutationKeys.grades.validate,
@@ -110,6 +133,12 @@ function GradeValidationsPage() {
       classId: detailValidation?.classId ?? '',
       subjectId: detailValidation?.subjectId ?? '',
       termId: detailValidation?.termId ?? '',
+      teacherId: detailValidation?.teacherId ?? undefined,
+      type: detailValidation?.gradeType ?? undefined,
+      gradeDate: detailValidation?.gradeDate ?? undefined,
+      description: detailValidation?.description ?? undefined,
+      status: 'submitted',
+      submittedAt: detailValidation?.submittedAt ? new Date(detailValidation.submittedAt).toISOString() : undefined,
     }),
     enabled: !!detailValidation && isSheetOpen,
   })
@@ -136,6 +165,7 @@ function GradeValidationsPage() {
     if (!userId)
       return
 
+    setIsConfirmingAction(true)
     try {
       const userResult = await getUserIdFromAuthUserId({
         data: { authUserId: userId },
@@ -154,6 +184,13 @@ function GradeValidationsPage() {
             classId: selectedValidation.classId,
             subjectId: selectedValidation.subjectId,
             termId: selectedValidation.termId,
+            teacherId: selectedValidation.teacherId ?? undefined,
+            gradeType: selectedValidation.gradeType,
+            gradeDate: selectedValidation.gradeDate,
+            description: selectedValidation.description ?? undefined,
+            submittedAt: selectedValidation.submittedAt
+              ? new Date(selectedValidation.submittedAt).toISOString()
+              : undefined,
           },
         })
 
@@ -166,12 +203,25 @@ function GradeValidationsPage() {
         }
       }
       else if (selectedRows.length > 0) {
-        const promises = selectedRows.map((rowId) => {
-          const [classId, subjectId, termId] = rowId.split('__') as [string, string, string]
-          return getSubmittedGradeIds({
-            data: { classId, subjectId, termId },
-          })
-        })
+        const selectedValidations = filteredValidations.filter(v =>
+          selectedRows.includes(getValidationRowId(v)),
+        )
+        const promises = selectedValidations.map(validation =>
+          getSubmittedGradeIds({
+            data: {
+              classId: validation.classId,
+              subjectId: validation.subjectId,
+              termId: validation.termId,
+              teacherId: validation.teacherId ?? undefined,
+              gradeType: validation.gradeType,
+              gradeDate: validation.gradeDate,
+              description: validation.description ?? undefined,
+              submittedAt: validation.submittedAt
+                ? new Date(validation.submittedAt).toISOString()
+                : undefined,
+            },
+          }),
+        )
         const results = await Promise.all(promises)
 
         gradeIds = results
@@ -189,7 +239,7 @@ function GradeValidationsPage() {
       }
 
       if (dialogMode === 'validate') {
-        validateMutation.mutate({
+        await validateMutation.mutateAsync({
           gradeIds,
           userId: internalUserId,
           comment: reason,
@@ -200,7 +250,7 @@ function GradeValidationsPage() {
           toast.error(t.academic.grades.validations.rejectReason())
           return
         }
-        rejectMutation.mutate({
+        await rejectMutation.mutateAsync({
           gradeIds,
           userId: internalUserId,
           reason,
@@ -210,26 +260,18 @@ function GradeValidationsPage() {
     catch {
       toast.error(t.academic.grades.errors.loadError())
     }
+    finally {
+      setIsConfirmingAction(false)
+    }
   }
 
   const isMutating = validateMutation.isPending || rejectMutation.isPending
-
-  const filteredValidations = (
-    (pendingValidations as PendingValidation[]) || []
-  ).filter(
-    v =>
-      v.className.toLowerCase().includes(search.toLowerCase())
-      || v.subjectName.toLowerCase().includes(search.toLowerCase())
-      || v.teacherName.toLowerCase().includes(search.toLowerCase())
-      || v.gradeName.toLowerCase().includes(search.toLowerCase()),
-  )
+  const isDialogActionPending = isConfirmingAction || isMutating
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
       setSelectedRows(
-        filteredValidations.map(
-          v => `${v.classId}__${v.subjectId}__${v.termId}`,
-        ),
+        filteredValidations.map(v => getValidationRowId(v)),
       )
     }
     else {
@@ -239,7 +281,7 @@ function GradeValidationsPage() {
 
   const handleSelectRow = (id: string, checked: boolean) => {
     if (checked) {
-      setSelectedRows(prev => [...prev, id])
+      setSelectedRows(prev => (prev.includes(id) ? prev : [...prev, id]))
     }
     else {
       setSelectedRows(prev => prev.filter(rowId => rowId !== id))
@@ -248,7 +290,7 @@ function GradeValidationsPage() {
 
   const totalPendingSelected = selectedRows.reduce((sum, rowId) => {
     const val = filteredValidations.find(
-      v => `${v.classId}__${v.subjectId}__${v.termId}` === rowId,
+      v => getValidationRowId(v) === rowId,
     )
     return sum + (val?.pendingCount || 0)
   }, 0)
@@ -275,6 +317,7 @@ function GradeValidationsPage() {
         onValidate={handleValidate}
         onReject={handleReject}
         onViewDetails={handleViewDetails}
+        getRowId={getValidationRowId}
         t={t}
       />
 
@@ -288,14 +331,14 @@ function GradeValidationsPage() {
             : totalPendingSelected
         }
         onConfirm={handleConfirm}
-        isPending={isMutating}
+        isPending={isDialogActionPending}
       />
 
       <GradingDetailsSheet
         isOpen={isSheetOpen}
         onOpenChange={setIsSheetOpen}
         detailValidation={detailValidation}
-        studentGradesData={studentGradesData as any}
+        studentGradesData={studentGradesData}
         isLoadingGrades={isLoadingGrades}
         onValidate={handleValidate}
         onReject={handleReject}

@@ -1078,6 +1078,102 @@ type RootTranslation = {
 		 */
 		enrollmentHistory: string
 		/**
+		 * A​s​s​i​d​u​i​t​é
+		 */
+		attendance: string
+		/**
+		 * C​o​n​d​u​i​t​e​ ​&​ ​P​o​n​c​t​u​a​l​i​t​é
+		 */
+		conductAndPunctuality: string
+		/**
+		 * P​e​r​f​o​r​m​a​n​c​e​s
+		 */
+		performance: string
+		/**
+		 * N​o​t​e​s​ ​e​t​ ​m​o​y​e​n​n​e​s​ ​p​a​r​ ​m​a​t​i​è​r​e
+		 */
+		gradesAndAverages: string
+		/**
+		 * A​s​s​i​d​u​i​t​é​ ​e​t​ ​d​o​s​s​i​e​r​s​ ​d​i​s​c​i​p​l​i​n​a​i​r​e​s
+		 */
+		attendanceAndIncidents: string
+		/**
+		 * J​o​u​r​s​ ​d​'​a​b​s​e​n​c​e
+		 */
+		attendanceDaysAbsent: string
+		/**
+		 * A​b​s​e​n​c​e​s​ ​j​u​s​t​i​f​i​é​e​s
+		 */
+		attendanceExcusedAbsences: string
+		/**
+		 * J​o​u​r​s
+		 */
+		attendanceDays: string
+		/**
+		 * R​e​t​a​r​d​s
+		 */
+		attendanceLateness: string
+		/**
+		 * F​o​i​s​ ​e​n​ ​r​e​t​a​r​d
+		 */
+		attendanceTimesLate: string
+		/**
+		 * T​o​t​a​l​ ​m​i​n​u​t​e​s
+		 */
+		attendanceTotalMinutes: string
+		/**
+		 * M​i​n​u​t​e​s​ ​d​e​ ​r​e​t​a​r​d
+		 */
+		attendanceLateMinutes: string
+		/**
+		 * D​o​s​s​i​e​r​ ​d​i​s​c​i​p​l​i​n​a​i​r​e
+		 */
+		conductRecordTitle: string
+		/**
+		 * H​i​s​t​o​r​i​q​u​e​ ​d​e​s​ ​i​n​c​i​d​e​n​t​s​ ​e​t​ ​s​a​n​c​t​i​o​n​s
+		 */
+		conductRecordDescription: string
+		/**
+		 * A​u​c​u​n​ ​i​n​c​i​d​e​n​t
+		 */
+		conductNoIncidentTitle: string
+		/**
+		 * L​e​ ​d​o​s​s​i​e​r​ ​d​e​ ​c​e​t​ ​é​l​è​v​e​ ​e​s​t​ ​v​i​e​r​g​e​.
+		 */
+		conductNoIncidentDescription: string
+		/**
+		 * N​o​r​m​a​l
+		 */
+		conductSeverityNormal: string
+		/**
+		 * A​n​n​é​e​ ​e​n​ ​c​o​u​r​s
+		 */
+		performanceCurrentYear: string
+		/**
+		 * M​o​y​e​n​n​e​ ​g​é​n​é​r​a​l​e
+		 */
+		performanceOverallAverage: string
+		/**
+		 * A​u​c​u​n​e​ ​n​o​t​e
+		 */
+		performanceNoGradesTitle: string
+		/**
+		 * L​'​é​l​è​v​e​ ​n​'​a​ ​p​a​s​ ​e​n​c​o​r​e​ ​r​e​ç​u​ ​d​e​ ​n​o​t​e​s​.
+		 */
+		performanceNoGradesDescription: string
+		/**
+		 * M​a​t​i​è​r​e
+		 */
+		performanceSubject: string
+		/**
+		 * D​e​r​n​i​è​r​e​s​ ​n​o​t​e​s
+		 */
+		performanceRecentGrades: string
+		/**
+		 * M​o​y​e​n​n​e
+		 */
+		performanceAverage: string
+		/**
 		 * N​u​m​é​r​o​ ​d​e​ ​r​ô​l​e
 		 */
 		rollNumber: string
@@ -3358,6 +3454,10 @@ type RootTranslation = {
 		 */
 		selectGrade: string
 		/**
+		 * V​e​u​i​l​l​e​z​ ​d​'​a​b​o​r​d​ ​s​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​ ​n​i​v​e​a​u
+		 */
+		selectGradeFirst: string
+		/**
 		 * S​é​r​i​e
 		 */
 		series: string
@@ -3365,6 +3465,10 @@ type RootTranslation = {
 		 * S​é​l​e​c​t​i​o​n​n​e​r​ ​u​n​e​ ​s​é​r​i​e
 		 */
 		selectSeries: string
+		/**
+		 * A​u​c​u​n​e​ ​s​é​r​i​e​ ​d​i​s​p​o​n​i​b​l​e​ ​p​o​u​r​ ​c​e​ ​n​i​v​e​a​u
+		 */
+		noSeriesForGrade: string
 		/**
 		 * S​e​c​t​i​o​n
 		 */
@@ -9586,6 +9690,102 @@ export type TranslationFunctions = {
 		 */
 		enrollmentHistory: () => LocalizedString
 		/**
+		 * Assiduité
+		 */
+		attendance: () => LocalizedString
+		/**
+		 * Conduite & Ponctualité
+		 */
+		conductAndPunctuality: () => LocalizedString
+		/**
+		 * Performances
+		 */
+		performance: () => LocalizedString
+		/**
+		 * Notes et moyennes par matière
+		 */
+		gradesAndAverages: () => LocalizedString
+		/**
+		 * Assiduité et dossiers disciplinaires
+		 */
+		attendanceAndIncidents: () => LocalizedString
+		/**
+		 * Jours d'absence
+		 */
+		attendanceDaysAbsent: () => LocalizedString
+		/**
+		 * Absences justifiées
+		 */
+		attendanceExcusedAbsences: () => LocalizedString
+		/**
+		 * Jours
+		 */
+		attendanceDays: () => LocalizedString
+		/**
+		 * Retards
+		 */
+		attendanceLateness: () => LocalizedString
+		/**
+		 * Fois en retard
+		 */
+		attendanceTimesLate: () => LocalizedString
+		/**
+		 * Total minutes
+		 */
+		attendanceTotalMinutes: () => LocalizedString
+		/**
+		 * Minutes de retard
+		 */
+		attendanceLateMinutes: () => LocalizedString
+		/**
+		 * Dossier disciplinaire
+		 */
+		conductRecordTitle: () => LocalizedString
+		/**
+		 * Historique des incidents et sanctions
+		 */
+		conductRecordDescription: () => LocalizedString
+		/**
+		 * Aucun incident
+		 */
+		conductNoIncidentTitle: () => LocalizedString
+		/**
+		 * Le dossier de cet élève est vierge.
+		 */
+		conductNoIncidentDescription: () => LocalizedString
+		/**
+		 * Normal
+		 */
+		conductSeverityNormal: () => LocalizedString
+		/**
+		 * Année en cours
+		 */
+		performanceCurrentYear: () => LocalizedString
+		/**
+		 * Moyenne générale
+		 */
+		performanceOverallAverage: () => LocalizedString
+		/**
+		 * Aucune note
+		 */
+		performanceNoGradesTitle: () => LocalizedString
+		/**
+		 * L'élève n'a pas encore reçu de notes.
+		 */
+		performanceNoGradesDescription: () => LocalizedString
+		/**
+		 * Matière
+		 */
+		performanceSubject: () => LocalizedString
+		/**
+		 * Dernières notes
+		 */
+		performanceRecentGrades: () => LocalizedString
+		/**
+		 * Moyenne
+		 */
+		performanceAverage: () => LocalizedString
+		/**
 		 * Numéro de rôle
 		 */
 		rollNumber: () => LocalizedString
@@ -11836,6 +12036,10 @@ export type TranslationFunctions = {
 		 */
 		selectGrade: () => LocalizedString
 		/**
+		 * Veuillez d'abord sélectionner un niveau
+		 */
+		selectGradeFirst: () => LocalizedString
+		/**
 		 * Série
 		 */
 		series: () => LocalizedString
@@ -11843,6 +12047,10 @@ export type TranslationFunctions = {
 		 * Sélectionner une série
 		 */
 		selectSeries: () => LocalizedString
+		/**
+		 * Aucune série disponible pour ce niveau
+		 */
+		noSeriesForGrade: () => LocalizedString
 		/**
 		 * Section
 		 */
