@@ -44,8 +44,6 @@ export function ClassDetailPage({
   const { data: scheduleData } = useQuery({
     ...detailedScheduleQueryOptions({
       teacherId: context?.teacherId ?? '',
-      schoolId: context?.schoolId ?? '',
-      schoolYearId: context?.schoolYearId ?? '',
       startDate: format(today, 'yyyy-MM-dd'),
       endDate: format(today, 'yyyy-MM-dd'),
     }),
@@ -53,6 +51,7 @@ export function ClassDetailPage({
   })
 
   const currentSession = scheduleData?.sessions.find(s => s.id === timetableSessionId)
+  const hasSessionForCurrentSlot = Boolean(currentSession?.hasSession)
 
   const sessionTimings = useMemo(() => {
     if (!currentSession)
@@ -67,7 +66,7 @@ export function ClassDetailPage({
       isWithinTimeWindow: now >= openWindowTime && now <= endDateTime,
       isLate: now > startDateTime,
     }
-  }, [currentSession, timetableSessionId])
+  }, [currentSession])
 
   const [searchQuery, setSearchQuery] = useState('')
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null)
@@ -160,7 +159,7 @@ export function ClassDetailPage({
         isSessionActive={session.isSessionActive}
         isEntryMode={gradeEntry.isEntryMode}
         isSaving={gradeEntry.isSaving}
-        isWithinTimeWindow={sessionTimings.isWithinTimeWindow}
+        isWithinTimeWindow={sessionTimings.isWithinTimeWindow && !hasSessionForCurrentSlot}
         isLate={sessionTimings.isLate}
         onStartSession={session.handleStartSession}
         onStartEntry={gradeEntry.handleStartEntry}

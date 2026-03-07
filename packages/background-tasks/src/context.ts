@@ -9,10 +9,6 @@ interface TaskContextStore {
 // Request-scoped storage to prevent cross-request I/O leaks in Cloudflare Workers
 const requestTaskCtx = new AsyncLocalStorage<TaskContextStore>()
 
-// Global fallback for non-ALS environments
-let globalExecutionContext: ExecutionContext | null = null
-let globalQueueBinding: LogsQueue | null = null
-
 /**
  * Create a request-scoped task context.
  * Must wrap the entire request lifecycle in CF Workers.
@@ -30,7 +26,6 @@ export function setExecutionContext(ctx: ExecutionContext): void {
   if (store) {
     store.executionContext = ctx
   }
-  globalExecutionContext = ctx
 }
 
 /**
@@ -41,7 +36,7 @@ export function getExecutionContext(): ExecutionContext | null {
   if (store) {
     return store.executionContext
   }
-  return globalExecutionContext
+  return null
 }
 
 /**
@@ -53,7 +48,6 @@ export function setQueueBinding(queue: LogsQueue): void {
   if (store) {
     store.queueBinding = queue
   }
-  globalQueueBinding = queue
 }
 
 /**
@@ -64,7 +58,7 @@ export function getQueueBinding(): LogsQueue | null {
   if (store) {
     return store.queueBinding
   }
-  return globalQueueBinding
+  return null
 }
 
 /**
@@ -76,6 +70,4 @@ export function clearContext(): void {
     store.executionContext = null
     store.queueBinding = null
   }
-  globalExecutionContext = null
-  globalQueueBinding = null
 }

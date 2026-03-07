@@ -147,6 +147,14 @@ function SessionDetailPage() {
     })
   }
 
+  const attendanceRecords = Object.fromEntries(
+    Array.from(attendance.entries()).map(([studentId, status]) => [studentId, status]),
+  )
+
+  const participationStudents = (studentsData?.students ?? []).filter(student =>
+    attendance.get(student.id) !== 'absent',
+  )
+
   const grades = Array.from(localGrades.entries()).map(
     ([studentId, { grade, comment }]) => ({
       studentId,
@@ -235,9 +243,9 @@ function SessionDetailPage() {
               const studentsAbsent = Array.from(attendance.values()).filter(s => s === 'absent' || s === 'excused').length
               saveAttendanceMutation.mutate({
                 sessionId,
-                teacherId,
                 studentsPresent,
                 studentsAbsent,
+                attendanceRecords,
               })
             }}
             isSaving={saveAttendanceMutation.isPending}
@@ -246,7 +254,7 @@ function SessionDetailPage() {
 
         <TabsContent value="participation" className="mt-4">
           <StudentParticipationList
-            students={studentsData?.students ?? []}
+            students={participationStudents}
             grades={grades}
             onGradeChange={handleGradeChange}
             onCommentChange={handleCommentChange}
@@ -330,6 +338,7 @@ function SessionDetailPage() {
               sessionId,
               studentsPresent,
               studentsAbsent,
+              attendanceRecords,
               notes: programNote,
             })
           }}

@@ -1,31 +1,20 @@
 import type { UseFormReturn } from 'react-hook-form'
 import type { ConductRecordFormData } from './conduct-record-schema'
-import {
-  IconAlertCircle,
-  IconTag,
-  IconUsers,
-} from '@tabler/icons-react'
+import { IconAlertCircle, IconCalendar, IconTag, IconUsers } from '@tabler/icons-react'
 import { Button } from '@workspace/ui/components/button'
-import { Input } from '@workspace/ui/components/input'
+import { DatePicker } from '@workspace/ui/components/date-picker'
 import { Label } from '@workspace/ui/components/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@workspace/ui/components/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@workspace/ui/components/select'
 import { Textarea } from '@workspace/ui/components/textarea'
 import { motion } from 'motion/react'
+import { useEffect } from 'react'
+import { toast } from 'sonner'
 import { StudentCombobox } from '@/components/attendance/student/student-combobox'
-import { useTranslations } from '@/i18n'
+import { useLocale, useTranslations } from '@/i18n'
+import { cn } from '@/lib/utils'
+import { getConductIncidentPresets } from './conduct-incident-presets'
 import { ConductRecordIncidentFields } from './conduct-record-incident-fields'
-import {
-  conductCategories,
-
-  conductTypes,
-  severityLevels,
-} from './conduct-record-schema'
+import { conductCategories, conductTypes, severityLevels } from './conduct-record-schema'
 
 interface ConductRecordFormInnerProps {
   form: UseFormReturn<ConductRecordFormData>
@@ -33,6 +22,7 @@ interface ConductRecordFormInnerProps {
   onSubmit: (data: ConductRecordFormData) => void
   onCancel: () => void
   isSubmitting?: boolean
+  stickyFooter?: boolean
 }
 
 export function ConductRecordFormInner({
@@ -41,331 +31,277 @@ export function ConductRecordFormInner({
   onSubmit,
   onCancel,
   isSubmitting,
+  stickyFooter = false,
 }: ConductRecordFormInnerProps) {
   const t = useTranslations()
+  const locale = useLocale()
   const watchType = form.watch('type')
+  const watchPresetId = form.watch('incidentPresetId')
   const showSeverity = watchType === 'incident' || watchType === 'sanction'
+  const incidentPresets = getConductIncidentPresets(locale.locale)
+  const selectedPreset = incidentPresets.find(preset => preset.id === watchPresetId) ?? null
+  const primaryFieldsClassName = showSeverity ? 'grid gap-5 md:grid-cols-3' : 'grid gap-5 md:grid-cols-2'
+  const submitDisabled = isSubmitting || form.formState.isSubmitting
+
+  useEffect(() => {
+    if (watchType !== 'incident') {
+      form.setValue('incidentPresetId', undefined)
+      return
+    }
+
+    if (!watchPresetId) {
+      form.setValue('incidentPresetId', incidentPresets[0]?.id)
+      return
+    }
+
+    if (!selectedPreset)
+      return
+
+    form.setValue('category', selectedPreset.category)
+    form.setValue('severity', selectedPreset.severity)
+    form.setValue('title', selectedPreset.label)
+  }, [form, incidentPresets, selectedPreset, watchPresetId, watchType])
+
+  const handleValidSubmit = (data: ConductRecordFormData) => {
+    const nextData: ConductRecordFormData = {
+      ...data,
+      studentId: data.studentId || initialStudentId || '',
+    }
+
+    if (watchType === 'incident' && selectedPreset) {
+      nextData.type = 'incident'
+      nextData.incidentPresetId = selectedPreset.id
+      nextData.category = selectedPreset.category
+      nextData.severity = selectedPreset.severity
+      nextData.title = selectedPreset.label
+    }
+
+    onSubmit(nextData)
+  }
+
+  const handleInvalidSubmit = (errors: typeof form.formState.errors) => {
+    const [firstEntry] = Object.entries(errors)
+    const [fieldName, fieldError] = firstEntry ?? []
+
+    const fieldLabel = fieldName === 'studentId'
+      ? t.conduct.student()
+      : fieldName === 'description'
+        ? 'Description detaillee'
+        : fieldName === 'incidentDate'
+          ? t.conduct.form.incidentDate()
+          : fieldName === 'title'
+            ? watchType === 'incident' ? 'Type d\'incident' : t.conduct.form.title()
+            : fieldName === 'category' || fieldName === 'severity'
+              ? 'Type d\'incident'
+              : fieldName === 'witnesses'
+                ? t.conduct.form.witnesses()
+                : 'Formulaire'
+
+    toast.error(`${fieldLabel} requis ou invalide.`)
+    if (fieldError?.message) {
+      console.error('Conduct form validation error:', fieldName, fieldError.message)
+    }
+  }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    <form onSubmit={form.handleSubmit(handleValidSubmit, handleInvalidSubmit)} className="space-y-6">
       {!initialStudentId && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-3"
-        >
-          <Label className="
-            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
-            font-black tracking-[0.2em] uppercase
-          "
-          >
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
+          <Label className="ml-1 flex items-center gap-2 text-xs font-semibold text-slate-600">
             <IconUsers className="size-3.5" />
             {t.conduct.student()}
           </Label>
-          <StudentCombobox
-            value={form.watch('studentId')}
-            onSelect={id => form.setValue('studentId', id)}
-          />
+          <StudentCombobox value={form.watch('studentId')} onSelect={id => form.setValue('studentId', id)} />
           {form.formState.errors.studentId && (
-            <p className="
-              text-destructive ml-1 text-[10px] font-black tracking-widest
-              uppercase
-            "
-            >
+            <p className="text-destructive ml-1 text-xs font-medium">
               {form.formState.errors.studentId.message}
             </p>
           )}
         </motion.div>
       )}
 
-      <div className="
-        grid gap-6
-        md:grid-cols-2
-      "
-      >
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="space-y-3"
-        >
-          <Label className="
-            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
-            font-black tracking-[0.2em] uppercase
-          "
-          >
-            <IconTag className="size-3.5" />
-            {t.conduct.form.type()}
-          </Label>
-          <Select
-            value={form.watch('type')}
-            onValueChange={v =>
-              form.setValue('type', v as (typeof conductTypes)[number])}
-          >
-            <SelectTrigger className="
-              bg-card/50 border-border/40
-              focus:ring-primary/20
-              h-12 rounded-2xl backdrop-blur-xl transition-all
-            "
-            >
-              <SelectValue placeholder={t.conduct.form.type()}>
-                {form.watch('type') && (
-                  <span className="
-                    text-[10px] font-bold tracking-widest uppercase
-                  "
-                  >
-                    {t.conduct.type[form.watch('type') as (typeof conductTypes)[number]]()}
-                  </span>
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="
-              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
-            "
-            >
-              {conductTypes.map(type => (
-                <SelectItem
-                  key={type}
-                  value={type}
-                  className="
-                    rounded-xl py-3 text-[10px] font-bold tracking-widest
-                    uppercase
-                  "
-                >
-                  {t.conduct.type[type]()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {watchType === 'incident' && (
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+          <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label className="ml-1 flex items-center gap-2 text-xs font-semibold text-slate-600">
+                <IconAlertCircle className="size-3.5" />
+                Type d'incident
+              </Label>
+              <Select value={watchPresetId ?? ''} onValueChange={value => form.setValue('incidentPresetId', value ?? undefined)}>
+                <SelectTrigger className="border-slate-200 bg-white focus:ring-2 focus:ring-orange-100 h-11 rounded-xl transition-[border-color,box-shadow]">
+                  <SelectValue placeholder="Sélectionner un incident">
+                    {selectedPreset && (
+                      <span className="text-sm font-medium text-slate-800">
+                        {`${selectedPreset.label} ${selectedPreset.penaltyLabel}`}
+                      </span>
+                    )}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-lg">
+                  {incidentPresets.map(preset => (
+                    <SelectItem key={preset.id} value={preset.id} className="rounded-lg py-2.5 text-sm font-medium text-slate-800">
+                      {`${preset.label} ${preset.penaltyLabel}`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="ml-1 flex items-center gap-2 text-xs font-semibold text-slate-600">
+                <IconCalendar className="size-3.5" />
+                {t.conduct.form.incidentDate()}
+              </Label>
+              <DatePicker
+                date={form.watch('incidentDate')}
+                onSelect={d => form.setValue('incidentDate', d)}
+                className="h-11 rounded-xl border-slate-200 bg-white transition-[border-color,box-shadow] hover:bg-white focus:ring-2 focus:ring-orange-100"
+              />
+            </div>
+          </div>
+
+          {selectedPreset && (
+            <div className="space-y-3 rounded-2xl border border-orange-200 bg-orange-50/70 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                    <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
+                    {selectedPreset.domainLabel}
+                  </div>
+                  <p className="text-sm leading-6 text-slate-600">{selectedPreset.description}</p>
+                </div>
+                <div className="rounded-xl bg-white px-3 py-2 text-sm font-semibold text-orange-600 shadow-sm">
+                  {selectedPreset.penaltyLabel}
+                </div>
+              </div>
+            </div>
+          )}
         </motion.div>
+      )}
 
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="space-y-3"
-        >
-          <Label className="
-            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
-            font-black tracking-[0.2em] uppercase
-          "
-          >
-            <IconTag className="size-3.5" />
-            {t.conduct.form.category()}
-          </Label>
-          <Select
-            value={form.watch('category')}
-            onValueChange={v =>
-              form.setValue('category', v as (typeof conductCategories)[number])}
-          >
-            <SelectTrigger className="
-              bg-card/50 border-border/40
-              focus:ring-primary/20
-              h-12 rounded-2xl backdrop-blur-xl transition-all
-            "
-            >
-              <SelectValue placeholder={t.conduct.form.category()}>
-                {form.watch('category') && (
-                  <span className="
-                    text-[10px] font-bold tracking-widest uppercase
-                  "
-                  >
-                    {t.conduct.category[form.watch('category') as (typeof conductCategories)[number]]()}
-                  </span>
-                )}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="
-              bg-popover/90 border-border/40 max-h-[300px] overflow-y-auto
-              rounded-2xl backdrop-blur-2xl
-            "
-            >
-              {conductCategories.map(cat => (
-                <SelectItem
-                  key={cat}
-                  value={cat}
-                  className="
-                    rounded-xl py-3 text-[10px] font-bold tracking-widest
-                    uppercase
-                  "
-                >
-                  {t.conduct.category[cat]()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </motion.div>
-      </div>
+      {watchType !== 'incident' && (
+        <div className={primaryFieldsClassName}>
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-2">
+            <Label className="ml-1 flex items-center gap-2 text-xs font-semibold text-slate-600">
+              <IconTag className="size-3.5" />
+              {t.conduct.form.type()}
+            </Label>
+            <Select value={form.watch('type')} onValueChange={v => form.setValue('type', v as (typeof conductTypes)[number])}>
+              <SelectTrigger className="border-slate-200 bg-white focus:ring-2 focus:ring-orange-100 h-11 rounded-xl transition-[border-color,box-shadow]">
+                <SelectValue placeholder={t.conduct.form.type()}>
+                  {form.watch('type') && (
+                    <span className="text-xs font-semibold tracking-[0.08em] uppercase text-slate-800">
+                      {t.conduct.type[form.watch('type') as (typeof conductTypes)[number]]()}
+                    </span>
+                  )}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-lg">
+                {conductTypes.map(type => (
+                  <SelectItem key={type} value={type} className="rounded-lg py-2.5 text-xs font-semibold tracking-[0.08em] uppercase">
+                    {t.conduct.type[type]()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-2">
+            <Label className="ml-1 flex items-center gap-2 text-xs font-semibold text-slate-600">
+              <IconTag className="size-3.5" />
+              {t.conduct.form.category()}
+            </Label>
+            <Select value={form.watch('category')} onValueChange={v => form.setValue('category', v as (typeof conductCategories)[number])}>
+              <SelectTrigger className="border-slate-200 bg-white focus:ring-2 focus:ring-orange-100 h-11 rounded-xl transition-[border-color,box-shadow]">
+                <SelectValue placeholder={t.conduct.form.category()}>
+                  {form.watch('category') && (
+                    <span className="text-xs font-semibold tracking-[0.08em] uppercase text-slate-800">
+                      {t.conduct.category[form.watch('category') as (typeof conductCategories)[number]]()}
+                    </span>
+                  )}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px] overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg">
+                {conductCategories.map(cat => (
+                  <SelectItem key={cat} value={cat} className="rounded-lg py-2.5 text-xs font-semibold tracking-[0.08em] uppercase">
+                    {t.conduct.category[cat]()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-3"
-      >
-        <Label className="
-          text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
-          font-black tracking-[0.2em] uppercase
-        "
-        >
+          {showSeverity && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-2 overflow-hidden">
+              <Label className="ml-1 flex items-center gap-2 text-xs font-semibold text-slate-600">
+                <IconAlertCircle className="size-3.5" />
+                {t.conduct.form.severity()}
+              </Label>
+              <Select value={form.watch('severity') ?? ''} onValueChange={v => form.setValue('severity', v as (typeof severityLevels)[number])}>
+                <SelectTrigger className="border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-orange-100 h-11 rounded-xl font-semibold transition-[border-color,box-shadow]">
+                  <SelectValue placeholder={t.conduct.form.selectSeverity()}>
+                    {form.watch('severity') && (
+                      <span className="text-sm font-semibold text-slate-800">
+                        {t.conduct.severity[form.watch('severity') as (typeof severityLevels)[number]]()}
+                      </span>
+                    )}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border border-slate-200 bg-white shadow-lg">
+                  {severityLevels.map(level => (
+                    <SelectItem key={level} value={level} className="rounded-lg py-2.5 text-xs font-semibold tracking-[0.08em] uppercase">
+                      {t.conduct.severity[level]()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </motion.div>
+          )}
+        </div>
+      )}
+
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-2">
+        <Label className="ml-1 flex items-center gap-2 text-xs font-semibold text-slate-600">
           <IconTag className="size-3.5" />
-          {t.conduct.form.title()}
-        </Label>
-        <Input
-          id="title"
-          {...form.register('title')}
-          className="
-            bg-card/50 border-border/40
-            focus:ring-primary/20
-            h-12 rounded-2xl font-bold backdrop-blur-xl transition-all
-          "
-          placeholder={t.conduct.form.title()}
-        />
-        {form.formState.errors.title && (
-          <p className="
-            text-destructive ml-1 text-[10px] font-black tracking-widest
-            uppercase
-          "
-          >
-            {form.formState.errors.title.message}
-          </p>
-        )}
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="space-y-3"
-      >
-        <Label className="
-          text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
-          font-black tracking-[0.2em] uppercase
-        "
-        >
-          <IconTag className="size-3.5" />
-          {t.conduct.form.description()}
+          Description détaillée
         </Label>
         <Textarea
           id="description"
           {...form.register('description')}
-          className="
-            bg-card/50 border-border/40
-            focus:ring-primary/20
-            min-h-[120px] rounded-2xl font-medium italic backdrop-blur-xl
-            transition-all
-          "
-          placeholder={t.conduct.form.description()}
+          className="min-h-[112px] rounded-xl border-slate-200 bg-white font-medium text-slate-900 transition-[border-color,box-shadow] focus:ring-2 focus:ring-orange-100"
+          placeholder="Décrivez l'incident en détail, avec les faits constatés et les éventuels témoins."
         />
         {form.formState.errors.description && (
-          <p className="
-            text-destructive ml-1 text-[10px] font-black tracking-widest
-            uppercase
-          "
-          >
+          <p className="text-destructive ml-1 text-xs font-medium">
             {form.formState.errors.description.message}
           </p>
         )}
       </motion.div>
 
-      {showSeverity && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          className="space-y-3 overflow-hidden"
-        >
-          <Label className="
-            text-muted-foreground/60 ml-1 flex items-center gap-2 text-[10px]
-            font-black tracking-[0.2em] uppercase
-          "
-          >
-            <IconAlertCircle className="size-3.5" />
-            {t.conduct.form.severity()}
-          </Label>
-          <Select
-            value={form.watch('severity') ?? ''}
-            onValueChange={v =>
-              form.setValue('severity', v as (typeof severityLevels)[number])}
-          >
-            <SelectTrigger className="
-              bg-card/50 border-border/40
-              focus:ring-primary/20
-              text-destructive h-12 rounded-2xl font-black backdrop-blur-xl
-              transition-all
-            "
-            >
-              <SelectValue placeholder={t.conduct.form.selectSeverity()}>
-                {form.watch('severity') && (() => {
-                  const severityConfig = {
-                    low: { color: 'bg-secondary', label: t.conduct.severity.low(), icon: '🔵' },
-                    medium: { color: 'bg-accent', label: t.conduct.severity.medium(), icon: '🟡' },
-                    high: { color: 'bg-accent', label: t.conduct.severity.high(), icon: '🟠' },
-                    critical: { color: 'bg-destructive', label: t.conduct.severity.critical(), icon: '🔴' },
-                  }
-                  const config = severityConfig[form.watch('severity') as keyof typeof severityConfig]
-                  return (
-                    <div className="flex items-center gap-2">
-                      <div className={`
-                        h-2 w-2 rounded-full
-                        ${config.color}
-                      `}
-                      />
-                      <span>
-                        {config.icon}
-                        {' '}
-                        {config.label}
-                      </span>
-                    </div>
-                  )
-                })()}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent className="
-              bg-popover/90 border-border/40 rounded-2xl backdrop-blur-2xl
-            "
-            >
-              {severityLevels.map(level => (
-                <SelectItem
-                  key={level}
-                  value={level}
-                  className="
-                    text-destructive rounded-xl py-3 text-[10px] font-bold
-                    tracking-widest uppercase
-                  "
-                >
-                  {t.conduct.severity[level]()}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </motion.div>
-      )}
+      <ConductRecordIncidentFields form={form} compact={watchType === 'incident'} hideDate={watchType === 'incident'} />
 
-      <ConductRecordIncidentFields form={form} />
-
-      <div className="border-border/10 flex justify-end gap-3 border-t pt-6">
+      <div
+        className={cn(
+          'flex justify-end gap-3 border-t border-slate-100 pt-4',
+          stickyFooter && 'sticky bottom-0 z-10 -mx-2 bg-white px-2 pb-1 pt-4',
+        )}
+      >
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
-          className="
-            border-border/40
-            hover:bg-muted/50
-            h-12 rounded-2xl px-8 text-[10px] font-black tracking-widest
-            uppercase transition-all
-          "
+          disabled={submitDisabled}
+          className="h-11 rounded-xl border-slate-200 px-6 text-xs font-semibold tracking-[0.08em] uppercase text-slate-700 transition-[border-color,background-color,color] hover:bg-slate-50"
         >
           {t.common.cancel()}
         </Button>
-        <Button
+        <button
           type="submit"
-          disabled={isSubmitting}
-          className="
-            bg-primary shadow-primary/20 h-12 rounded-2xl px-10 text-[10px]
-            font-black tracking-widest uppercase shadow-xl transition-all
-            hover:scale-105
-            active:scale-95
-          "
+          disabled={submitDisabled}
+          className="h-11 rounded-xl bg-orange-500 px-7 text-xs font-semibold tracking-[0.08em] uppercase text-white transition-[background-color,box-shadow,transform] hover:bg-orange-600 active:scale-[0.99]"
         >
-          {isSubmitting ? t.common.saving() : t.common.save()}
-        </Button>
+          {submitDisabled ? t.common.saving() : t.common.save()}
+        </button>
       </div>
     </form>
   )

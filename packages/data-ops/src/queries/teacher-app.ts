@@ -249,6 +249,45 @@ export async function completeTeacherClassSession(params: {
 }
 
 /**
+ * Update attendance counters for an in-progress class session without closing it.
+ */
+export async function updateTeacherClassSessionAttendance(params: {
+  sessionId: string
+  teacherId: string
+  studentsPresent: number
+  studentsAbsent: number
+}): R.ResultAsync<typeof classSessions.$inferSelect, DatabaseError> {
+  const db = getDb()
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const [updated] = await db
+          .update(classSessions)
+          .set({
+            studentsPresent: params.studentsPresent,
+            studentsAbsent: params.studentsAbsent,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(classSessions.id, params.sessionId),
+              eq(classSessions.teacherId, params.teacherId),
+            ),
+          )
+          .returning()
+        if (!updated) {
+          throw new Error('Failed to update class session attendance')
+        }
+        return updated
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.completeFailed'), { code: 'UPDATE_SESSION_ATTENDANCE_FAILED' }),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
+}
+
+/**
  * Get session details
  */
 export async function getTeacherClassSessionById(sessionId: string): R.ResultAsync<TeacherClassSession | null, DatabaseError> {
@@ -298,6 +337,54 @@ export async function getTeacherClassSessionById(sessionId: string): R.ResultAsy
 }
 
 /**
+ * Get a teacher class session for a timetable slot on a specific date.
+ * Used to enforce "one session per slot per day".
+ */
+export async function getTeacherClassSessionForSlot(params: {
+  teacherId: string
+  timetableSessionId: string
+  date: string
+}): R.ResultAsync<{
+  id: string
+  status: 'scheduled' | 'completed' | 'cancelled' | 'rescheduled'
+} | null, DatabaseError> {
+  const db = getDb()
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const rows = await db
+          .select({
+            id: classSessions.id,
+            status: classSessions.status,
+          })
+          .from(classSessions)
+          .where(
+            and(
+              eq(classSessions.teacherId, params.teacherId),
+              eq(classSessions.timetableSessionId, params.timetableSessionId),
+              eq(classSessions.date, params.date),
+            ),
+          )
+          .orderBy(desc(classSessions.createdAt))
+          .limit(1)
+
+        const session = rows[0]
+        if (!session)
+          return null
+
+        return {
+          id: session.id,
+          status: session.status as 'scheduled' | 'completed' | 'cancelled' | 'rescheduled',
+        }
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.getFailed'), { code: 'GET_SESSION_FAILED' }),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
+}
+
+/**
  * Get session history for teacher
  */
 export async function getTeacherSessionHistory(params: {
@@ -311,6 +398,7 @@ export async function getTeacherSessionHistory(params: {
 }): R.ResultAsync<{
   sessions: Array<{
     id: string
+    timetableSessionId: string | null
     className: string
     subjectName: string
     date: string
@@ -345,6 +433,7 @@ export async function getTeacherSessionHistory(params: {
           db
             .select({
               id: classSessions.id,
+              timetableSessionId: classSessions.timetableSessionId,
               className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
               subjectName: subjects.name,
               date: classSessions.date,
@@ -1906,7 +1995,7 @@ export async function upsertStudentAttendance(params: {
   schoolId: string
   classId: string
   classSessionId: string
-  teacherId: string // recordedBy
+  recordedByUserId: string
   date: string
   records: Array<{
     studentId: string
@@ -1932,12 +2021,13 @@ export async function upsertStudentAttendance(params: {
             classSessionId: params.classSessionId,
             date: params.date,
             status: r.status,
-            recordedBy: params.teacherId,
+            recordedBy: params.recordedByUserId,
           })))
           .onConflictDoUpdate({
             target: [studentAttendance.studentId, studentAttendance.date, studentAttendance.classId, studentAttendance.classSessionId],
             set: {
               status: sql`excluded.status`,
+              recordedBy: sql`excluded.recorded_by`,
               updatedAt: new Date(),
             },
           })

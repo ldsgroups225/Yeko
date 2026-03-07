@@ -10,19 +10,19 @@ import { getTeacherContext } from '../middleware/teacher-context'
 // Schema for saving individual student attendance
 export const saveAttendanceSchema = z.object({
   enrollmentId: z.string(),
-  sessionId: z.string(),
+  sessionId: z.string().optional(),
   sessionDate: z.string(),
   status: z.enum(['present', 'absent', 'late', 'excused']),
   notes: z.string().optional(),
-  teacherId: z.string(),
+  teacherId: z.string().optional(), // Legacy client field - server derives user context
 })
 
 // Schema for bulk attendance save
 export const bulkAttendanceSchema = z.object({
   classId: z.string(),
-  sessionId: z.string(),
+  sessionId: z.string().optional(),
   sessionDate: z.string(),
-  teacherId: z.string(),
+  teacherId: z.string().optional(), // Legacy client field - server derives user context
   attendanceRecords: z.array(
     z.object({
       enrollmentId: z.string(),
@@ -120,7 +120,7 @@ export const getOrCreateSession = createServerFn()
       schoolId: context.schoolId,
       classId: data.classId,
       subjectId: data.subjectId,
-      teacherId: data.teacherId,
+      teacherId: context.teacherId,
       date: data.date,
       startTime: data.startTime,
       endTime: data.endTime,
@@ -162,7 +162,7 @@ export const saveAttendance = createServerFn()
       sessionDate: data.sessionDate,
       status: data.status,
       notes: data.notes,
-      teacherId: data.teacherId,
+      teacherId: context.userId,
     })
 
     if (R.isFailure(result)) {
@@ -199,7 +199,7 @@ export const saveBulkAttendance = createServerFn()
       classId: data.classId,
       sessionId: data.sessionId,
       sessionDate: data.sessionDate,
-      teacherId: data.teacherId,
+      teacherId: context.userId,
       attendanceRecords: data.attendanceRecords,
     })
 
