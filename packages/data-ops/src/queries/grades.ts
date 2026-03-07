@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type {
   GradeStatus,
   GradeType,
@@ -10,7 +11,9 @@ import {
   asc,
   desc,
   eq,
+  gte,
   inArray,
+  lte,
   sql,
 } from 'drizzle-orm'
 import { getDb } from '../database/setup'
@@ -28,13 +31,34 @@ import {
 import { DatabaseError } from '../errors'
 import { getNestedErrorMessage } from '../i18n'
 
+export interface StudentGradeWithStudent {
+  id: string
+  value: string
+  type: GradeType
+  maxPoints: number | null
+  gradeDate: string
+  studentId: string
+  status: GradeStatus
+  student: {
+    id: string
+    firstName: string
+    lastName: string
+    matricule: string | null
+  }
+}
+
 export async function getGradesByClass(params: {
   schoolId: string
   classId: string
   subjectId: string
   termId: string
   teacherId?: string
-}): R.ResultAsync<any[], DatabaseError> { // Using any[] here as type wasn't explicitly provided but keeping existing logic
+  type?: GradeType
+  gradeDate?: string
+  description?: string
+  status?: GradeStatus
+  submittedAt?: string
+}): R.ResultAsync<StudentGradeWithStudent[], DatabaseError> {
   const db = getDb()
   return R.pipe(
     R.try({
@@ -54,11 +78,17 @@ export async function getGradesByClass(params: {
             eq(studentGrades.subjectId, params.subjectId),
             eq(studentGrades.termId, params.termId),
             params.teacherId ? eq(studentGrades.teacherId, params.teacherId) : undefined,
+            params.type ? eq(studentGrades.type, params.type) : undefined,
+            params.gradeDate ? eq(studentGrades.gradeDate, params.gradeDate) : undefined,
+            params.description ? eq(studentGrades.description, params.description) : undefined,
+            params.status ? eq(studentGrades.status, params.status) : undefined,
+            params.submittedAt ? eq(studentGrades.submittedAt, new Date(params.submittedAt)) : undefined,
           ),
           columns: {
             id: true,
             value: true,
             type: true,
+            maxPoints: true,
             gradeDate: true,
             studentId: true,
             status: true,
@@ -84,6 +114,9 @@ export interface PendingValidation {
   subjectId: string
   subjectName: string
   termId: string
+  gradeType: GradeType
+  gradeDate: string
+  description: string | null
   teacherId: string | null
   teacherName: string
   pendingCount: number
@@ -123,13 +156,16 @@ export async function getPendingValidations(params: {
           subjectId: studentGrades.subjectId,
           subjectName: subjects.name,
           termId: studentGrades.termId,
+          gradeType: studentGrades.type,
+          gradeDate: studentGrades.gradeDate,
+          description: studentGrades.description,
           teacherId: studentGrades.teacherId,
           teacherName: users.name,
           pendingCount: sql<number>`count(*)`,
-          submittedAt: sql<Date>`min(${studentGrades.submittedAt})`,
+          submittedAt: studentGrades.submittedAt,
           average: sql<number>`round(avg(${studentGrades.value}), 2)`,
-          maxGrade: sql<number>`20`,
-          coefficient: sql<number>`1`,
+          maxGrade: sql<number>`coalesce(max(${studentGrades.maxPoints}), 20)`,
+          coefficient: sql<number>`coalesce(max(${studentGrades.weight}), 1)`,
         })
           .from(studentGrades)
           .innerJoin(classes, eq(studentGrades.classId, classes.id))
@@ -145,10 +181,14 @@ export async function getPendingValidations(params: {
             studentGrades.subjectId,
             subjects.name,
             studentGrades.termId,
+            studentGrades.type,
+            studentGrades.gradeDate,
+            studentGrades.description,
             studentGrades.teacherId,
             users.name,
+            studentGrades.submittedAt,
           )
-          .orderBy(desc(sql`min(${studentGrades.submittedAt})`))
+          .orderBy(desc(studentGrades.submittedAt))
       },
       catch: e => DatabaseError.from(e),
     }),
@@ -398,6 +438,11 @@ export async function getSubmittedGradeIds(params: {
   classId: string
   subjectId: string
   termId: string
+  gradeType?: GradeType
+  gradeDate?: string
+  description?: string
+  teacherId?: string
+  submittedAt?: string
 }): R.ResultAsync<string[], DatabaseError> {
   const db = getDb()
   return R.pipe(
@@ -411,16 +456,53 @@ export async function getSubmittedGradeIds(params: {
           throw new DatabaseError('PERMISSION_DENIED', getNestedErrorMessage('auth', 'noSchoolContext'))
         }
 
-        const results = await db.select({ id: studentGrades.id })
-          .from(studentGrades)
-          .where(and(
-            eq(studentGrades.classId, params.classId),
-            eq(studentGrades.subjectId, params.subjectId),
-            eq(studentGrades.termId, params.termId),
-            eq(studentGrades.status, 'submitted'),
-          ))
+        const baseConditions = [
+          eq(studentGrades.classId, params.classId),
+          eq(studentGrades.subjectId, params.subjectId),
+          eq(studentGrades.termId, params.termId),
+          eq(studentGrades.status, 'submitted'),
+          params.gradeType ? eq(studentGrades.type, params.gradeType) : undefined,
+          params.gradeDate ? eq(studentGrades.gradeDate, params.gradeDate) : undefined,
+          params.description !== undefined ? eq(studentGrades.description, params.description) : undefined,
+          params.teacherId ? eq(studentGrades.teacherId, params.teacherId) : undefined,
+        ]
 
-        return results.map((r: { id: string }) => r.id)
+        const selectIds = async (conditions: (ReturnType<typeof eq> | ReturnType<typeof gte> | ReturnType<typeof lte> | undefined)[]) => {
+          return await db.select({ id: studentGrades.id })
+            .from(studentGrades)
+            .where(and(...conditions))
+        }
+
+        // Fuzzy submittedAt matching: timestamps may lose precision during
+        // JSON serialization (frontend → server) or differ by milliseconds due
+        // to clock skew between PGlite and Neon. We try exact match first, then
+        // a ±1 second range, then fall back to matching without submittedAt.
+        if (params.submittedAt) {
+          const submittedAtDate = new Date(params.submittedAt)
+
+          const exactMatches = await selectIds([
+            ...baseConditions,
+            eq(studentGrades.submittedAt, submittedAtDate),
+          ])
+          if (exactMatches.length > 0) {
+            return exactMatches.map((r: { id: string }) => r.id)
+          }
+
+          const oneSecondMs = 1000
+          const lowerBound = new Date(submittedAtDate.getTime() - oneSecondMs)
+          const upperBound = new Date(submittedAtDate.getTime() + oneSecondMs)
+          const closeMatches = await selectIds([
+            ...baseConditions,
+            gte(studentGrades.submittedAt, lowerBound),
+            lte(studentGrades.submittedAt, upperBound),
+          ])
+          if (closeMatches.length > 0) {
+            return closeMatches.map((r: { id: string }) => r.id)
+          }
+        }
+
+        const fallbackMatches = await selectIds(baseConditions)
+        return fallbackMatches.map((r: { id: string }) => r.id)
       },
       catch: e => DatabaseError.from(e),
     }),

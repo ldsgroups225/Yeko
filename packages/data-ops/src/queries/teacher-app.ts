@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import type { SQL } from 'drizzle-orm'
 import type { GradeStatus, GradeType, MessageCategory } from '../drizzle/school-schema'
 import { Result as R } from '@praha/byethrow'
@@ -248,6 +249,45 @@ export async function completeTeacherClassSession(params: {
 }
 
 /**
+ * Update attendance counters for an in-progress class session without closing it.
+ */
+export async function updateTeacherClassSessionAttendance(params: {
+  sessionId: string
+  teacherId: string
+  studentsPresent: number
+  studentsAbsent: number
+}): R.ResultAsync<typeof classSessions.$inferSelect, DatabaseError> {
+  const db = getDb()
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const [updated] = await db
+          .update(classSessions)
+          .set({
+            studentsPresent: params.studentsPresent,
+            studentsAbsent: params.studentsAbsent,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(classSessions.id, params.sessionId),
+              eq(classSessions.teacherId, params.teacherId),
+            ),
+          )
+          .returning()
+        if (!updated) {
+          throw new Error('Failed to update class session attendance')
+        }
+        return updated
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.completeFailed'), { code: 'UPDATE_SESSION_ATTENDANCE_FAILED' }),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
+}
+
+/**
  * Get session details
  */
 export async function getTeacherClassSessionById(sessionId: string): R.ResultAsync<TeacherClassSession | null, DatabaseError> {
@@ -297,6 +337,54 @@ export async function getTeacherClassSessionById(sessionId: string): R.ResultAsy
 }
 
 /**
+ * Get a teacher class session for a timetable slot on a specific date.
+ * Used to enforce "one session per slot per day".
+ */
+export async function getTeacherClassSessionForSlot(params: {
+  teacherId: string
+  timetableSessionId: string
+  date: string
+}): R.ResultAsync<{
+  id: string
+  status: 'scheduled' | 'completed' | 'cancelled' | 'rescheduled'
+} | null, DatabaseError> {
+  const db = getDb()
+
+  return R.pipe(
+    R.try({
+      try: async () => {
+        const rows = await db
+          .select({
+            id: classSessions.id,
+            status: classSessions.status,
+          })
+          .from(classSessions)
+          .where(
+            and(
+              eq(classSessions.teacherId, params.teacherId),
+              eq(classSessions.timetableSessionId, params.timetableSessionId),
+              eq(classSessions.date, params.date),
+            ),
+          )
+          .orderBy(desc(classSessions.createdAt))
+          .limit(1)
+
+        const session = rows[0]
+        if (!session)
+          return null
+
+        return {
+          id: session.id,
+          status: session.status as 'scheduled' | 'completed' | 'cancelled' | 'rescheduled',
+        }
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.getFailed'), { code: 'GET_SESSION_FAILED' }),
+    }),
+    R.mapError(tapLogErr(databaseLogger, params)),
+  )
+}
+
+/**
  * Get session history for teacher
  */
 export async function getTeacherSessionHistory(params: {
@@ -310,6 +398,7 @@ export async function getTeacherSessionHistory(params: {
 }): R.ResultAsync<{
   sessions: Array<{
     id: string
+    timetableSessionId: string | null
     className: string
     subjectName: string
     date: string
@@ -344,6 +433,7 @@ export async function getTeacherSessionHistory(params: {
           db
             .select({
               id: classSessions.id,
+              timetableSessionId: classSessions.timetableSessionId,
               className: sql<string>`${grades.name} || ' ' || ${classes.section}`,
               subjectName: subjects.name,
               date: classSessions.date,
@@ -1402,11 +1492,19 @@ export async function submitStudentGrades(params: {
   }>
   status: GradeStatus
   gradeType?: GradeType
+  weight?: number
+  maxPoints?: number
+  description?: string
+  gradeDate?: string
 }): R.ResultAsync<{ success: boolean, count: number }, DatabaseError> {
   const db = getDb()
 
   const gradeType: GradeType = params.gradeType ?? 'test'
   const today = new Date().toISOString().split('T')[0]!
+  const gradeDate = params.gradeDate ?? today
+  const gradeWeight = params.weight ?? 1
+  const maxPoints = params.maxPoints ?? 20
+  const submittedAt = params.status === 'submitted' ? new Date() : null
 
   if (params.grades.length === 0) {
     return R.succeed({ success: true, count: 0 })
@@ -1415,6 +1513,15 @@ export async function submitStudentGrades(params: {
   return R.pipe(
     R.try({
       try: async () => {
+        // Validate class belongs to the teacher's school (multi-tenant isolation)
+        const classExists = await db.query.classes.findFirst({
+          where: and(eq(classes.id, params.classId), eq(classes.schoolId, params.schoolId)),
+          columns: { id: true },
+        })
+        if (!classExists) {
+          throw new DatabaseError('PERMISSION_DENIED', getNestedErrorMessage('auth', 'noSchoolContext'))
+        }
+
         const results = await db
           .insert(studentGrades)
           .values(params.grades.map(grade => ({
@@ -1426,10 +1533,12 @@ export async function submitStudentGrades(params: {
             teacherId: params.teacherId,
             value: grade.grade.toFixed(2),
             type: gradeType,
-            weight: 1,
-            gradeDate: today,
+            weight: gradeWeight,
+            maxPoints,
+            description: params.description,
+            gradeDate,
             status: params.status,
-            submittedAt: params.status === 'submitted' ? new Date() : null,
+            submittedAt,
           })))
           .returning()
 
@@ -1817,7 +1926,26 @@ export async function getCurrentTermForSchoolYear(schoolYearId: string): R.Resul
           )
           .limit(1)
 
-        return result[0] ?? null
+        if (result[0]) {
+          return result[0]
+        }
+
+        // Fallback: if no active term matches today's date, use the latest
+        // term in that school year so grade publication is not blocked.
+        const latestTerm = await db
+          .select({
+            id: terms.id,
+            name: termTemplates.name,
+            startDate: terms.startDate,
+            endDate: terms.endDate,
+          })
+          .from(terms)
+          .innerJoin(termTemplates, eq(terms.termTemplateId, termTemplates.id))
+          .where(eq(terms.schoolYearId, schoolYearId))
+          .orderBy(desc(terms.endDate))
+          .limit(1)
+
+        return latestTerm[0] ?? null
       },
       catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', getNestedErrorMessage('teacherApp', 'session.termFailed'), { code: 'GET_CURRENT_TERM_FAILED' }),
     }),
@@ -1867,7 +1995,7 @@ export async function upsertStudentAttendance(params: {
   schoolId: string
   classId: string
   classSessionId: string
-  teacherId: string // recordedBy
+  recordedByUserId: string
   date: string
   records: Array<{
     studentId: string
@@ -1893,12 +2021,13 @@ export async function upsertStudentAttendance(params: {
             classSessionId: params.classSessionId,
             date: params.date,
             status: r.status,
-            recordedBy: params.teacherId,
+            recordedBy: params.recordedByUserId,
           })))
           .onConflictDoUpdate({
             target: [studentAttendance.studentId, studentAttendance.date, studentAttendance.classId, studentAttendance.classSessionId],
             set: {
               status: sql`excluded.status`,
+              recordedBy: sql`excluded.recorded_by`,
               updatedAt: new Date(),
             },
           })

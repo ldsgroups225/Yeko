@@ -47,8 +47,8 @@ export function AttendanceStudentCard({
   const config = statusConfig[status]
   const StatusIcon = config.icon
 
-  // In late mode, only show absent students who might arrive late
-  if (isLateMode && status === 'present') {
+  // In late mode, only absent students are eligible for absent -> late transition.
+  if (isLateMode && status !== 'absent') {
     return null
   }
 
@@ -113,31 +113,25 @@ export function AttendanceStudentCard({
         <div className="flex items-center gap-1.5">
           {isLateMode
             ? (
-                // Late mode: only show "Arrived Late" button
+                // Late mode: allow absent -> late only
                 <Button
                   variant="outline"
                   size="sm"
                   className={cn(
                     'h-9 rounded-lg px-3 font-semibold transition-all',
-                    status === 'late'
-                      ? `
-                        bg-accent border-accent
-                        hover:bg-accent
-                        text-white
-                      `
-                      : `
-                        bg-muted/50
-                        hover:bg-accent/20 hover:border-accent/50
-                      `,
+                    `
+                      bg-muted/50
+                      hover:bg-accent/20 hover:border-accent/50
+                    `,
                   )}
-                  onClick={() => onUpdateStatus(student.id, status === 'late' ? 'absent' : 'late')}
+                  onClick={() => onUpdateStatus(student.id, 'late')}
                 >
                   <IconClock className="mr-1.5 h-4 w-4" />
                   {LL.session.late()}
                 </Button>
               )
             : (
-                // Initial attendance mode: show all three buttons
+                // Initial attendance mode: show present/absent only
                 <>
                   <Button
                     variant="ghost"
@@ -178,27 +172,6 @@ export function AttendanceStudentCard({
                     title={LL.attendance.status.absent()}
                   >
                     <IconX className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      'h-9 w-9 rounded-lg transition-all',
-                      status === 'late'
-                        ? `
-                          bg-accent
-                          hover:bg-accent
-                          text-white
-                        `
-                        : `
-                          bg-muted/50
-                          hover:bg-accent/20
-                        `,
-                    )}
-                    onClick={() => onUpdateStatus(student.id, 'late')}
-                    title={LL.attendance.status.late()}
-                  >
-                    <IconClock className="h-4 w-4" />
                   </Button>
                 </>
               )}

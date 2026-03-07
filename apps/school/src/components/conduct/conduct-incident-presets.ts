@@ -1,0 +1,223 @@
+import type { Locales } from '@/i18n/i18n-types'
+import type { ConductCategory, SeverityLevel } from '@/schemas/conduct-record'
+
+export interface ConductIncidentPreset {
+  id: string
+  label: string
+  penaltyLabel: string
+  description: string
+  domainLabel: string
+  points: number
+  category: ConductCategory
+  severity: SeverityLevel
+}
+
+const frPresets: ConductIncidentPreset[] = [
+  {
+    id: 'unexcused-absence',
+    label: 'Absence injustifiée',
+    penaltyLabel: '-0.5 pts',
+    description: 'Absence non justifiée constatée et prise en compte dans la note de conduite.',
+    domainLabel: 'Assiduité',
+    points: -0.5,
+    category: 'attendance',
+    severity: 'low',
+  },
+  {
+    id: 'uniform-breach',
+    label: 'Tenue non conforme',
+    penaltyLabel: '-0.5 pts',
+    description: 'Présentation ou tenue non conforme au règlement intérieur de l’établissement.',
+    domainLabel: 'Tenue',
+    points: -0.5,
+    category: 'uniform',
+    severity: 'low',
+  },
+  {
+    id: 'class-disruption',
+    label: 'Perturbation en classe',
+    penaltyLabel: '-0.5 pts',
+    description: 'Perturbation répétée du déroulement normal du cours ou gêne pour le groupe.',
+    domainLabel: 'Discipline',
+    points: -0.5,
+    category: 'behavior',
+    severity: 'low',
+  },
+  {
+    id: 'attempted-cheating',
+    label: 'Tentative de fraude',
+    penaltyLabel: '-1 pt',
+    description: 'Tentative de tricherie relevée pendant une évaluation ou une activité académique.',
+    domainLabel: 'Intégrité académique',
+    points: -1,
+    category: 'cheating',
+    severity: 'high',
+  },
+  {
+    id: 'confirmed-cheating',
+    label: 'Fraude confirmée',
+    penaltyLabel: '-1 pt',
+    description: 'Fraude ou tricherie confirmée par l’équipe éducative.',
+    domainLabel: 'Intégrité académique',
+    points: -1,
+    category: 'cheating',
+    severity: 'critical',
+  },
+  {
+    id: 'staff-disrespect',
+    label: 'Irrespect envers le personnel',
+    penaltyLabel: '-1 pt',
+    description: 'Manquement grave au respect dû au personnel éducatif ou administratif.',
+    domainLabel: 'Discipline',
+    points: -1,
+    category: 'behavior',
+    severity: 'high',
+  },
+  {
+    id: 'property-damage',
+    label: 'Dégradation de biens',
+    penaltyLabel: '-1 pt',
+    description: 'Dégradation volontaire ou par négligence du matériel ou des infrastructures.',
+    domainLabel: 'Patrimoine',
+    points: -1,
+    category: 'property',
+    severity: 'high',
+  },
+  {
+    id: 'theft-extortion',
+    label: 'Vol / Extorsion',
+    penaltyLabel: '-1 pt',
+    description: 'Appropriation illicite, racket ou tentative d’extorsion entre élèves ou envers autrui.',
+    domainLabel: 'Discipline grave',
+    points: -1,
+    category: 'property',
+    severity: 'critical',
+  },
+  {
+    id: 'alcohol-tobacco',
+    label: 'Alcool / Tabac dans l’établissement',
+    penaltyLabel: '-1 pt',
+    description: 'Consommation, possession ou usage d’alcool ou de tabac dans l’enceinte scolaire.',
+    domainLabel: 'Conduite à risque',
+    points: -1,
+    category: 'behavior',
+    severity: 'critical',
+  },
+  {
+    id: 'physical-violence',
+    label: 'Violence physique',
+    penaltyLabel: '-2 pts',
+    description: 'Agression physique ou violence avérée nécessitant un signalement renforcé.',
+    domainLabel: 'Discipline grave',
+    points: -2,
+    category: 'violence',
+    severity: 'critical',
+  },
+]
+
+const enPresets: ConductIncidentPreset[] = [
+  {
+    id: 'unexcused-absence',
+    label: 'Unexcused absence',
+    penaltyLabel: '-0.5 pts',
+    description: 'Unjustified absence recorded and counted toward the conduct score.',
+    domainLabel: 'Attendance',
+    points: -0.5,
+    category: 'attendance',
+    severity: 'low',
+  },
+  {
+    id: 'uniform-breach',
+    label: 'Uniform violation',
+    penaltyLabel: '-0.5 pts',
+    description: 'Dress code or presentation does not comply with school rules.',
+    domainLabel: 'Uniform',
+    points: -0.5,
+    category: 'uniform',
+    severity: 'low',
+  },
+  {
+    id: 'class-disruption',
+    label: 'Class disruption',
+    penaltyLabel: '-0.5 pts',
+    description: 'Repeated disruption of class flow or disturbance for the group.',
+    domainLabel: 'Discipline',
+    points: -0.5,
+    category: 'behavior',
+    severity: 'low',
+  },
+  {
+    id: 'attempted-cheating',
+    label: 'Attempted cheating',
+    penaltyLabel: '-1 pt',
+    description: 'Cheating attempt identified during an assessment or academic activity.',
+    domainLabel: 'Academic integrity',
+    points: -1,
+    category: 'cheating',
+    severity: 'high',
+  },
+  {
+    id: 'confirmed-cheating',
+    label: 'Confirmed cheating',
+    penaltyLabel: '-1 pt',
+    description: 'Cheating confirmed by the educational team.',
+    domainLabel: 'Academic integrity',
+    points: -1,
+    category: 'cheating',
+    severity: 'critical',
+  },
+  {
+    id: 'staff-disrespect',
+    label: 'Disrespect toward staff',
+    penaltyLabel: '-1 pt',
+    description: 'Serious misconduct involving disrespect toward school staff.',
+    domainLabel: 'Discipline',
+    points: -1,
+    category: 'behavior',
+    severity: 'high',
+  },
+  {
+    id: 'property-damage',
+    label: 'Property damage',
+    penaltyLabel: '-1 pt',
+    description: 'Damage to school property or equipment, intentional or negligent.',
+    domainLabel: 'Property',
+    points: -1,
+    category: 'property',
+    severity: 'high',
+  },
+  {
+    id: 'theft-extortion',
+    label: 'Theft / Extortion',
+    penaltyLabel: '-1 pt',
+    description: 'Theft, racketeering, or extortion involving students or staff.',
+    domainLabel: 'Serious discipline',
+    points: -1,
+    category: 'property',
+    severity: 'critical',
+  },
+  {
+    id: 'alcohol-tobacco',
+    label: 'Alcohol / Tobacco on campus',
+    penaltyLabel: '-1 pt',
+    description: 'Consumption or possession of alcohol or tobacco on school grounds.',
+    domainLabel: 'Risk conduct',
+    points: -1,
+    category: 'behavior',
+    severity: 'critical',
+  },
+  {
+    id: 'physical-violence',
+    label: 'Physical violence',
+    penaltyLabel: '-2 pts',
+    description: 'Physical aggression requiring an elevated disciplinary report.',
+    domainLabel: 'Serious discipline',
+    points: -2,
+    category: 'violence',
+    severity: 'critical',
+  },
+]
+
+export function getConductIncidentPresets(locale: Locales) {
+  return locale === 'en' ? enPresets : frPresets
+}

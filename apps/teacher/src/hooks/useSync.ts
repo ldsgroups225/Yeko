@@ -4,6 +4,7 @@ import type { PublishOptions, SyncResult } from '../lib/services/sync-service'
 import { useMutation } from '@tanstack/react-query'
 import { useCallback, useEffect, useState } from 'react'
 import { teacherMutationKeys } from '@/lib/queries/keys'
+import { remotePublishHandler } from '../lib/services/remote-publish'
 import { syncService } from '../lib/services/sync-service'
 import { useSyncStatus } from './useDatabaseStatus'
 
@@ -40,10 +41,15 @@ export function useSync(): UseSyncReturn {
 
   const syncStatus = useSyncStatus()
 
+  const ensureRemotePublishHandler = useCallback(() => {
+    syncService.setRemotePublishHandler(remotePublishHandler)
+  }, [])
+
   // Publish notes mutation
   const publishMutation = useMutation({
     mutationKey: teacherMutationKeys.localNotes.publishAll,
     mutationFn: async (options: PublishOptions = {}) => {
+      ensureRemotePublishHandler()
       if (!syncStatus.isOnline) {
         throw new Error('Vous êtes hors ligne. Veuillez réessayer une fois connecté.')
       }
@@ -80,6 +86,7 @@ export function useSync(): UseSyncReturn {
   const syncQueueMutation = useMutation({
     mutationKey: teacherMutationKeys.localNotes.publish, // Generic publish key or add sync-queue
     mutationFn: async () => {
+      ensureRemotePublishHandler()
       if (!syncStatus.isOnline) {
         throw new Error('Vous êtes hors ligne')
       }

@@ -33,7 +33,8 @@ export function UnpublishedNoteSheet({
   isPublishing,
 }: UnpublishedNoteSheetProps) {
   const { LL } = useI18nContext()
-  const participatedCount = note.details.length
+  const noteDetails = Array.isArray(note.details) ? note.details : []
+  const participatedCount = noteDetails.length
   const missingCount = totalStudents - participatedCount
   const isComplete = missingCount === 0
 

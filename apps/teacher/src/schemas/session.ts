@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const startSessionSchema = z.object({
   timetableSessionId: z.string().min(1),
-  teacherId: z.string().min(1),
+  teacherId: z.string().min(1).optional(), // Legacy client field - server derives teacher from auth context
   date: z.string(), // ISO date string
   topic: z.string().max(500).optional(),
   chapterId: z.string().optional(),
@@ -20,10 +20,10 @@ export type ParticipationGrade = z.infer<typeof participationGradeSchema>
 
 export const completeSessionSchema = z.object({
   sessionId: z.string().min(1),
-  teacherId: z.string().min(1).optional(), // For authorization
+  teacherId: z.string().min(1).optional(), // Legacy client field - server derives teacher from auth context
   studentsPresent: z.number().int().min(0),
   studentsAbsent: z.number().int().min(0),
-  attendanceRecords: z.record(z.string(), z.enum(['present', 'absent', 'late'])).optional(), // studentId -> status
+  attendanceRecords: z.record(z.string(), z.enum(['present', 'absent', 'late', 'excused'])).optional(), // studentId -> status
   participationGrades: z.array(participationGradeSchema).optional(),
   notes: z.string().max(5000).optional(),
   homework: z.object({
@@ -39,9 +39,10 @@ export type CompleteSessionInput = z.infer<typeof completeSessionSchema>
 
 export const updateAttendanceSchema = z.object({
   sessionId: z.string().min(1),
-  teacherId: z.string().min(1).optional(), // For authorization
+  teacherId: z.string().min(1).optional(), // Legacy client field - server derives teacher from auth context
   studentsPresent: z.number().int().min(0),
   studentsAbsent: z.number().int().min(0),
+  attendanceRecords: z.record(z.string(), z.enum(['present', 'absent', 'late', 'excused'])).optional(), // studentId -> status
 })
 
 export type UpdateAttendanceInput = z.infer<typeof updateAttendanceSchema>

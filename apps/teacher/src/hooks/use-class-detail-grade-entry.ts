@@ -12,6 +12,7 @@ type Student = StudentCardProps['student']
 interface UseClassDetailGradeEntryParams {
   classId: string
   schoolId: string
+  schoolYearId?: string
   teacherId?: string
   students: Student[]
   teacherSubjects: Array<{ id: string }>
@@ -22,6 +23,7 @@ interface UseClassDetailGradeEntryParams {
 export function useClassDetailGradeEntry({
   classId,
   schoolId,
+  schoolYearId,
   teacherId,
   students,
   teacherSubjects,
@@ -45,7 +47,29 @@ export function useClassDetailGradeEntry({
   const [isUnpublishedSheetOpen, setIsUnpublishedSheetOpen] = useState(false)
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false)
 
+  const handleResumeUnpublished = () => {
+    if (!unpublishedNote)
+      return
+    setNoteTitle(unpublishedNote.title)
+    setNoteType(unpublishedNote.type as 'quizzes' | 'tests' | 'level_tests')
+    setWeight(unpublishedNote.weight ?? 1)
+    setGradeOutOf(unpublishedNote.totalPoints || 20)
+    setSelectedSubjectId(unpublishedNote.subjectId)
+    const map = new Map()
+    const details = Array.isArray(unpublishedNote.details) ? unpublishedNote.details : []
+    details.forEach(d => map.set(d.studentId, d.value))
+    setGradesMap(map)
+    setIsEntryMode(true)
+    setIsUnpublishedSheetOpen(false)
+    setIsMetaExpanded(false)
+  }
+
   const handleStartEntry = () => {
+    if (unpublishedNote) {
+      handleResumeUnpublished()
+      return
+    }
+
     if (!selectedSubjectId && teacherSubjects.length > 0)
       setSelectedSubjectId(teacherSubjects[0]!.id)
 
@@ -65,7 +89,7 @@ export function useClassDetailGradeEntry({
 
     setIsSaving(true)
     try {
-      const noteId = crypto.randomUUID()
+      const noteId = unpublishedNote?.id ?? crypto.randomUUID()
       const noteDetails = Array.from(gradesMap.entries())
         .filter(([, val]) => val !== '')
         .map(([studentId, value]) => ({
@@ -75,20 +99,29 @@ export function useClassDetailGradeEntry({
           value,
         }))
 
-      await localNotesService.saveNoteLocally(
-        {
-          id: noteId,
-          title: noteTitle,
-          type: noteType,
-          weight,
-          totalPoints: gradeOutOf,
-          schoolId,
-          classId,
-          subjectId: selectedSubjectId,
-          teacherId,
-        },
-        noteDetails,
-      )
+      const notePayload = {
+        id: noteId,
+        title: noteTitle,
+        type: noteType,
+        weight,
+        totalPoints: gradeOutOf,
+        schoolId,
+        schoolYearId,
+        classId,
+        subjectId: selectedSubjectId,
+        teacherId,
+      }
+
+      if (unpublishedNote?.id) {
+        await localNotesService.updateNoteLocally(
+          unpublishedNote.id,
+          notePayload,
+          noteDetails,
+        )
+      }
+      else {
+        await localNotesService.saveNoteLocally(notePayload, noteDetails)
+      }
 
       toast.success(LL.grades.savedLocally())
       await refetchUnpublished()
@@ -109,26 +142,40 @@ export function useClassDetailGradeEntry({
     if (!unpublishedNote)
       return
     setIsSaving(true)
-    const result = await publishNotes({ noteIds: [unpublishedNote.id] })
-    if (result.success) {
-      toast.success(LL.grades.published())
-      setIsConfirmDialogOpen(false)
-      setIsUnpublishedSheetOpen(false)
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['local-notes'] }),
-        queryClient.invalidateQueries({ queryKey: ['class-stats'] }),
-      ])
+    try {
+      await localNotesService.publishNote(unpublishedNote.id)
+      const result = await publishNotes({ noteIds: [unpublishedNote.id] })
+      if (result.success) {
+        await localNotesService.clearLocalDataAfterPublish([unpublishedNote.id])
+
+        toast.success(LL.grades.published())
+        setIsConfirmDialogOpen(false)
+        setIsUnpublishedSheetOpen(false)
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['local-notes'] }),
+          queryClient.invalidateQueries({ queryKey: ['sync', 'pending-items'] }),
+          queryClient.invalidateQueries({ queryKey: ['classes', 'stats', classId] }),
+          queryClient.invalidateQueries({ queryKey: ['teacher', 'classes'] }),
+          refetchUnpublished(),
+        ])
+      }
+      else {
+        toast.error(LL.common.error())
+      }
     }
-    else {
+    catch {
       toast.error(LL.common.error())
     }
-    setIsSaving(false)
+    finally {
+      setIsSaving(false)
+    }
   }
 
   const handlePublish = () => {
     if (!unpublishedNote)
       return
-    if (unpublishedNote.details.length < students.length)
+    const detailsCount = Array.isArray(unpublishedNote.details) ? unpublishedNote.details.length : 0
+    if (detailsCount < students.length)
       setIsConfirmDialogOpen(true)
     else
       executePublish()
@@ -146,22 +193,6 @@ export function useClassDetailGradeEntry({
 
   const toggleStudentExpansion = (studentId: string) => {
     setExpandedStudent(expandedStudent === studentId ? null : studentId)
-  }
-
-  const handleResumeUnpublished = () => {
-    if (!unpublishedNote)
-      return
-    setNoteTitle(unpublishedNote.title)
-    setNoteType(unpublishedNote.type as 'quizzes' | 'tests' | 'level_tests')
-    setWeight(unpublishedNote.weight ?? 1)
-    setGradeOutOf(unpublishedNote.totalPoints || 20)
-    setSelectedSubjectId(unpublishedNote.subjectId)
-    const map = new Map()
-    unpublishedNote.details.forEach(d => map.set(d.studentId, d.value))
-    setGradesMap(map)
-    setIsEntryMode(true)
-    setIsUnpublishedSheetOpen(false)
-    setIsMetaExpanded(false)
   }
 
   return {

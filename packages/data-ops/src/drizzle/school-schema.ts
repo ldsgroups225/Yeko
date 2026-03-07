@@ -772,6 +772,7 @@ export const studentGrades = pgTable('student_grades', {
   value: decimal('value', { precision: 5, scale: 2 }).notNull(), // 20.00
   type: text('type', { enum: gradeTypes }).notNull(),
   weight: smallint('weight').notNull().default(1),
+  maxPoints: smallint('max_points').notNull().default(20),
   description: text('description'),
   gradeDate: date('grade_date').notNull().defaultNow(),
 

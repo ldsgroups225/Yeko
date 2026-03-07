@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import { useAttendanceRecords } from '@/hooks/use-attendance-records'
@@ -25,6 +26,7 @@ export function useClassDetailSession({
   schoolLocation,
 }: UseClassDetailSessionParams) {
   const { LL } = useI18nContext()
+  const queryClient = useQueryClient()
   const [sessionMode, setSessionMode] = useState<
     'view' | 'attendance_initial' | 'attendance_late' | 'participation' | 'finalization'
   >('view')
@@ -91,6 +93,8 @@ export function useClassDetailSession({
         setSessionId(result.sessionId)
         setSessionMode('attendance_initial')
         toast.success(LL.session.sessionSuccess())
+        void queryClient.invalidateQueries({ queryKey: ['teacher', 'schedule'] })
+        void queryClient.invalidateQueries({ queryKey: ['teacher', 'dashboard'] })
       }
       else {
         toast.error(result.error ?? LL.common.error())
@@ -132,7 +136,7 @@ export function useClassDetailSession({
       const result = await completeSession({
         data: {
           sessionId,
-          studentsPresent: attendanceStats.present,
+          studentsPresent: attendanceStats.present + attendanceStats.late,
           studentsAbsent: attendanceStats.absent,
           attendanceRecords: records,
           homework: data.homework || undefined,
@@ -150,6 +154,8 @@ export function useClassDetailSession({
         setSessionMode('view')
         resetAttendance()
         resetParticipations()
+        void queryClient.invalidateQueries({ queryKey: ['teacher', 'schedule'] })
+        void queryClient.invalidateQueries({ queryKey: ['teacher', 'dashboard'] })
       }
       else {
         toast.error(result.error ?? LL.common.error())

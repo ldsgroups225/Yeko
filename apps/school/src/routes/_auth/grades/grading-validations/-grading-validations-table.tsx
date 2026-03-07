@@ -1,3 +1,5 @@
+import type { PendingValidation } from '@repo/data-ops/index'
+import type { TranslationFunctions } from '@/i18n'
 import { IconCircleCheck, IconCircleX, IconClipboardCheck, IconDots, IconFileText, IconUser } from '@tabler/icons-react'
 import { Badge } from '@workspace/ui/components/badge'
 import { Button } from '@workspace/ui/components/button'
@@ -22,20 +24,22 @@ import { generateUUID } from '@/utils/generateUUID'
 
 interface GradingValidationsTableProps {
   isPending: boolean
-  filteredValidations: any[]
+  filteredValidations: PendingValidation[]
   selectedRows: string[]
+  getRowId: (validation: PendingValidation) => string
   onSelectAll: (checked: boolean) => void
   onSelectRow: (id: string, checked: boolean) => void
-  onValidate: (validation: any) => void
-  onReject: (validation: any) => void
-  onViewDetails: (validation: any) => void
-  t: any
+  onValidate: (validation: PendingValidation) => void
+  onReject: (validation: PendingValidation) => void
+  onViewDetails: (validation: PendingValidation) => void
+  t: TranslationFunctions
 }
 
 export function GradingValidationsTable({
   isPending,
   filteredValidations,
   selectedRows,
+  getRowId,
   onSelectAll,
   onSelectRow,
   onValidate,
@@ -144,7 +148,7 @@ export function GradingValidationsTable({
               ? (
                   <AnimatePresence mode="popLayout">
                     {filteredValidations.map((validation, index) => {
-                      const rowId = `${validation.classId}__${validation.subjectId}__${validation.termId}`
+                      const rowId = getRowId(validation)
                       return (
                         <motion.tr
                           key={rowId}

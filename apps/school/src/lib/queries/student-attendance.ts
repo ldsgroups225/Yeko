@@ -25,17 +25,17 @@ export const studentAttendanceKeys = {
     [...studentAttendanceKeys.all, 'chronic', studentId] as const,
 }
 
-export function classAttendanceOptions(classId: string, date: string, classSessionId?: string) {
+export function classAttendanceOptions(classId: string, date: string, schoolYearId: string, classSessionId?: string) {
   return queryOptions({
-    queryKey: studentAttendanceKeys.class(classId, date),
+    queryKey: [...studentAttendanceKeys.class(classId, date), schoolYearId],
     queryFn: async () => {
-      const res = await getClassAttendanceForDate({ data: { classId, date, classSessionId } })
+      const res = await getClassAttendanceForDate({ data: { classId, date, schoolYearId, classSessionId } })
       if (!res.success)
         throw new Error(res.error)
       return res.data
     },
     staleTime: 2 * 60 * 1000,
-    enabled: !!classId && !!date,
+    enabled: !!classId && !!date && !!schoolYearId,
   })
 }
 
