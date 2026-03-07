@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components, max-lines, react-naming-convention/use-state */
 'use client'
 
 import type { VariantProps } from 'class-variance-authority'
@@ -267,6 +268,8 @@ function SidebarTrigger({
       variant="ghost"
       size="icon-sm"
       className={cn(className)}
+      title="Toggle Sidebar"
+      aria-label="Toggle Sidebar"
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()

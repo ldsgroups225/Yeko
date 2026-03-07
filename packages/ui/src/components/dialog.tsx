@@ -65,6 +65,8 @@ function DialogContent({
                 variant="ghost"
                 className="absolute top-2 right-2"
                 size="icon-sm"
+                title="Close"
+                aria-label="Close"
               />
             )}
           >
