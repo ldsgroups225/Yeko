@@ -5,6 +5,7 @@
   "scripts": {
     "rm:vite": "rm -rf ./node_modules/.vite",
     "dev": "pnpm run rm:vite && vite dev --port 3002",
+    "dev:fresh-local-db": "pnpm run rm:vite && VITE_RESET_LOCAL_DB_ON_START=1 vite dev --port 3002",
     "build": "vite build",
     "deploy": "pnpm run build && wrangler deploy",
     "serve": "vite preview",

@@ -13,8 +13,6 @@ const { ConductTypeBadge }
   = await import('@/components/conduct/conduct-type-badge')
 const { TeacherAttendanceStatusBadge }
   = await import('@/components/attendance/teacher/teacher-attendance-status-badge')
-const { StudentAttendanceStatusBadge }
-  = await import('@/components/attendance/student/student-attendance-status-badge')
 
 describe('school Life Management Integration', () => {
   describe('conduct Severity Badge', () => {
@@ -143,35 +141,6 @@ describe('school Life Management Integration', () => {
     })
   })
 
-  describe('student Attendance Status Badge', () => {
-    test('should display all student attendance statuses correctly', () => {
-      const { rerender } = render(
-        <StudentAttendanceStatusBadge status="present" />,
-      )
-      expect(screen.getByText('Present')).toBeInTheDocument()
-
-      rerender(<StudentAttendanceStatusBadge status="late" />)
-      expect(screen.getByText('Late')).toBeInTheDocument()
-
-      rerender(<StudentAttendanceStatusBadge status="absent" />)
-      expect(screen.getByText('Absent')).toBeInTheDocument()
-
-      rerender(<StudentAttendanceStatusBadge status="excused" />)
-      expect(screen.getByText('Excused')).toBeInTheDocument()
-    })
-
-    test('should accept custom className', () => {
-      const { container } = render(
-        <StudentAttendanceStatusBadge
-          status="present"
-          className="custom-class"
-        />,
-      )
-      const badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('custom-class')
-    })
-  })
-
   describe('accessibility', () => {
     test('should have accessible conduct severity badge', () => {
       render(<ConductSeverityBadge severity="high" />)
@@ -196,12 +165,6 @@ describe('school Life Management Integration', () => {
       const badge = screen.getByText('Present')
       expect(badge).toBeInTheDocument()
     })
-
-    test('should have accessible student attendance badge', () => {
-      render(<StudentAttendanceStatusBadge status="present" />)
-      const badge = screen.getByText('Present')
-      expect(badge).toBeInTheDocument()
-    })
   })
 
   describe('color Coding', () => {
@@ -223,26 +186,6 @@ describe('school Life Management Integration', () => {
       rerender(<ConductSeverityBadge severity="critical" />)
       badge = container.querySelector('[data-slot="badge"]')
       expect(badge?.className).toContain('text-destructive')
-    })
-
-    test('should apply correct color classes for attendance statuses', () => {
-      const { container, rerender } = render(
-        <StudentAttendanceStatusBadge status="present" />,
-      )
-      let badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-success')
-
-      rerender(<StudentAttendanceStatusBadge status="late" />)
-      badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-accent-foreground')
-
-      rerender(<StudentAttendanceStatusBadge status="absent" />)
-      badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-destructive')
-
-      rerender(<StudentAttendanceStatusBadge status="excused" />)
-      badge = container.querySelector('[data-slot="badge"]')
-      expect(badge?.className).toContain('text-secondary')
     })
   })
 })

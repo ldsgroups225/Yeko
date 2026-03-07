@@ -182,10 +182,8 @@ function AttendancePage() {
   ) => {
     await saveMutation.mutateAsync({
       enrollmentId,
-      sessionId: `temp-${Date.now()}`,
       sessionDate: selectedDate,
       status,
-      teacherId: context?.teacherId ?? '',
     })
   }
 
@@ -203,9 +201,7 @@ function AttendancePage() {
     if (records.length > 0) {
       await bulkSaveMutation.mutateAsync({
         classId: selectedClassId,
-        sessionId: `temp-${Date.now()}`,
         sessionDate: selectedDate,
-        teacherId: context?.teacherId ?? '',
         attendanceRecords: records,
       })
     }

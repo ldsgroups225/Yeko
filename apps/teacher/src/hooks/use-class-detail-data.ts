@@ -65,6 +65,7 @@ export function useClassDetailData({
       classId,
       schoolId,
       teacherId: teacherId ?? '',
+      noteTypes: ['tests', 'quizzes', 'level_tests'],
     }),
   )
 
@@ -73,6 +74,7 @@ export function useClassDetailData({
       classId,
       schoolId,
       teacherId: teacherId ?? '',
+      noteTypes: ['tests', 'quizzes', 'level_tests'],
     }),
   )
 

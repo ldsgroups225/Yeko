@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { IconChevronDown } from '@tabler/icons-react'
 import { Badge } from '@workspace/ui/components/badge'
 import {
@@ -206,7 +207,7 @@ export function GradeEntryControls({
                     </div>
 
                     {/* Weight, Barème & Subject Group */}
-                    <div className="flex flex-[2] flex-row items-end gap-2">
+                    <div className="flex flex-2 flex-row items-end gap-2">
                       <div className="w-20 shrink-0 space-y-1.5">
                         <label
                           htmlFor="note-weight-input"
@@ -266,6 +267,7 @@ export function GradeEntryControls({
                           id="note-outof-input"
                           min={1}
                           max={100}
+                          step={5}
                           value={gradeOutOf}
                           onValueChange={val => setGradeOutOf(val || 20)}
                         >

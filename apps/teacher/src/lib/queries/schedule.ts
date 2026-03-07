@@ -13,42 +13,36 @@ export const scheduleKeys = {
 
 export function detailedScheduleQueryOptions(params: {
   teacherId: string
-  schoolId: string
-  schoolYearId: string
   startDate: string
   endDate: string
 }) {
   return queryOptions({
     queryKey: scheduleKeys.detailed(params.teacherId, params.startDate, params.endDate),
-    queryFn: () => getDetailedSchedule({ data: params }),
+    queryFn: () => getDetailedSchedule({ data: { startDate: params.startDate, endDate: params.endDate } }),
     staleTime: 5 * 60 * 1000,
   })
 }
 
 export function teacherSubstitutionsQueryOptions(params: {
   teacherId: string
-  schoolId: string
-  schoolYearId: string
   startDate: string
   endDate: string
 }) {
   return queryOptions({
     queryKey: scheduleKeys.substitutions(params.teacherId, params.startDate, params.endDate),
-    queryFn: () => getTeacherSubstitutionsFn({ data: params }),
+    queryFn: () => getTeacherSubstitutionsFn({ data: { startDate: params.startDate, endDate: params.endDate } }),
     staleTime: 5 * 60 * 1000,
   })
 }
 
 export function cancelledSessionsQueryOptions(params: {
   teacherId: string
-  schoolId: string
-  schoolYearId: string
   startDate: string
   endDate: string
 }) {
   return queryOptions({
     queryKey: scheduleKeys.cancellations(params.teacherId, params.startDate, params.endDate),
-    queryFn: () => getCancelledSessions({ data: params }),
+    queryFn: () => getCancelledSessions({ data: { startDate: params.startDate, endDate: params.endDate } }),
     staleTime: 5 * 60 * 1000,
   })
 }

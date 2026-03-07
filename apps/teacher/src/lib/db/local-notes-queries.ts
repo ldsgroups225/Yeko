@@ -1,6 +1,6 @@
 import type { NoteWithDetails } from './local-notes-types'
 import type { Note, NoteDetail } from './schema'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, inArray } from 'drizzle-orm'
 import { clientDatabaseManager } from './client-db'
 import {
   noteDetailsTable,
@@ -183,10 +183,12 @@ export async function getUnpublishedNotes(): Promise<NoteWithDetails[]> {
           ),
         )
 
-      notesWithDetails.push({
-        ...note,
-        details,
-      })
+      if (details.length > 0) {
+        notesWithDetails.push({
+          ...note,
+          details,
+        })
+      }
     }
 
     return notesWithDetails
@@ -203,6 +205,7 @@ export async function findUnpublishedNote(params: {
   schoolId: string
   subjectId?: string
   teacherId: string
+  types?: string[]
 }): Promise<NoteWithDetails | null> {
   try {
     if (!clientDatabaseManager.isReady()) {
@@ -214,12 +217,17 @@ export async function findUnpublishedNote(params: {
       eq(notesTable.classId, params.classId),
       eq(notesTable.schoolId, params.schoolId),
       eq(notesTable.teacherId, params.teacherId),
+      eq(notesTable.isDirty, true),
       eq(notesTable.isPublished, false),
       eq(notesTable.isDeleted, false),
     ]
 
     if (params.subjectId) {
       conditions.push(eq(notesTable.subjectId, params.subjectId))
+    }
+
+    if (params.types && params.types.length > 0) {
+      conditions.push(inArray(notesTable.type, params.types))
     }
 
     const result = await db
@@ -232,7 +240,11 @@ export async function findUnpublishedNote(params: {
     if (result.length === 0)
       return null
 
-    return getNoteById(result[0]!.id)
+    const note = await getNoteById(result[0]!.id)
+    if (!note || note.details.length === 0) {
+      return null
+    }
+    return note
   }
   catch (error) {
     console.error('Failed to find unpublished note:', error)
@@ -244,6 +256,7 @@ export async function countUnpublishedNotes(params: {
   classId: string
   schoolId: string
   teacherId: string
+  types?: string[]
 }): Promise<number> {
   try {
     if (!clientDatabaseManager.isReady()) {
@@ -251,7 +264,7 @@ export async function countUnpublishedNotes(params: {
     }
 
     const db = await getDb()
-    const result = await db
+    const notes = await db
       .select()
       .from(notesTable)
       .where(
@@ -259,12 +272,34 @@ export async function countUnpublishedNotes(params: {
           eq(notesTable.classId, params.classId),
           eq(notesTable.schoolId, params.schoolId),
           eq(notesTable.teacherId, params.teacherId),
+          eq(notesTable.isDirty, true),
           eq(notesTable.isPublished, false),
           eq(notesTable.isDeleted, false),
+          params.types && params.types.length > 0
+            ? inArray(notesTable.type, params.types)
+            : undefined,
         ),
       )
 
-    return result.length
+    let count = 0
+    for (const note of notes) {
+      const details = await db
+        .select({ id: noteDetailsTable.id })
+        .from(noteDetailsTable)
+        .where(
+          and(
+            eq(noteDetailsTable.noteId, note.id),
+            eq(noteDetailsTable.isDeleted, false),
+          ),
+        )
+        .limit(1)
+
+      if (details.length > 0) {
+        count++
+      }
+    }
+
+    return count
   }
   catch (error) {
     console.error('Failed to count unpublished notes:', error)

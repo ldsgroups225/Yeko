@@ -3,7 +3,6 @@ import { setExecutionContext, setQueueBinding, withTaskScope } from '@repo/backg
 import { setAuth, withAuthScope } from '@repo/data-ops/auth/server'
 import { initDatabase, withDatabaseScope } from '@repo/data-ops/database/setup'
 import handler from '@tanstack/react-start/server-entry'
-import { env } from 'cloudflare:workers'
 
 console.warn('[server-entry]: using custom server entry in \'src/server.ts\'')
 
@@ -20,9 +19,9 @@ export default {
         withTaskScope(() => {
           // Initialize database on each request
           const db = initDatabase({
-            host: env.DATABASE_HOST,
-            username: env.DATABASE_USERNAME,
-            password: env.DATABASE_PASSWORD,
+            host: workerEnv.DATABASE_HOST,
+            username: workerEnv.DATABASE_USERNAME,
+            password: workerEnv.DATABASE_PASSWORD,
           })
 
           // Initialize auth with database and config
@@ -31,14 +30,14 @@ export default {
               drizzleDb: db,
               provider: 'pg',
             },
-            secret: env.BETTER_AUTH_SECRET,
-            baseURL: env.BETTER_AUTH_BASE_URL,
+            secret: workerEnv.BETTER_AUTH_SECRET,
+            baseURL: workerEnv.BETTER_AUTH_BASE_URL,
             cookiePrefix: 'school',
-            trustedOrigins: [env.BETTER_AUTH_BASE_URL, 'http://localhost:3001'],
+            trustedOrigins: [workerEnv.BETTER_AUTH_BASE_URL, 'http://localhost:3001'],
             socialProviders: {
               google: {
-                clientId: env.GOOGLE_CLIENT_ID,
-                clientSecret: env.GOOGLE_CLIENT_SECRET,
+                clientId: workerEnv.GOOGLE_CLIENT_ID,
+                clientSecret: workerEnv.GOOGLE_CLIENT_SECRET,
               },
             },
             emailAndPassword: {
