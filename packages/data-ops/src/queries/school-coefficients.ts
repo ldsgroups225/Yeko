@@ -320,7 +320,7 @@ export async function bulkUpdateSchoolCoefficients(options: {
     .onConflictDoUpdate({
       target: [schoolSubjectCoefficients.schoolId, schoolSubjectCoefficients.coefficientTemplateId],
       set: {
-        weightOverride: sql.raw(`EXCLUDED."${schoolSubjectCoefficients.weightOverride.name}"`),
+        weightOverride: sql`EXCLUDED.weight_override`,
         updatedAt: new Date(),
       },
     })
