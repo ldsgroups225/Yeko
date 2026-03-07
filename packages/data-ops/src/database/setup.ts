@@ -29,6 +29,12 @@ const requestDb = new AsyncLocalStorage<{ current: Database | undefined }>()
 // Global fallback for non-ALS environments (tests, seed scripts, local dev with pg)
 let globalDb: Database | undefined
 
+function canUseGlobalFallback(): boolean {
+  // Cloudflare Workers reuse isolates across requests, so request-bound
+  // resources must never be revived from module scope there.
+  return typeof WebSocketPair === 'undefined'
+}
+
 /**
  * Create a request-scoped database context.
  * Must wrap the entire request lifecycle in CF Workers.
@@ -42,19 +48,22 @@ export function initDatabase(connection: {
   username: string
   password: string
 }): Database {
-  const connectionString = `postgres://${connection.username}:${connection.password}@${connection.host}`
+  const connectionUrl = new URL(`postgresql://${connection.host}`)
+  connectionUrl.username = connection.username
+  connectionUrl.password = connection.password
+  const connectionString = connectionUrl.toString()
 
   let database: Database
 
   // Check if it's a Neon connection (contains .neon.tech or sslmode=require)
-  if (connection.host.includes('.neon.tech') || connection.host.includes('sslmode=')) {
+  if (connectionUrl.hostname.includes('.neon.tech') || connectionUrl.searchParams.has('sslmode')) {
     // Use Neon HTTP driver for Cloudflare Workers - stateless, creates fresh per request
     const sql = neon(connectionString)
     database = drizzleNeonHttp({ client: sql, schema })
   }
   else {
     // Use standard PostgreSQL connection (cached for non-serverless)
-    if (globalDb) {
+    if (canUseGlobalFallback() && globalDb) {
       return globalDb
     }
     const pool = new Pool({ connectionString })
@@ -67,8 +76,10 @@ export function initDatabase(connection: {
     store.current = database
   }
 
-  // Also set global for backward compatibility (tests, seed scripts)
-  globalDb = database
+  // Keep the global fallback for Node-based tests/scripts only.
+  if (canUseGlobalFallback()) {
+    globalDb = database
+  }
 
   return database
 }
@@ -79,8 +90,8 @@ export function getDb(): Database {
   if (store?.current) {
     return store.current
   }
-  // Fallback to global for non-ALS environments
-  if (globalDb) {
+  // Fallback to global only outside the Workers runtime.
+  if (canUseGlobalFallback() && globalDb) {
     return globalDb
   }
   throw new Error('Database not initialized')

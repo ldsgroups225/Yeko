@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yeko PR Review Workflow"
+  short_description: "Review and triage open Yeko pull requests"
+  default_prompt: "Use $pr-review-workflow to review open Yeko PRs and decide merge, fix then merge, close, or skip."

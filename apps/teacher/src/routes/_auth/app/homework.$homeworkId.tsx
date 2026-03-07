@@ -188,7 +188,7 @@ function HomeworkDetailPage() {
           </h1>
         </div>
         {!isEditing && homework.status !== 'cancelled' && (
-          <Button variant="ghost" size="icon" onClick={initEditForm} aria-label={LL.homework.edit()}>
+          <Button variant="ghost" size="icon" onClick={initEditForm} aria-label={LL.common.edit()}>
             <IconEdit className="h-5 w-5" />
           </Button>
         )}
@@ -342,6 +342,7 @@ function HomeworkDetailPage() {
                             variant="outline"
                             size="icon"
                             className="text-destructive"
+                            aria-label={LL.common.delete()}
                           >
                             <IconTrash className="h-4 w-4" />
                           </Button>

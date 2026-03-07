@@ -37,8 +37,6 @@ function SchedulePage() {
   const { data, isPending: dataPending } = useQuery({
     ...detailedScheduleQueryOptions({
       teacherId: context?.teacherId ?? '',
-      schoolId: context?.schoolId ?? '',
-      schoolYearId: context?.schoolYearId ?? '',
       startDate: format(weekStart, 'yyyy-MM-dd'),
       endDate: format(weekEnd, 'yyyy-MM-dd'),
     }),
@@ -233,7 +231,7 @@ function ScheduleCard({ session, schoolId }: ScheduleCardProps) {
               {session.classroom && ` • ${session.classroom.name}`}
             </p>
           </div>
-          {isWithinTimeWindow && (
+          {isWithinTimeWindow && !session.hasSession && (
             <Link
               to="/app/schools/$schoolId/class/$classId"
               params={{

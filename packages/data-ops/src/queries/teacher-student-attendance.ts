@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Result as R } from '@praha/byethrow'
 /**
  * Student Attendance Queries for Teacher App
@@ -122,49 +123,48 @@ export async function getOrCreateAttendanceSession(params: {
 
   return R.pipe(
     R.try({
-      try: () =>
-        db.transaction(async (tx) => {
-          // Try to find existing session
-          const [existing] = await tx
-            .select()
-            .from(classSessions)
-            .where(
-              and(
-                eq(classSessions.classId, params.classId),
-                eq(classSessions.subjectId, params.subjectId),
-                eq(classSessions.date, params.date),
-                eq(classSessions.startTime, params.startTime),
-              ),
-            )
-            .limit(1)
+      try: async () => {
+        // Try to find existing session
+        const [existing] = await db
+          .select()
+          .from(classSessions)
+          .where(
+            and(
+              eq(classSessions.classId, params.classId),
+              eq(classSessions.subjectId, params.subjectId),
+              eq(classSessions.date, params.date),
+              eq(classSessions.startTime, params.startTime),
+            ),
+          )
+          .limit(1)
 
-          if (existing) {
-            return { session: existing, isNew: false }
-          }
+        if (existing) {
+          return { session: existing, isNew: false }
+        }
 
-          // Create new session
-          const [session] = await tx
-            .insert(classSessions)
-            .values({
-              id: crypto.randomUUID(),
-              classId: params.classId,
-              subjectId: params.subjectId,
-              teacherId: params.teacherId,
-              date: params.date,
-              startTime: params.startTime,
-              endTime: params.endTime,
-              timetableSessionId: params.timetableSessionId ?? null,
-              status: 'scheduled',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            })
-            .returning()
+        // Create new session
+        const [session] = await db
+          .insert(classSessions)
+          .values({
+            id: crypto.randomUUID(),
+            classId: params.classId,
+            subjectId: params.subjectId,
+            teacherId: params.teacherId,
+            date: params.date,
+            startTime: params.startTime,
+            endTime: params.endTime,
+            timetableSessionId: params.timetableSessionId ?? null,
+            status: 'scheduled',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .returning()
 
-          if (!session)
-            return null // Will be handled by check
+        if (!session)
+          return null // Will be handled by check
 
-          return { session, isNew: true }
-        }),
+        return { session, isNew: true }
+      },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to get or create attendance session'),
     }),
     R.andThen((result) => {
@@ -182,7 +182,7 @@ export async function getOrCreateAttendanceSession(params: {
 export async function saveStudentAttendance(params: {
   schoolId: string
   enrollmentId: string
-  sessionId: string
+  sessionId?: string
   sessionDate: string
   status: 'present' | 'absent' | 'late' | 'excused'
   notes?: string
@@ -192,59 +192,59 @@ export async function saveStudentAttendance(params: {
 
   return R.pipe(
     R.try({
-      try: () =>
-        db.transaction(async (tx) => {
-          // Find enrollment to get student and class info
-          const [enrollment] = await tx
-            .select({
-              studentId: enrollments.studentId,
-              classId: enrollments.classId,
-            })
-            .from(enrollments)
-            .innerJoin(students, eq(enrollments.studentId, students.id))
-            .where(and(
-              eq(enrollments.id, params.enrollmentId),
-              eq(students.schoolId, params.schoolId),
-            ))
-            .limit(1)
+      try: async () => {
+        // Find enrollment to get student and class info
+        const [enrollment] = await db
+          .select({
+            studentId: enrollments.studentId,
+            classId: enrollments.classId,
+          })
+          .from(enrollments)
+          .innerJoin(students, eq(enrollments.studentId, students.id))
+          .where(and(
+            eq(enrollments.id, params.enrollmentId),
+            eq(students.schoolId, params.schoolId),
+          ))
+          .limit(1)
 
-          if (!enrollment)
-            return null
+        if (!enrollment)
+          return null
 
-          const [attendance] = await tx
-            .insert(studentAttendance)
-            .values({
-              id: crypto.randomUUID(),
-              schoolId: params.schoolId,
-              studentId: enrollment.studentId,
-              classId: enrollment.classId,
-              classSessionId: params.sessionId,
-              date: params.sessionDate,
+        const [attendance] = await db
+          .insert(studentAttendance)
+          .values({
+            id: crypto.randomUUID(),
+            schoolId: params.schoolId,
+            studentId: enrollment.studentId,
+            classId: enrollment.classId,
+            classSessionId: params.sessionId ?? null,
+            date: params.sessionDate,
+            status: params.status,
+            reason: params.notes ?? null,
+            recordedBy: params.teacherId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
+          .onConflictDoUpdate({
+            target: [
+              studentAttendance.studentId,
+              studentAttendance.date,
+              studentAttendance.classId,
+              studentAttendance.classSessionId,
+            ],
+            set: {
               status: params.status,
               reason: params.notes ?? null,
-              recordedBy: params.teacherId,
-              createdAt: new Date(),
               updatedAt: new Date(),
-            })
-            .onConflictDoUpdate({
-              target: [
-                studentAttendance.studentId,
-                studentAttendance.date,
-                studentAttendance.classId,
-                studentAttendance.classSessionId,
-              ],
-              set: {
-                status: params.status,
-                reason: params.notes ?? null,
-                updatedAt: new Date(),
-              },
-            })
-            .returning()
+            },
+          })
+          .returning()
 
-          if (!attendance)
-            return 'FAILED_INSERT' as const
+        if (!attendance)
+          return 'FAILED_INSERT' as const
 
-          // Update session counters
+        if (params.sessionId) {
+          // Update session counters when attendance is tied to a class session.
           const sessionConditions = [
             eq(studentAttendance.schoolId, params.schoolId),
             eq(studentAttendance.classId, enrollment.classId),
@@ -252,7 +252,7 @@ export async function saveStudentAttendance(params: {
             eq(studentAttendance.classSessionId, params.sessionId),
           ]
 
-          const statusCounts = await tx
+          const statusCounts = await db
             .select({
               status: studentAttendance.status,
               count: count(),
@@ -264,7 +264,7 @@ export async function saveStudentAttendance(params: {
           const presentCount = statusCounts.find(c => c.status === 'present')?.count || 0
           const absentCount = statusCounts.find(c => c.status === 'absent')?.count || 0
 
-          await tx
+          await db
             .update(classSessions)
             .set({
               studentsPresent: Number(presentCount),
@@ -272,9 +272,10 @@ export async function saveStudentAttendance(params: {
               updatedAt: new Date(),
             })
             .where(eq(classSessions.id, params.sessionId))
+        }
 
-          return { attendance, isNew: true }
-        }),
+        return { attendance, isNew: true }
+      },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to save student attendance'),
     }),
     R.andThen((result) => {
@@ -294,7 +295,7 @@ export async function saveStudentAttendance(params: {
 export async function bulkSaveAttendance(params: {
   schoolId: string
   classId: string
-  sessionId: string
+  sessionId?: string
   sessionDate: string
   teacherId: string
   attendanceRecords: Array<{
@@ -307,61 +308,66 @@ export async function bulkSaveAttendance(params: {
 
   return R.pipe(
     R.try({
-      try: () =>
-        db.transaction(async (tx) => {
-          // Get all enrollments at once for student IDs
-          const enrollmentIds = params.attendanceRecords.map(r => r.enrollmentId)
-          const enrollmentData = await tx
-            .select({
-              id: enrollments.id,
-              studentId: enrollments.studentId,
-            })
-            .from(enrollments)
-            .innerJoin(students, eq(enrollments.studentId, students.id))
-            .where(and(
-              inArray(enrollments.id, enrollmentIds),
-              eq(students.schoolId, params.schoolId),
-            ))
+      try: async () => {
+        // Get all enrollments at once for student IDs
+        const enrollmentIds = params.attendanceRecords.map(r => r.enrollmentId)
+        const enrollmentData = await db
+          .select({
+            id: enrollments.id,
+            studentId: enrollments.studentId,
+          })
+          .from(enrollments)
+          .innerJoin(students, eq(enrollments.studentId, students.id))
+          .where(and(
+            inArray(enrollments.id, enrollmentIds),
+            eq(students.schoolId, params.schoolId),
+          ))
 
-          const enrollmentMap = new Map<string, typeof enrollmentData[number]>(
-            enrollmentData.map(e => [e.id, e]),
-          )
+        const enrollmentMap = new Map<string, typeof enrollmentData[number]>(
+          enrollmentData.map(e => [e.id, e]),
+        )
 
-          for (const record of params.attendanceRecords) {
+        const bulkValues = params.attendanceRecords
+          .map((record) => {
             const e = enrollmentMap.get(record.enrollmentId)
             if (!e)
-              continue
+              return null
+            return {
+              id: crypto.randomUUID(),
+              schoolId: params.schoolId,
+              studentId: e.studentId,
+              classId: params.classId,
+              classSessionId: params.sessionId ?? null,
+              date: params.sessionDate,
+              status: record.status,
+              reason: record.notes ?? null,
+              recordedBy: params.teacherId,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            }
+          })
+          .filter((v): v is NonNullable<typeof v> => v !== null)
 
-            await tx
-              .insert(studentAttendance)
-              .values({
-                id: crypto.randomUUID(),
-                schoolId: params.schoolId,
-                studentId: e.studentId,
-                classId: params.classId,
-                classSessionId: params.sessionId,
-                date: params.sessionDate,
-                status: record.status,
-                reason: record.notes ?? null,
-                recordedBy: params.teacherId,
-                createdAt: new Date(),
+        if (bulkValues.length > 0) {
+          await db
+            .insert(studentAttendance)
+            .values(bulkValues)
+            .onConflictDoUpdate({
+              target: [
+                studentAttendance.studentId,
+                studentAttendance.date,
+                studentAttendance.classId,
+                studentAttendance.classSessionId,
+              ],
+              set: {
+                status: sql`excluded.status`,
+                reason: sql`excluded.reason`,
                 updatedAt: new Date(),
-              })
-              .onConflictDoUpdate({
-                target: [
-                  studentAttendance.studentId,
-                  studentAttendance.date,
-                  studentAttendance.classId,
-                  studentAttendance.classSessionId,
-                ],
-                set: {
-                  status: record.status,
-                  reason: record.notes ?? null,
-                  updatedAt: new Date(),
-                },
-              })
-          }
+              },
+            })
+        }
 
+        if (params.sessionId) {
           const presentCount = params.attendanceRecords.filter(
             r => r.status === 'present',
           ).length
@@ -369,7 +375,7 @@ export async function bulkSaveAttendance(params: {
             r => r.status === 'absent',
           ).length
 
-          await tx
+          await db
             .update(classSessions)
             .set({
               studentsPresent: presentCount,
@@ -377,9 +383,10 @@ export async function bulkSaveAttendance(params: {
               updatedAt: new Date(),
             })
             .where(eq(classSessions.id, params.sessionId))
+        }
 
-          return { success: true as const, count: params.attendanceRecords.length }
-        }),
+        return { success: true as const, count: params.attendanceRecords.length }
+      },
       catch: err => DatabaseError.from(err, 'INTERNAL_ERROR', 'Failed to bulk save attendance'),
     }),
     R.mapError(tapLogErr(databaseLogger, params)),
@@ -646,7 +653,7 @@ export function getStudentAttendanceTrend(params: {
               eq(studentAttendance.schoolId, params.schoolId),
               eq(studentAttendance.studentId, params.studentId),
               // Simplified date range for trend
-              sql`${studentAttendance.date} >= date('now', '-${sql.raw(months.toString())} month')`,
+              sql`${studentAttendance.date} >= date('now', ${`-${months} month`})`,
             ),
           )
           .groupBy(studentAttendance.status)

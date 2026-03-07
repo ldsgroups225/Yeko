@@ -7,6 +7,8 @@ import type {
   SupportTicketStatus,
   TaskStatus,
 } from '../drizzle/support-schema'
+import { Result as R } from '@praha/byethrow'
+import { databaseLogger, tapLogErr } from '@repo/logger'
 import {
   and,
   asc,
@@ -14,6 +16,7 @@ import {
   desc,
   eq,
   gte,
+  inArray,
   isNotNull,
   lte,
   sql,
@@ -29,6 +32,7 @@ import {
   supportTickets,
   ticketComments,
 } from '../drizzle/support-schema'
+import { DatabaseError } from '../errors'
 
 // Type aliases using Drizzle's InferSelectModel
 export type SupportTicket = InferSelectModel<typeof supportTickets>
@@ -83,84 +87,103 @@ export async function getTickets(
   filters: TicketFilters = {},
   limit = 50,
   offset = 0,
-): Promise<{ tickets: TicketWithDetails[], total: number }> {
+): R.ResultAsync<{ tickets: TicketWithDetails[], total: number }, DatabaseError> {
   const db = getDb()
 
-  // Build conditions
-  const conditions = []
+  return R.pipe(
+    R.try({
+      try: async () => {
+        // Build conditions
+        const conditions = []
 
-  if (filters.status) {
-    conditions.push(eq(supportTickets.status, filters.status))
-  }
-  if (filters.priority) {
-    conditions.push(eq(supportTickets.priority, filters.priority))
-  }
-  if (filters.category) {
-    conditions.push(eq(supportTickets.category, filters.category))
-  }
-  if (filters.assigneeId) {
-    conditions.push(eq(supportTickets.assigneeId, filters.assigneeId))
-  }
-  if (filters.schoolId) {
-    conditions.push(eq(supportTickets.schoolId, filters.schoolId))
-  }
-  if (filters.search) {
-    conditions.push(
-      sql`(${supportTickets.title} ILIKE ${`%${filters.search}%`} OR ${supportTickets.description} ILIKE ${`%${filters.search}%`})`,
-    )
-  }
-  if (filters.startDate) {
-    conditions.push(gte(supportTickets.createdAt, filters.startDate))
-  }
-  if (filters.endDate) {
-    conditions.push(lte(supportTickets.createdAt, filters.endDate))
-  }
+        if (filters.status) {
+          conditions.push(eq(supportTickets.status, filters.status))
+        }
+        if (filters.priority) {
+          conditions.push(eq(supportTickets.priority, filters.priority))
+        }
+        if (filters.category) {
+          conditions.push(eq(supportTickets.category, filters.category))
+        }
+        if (filters.assigneeId) {
+          conditions.push(eq(supportTickets.assigneeId, filters.assigneeId))
+        }
+        if (filters.schoolId) {
+          conditions.push(eq(supportTickets.schoolId, filters.schoolId))
+        }
+        if (filters.search) {
+          conditions.push(
+            sql`(${supportTickets.title} ILIKE ${`%${filters.search}%`} OR ${supportTickets.description} ILIKE ${`%${filters.search}%`})`,
+          )
+        }
+        if (filters.startDate) {
+          conditions.push(gte(supportTickets.createdAt, filters.startDate))
+        }
+        if (filters.endDate) {
+          conditions.push(lte(supportTickets.createdAt, filters.endDate))
+        }
 
-  // Get total count
-  const [totalResult] = await db
-    .select({ count: count() })
-    .from(supportTickets)
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
+        // Get total count
+        const [totalResult] = await db
+          .select({ count: count() })
+          .from(supportTickets)
+          .where(conditions.length > 0 ? and(...conditions) : undefined)
 
-  // Get tickets with joins
-  const tickets = await db
-    .select({
-      ticket: supportTickets,
-      schoolName: schools.name,
-      userName: users.name,
-      assigneeName: users.name,
-    })
-    .from(supportTickets)
-    .leftJoin(schools, eq(supportTickets.schoolId, schools.id))
-    .leftJoin(users, eq(supportTickets.userId, users.id))
-    .leftJoin(users, eq(supportTickets.assigneeId, users.id))
-    .where(conditions.length > 0 ? and(...conditions) : undefined)
-    .orderBy(desc(supportTickets.createdAt))
-    .limit(limit)
-    .offset(offset)
+        // Get tickets with joins
+        const tickets = await db
+          .select({
+            ticket: supportTickets,
+            schoolName: schools.name,
+            userName: users.name,
+            assigneeName: users.name,
+          })
+          .from(supportTickets)
+          .leftJoin(schools, eq(supportTickets.schoolId, schools.id))
+          .leftJoin(users, eq(supportTickets.userId, users.id))
+          .leftJoin(users, eq(supportTickets.assigneeId, users.id))
+          .where(conditions.length > 0 ? and(...conditions) : undefined)
+          .orderBy(desc(supportTickets.createdAt))
+          .limit(limit)
+          .offset(offset)
 
-  // Get comments count for each ticket
-  const ticketsWithComments = await Promise.all(
-    tickets.map(async (t) => {
-      const [commentsCountResult] = await db
-        .select({ count: count() })
-        .from(ticketComments)
-        .where(eq(ticketComments.ticketId, t.ticket.id))
+        // Get comments count for each ticket
+        const ticketIds = tickets.map(t => t.ticket.id)
+        let commentsCounts: Record<string, number> = {}
 
-      return {
-        ...t.ticket,
-        schoolName: t.schoolName,
-        userName: t.userName,
-        assigneeName: t.assigneeName,
-        commentsCount: commentsCountResult?.count || 0,
-      }
+        if (ticketIds.length > 0) {
+          const counts = await db
+            .select({
+              ticketId: ticketComments.ticketId,
+              count: count(),
+            })
+            .from(ticketComments)
+            .where(inArray(ticketComments.ticketId, ticketIds))
+            .groupBy(ticketComments.ticketId)
+
+          commentsCounts = Object.fromEntries(
+            counts.map(c => [c.ticketId, c.count]),
+          )
+        }
+
+        const ticketsWithComments = tickets.map((t) => {
+          return {
+            ...t.ticket,
+            schoolName: t.schoolName,
+            userName: t.userName,
+            assigneeName: t.assigneeName,
+            commentsCount: commentsCounts[t.ticket.id] || 0,
+          }
+        })
+
+        return {
+          tickets: ticketsWithComments,
+          total: totalResult?.count || 0,
+        }
+      },
+      catch: e => DatabaseError.from(e, 'INTERNAL_ERROR', 'Failed to get tickets'),
     }),
+    R.mapError(tapLogErr(databaseLogger, { ...filters, action: 'getTickets' })),
   )
-
-  return {
-    tickets: ticketsWithComments,
-    total: totalResult?.count || 0,
-  }
 }
 
 export async function getTicketById(
@@ -383,8 +406,11 @@ export async function getTicketStats(schoolId?: string): Promise<TicketStats> {
 export async function getRecentTickets(
   limit = 5,
 ): Promise<TicketWithDetails[]> {
-  const { tickets } = await getTickets({}, limit, 0)
-  return tickets
+  const result = await getTickets({}, limit, 0)
+  if (R.isFailure(result)) {
+    throw result.error
+  }
+  return result.value.tickets
 }
 
 // ===== KNOWLEDGE BASE QUERIES =====

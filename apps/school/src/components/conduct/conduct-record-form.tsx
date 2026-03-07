@@ -14,6 +14,7 @@ interface ConductRecordFormProps {
   onSubmit: (data: ConductRecordFormData) => void
   onCancel: () => void
   isSubmitting?: boolean
+  stickyFooter?: boolean
 }
 
 export function ConductRecordForm({
@@ -22,11 +23,13 @@ export function ConductRecordForm({
   onSubmit,
   onCancel,
   isSubmitting,
+  stickyFooter = false,
 }: ConductRecordFormProps) {
   const form = useForm<ConductRecordFormData>({
     resolver: zodResolver(conductRecordFormSchema),
     defaultValues: {
       studentId: initialStudentId ?? '',
+      incidentPresetId: defaultType === 'incident' ? 'class-disruption' : undefined,
       type: defaultType,
       category: 'behavior',
       title: '',
@@ -41,6 +44,7 @@ export function ConductRecordForm({
       onSubmit={onSubmit}
       onCancel={onCancel}
       isSubmitting={isSubmitting}
+      stickyFooter={stickyFooter}
     />
   )
 }

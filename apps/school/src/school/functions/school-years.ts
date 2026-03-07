@@ -1,5 +1,4 @@
 import { Result as R } from '@praha/byethrow'
-import { getSchoolYearTemplates } from '@repo/data-ops/queries/programs'
 import { createAuditLog } from '@repo/data-ops/queries/school-admin/audit'
 import {
   createSchoolYear as createSchoolYearQuery,
@@ -40,6 +39,7 @@ export const getAvailableSchoolYearTemplates = authServerFn.handler(async ({ con
     return { success: false as const, error: 'Établissement non sélectionné' }
 
   await requirePermission('settings', 'view')
+  const { getSchoolYearTemplates } = await import('@repo/data-ops/queries/programs')
   const _result3 = await getSchoolYearTemplates()
   if (R.isFailure(_result3))
     return { success: false as const, error: 'Erreur lors de la récupération des modèles d\'année scolaire' }

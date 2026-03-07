@@ -75,7 +75,6 @@ import { Route as AuthSettingsRolesIndexRouteImport } from './routes/_auth/setti
 import { Route as AuthSettingsPersonnelIndexRouteImport } from './routes/_auth/settings/personnel/index'
 import { Route as AuthSettingsFinanceIndexRouteImport } from './routes/_auth/settings/finance/index'
 import { Route as AuthConductsTeacherAttendanceIndexRouteImport } from './routes/_auth/conducts/teacher-attendance/index'
-import { Route as AuthConductsStudentAttendanceIndexRouteImport } from './routes/_auth/conducts/student-attendance/index'
 import { Route as AuthConductsConductIndexRouteImport } from './routes/_auth/conducts/conduct/index'
 import { Route as AuthConductsAlertsIndexRouteImport } from './routes/_auth/conducts/alerts/index'
 import { Route as AuthClassesClassIdIndexRouteImport } from './routes/_auth/classes/$classId/index'
@@ -94,8 +93,6 @@ import { Route as AuthSettingsFinanceFeeStructuresRouteImport } from './routes/_
 import { Route as AuthSettingsFinanceDiscountsRouteImport } from './routes/_auth/settings/finance/discounts'
 import { Route as AuthSettingsFinanceAccountsRouteImport } from './routes/_auth/settings/finance/accounts'
 import { Route as AuthConductsTeacherAttendanceReportsRouteImport } from './routes/_auth/conducts/teacher-attendance/reports'
-import { Route as AuthConductsStudentAttendanceStatisticsRouteImport } from './routes/_auth/conducts/student-attendance/statistics'
-import { Route as AuthConductsStudentAttendanceHistoryRouteImport } from './routes/_auth/conducts/student-attendance/history'
 import { Route as AuthConductsConductReportsRouteImport } from './routes/_auth/conducts/conduct/reports'
 import { Route as AuthConductsConductNewRouteImport } from './routes/_auth/conducts/conduct/new'
 import { Route as AuthConductsConductRecordIdRouteImport } from './routes/_auth/conducts/conduct/$recordId'
@@ -459,12 +456,6 @@ const AuthConductsTeacherAttendanceIndexRoute =
     path: '/teacher-attendance/',
     getParentRoute: () => AuthConductsRoute,
   } as any)
-const AuthConductsStudentAttendanceIndexRoute =
-  AuthConductsStudentAttendanceIndexRouteImport.update({
-    id: '/student-attendance/',
-    path: '/student-attendance/',
-    getParentRoute: () => AuthConductsRoute,
-  } as any)
 const AuthConductsConductIndexRoute =
   AuthConductsConductIndexRouteImport.update({
     id: '/conduct/',
@@ -568,18 +559,6 @@ const AuthConductsTeacherAttendanceReportsRoute =
   AuthConductsTeacherAttendanceReportsRouteImport.update({
     id: '/teacher-attendance/reports',
     path: '/teacher-attendance/reports',
-    getParentRoute: () => AuthConductsRoute,
-  } as any)
-const AuthConductsStudentAttendanceStatisticsRoute =
-  AuthConductsStudentAttendanceStatisticsRouteImport.update({
-    id: '/student-attendance/statistics',
-    path: '/student-attendance/statistics',
-    getParentRoute: () => AuthConductsRoute,
-  } as any)
-const AuthConductsStudentAttendanceHistoryRoute =
-  AuthConductsStudentAttendanceHistoryRouteImport.update({
-    id: '/student-attendance/history',
-    path: '/student-attendance/history',
     getParentRoute: () => AuthConductsRoute,
   } as any)
 const AuthConductsConductReportsRoute =
@@ -746,8 +725,6 @@ export interface FileRoutesByFullPath {
   '/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
   '/conducts/conduct/new': typeof AuthConductsConductNewRoute
   '/conducts/conduct/reports': typeof AuthConductsConductReportsRoute
-  '/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
-  '/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
   '/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
   '/settings/finance/accounts': typeof AuthSettingsFinanceAccountsRoute
   '/settings/finance/discounts': typeof AuthSettingsFinanceDiscountsRoute
@@ -766,7 +743,6 @@ export interface FileRoutesByFullPath {
   '/classes/$classId/': typeof AuthClassesClassIdIndexRoute
   '/conducts/alerts/': typeof AuthConductsAlertsIndexRoute
   '/conducts/conduct/': typeof AuthConductsConductIndexRoute
-  '/conducts/student-attendance/': typeof AuthConductsStudentAttendanceIndexRoute
   '/conducts/teacher-attendance/': typeof AuthConductsTeacherAttendanceIndexRoute
   '/settings/finance/': typeof AuthSettingsFinanceIndexRoute
   '/settings/personnel/': typeof AuthSettingsPersonnelIndexRoute
@@ -840,8 +816,6 @@ export interface FileRoutesByTo {
   '/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
   '/conducts/conduct/new': typeof AuthConductsConductNewRoute
   '/conducts/conduct/reports': typeof AuthConductsConductReportsRoute
-  '/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
-  '/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
   '/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
   '/settings/finance/accounts': typeof AuthSettingsFinanceAccountsRoute
   '/settings/finance/discounts': typeof AuthSettingsFinanceDiscountsRoute
@@ -860,7 +834,6 @@ export interface FileRoutesByTo {
   '/classes/$classId': typeof AuthClassesClassIdIndexRoute
   '/conducts/alerts': typeof AuthConductsAlertsIndexRoute
   '/conducts/conduct': typeof AuthConductsConductIndexRoute
-  '/conducts/student-attendance': typeof AuthConductsStudentAttendanceIndexRoute
   '/conducts/teacher-attendance': typeof AuthConductsTeacherAttendanceIndexRoute
   '/settings/finance': typeof AuthSettingsFinanceIndexRoute
   '/settings/personnel': typeof AuthSettingsPersonnelIndexRoute
@@ -947,8 +920,6 @@ export interface FileRoutesById {
   '/_auth/conducts/conduct/$recordId': typeof AuthConductsConductRecordIdRoute
   '/_auth/conducts/conduct/new': typeof AuthConductsConductNewRoute
   '/_auth/conducts/conduct/reports': typeof AuthConductsConductReportsRoute
-  '/_auth/conducts/student-attendance/history': typeof AuthConductsStudentAttendanceHistoryRoute
-  '/_auth/conducts/student-attendance/statistics': typeof AuthConductsStudentAttendanceStatisticsRoute
   '/_auth/conducts/teacher-attendance/reports': typeof AuthConductsTeacherAttendanceReportsRoute
   '/_auth/settings/finance/accounts': typeof AuthSettingsFinanceAccountsRoute
   '/_auth/settings/finance/discounts': typeof AuthSettingsFinanceDiscountsRoute
@@ -967,7 +938,6 @@ export interface FileRoutesById {
   '/_auth/classes/$classId/': typeof AuthClassesClassIdIndexRoute
   '/_auth/conducts/alerts/': typeof AuthConductsAlertsIndexRoute
   '/_auth/conducts/conduct/': typeof AuthConductsConductIndexRoute
-  '/_auth/conducts/student-attendance/': typeof AuthConductsStudentAttendanceIndexRoute
   '/_auth/conducts/teacher-attendance/': typeof AuthConductsTeacherAttendanceIndexRoute
   '/_auth/settings/finance/': typeof AuthSettingsFinanceIndexRoute
   '/_auth/settings/personnel/': typeof AuthSettingsPersonnelIndexRoute
@@ -1054,8 +1024,6 @@ export interface FileRouteTypes {
     | '/conducts/conduct/$recordId'
     | '/conducts/conduct/new'
     | '/conducts/conduct/reports'
-    | '/conducts/student-attendance/history'
-    | '/conducts/student-attendance/statistics'
     | '/conducts/teacher-attendance/reports'
     | '/settings/finance/accounts'
     | '/settings/finance/discounts'
@@ -1074,7 +1042,6 @@ export interface FileRouteTypes {
     | '/classes/$classId/'
     | '/conducts/alerts/'
     | '/conducts/conduct/'
-    | '/conducts/student-attendance/'
     | '/conducts/teacher-attendance/'
     | '/settings/finance/'
     | '/settings/personnel/'
@@ -1148,8 +1115,6 @@ export interface FileRouteTypes {
     | '/conducts/conduct/$recordId'
     | '/conducts/conduct/new'
     | '/conducts/conduct/reports'
-    | '/conducts/student-attendance/history'
-    | '/conducts/student-attendance/statistics'
     | '/conducts/teacher-attendance/reports'
     | '/settings/finance/accounts'
     | '/settings/finance/discounts'
@@ -1168,7 +1133,6 @@ export interface FileRouteTypes {
     | '/classes/$classId'
     | '/conducts/alerts'
     | '/conducts/conduct'
-    | '/conducts/student-attendance'
     | '/conducts/teacher-attendance'
     | '/settings/finance'
     | '/settings/personnel'
@@ -1254,8 +1218,6 @@ export interface FileRouteTypes {
     | '/_auth/conducts/conduct/$recordId'
     | '/_auth/conducts/conduct/new'
     | '/_auth/conducts/conduct/reports'
-    | '/_auth/conducts/student-attendance/history'
-    | '/_auth/conducts/student-attendance/statistics'
     | '/_auth/conducts/teacher-attendance/reports'
     | '/_auth/settings/finance/accounts'
     | '/_auth/settings/finance/discounts'
@@ -1274,7 +1236,6 @@ export interface FileRouteTypes {
     | '/_auth/classes/$classId/'
     | '/_auth/conducts/alerts/'
     | '/_auth/conducts/conduct/'
-    | '/_auth/conducts/student-attendance/'
     | '/_auth/conducts/teacher-attendance/'
     | '/_auth/settings/finance/'
     | '/_auth/settings/personnel/'
@@ -1769,13 +1730,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthConductsTeacherAttendanceIndexRouteImport
       parentRoute: typeof AuthConductsRoute
     }
-    '/_auth/conducts/student-attendance/': {
-      id: '/_auth/conducts/student-attendance/'
-      path: '/student-attendance'
-      fullPath: '/conducts/student-attendance/'
-      preLoaderRoute: typeof AuthConductsStudentAttendanceIndexRouteImport
-      parentRoute: typeof AuthConductsRoute
-    }
     '/_auth/conducts/conduct/': {
       id: '/_auth/conducts/conduct/'
       path: '/conduct'
@@ -1900,20 +1854,6 @@ declare module '@tanstack/react-router' {
       path: '/teacher-attendance/reports'
       fullPath: '/conducts/teacher-attendance/reports'
       preLoaderRoute: typeof AuthConductsTeacherAttendanceReportsRouteImport
-      parentRoute: typeof AuthConductsRoute
-    }
-    '/_auth/conducts/student-attendance/statistics': {
-      id: '/_auth/conducts/student-attendance/statistics'
-      path: '/student-attendance/statistics'
-      fullPath: '/conducts/student-attendance/statistics'
-      preLoaderRoute: typeof AuthConductsStudentAttendanceStatisticsRouteImport
-      parentRoute: typeof AuthConductsRoute
-    }
-    '/_auth/conducts/student-attendance/history': {
-      id: '/_auth/conducts/student-attendance/history'
-      path: '/student-attendance/history'
-      fullPath: '/conducts/student-attendance/history'
-      preLoaderRoute: typeof AuthConductsStudentAttendanceHistoryRouteImport
       parentRoute: typeof AuthConductsRoute
     }
     '/_auth/conducts/conduct/reports': {
@@ -2097,12 +2037,9 @@ interface AuthConductsRouteChildren {
   AuthConductsConductRecordIdRoute: typeof AuthConductsConductRecordIdRoute
   AuthConductsConductNewRoute: typeof AuthConductsConductNewRoute
   AuthConductsConductReportsRoute: typeof AuthConductsConductReportsRoute
-  AuthConductsStudentAttendanceHistoryRoute: typeof AuthConductsStudentAttendanceHistoryRoute
-  AuthConductsStudentAttendanceStatisticsRoute: typeof AuthConductsStudentAttendanceStatisticsRoute
   AuthConductsTeacherAttendanceReportsRoute: typeof AuthConductsTeacherAttendanceReportsRoute
   AuthConductsAlertsIndexRoute: typeof AuthConductsAlertsIndexRoute
   AuthConductsConductIndexRoute: typeof AuthConductsConductIndexRoute
-  AuthConductsStudentAttendanceIndexRoute: typeof AuthConductsStudentAttendanceIndexRoute
   AuthConductsTeacherAttendanceIndexRoute: typeof AuthConductsTeacherAttendanceIndexRoute
 }
 
@@ -2112,16 +2049,10 @@ const AuthConductsRouteChildren: AuthConductsRouteChildren = {
   AuthConductsConductRecordIdRoute: AuthConductsConductRecordIdRoute,
   AuthConductsConductNewRoute: AuthConductsConductNewRoute,
   AuthConductsConductReportsRoute: AuthConductsConductReportsRoute,
-  AuthConductsStudentAttendanceHistoryRoute:
-    AuthConductsStudentAttendanceHistoryRoute,
-  AuthConductsStudentAttendanceStatisticsRoute:
-    AuthConductsStudentAttendanceStatisticsRoute,
   AuthConductsTeacherAttendanceReportsRoute:
     AuthConductsTeacherAttendanceReportsRoute,
   AuthConductsAlertsIndexRoute: AuthConductsAlertsIndexRoute,
   AuthConductsConductIndexRoute: AuthConductsConductIndexRoute,
-  AuthConductsStudentAttendanceIndexRoute:
-    AuthConductsStudentAttendanceIndexRoute,
   AuthConductsTeacherAttendanceIndexRoute:
     AuthConductsTeacherAttendanceIndexRoute,
 }

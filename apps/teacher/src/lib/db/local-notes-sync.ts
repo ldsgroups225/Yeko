@@ -1,6 +1,10 @@
 import type { NewSyncQueueItem, SyncQueueItem } from './schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { clientDatabaseManager } from './client-db'
+import {
+  getActionablePendingSyncCount,
+  removeSyncQueueEntriesForPublishedNote,
+} from './local-notes-sync-helpers'
 import {
   noteDetailsTable,
   notesTable,
@@ -30,6 +34,67 @@ export async function addToSyncQueue(
     }
 
     const db = await getDb()
+    const now = new Date()
+
+    const existingPendingItems = await db
+      .select({
+        id: syncQueueTable.id,
+        operation: syncQueueTable.operation,
+      })
+      .from(syncQueueTable)
+      .where(
+        and(
+          eq(syncQueueTable.tableName, tableName),
+          eq(syncQueueTable.recordId, recordId),
+          eq(syncQueueTable.status, 'pending'),
+        ),
+      )
+
+    const existingItem = existingPendingItems[0]
+    if (existingItem) {
+      if (operation === 'update' && (existingItem.operation === 'create' || existingItem.operation === 'update')) {
+        await db
+          .update(syncQueueTable)
+          .set({
+            data: JSON.stringify(data),
+            createdAt: now,
+          })
+          .where(eq(syncQueueTable.id, existingItem.id))
+        return
+      }
+
+      if (operation === 'update' && existingItem.operation === 'delete') {
+        return
+      }
+
+      if (operation === 'create' && existingItem.operation === 'create') {
+        await db
+          .update(syncQueueTable)
+          .set({
+            data: JSON.stringify(data),
+            createdAt: now,
+          })
+          .where(eq(syncQueueTable.id, existingItem.id))
+        return
+      }
+
+      if (operation === 'delete' && existingItem.operation === 'create') {
+        await db.delete(syncQueueTable).where(eq(syncQueueTable.id, existingItem.id))
+        return
+      }
+
+      if (operation === 'delete') {
+        await db
+          .delete(syncQueueTable)
+          .where(
+            and(
+              eq(syncQueueTable.tableName, tableName),
+              eq(syncQueueTable.recordId, recordId),
+              eq(syncQueueTable.status, 'pending'),
+            ),
+          )
+      }
+    }
 
     const syncItem: NewSyncQueueItem = {
       id: `${tableName}-${recordId}-${Date.now()}`,
@@ -211,11 +276,28 @@ export async function getPendingSyncCount(): Promise<number> {
     }
 
     const db = await getDb()
+    return getActionablePendingSyncCount(db)
+  }
+  catch {
+    return 0
+  }
+}
+
+/**
+ * Get count of failed sync items
+ */
+export async function getFailedSyncCount(): Promise<number> {
+  try {
+    if (!clientDatabaseManager.isReady()) {
+      return 0
+    }
+
+    const db = await getDb()
 
     const result = await db
       .select()
       .from(syncQueueTable)
-      .where(eq(syncQueueTable.status, 'pending'))
+      .where(eq(syncQueueTable.status, 'failed'))
 
     return result.length
   }
@@ -271,6 +353,10 @@ export async function clearLocalDataAfterPublish(noteIds: string[]): Promise<voi
     const db = await getDb()
 
     for (const noteId of noteIds) {
+      // Remove any queued sync operations for this note and its details
+      // so sync status reflects successful publish immediately.
+      await removeSyncQueueEntriesForPublishedNote(db, noteId)
+
       // Delete note details first (due to foreign key)
       await db
         .delete(noteDetailsTable)

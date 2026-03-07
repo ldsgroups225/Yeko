@@ -17,6 +17,12 @@ const requestAuth = new AsyncLocalStorage<{ current: BetterAuthInstance | undefi
 // Global fallback for non-ALS environments (tests, local dev)
 let globalAuth: BetterAuthInstance | undefined
 
+function canUseGlobalFallback(): boolean {
+  // Cloudflare Workers reuse isolates across requests, so request-bound
+  // resources must never be revived from module scope there.
+  return typeof WebSocketPair === 'undefined'
+}
+
 /**
  * Create a request-scoped auth context.
  * Must wrap the entire request lifecycle in CF Workers.
@@ -52,8 +58,10 @@ export function setAuth(
     store.current = instance
   }
 
-  // Also set global for backward compatibility
-  globalAuth = instance
+  // Keep the global fallback for Node-based tests/scripts only.
+  if (canUseGlobalFallback()) {
+    globalAuth = instance
+  }
 
   return instance
 }
@@ -64,8 +72,8 @@ export function getAuth() {
   if (store?.current) {
     return store.current
   }
-  // Fallback to global for non-ALS environments
-  if (globalAuth) {
+  // Fallback to global only outside the Workers runtime.
+  if (canUseGlobalFallback() && globalAuth) {
     return globalAuth
   }
   throw new Error('Auth not initialized')
