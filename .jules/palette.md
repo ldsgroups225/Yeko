@@ -1,0 +1,3 @@
+## 2024-10-25 - ARIA Labels on Icon-only Buttons
+**Learning:** In a heavily icon-driven interface like the Yeko app (e.g. `apps/teacher` header navigation and chat features, `apps/school` timetable upload), buttons exclusively containing icons (e.g., `<Button size="icon">` with `<IconArrowLeft />` or `<IconX />`) frequently lacked `aria-label` attributes. This breaks accessibility for screen-reader users as the action context is missing.
+**Action:** When implementing new interfaces using the shared UI components, always pair a `<Button size="icon">` and similar standalone icons with a localized `aria-label` (e.g. `aria-label={LL.common.back()}`) to ensure actions are fully accessible.
