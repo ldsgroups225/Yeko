@@ -1,6 +1,6 @@
 import { Result as R } from '@praha/byethrow'
 import { databaseLogger, tapLogErr } from '@repo/logger'
-import { and, eq, sql, sum } from 'drizzle-orm'
+import { and, eq, gte, sql, sum } from 'drizzle-orm'
 import { getDb } from '../database/setup'
 import {
   installments,
@@ -89,7 +89,10 @@ export async function getMonthlyRevenue(schoolId: string, months: number = 6): R
             and(
               eq(payments.schoolId, schoolId),
               eq(payments.status, 'completed'),
-              sql`${payments.paymentDate} >= CURRENT_DATE - INTERVAL '${sql.raw(String(months))} months'`,
+              gte(
+                payments.paymentDate,
+                sql`CURRENT_DATE - INTERVAL '1 month' * ${months}`,
+              ),
             ),
           )
           .groupBy(sql`TO_CHAR(${payments.paymentDate}, 'YYYY-MM')`)
