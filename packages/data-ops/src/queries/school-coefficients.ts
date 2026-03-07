@@ -294,15 +294,22 @@ export async function bulkUpdateSchoolCoefficients(options: {
     }
   }
 
+  // Preserve the previous sequential semantics for duplicate template IDs:
+  // the last update for a given template wins.
+  const latestUpdates = new Map<string, number>()
+  for (const update of updates) {
+    latestUpdates.set(update.coefficientTemplateId, update.weightOverride)
+  }
+
   // ⚡ Bolt Optimization: Replace N+1 inserts with single bulk insert
   // Problem: The previous approach executed a separate database roundtrip for each coefficient update
   // Impact: Reduces DB latency from O(N) to O(1) by batching all rows in a single query
   // Measurement: Verification can be done by tracking DB execution times in APM tooling during bulk updates
-  const valuesToInsert = updates.map(update => ({
+  const valuesToInsert = Array.from(latestUpdates.entries()).map(([coefficientTemplateId, weightOverride]) => ({
     id: crypto.randomUUID(),
     schoolId,
-    coefficientTemplateId: update.coefficientTemplateId,
-    weightOverride: update.weightOverride,
+    coefficientTemplateId,
+    weightOverride,
     createdAt: new Date(),
     updatedAt: new Date(),
   }))
