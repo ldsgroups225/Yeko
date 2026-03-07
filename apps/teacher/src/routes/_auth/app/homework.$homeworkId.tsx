@@ -176,7 +176,7 @@ function HomeworkDetailPage() {
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link to="/app/homework">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" aria-label={LL.common.back()}>
             <IconArrowLeft className="h-5 w-5" />
           </Button>
         </Link>
@@ -188,7 +188,7 @@ function HomeworkDetailPage() {
           </h1>
         </div>
         {!isEditing && homework.status !== 'cancelled' && (
-          <Button variant="ghost" size="icon" onClick={initEditForm}>
+          <Button variant="ghost" size="icon" onClick={initEditForm} aria-label={LL.common.edit()}>
             <IconEdit className="h-5 w-5" />
           </Button>
         )}
@@ -342,6 +342,7 @@ function HomeworkDetailPage() {
                             variant="outline"
                             size="icon"
                             className="text-destructive"
+                            aria-label={LL.common.delete()}
                           >
                             <IconTrash className="h-4 w-4" />
                           </Button>

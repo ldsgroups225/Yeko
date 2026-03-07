@@ -28,6 +28,7 @@ export const getClassAttendanceForDate = authServerFn
   .inputValidator(
     z.object({
       classId: z.string(),
+      schoolYearId: z.string(),
       date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
       classSessionId: z.string().optional(),
     }),
@@ -38,7 +39,10 @@ export const getClassAttendanceForDate = authServerFn
 
     await requirePermission('attendance', 'view')
 
-    const _result1 = await getClassAttendance(data)
+    const _result1 = await getClassAttendance({
+      schoolId: context.school.schoolId,
+      ...data,
+    })
     if (R.isFailure(_result1))
       return { success: false as const, error: 'Erreur lors de la récupération des présences de la classe' }
     return { success: true as const, data: _result1.value }

@@ -4,20 +4,31 @@ import { teacherMutationKeys } from './keys'
 
 export const localNotesKeys = {
   all: ['local-notes'] as const,
-  unpublished: (schoolId: string, classId: string, teacherId: string) =>
-    [...localNotesKeys.all, 'unpublished', schoolId, classId, teacherId] as const,
-  unpublishedCount: (schoolId: string, classId: string, teacherId: string) =>
-    [...localNotesKeys.all, 'unpublished-count', schoolId, classId, teacherId] as const,
+  unpublished: (schoolId: string, classId: string, teacherId: string, noteTypes?: string[]) =>
+    [...localNotesKeys.all, 'unpublished', schoolId, classId, teacherId, noteTypes?.join('|') ?? 'all-types'] as const,
+  unpublishedCount: (schoolId: string, classId: string, teacherId: string, noteTypes?: string[]) =>
+    [...localNotesKeys.all, 'unpublished-count', schoolId, classId, teacherId, noteTypes?.join('|') ?? 'all-types'] as const,
 }
 
 export function unpublishedNoteQueryOptions(params: {
   schoolId: string
   classId: string
   teacherId: string
+  noteTypes?: string[]
 }) {
   return queryOptions({
-    queryKey: localNotesKeys.unpublished(params.schoolId, params.classId, params.teacherId),
-    queryFn: () => localNotesService.findUnpublishedNote(params),
+    queryKey: localNotesKeys.unpublished(
+      params.schoolId,
+      params.classId,
+      params.teacherId,
+      params.noteTypes,
+    ),
+    queryFn: () => localNotesService.findUnpublishedNote({
+      classId: params.classId,
+      schoolId: params.schoolId,
+      teacherId: params.teacherId,
+      types: params.noteTypes,
+    }),
     staleTime: 0, // Always fresh as it's local PGlite
     enabled: !!params.teacherId && !!params.classId && !!params.schoolId,
   })
@@ -27,10 +38,21 @@ export function unpublishedCountQueryOptions(params: {
   schoolId: string
   classId: string
   teacherId: string
+  noteTypes?: string[]
 }) {
   return queryOptions({
-    queryKey: localNotesKeys.unpublishedCount(params.schoolId, params.classId, params.teacherId),
-    queryFn: () => localNotesService.countUnpublishedNotes(params),
+    queryKey: localNotesKeys.unpublishedCount(
+      params.schoolId,
+      params.classId,
+      params.teacherId,
+      params.noteTypes,
+    ),
+    queryFn: () => localNotesService.countUnpublishedNotes({
+      classId: params.classId,
+      schoolId: params.schoolId,
+      teacherId: params.teacherId,
+      types: params.noteTypes,
+    }),
     staleTime: 0,
     enabled: !!params.teacherId && !!params.classId && !!params.schoolId,
   })

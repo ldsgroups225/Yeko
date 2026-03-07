@@ -8,6 +8,7 @@ import {
   getStudentSummary,
   listConductRecords,
   listConductRecordsKeyset,
+  listConductStudents,
   markFollowUpComplete,
   markParentAcknowledged,
   notifyParentOfConduct,
@@ -21,6 +22,8 @@ export const conductRecordsKeys = {
   all: ['conduct-records'] as const,
   list: (schoolYearId: string, filters?: Record<string, unknown>) =>
     [...conductRecordsKeys.all, 'list', schoolYearId, filters] as const,
+  students: (schoolYearId: string, filters?: Record<string, unknown>) =>
+    [...conductRecordsKeys.all, 'students', schoolYearId, filters] as const,
   detail: (id: string) =>
     [...conductRecordsKeys.all, 'detail', id] as const,
   summary: (studentId: string, schoolYearId: string) =>
@@ -52,6 +55,40 @@ export function conductRecordsOptions(params: {
     staleTime: 5 * 60 * 1000,
     placeholderData: keepPreviousData,
     enabled: !!params.schoolYearId,
+  })
+}
+
+export function conductStudentsOptions(params: {
+  schoolYearId: string | null | undefined
+  classId?: string
+  search?: string
+  page?: number
+  limit?: number
+}) {
+  return queryOptions({
+    queryKey: conductRecordsKeys.students(params.schoolYearId ?? 'all', params),
+    queryFn: async () => {
+      const res = await listConductStudents({
+        data: {
+          schoolYearId: params.schoolYearId ?? undefined,
+          classId: params.classId,
+          search: params.search,
+          page: params.page ?? 1,
+          limit: params.limit ?? 200,
+        },
+      }).catch((error) => {
+        throw error instanceof Error
+          ? error
+          : new Error('Erreur lors de la récupération des élèves pour la conduite')
+      })
+      if (!res)
+        throw new Error('Réponse vide lors de la récupération des élèves pour la conduite')
+      if (!res.success)
+        throw new Error(res.error)
+      return res.data
+    },
+    staleTime: 5 * 60 * 1000,
+    placeholderData: keepPreviousData,
   })
 }
 

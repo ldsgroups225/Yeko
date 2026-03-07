@@ -11,7 +11,13 @@ export function schoolYearsOptions() {
   return queryOptions({
     queryKey: schoolYearsKeys.lists(),
     queryFn: async () => {
-      const result = await getSchoolYears()
+      const result = await getSchoolYears().catch((error) => {
+        throw error instanceof Error
+          ? error
+          : new Error('Erreur lors de la récupération des années scolaires')
+      })
+      if (!result)
+        throw new Error('Réponse vide lors de la récupération des années scolaires')
       if (result.success)
         return result.data
       throw new Error(result.error)
@@ -24,7 +30,13 @@ export function schoolYearTemplatesOptions() {
   return queryOptions({
     queryKey: schoolYearsKeys.templates(),
     queryFn: async () => {
-      const result = await getAvailableSchoolYearTemplates()
+      const result = await getAvailableSchoolYearTemplates().catch((error) => {
+        throw error instanceof Error
+          ? error
+          : new Error('Erreur lors de la récupération des modèles d\'année scolaire')
+      })
+      if (!result)
+        throw new Error('Réponse vide lors de la récupération des modèles d\'année scolaire')
       if (result.success)
         return result.data
       throw new Error(result.error)

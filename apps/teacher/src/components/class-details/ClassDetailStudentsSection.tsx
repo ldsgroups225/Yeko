@@ -137,6 +137,8 @@ export function ClassDetailStudentsSection({
   totalStudents,
 }: ClassDetailStudentsSectionProps) {
   const { LL } = useI18nContext()
+  const hasUnpublishedDraft = unpublishedCount > 0 || Boolean(unpublishedNote)
+  const unpublishedDetails = Array.isArray(unpublishedNote?.details) ? unpublishedNote.details : []
 
   return (
     <>
@@ -259,11 +261,11 @@ export function ClassDetailStudentsSection({
             <EmptyStudents />
           )}
 
-      {unpublishedNote && (
+      {hasUnpublishedDraft && unpublishedNote && (
         <UnpublishedNoteSheet
           open={isUnpublishedSheetOpen}
           onOpenChange={setIsUnpublishedSheetOpen}
-          note={unpublishedCount > 0 ? unpublishedNote : ({} as NoteWithDetails)}
+          note={unpublishedNote}
           totalStudents={totalStudents}
           onPublish={onPublish}
           isPublishing={isPublishing}
@@ -271,14 +273,14 @@ export function ClassDetailStudentsSection({
         />
       )}
 
-      {unpublishedNote && (
+      {hasUnpublishedDraft && unpublishedNote && (
         <ConfirmationDialog
           open={isConfirmDialogOpen}
           onOpenChange={setIsConfirmDialogOpen}
           onConfirm={onConfirmPublish}
           isPending={isPublishing}
           title={LL.grades.confirmPublishTitle()}
-          description={LL.grades.confirmPublishDescription({ count: totalStudents - unpublishedNote.details.length })}
+          description={LL.grades.confirmPublishDescription({ count: totalStudents - unpublishedDetails.length })}
           confirmText={LL.grades.confirmPublish()}
           cancelText={LL.common.cancel()}
         />
